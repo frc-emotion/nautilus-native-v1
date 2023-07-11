@@ -3,24 +3,19 @@ package org.team2658.emotion.android
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.material.*
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
-import org.team2658.emotion.Greeting
+import org.team2658.emotion.AuthState
+import org.team2658.emotion.android.screens.SettingsScreen
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
-            MyApplicationTheme {
-                Surface(
-                    modifier = Modifier.fillMaxSize(),
-                    color = MaterialTheme.colors.background
-                ) {
-                    GreetingView(Greeting().greet())
-                }
+            MainTheme {
+                SettingsScreen(AuthState.NOT_LOGGED_IN)
+                //TODO: auth state controlled by viewmodel
             }
         }
     }
@@ -34,7 +29,7 @@ fun GreetingView(text: String) {
 @Preview
 @Composable
 fun DefaultPreview() {
-    MyApplicationTheme {
+    MainTheme {
         GreetingView("Hello, Android!")
     }
 }

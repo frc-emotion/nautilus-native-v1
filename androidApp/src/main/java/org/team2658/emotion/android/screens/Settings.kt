@@ -126,6 +126,9 @@ fun RegisterScreen(
         Text(text = "Create New Account",
             style = MaterialTheme.typography.displayMedium,
         )
+        Text(text = "After registering, please notify a team lead to verify your account",
+            style = MaterialTheme.typography.bodyLarge,
+            )
         Spacer(modifier = Modifier.size(32.dp))
         LabelledTextBoxSingleLine(label = "First Name",
             text = firstName,

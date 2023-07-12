@@ -6,7 +6,6 @@ import androidx.activity.compose.setContent
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.tooling.preview.Preview
-import org.team2658.emotion.AuthState
 import org.team2658.emotion.android.screens.SettingsScreen
 
 class MainActivity : ComponentActivity() {
@@ -14,7 +13,7 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         setContent {
             MainTheme {
-                SettingsScreen(AuthState.NOT_LOGGED_IN)
+                SettingsScreen()
                 //TODO: auth state controlled by viewmodel
             }
         }

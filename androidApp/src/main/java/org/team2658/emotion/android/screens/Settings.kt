@@ -29,22 +29,25 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import org.team2658.emotion.AuthState
+import org.team2658.emotion.User
 import org.team2658.emotion.android.MainTheme
 import org.team2658.emotion.android.composables.LabelledTextBoxSingleLine
+import org.team2658.emotion.android.viewmodels.SettingsViewModel
 
 
 @Composable
-fun SettingsScreen(authState: AuthState) {
+fun SettingsScreen() {
+    val viewModel = remember { SettingsViewModel() }
     Surface(color= MaterialTheme.colorScheme.background, modifier = Modifier.fillMaxSize()){
         Scaffold{padding->
             Box(modifier=Modifier.padding(padding)) {
                 Column(modifier= Modifier
                     .padding(32.dp)
                 ) {
-                    when(authState) {
-                        AuthState.NOT_LOGGED_IN -> SettingsNotLoggedIn()
-                        AuthState.AWAITING_VERIFICATION -> SettingsAwaitingVerification()
-                        AuthState.LOGGED_IN -> SettingsLoggedIn("exampleuser")
+                    when(viewModel.authState) {
+                        AuthState.NOT_LOGGED_IN -> SettingsNotLoggedIn(viewModel::login, viewModel::register)
+                        AuthState.AWAITING_VERIFICATION-> SettingsAwaitingVerification(viewModel::logout)
+                        AuthState.LOGGED_IN -> SettingsLoggedIn(viewModel.user, viewModel::logout)
                     }
                 }
             }
@@ -59,16 +62,27 @@ enum class SignedOutScreen {
     REGISTER
 }
 @Composable
-fun SettingsNotLoggedIn() {
+fun SettingsNotLoggedIn(
+    onLogin: (
+        username: String,
+        password: String
+    ) -> Unit,
+    onRegister: (
+        username: String,
+        password: String,
+        email: String,
+        firstName: String,
+        lastName: String
+    ) -> Unit) {
     val navController = rememberNavController()
     NavHost(navController, startDestination = SignedOutScreen.LOGIN.name){
         composable(SignedOutScreen.LOGIN.name){
-            LoginScreen{
+            LoginScreen(onLogin){
                 navController.navigate(SignedOutScreen.REGISTER.name)
             }
         }
         composable(SignedOutScreen.REGISTER.name){
-            RegisterScreen{
+            RegisterScreen(onRegister){
                 navController.navigate(SignedOutScreen.LOGIN.name)
             }
         }
@@ -79,6 +93,10 @@ fun SettingsNotLoggedIn() {
 
 @Composable
 fun LoginScreen(
+    onLogin: (
+        username: String,
+        password: String
+            ) -> Unit,
     onCreateAccount: ()->Unit
 ) {
     var username by remember { mutableStateOf("")}
@@ -100,7 +118,7 @@ fun LoginScreen(
         )
         Spacer(modifier = Modifier.size(32.dp))
         Row{
-            Button(onClick = { /*TODO*/ }) {
+            Button(onClick = { onLogin(username, password) }) {
                 Text(text="Log In")
             }
             Spacer(modifier = Modifier.size(24.dp))
@@ -113,6 +131,13 @@ fun LoginScreen(
 
 @Composable
 fun RegisterScreen(
+    onRegister: (
+        username: String,
+        password: String,
+        email: String,
+        firstName: String,
+        lastName: String
+            )->Unit,
     onLogin: ()->Unit
 ) {
     var username by remember { mutableStateOf("")}
@@ -171,7 +196,11 @@ fun RegisterScreen(
         }
         Spacer(modifier = Modifier.size(32.dp))
         Row{
-            Button(onClick = { /*TODO*/ }) {
+            Button(onClick = {
+                if(password == passwordConfirm) {
+                    onRegister(username, password, email, firstName, lastName)
+                }
+            }) {
                 Text(text="Create Account")
             }
             Spacer(modifier = Modifier.size(24.dp))
@@ -184,7 +213,9 @@ fun RegisterScreen(
 }
 
 @Composable
-fun SettingsAwaitingVerification() {
+fun SettingsAwaitingVerification(
+    onLogout: () -> Unit
+) {
     Text(text = "Awaiting Verification",
         style = MaterialTheme.typography.displayMedium,
     )
@@ -193,13 +224,14 @@ fun SettingsAwaitingVerification() {
         style = MaterialTheme.typography.bodyLarge,
     )
     Spacer(modifier = Modifier.size(32.dp))
-    Button(onClick = { /*TODO*/ }) {
+    Button(onClick = { onLogout() }) {
         Text(text="Log Out")
     }
 }
 
 @Composable
-fun SettingsLoggedIn(username: String) {
+fun SettingsLoggedIn(user: User?, onLogout: ()->Unit) {
+    val username = user?.username ?: ""
     Text(text = "Settings",
         style = MaterialTheme.typography.displayMedium,
     )
@@ -208,7 +240,7 @@ fun SettingsLoggedIn(username: String) {
         style = MaterialTheme.typography.headlineLarge,
     )
     Spacer(modifier = Modifier.size(32.dp))
-    Button(onClick = { /*TODO*/ }) {
+    Button(onClick = { onLogout() }) {
         Text(text="Log Out")
     }
 }
@@ -218,6 +250,6 @@ fun SettingsLoggedIn(username: String) {
 @Composable
 fun SettingsPreview() {
     MainTheme(false) {
-        SettingsScreen(AuthState.NOT_LOGGED_IN)
+        SettingsScreen()
     }
 }

@@ -1,7 +1,7 @@
-package org.team2658.emotion
+package org.team2658.emotion.userauth
 
 enum class AccessLevel {
     ADMIN,
-    SCOUTER,
+    BASE,
     NONE,
 }

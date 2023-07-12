@@ -28,16 +28,15 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import org.team2658.emotion.AuthState
-import org.team2658.emotion.User
+import org.team2658.emotion.userauth.AuthState
+import org.team2658.emotion.userauth.User
 import org.team2658.emotion.android.MainTheme
 import org.team2658.emotion.android.composables.LabelledTextBoxSingleLine
 import org.team2658.emotion.android.viewmodels.SettingsViewModel
 
 
 @Composable
-fun SettingsScreen() {
-    val viewModel = remember { SettingsViewModel() }
+fun SettingsScreen(viewModel: SettingsViewModel) {
     Surface(color= MaterialTheme.colorScheme.background, modifier = Modifier.fillMaxSize()){
         Scaffold{padding->
             Box(modifier=Modifier.padding(padding)) {
@@ -249,7 +248,8 @@ fun SettingsLoggedIn(user: User?, onLogout: ()->Unit) {
 @Preview
 @Composable
 fun SettingsPreview() {
+    val settingsViewModel = SettingsViewModel()
     MainTheme(false) {
-        SettingsScreen()
+        SettingsScreen(settingsViewModel)
     }
 }

@@ -4,9 +4,10 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
-import org.team2658.emotion.AccessLevel
-import org.team2658.emotion.AuthState
-import org.team2658.emotion.User
+import org.team2658.emotion.userauth.AccessLevel
+import org.team2658.emotion.userauth.AuthState
+import org.team2658.emotion.userauth.Subteam
+import org.team2658.emotion.userauth.User
 
 class SettingsViewModel: ViewModel() {
     //TODO: instantiate with GetAuthState once implemented
@@ -21,7 +22,7 @@ class SettingsViewModel: ViewModel() {
     fun login(username: String, password: String) {
        //TODO(username, password)
         //TODO: user = GetUser()
-        user = User(username, "JWT", "firstName", "lastName", "email", AccessLevel.SCOUTER) //TODO: remove this line
+        user = User(username, "JWT", "firstName", "lastName", "email", AccessLevel.BASE) //TODO: remove this line
         authState = AuthState.LOGGED_IN
     }
 
@@ -39,7 +40,7 @@ class SettingsViewModel: ViewModel() {
         lastName: String) {
         //TODO(username, password, email, firstName, lastName)
         //TODO: user = GetUser()
-        user = User(username, "JWT", firstName, lastName, email, AccessLevel.SCOUTER) //TODO: remove this line
+        user = User(username, "JWT", firstName, lastName, email, AccessLevel.BASE) //TODO: remove this line
         authState = AuthState.AWAITING_VERIFICATION
     }
 }

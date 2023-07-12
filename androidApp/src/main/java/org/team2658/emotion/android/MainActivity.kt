@@ -7,7 +7,7 @@ import androidx.activity.viewModels
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.tooling.preview.Preview
-import org.team2658.emotion.android.screens.SettingsScreen
+import org.team2658.emotion.android.screens.settings.SettingsScreen
 import org.team2658.emotion.android.viewmodels.SettingsViewModel
 
 class MainActivity : ComponentActivity() {

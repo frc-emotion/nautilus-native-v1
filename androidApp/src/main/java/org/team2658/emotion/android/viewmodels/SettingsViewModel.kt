@@ -37,10 +37,11 @@ class SettingsViewModel: ViewModel() {
         password: String,
         email:String,
         firstName: String,
-        lastName: String) {
+        lastName: String,
+        subteam: Subteam) {
         //TODO(username, password, email, firstName, lastName)
         //TODO: user = GetUser()
-        user = User(username, "JWT", firstName, lastName, email, AccessLevel.BASE) //TODO: remove this line
+        user = User(username, "JWT", firstName, lastName, email, AccessLevel.NONE, subteam=subteam) //TODO: remove this line
         authState = AuthState.AWAITING_VERIFICATION
     }
 }

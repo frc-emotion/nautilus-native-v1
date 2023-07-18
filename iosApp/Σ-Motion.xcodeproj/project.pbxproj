@@ -35,6 +35,7 @@
 		93B9EAE62A65E0FA00D5B8A8 /* UserStateViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 93B9EAE52A65E0FA00D5B8A8 /* UserStateViewModel.swift */; };
 		93B9EAEB2A65F6B400D5B8A8 /* YearViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 93B9EAEA2A65F6B400D5B8A8 /* YearViewModel.swift */; };
 		93B9EAED2A67211600D5B8A8 /* ForgotPasswordView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 93B9EAEC2A67211600D5B8A8 /* ForgotPasswordView.swift */; };
+		93B9EAF02A67255600D5B8A8 /* RapidReactMatch.swift in Sources */ = {isa = PBXBuildFile; fileRef = 93B9EAEF2A67255600D5B8A8 /* RapidReactMatch.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -81,6 +82,7 @@
 		93B9EAE52A65E0FA00D5B8A8 /* UserStateViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserStateViewModel.swift; sourceTree = "<group>"; };
 		93B9EAEA2A65F6B400D5B8A8 /* YearViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = YearViewModel.swift; sourceTree = "<group>"; };
 		93B9EAEC2A67211600D5B8A8 /* ForgotPasswordView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ForgotPasswordView.swift; sourceTree = "<group>"; };
+		93B9EAEF2A67255600D5B8A8 /* RapidReactMatch.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RapidReactMatch.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -190,6 +192,7 @@
 		93B9EAB42A5E67A500D5B8A8 /* Models */ = {
 			isa = PBXGroup;
 			children = (
+				93B9EAEE2A67254500D5B8A8 /* RapidReact */,
 				93B9EAE22A65DEB700D5B8A8 /* ChargedUp */,
 				93B9EAC42A5E779C00D5B8A8 /* User.swift */,
 				93B9EAC62A5E77F200D5B8A8 /* UserData.swift */,
@@ -232,6 +235,14 @@
 				93418DE52A5E362D00336A62 /* UserBar.swift */,
 			);
 			path = User;
+			sourceTree = "<group>";
+		};
+		93B9EAEE2A67254500D5B8A8 /* RapidReact */ = {
+			isa = PBXGroup;
+			children = (
+				93B9EAEF2A67255600D5B8A8 /* RapidReactMatch.swift */,
+			);
+			path = RapidReact;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -342,6 +353,7 @@
 				93B9EAC92A5E781D00D5B8A8 /* DirectoryBar.swift in Sources */,
 				93B9EAC32A5E778C00D5B8A8 /* DirectoryView.swift in Sources */,
 				93418D9D2A5BC4D100336A62 /* ScoutingView.swift in Sources */,
+				93B9EAF02A67255600D5B8A8 /* RapidReactMatch.swift in Sources */,
 				93B9EAC72A5E77F200D5B8A8 /* UserData.swift in Sources */,
 				93B9EAED2A67211600D5B8A8 /* ForgotPasswordView.swift in Sources */,
 				93B9EAD12A5F387A00D5B8A8 /* LoginView.swift in Sources */,

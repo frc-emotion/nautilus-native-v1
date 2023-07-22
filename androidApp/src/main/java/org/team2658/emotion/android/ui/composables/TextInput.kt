@@ -1,4 +1,4 @@
-package org.team2658.emotion.android.composables
+package org.team2658.emotion.android.ui.composables
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer

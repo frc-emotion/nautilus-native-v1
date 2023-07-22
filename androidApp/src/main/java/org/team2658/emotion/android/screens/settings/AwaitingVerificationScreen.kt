@@ -8,7 +8,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import org.team2658.emotion.android.composables.UserInfoCard
+import org.team2658.emotion.android.ui.composables.UserInfoCard
 import org.team2658.emotion.userauth.User
 
 @Composable

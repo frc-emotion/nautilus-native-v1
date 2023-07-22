@@ -7,8 +7,11 @@ import androidx.activity.viewModels
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.tooling.preview.Preview
+import org.team2658.emotion.android.screens.home.HomeScreen
 import org.team2658.emotion.android.screens.settings.SettingsScreen
+import org.team2658.emotion.android.ui.navigation.LoggedInNavigator
 import org.team2658.emotion.android.viewmodels.SettingsViewModel
+import org.team2658.emotion.userauth.AuthState
 
 class MainActivity : ComponentActivity() {
     private val settingsViewModel by viewModels<SettingsViewModel>()
@@ -16,7 +19,11 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         setContent {
             MainTheme {
-                SettingsScreen(settingsViewModel)
+                if(settingsViewModel.authState == AuthState.LOGGED_IN){
+                    LoggedInNavigator()
+                } else {
+                    SettingsScreen(settingsViewModel)
+                }
             }
         }
     }

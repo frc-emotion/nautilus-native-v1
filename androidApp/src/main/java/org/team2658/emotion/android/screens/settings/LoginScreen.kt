@@ -16,7 +16,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
-import org.team2658.emotion.android.composables.LabelledTextBoxSingleLine
+import org.team2658.emotion.android.ui.composables.LabelledTextBoxSingleLine
 
 @Composable
 fun LoginScreen(

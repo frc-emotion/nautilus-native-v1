@@ -25,7 +25,7 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import org.team2658.emotion.android.MainTheme
-import org.team2658.emotion.android.composables.LabelledTextBoxSingleLine
+import org.team2658.emotion.android.ui.composables.LabelledTextBoxSingleLine
 import org.team2658.emotion.toCapitalized
 import org.team2658.emotion.userauth.Subteam
 

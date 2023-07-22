@@ -20,48 +20,99 @@ import org.team2658.emotion.userauth.User
 import org.team2658.emotion.userauth.UserPermissions
 
 @Composable
-fun UserInfoCard(User: User?, modifier: Modifier = Modifier.fillMaxWidth()) {
-    Card(modifier = modifier) {
-        if(User != null) {
-            Column(modifier = Modifier.padding(32.dp)){
-                Text(text = "Logged in as ${User.firstName} ${User.lastName}",
-                    style = MaterialTheme.typography.headlineMedium)
-                if(User.accessLevel == AccessLevel.ADMIN) {
+fun UserInfoCard(User: User?) {
+    Card(modifier = Modifier.fillMaxWidth()) {
+        if (User != null) {
+            Column(modifier = Modifier.padding(32.dp)) {
+                Text(
+                    text = "Logged in as ${User.firstName} ${User.lastName}",
+                    style = MaterialTheme.typography.headlineMedium
+                )
+                if (User.accessLevel == AccessLevel.ADMIN) {
                     Spacer(modifier = Modifier.size(16.dp))
-                    Text(text = "Admin Access ✅",
+                    Text(
+                        text = "Admin Access ✅",
                         style = MaterialTheme.typography.titleLarge,
-                        color= MaterialTheme.colorScheme.primary
+                        color = MaterialTheme.colorScheme.primary
                     )
                 }
-                if(User.accessLevel==AccessLevel.NONE) {
+                if (User.accessLevel == AccessLevel.NONE) {
                     Spacer(modifier = Modifier.size(16.dp))
-                    Text(text = "Not Verified ❌",
+                    Text(
+                        text = "Not Verified ❌",
                         style = MaterialTheme.typography.headlineMedium,
-                        color=MaterialTheme.colorScheme.error
+                        color = MaterialTheme.colorScheme.error
                     )
                 }
                 Spacer(modifier = Modifier.size(16.dp))
-                Text(text = "Username: ${User.username}",
-                    style = MaterialTheme.typography.bodyLarge)
+                Text(
+                    text = "Username: ${User.username}",
+                    style = MaterialTheme.typography.bodyLarge
+                )
                 Spacer(modifier = Modifier.size(16.dp))
-                Text(text = "Email: ${User.email}",
-                    style = MaterialTheme.typography.bodyLarge)
+                Text(
+                    text = "Email: ${User.email}",
+                    style = MaterialTheme.typography.bodyLarge
+                )
                 Spacer(modifier = Modifier.size(16.dp))
-                Text(text = "Subteam: ${User.subteam.name.toCapitalized()}",
-                    style = MaterialTheme.typography.bodyLarge)
+                Text(
+                    text = "Subteam: ${User.subteam.name.toCapitalized()}",
+                    style = MaterialTheme.typography.bodyLarge
+                )
                 Spacer(modifier = Modifier.size(16.dp))
-                Text(text="Permissions: ", style = MaterialTheme.typography.bodyLarge)
-                if(User.permissions.submitScoutingData) {
-                    Text(text = "✓ Submit scouting data", style = MaterialTheme.typography.bodyLarge)
+                Text(text = "Permissions: ", style = MaterialTheme.typography.bodyLarge)
+//                when {
+//                    (User.permissions.submitScoutingData) -> {
+//                        Text(
+//                            text = "✓ Submit scouting data",
+//                            style = MaterialTheme.typography.bodyLarge
+//                        )
+//                    }
+//
+//                    (User.permissions.inPitScouting) -> {
+//                        Text(text = "✓ In-pit scouting", style = MaterialTheme.typography.bodyLarge)
+//                    }
+//
+//                    (User.permissions.viewScoutingData) -> {
+//                        Text(
+//                            text = "✓ View scouting data",
+//                            style = MaterialTheme.typography.bodyLarge
+//                        )
+//                    }
+//
+//                    else -> {
+//                        Text(
+//                            text = "None",
+//                            style = MaterialTheme.typography.bodyLarge,
+//                            color = MaterialTheme.colorScheme.error
+//                        )
+//                    }
+//                }
+                var hasPermissions = false;
+                if (User.permissions.submitScoutingData) {
+                    Text(
+                        text = "✓ Submit scouting data",
+                        style = MaterialTheme.typography.bodyLarge
+                    )
+                    hasPermissions = true;
                 }
-                if(User.permissions.inPitScouting) {
+                if (User.permissions.inPitScouting) {
                     Text(text = "✓ In-pit scouting", style = MaterialTheme.typography.bodyLarge)
+                    hasPermissions = true;
                 }
-                if(User.permissions.viewScoutingData) {
-                    Text(text = "✓ View scouting data", style = MaterialTheme.typography.bodyLarge)
+                if (User.permissions.viewScoutingData) {
+                    Text(
+                        text = "✓ View scouting data",
+                        style = MaterialTheme.typography.bodyLarge
+                    )
+                    hasPermissions = true;
                 }
-                if(!User.permissions.submitScoutingData && !User.permissions.inPitScouting && !User.permissions.viewScoutingData) {
-                    Text(text = "None", style = MaterialTheme.typography.bodyLarge, color = MaterialTheme.colorScheme.error)
+                if (!hasPermissions) {
+                    Text(
+                        text = "None",
+                        style = MaterialTheme.typography.bodyLarge,
+                        color = MaterialTheme.colorScheme.error
+                    )
                 }
             }
         } else {
@@ -88,6 +139,6 @@ fun UserInfoCardPreview() {
         )
     )
     MainTheme(true) {
-            UserInfoCard(exampleUser)
+        UserInfoCard(exampleUser)
     }
 }

@@ -10,10 +10,10 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.material3.Button
 import androidx.compose.material3.Checkbox
-import androidx.compose.material3.ElevatedButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -39,8 +39,8 @@ fun RegisterScreen(
         firstName: String,
         lastName: String,
         subteam: Subteam
-            )->Unit,
-    onLogin: ()->Unit
+    ) -> Unit,
+    onLogin: () -> Unit
 ) {
     var username by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
@@ -104,29 +104,27 @@ fun RegisterScreen(
             )
         }
         Spacer(modifier = Modifier.size(16.dp))
-        Text(text = "Subteam", style=MaterialTheme.typography.labelLarge)
-        for(entry in Subteam.values().slice(1 until Subteam.values().size)) {
+        Text(text = "Subteam", style = MaterialTheme.typography.labelLarge)
+        for (entry in Subteam.values().slice(1 until Subteam.values().size)) {
             Row(
                 verticalAlignment = Alignment.CenterVertically,
             ) {
-                Checkbox(checked = (entry==subteam), onCheckedChange = {subteam = entry})
+                Checkbox(checked = (entry == subteam), onCheckedChange = { subteam = entry })
                 Spacer(modifier = Modifier.width(2.dp))
-                Text(text = entry.name.toCapitalized(), style=MaterialTheme.typography.bodyLarge)
+                Text(text = entry.name.toCapitalized(), style = MaterialTheme.typography.bodyLarge)
             }
         }
         Spacer(modifier = Modifier.size(32.dp))
-        Row {
-            Button(onClick = {
-                if (password == passwordConfirm) {
-                    onRegister(username, password, email, firstName, lastName, subteam)
-                }
-            }) {
-                Text(text = "Create Account")
+        Button(onClick = {
+            if (password == passwordConfirm) {
+                onRegister(username, password, email, firstName, lastName, subteam)
             }
-            Spacer(modifier = Modifier.size(24.dp))
-            ElevatedButton(onClick = { onLogin() }) {
-                Text(text = "Log In to Existing Account")
-            }
+        }) {
+            Text(text = "Create Account")
+        }
+        Spacer(modifier = Modifier.size(8.dp))
+        TextButton(onClick = { onLogin() }) {
+            Text(text = "Log In to Existing Account")
         }
         Spacer(modifier = Modifier.height(300.dp))
     }
@@ -136,10 +134,12 @@ fun RegisterScreen(
 @Composable
 fun RegisterPreview() {
     MainTheme {
-        Surface(modifier = Modifier
-            .fillMaxSize()
-            .background(MaterialTheme.colorScheme.background)) {
-            RegisterScreen(onRegister = { _, _, _, _, _, _-> }, onLogin = { })
+        Surface(
+            modifier = Modifier
+                .fillMaxSize()
+                .background(MaterialTheme.colorScheme.background)
+        ) {
+            RegisterScreen(onRegister = { _, _, _, _, _, _ -> }, onLogin = { })
         }
     }
 

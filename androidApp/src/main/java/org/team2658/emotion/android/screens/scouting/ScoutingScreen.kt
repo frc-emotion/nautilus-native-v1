@@ -1,13 +1,12 @@
-package org.team2658.emotion.android.screens.home
+package org.team2658.emotion.android.screens.scouting
 
-import androidx.compose.material.icons.Icons
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import org.team2658.emotion.android.ui.composables.Screen
 
 @Composable
-fun HomeScreen() {
+fun ScoutingScreen() {
     Screen {
-        Text(text = "Home")
+        Text(text = "Scouting")
     }
 }

@@ -4,8 +4,12 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.viewModels
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import org.team2658.emotion.android.screens.home.HomeScreen
 import org.team2658.emotion.android.screens.settings.SettingsScreen
@@ -20,9 +24,13 @@ class MainActivity : ComponentActivity() {
         setContent {
             MainTheme {
                 if(settingsViewModel.authState == AuthState.LOGGED_IN){
-                    LoggedInNavigator()
+                    LoggedInNavigator(settingsViewModel)
                 } else {
-                    SettingsScreen(settingsViewModel)
+                    Scaffold{padding->
+                        Box(modifier= Modifier.padding(padding)) {
+                            SettingsScreen(settingsViewModel)
+                        }
+                    }
                 }
             }
         }

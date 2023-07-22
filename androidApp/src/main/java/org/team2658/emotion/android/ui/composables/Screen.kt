@@ -18,16 +18,12 @@ fun Screen(content: @Composable ()->Unit){
     Surface(color= MaterialTheme.colorScheme.background, modifier = Modifier
         .fillMaxSize()
     ){
-        Scaffold{padding->
-            Box(modifier= Modifier.padding(padding)) {
-                Column(modifier= Modifier
-                    .padding(32.dp)
-                    .verticalScroll(rememberScrollState(), enabled = true)
-                ) {
-                    content()
-                }
-            }
-
+        Column(modifier= Modifier
+            .padding(32.dp)
+            .verticalScroll(rememberScrollState(), enabled = true)
+        ) {
+            content()
         }
     }
 }
+

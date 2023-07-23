@@ -57,33 +57,6 @@ fun UserInfoCard(User: User?) {
                 )
                 Spacer(modifier = Modifier.size(16.dp))
                 Text(text = "Permissions: ", style = MaterialTheme.typography.bodyLarge)
-//                when {
-//                    (User.permissions.submitScoutingData) -> {
-//                        Text(
-//                            text = "✓ Submit scouting data",
-//                            style = MaterialTheme.typography.bodyLarge
-//                        )
-//                    }
-//
-//                    (User.permissions.inPitScouting) -> {
-//                        Text(text = "✓ In-pit scouting", style = MaterialTheme.typography.bodyLarge)
-//                    }
-//
-//                    (User.permissions.viewScoutingData) -> {
-//                        Text(
-//                            text = "✓ View scouting data",
-//                            style = MaterialTheme.typography.bodyLarge
-//                        )
-//                    }
-//
-//                    else -> {
-//                        Text(
-//                            text = "None",
-//                            style = MaterialTheme.typography.bodyLarge,
-//                            color = MaterialTheme.colorScheme.error
-//                        )
-//                    }
-//                }
                 User.permissions.asList().forEach {
                     if (it.value) Text(
                         text = "✓ ${it.key}",

@@ -18,8 +18,11 @@ fun NotLoggedInScreen(
         email: String,
         firstName: String,
         lastName: String,
-        subteam: Subteam
-    ) -> Unit) {
+        subteam: Subteam,
+        grade: Int,
+        phone: Int,
+    ) -> Unit
+) {
     val navController = rememberNavController()
     NavHost(navController, startDestination = SignedOutScreens.LOGIN.name) {
         composable(SignedOutScreens.LOGIN.name) {

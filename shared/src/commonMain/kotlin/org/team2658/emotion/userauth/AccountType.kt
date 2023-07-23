@@ -1,7 +1,8 @@
 package org.team2658.emotion.userauth
 
-enum class AccessLevel {
+enum class AccountType {
     ADMIN,
+    LEAD,
     BASE,
-    NONE,
+    UNVERIFIED,
 }

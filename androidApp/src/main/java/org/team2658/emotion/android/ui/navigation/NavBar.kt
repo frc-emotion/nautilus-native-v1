@@ -11,21 +11,21 @@ import androidx.navigation.NavDestination.Companion.hierarchy
 import androidx.navigation.compose.currentBackStackEntryAsState
 import org.team2658.emotion.android.viewmodels.SettingsViewModel
 import org.team2658.emotion.toCapitalized
-import org.team2658.emotion.userauth.AccessLevel
+import org.team2658.emotion.userauth.AccountType
 
 @Composable
 fun NavBar(navController: NavController, viewModel: SettingsViewModel) {
     val backStackEntry by navController.currentBackStackEntryAsState()
     val currentDestination = backStackEntry?.destination
     val items = when {
-        (viewModel.user?.accessLevel == AccessLevel.ADMIN) -> listOf(
+        (viewModel.user?.accountType == AccountType.ADMIN) -> listOf(
             AppScreens.HOME,
             AppScreens.SCOUTING,
             AppScreens.ADMIN,
             AppScreens.SETTINGS
         )
 
-        (viewModel.user?.permissions?.submitScoutingData == true)
+        (viewModel.user?.permissions?.standScouting == true)
                 || (viewModel.user?.permissions?.inPitScouting == true)
                 || (viewModel.user?.permissions?.viewScoutingData == true)
         -> listOf(

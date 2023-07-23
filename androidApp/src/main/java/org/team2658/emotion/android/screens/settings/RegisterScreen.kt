@@ -1,5 +1,6 @@
 package org.team2658.emotion.android.screens.settings
 
+import android.app.AlertDialog
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -21,6 +22,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -28,6 +30,7 @@ import org.team2658.emotion.android.MainTheme
 import org.team2658.emotion.android.ui.composables.LabelledTextBoxSingleLine
 import org.team2658.emotion.toCapitalized
 import org.team2658.emotion.userauth.Subteam
+import java.lang.Integer.parseInt
 
 
 @Composable
@@ -38,7 +41,9 @@ fun RegisterScreen(
         email: String,
         firstName: String,
         lastName: String,
-        subteam: Subteam
+        subteam: Subteam,
+        grade: Int,
+        phone: Int,
     ) -> Unit,
     onLogin: () -> Unit
 ) {
@@ -49,6 +54,9 @@ fun RegisterScreen(
     var firstName by remember { mutableStateOf("") }
     var lastName by remember { mutableStateOf("") }
     var subteam by remember { mutableStateOf(Subteam.NONE) }
+    var grade by remember { mutableStateOf(-1) }
+    var phone by remember { mutableStateOf("") }
+    val context = LocalContext.current
 
     Column {
         Text(
@@ -75,6 +83,13 @@ fun RegisterScreen(
             text = email,
             onValueChange = { text -> email = text },
             keyboardType = KeyboardType.Email
+        )
+        Spacer(modifier = Modifier.size(16.dp))
+        LabelledTextBoxSingleLine(
+            label = "Phone Number",
+            text = phone.toString(),
+            onValueChange = { text -> phone = text },
+            keyboardType = KeyboardType.Phone
         )
         Spacer(modifier = Modifier.size(16.dp))
         LabelledTextBoxSingleLine(label = "Username",
@@ -115,9 +130,36 @@ fun RegisterScreen(
             }
         }
         Spacer(modifier = Modifier.size(32.dp))
+        Text(text = "Grade", style = MaterialTheme.typography.labelLarge)
+        for (i in 9..12) {
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+            ) {
+                Checkbox(checked = (i == grade), onCheckedChange = { grade = i })
+                Spacer(modifier = Modifier.width(2.dp))
+                Text(text = "Grade $i", style = MaterialTheme.typography.bodyLarge)
+            }
+        }
+        Spacer(modifier = Modifier.size(32.dp))
         Button(onClick = {
-            if (password == passwordConfirm) {
-                onRegister(username, password, email, firstName, lastName, subteam)
+            if (password == passwordConfirm && phone.toIntOrNull() !== null) {
+                onRegister(
+                    username,
+                    password,
+                    email,
+                    firstName,
+                    lastName,
+                    subteam,
+                    grade,
+                    parseInt(phone)
+                )
+            } else {
+                //TODO: ALERT
+                AlertDialog.Builder(context)
+                    .setTitle("Invalid Input")
+                    .setMessage("Please check all fields and try again")
+                    .setNeutralButton("OK", null)
+                    .show()
             }
         }) {
             Text(text = "Create Account")
@@ -139,7 +181,7 @@ fun RegisterPreview() {
                 .fillMaxSize()
                 .background(MaterialTheme.colorScheme.background)
         ) {
-            RegisterScreen(onRegister = { _, _, _, _, _, _ -> }, onLogin = { })
+            RegisterScreen(onRegister = { _, _, _, _, _, _, _, _ -> }, onLogin = { })
         }
     }
 

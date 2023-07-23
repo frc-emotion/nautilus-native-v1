@@ -4,8 +4,9 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
-import org.team2658.emotion.userauth.AccessLevel
+import org.team2658.emotion.userauth.AccountType
 import org.team2658.emotion.userauth.AuthState
+import org.team2658.emotion.userauth.Role
 import org.team2658.emotion.userauth.Subteam
 import org.team2658.emotion.userauth.User
 import org.team2658.emotion.userauth.UserPermissions
@@ -24,45 +25,67 @@ class SettingsViewModel : ViewModel() {
         //TODO: user = GetUser()
         user = when (username.trim()) {
             "nova", "novamondal", "admin" -> User(
-                username,
-                "JWT",
                 "Nova",
                 "Mondal",
+                username,
                 "email@example.com",
-                AccessLevel.ADMIN,
-                permissions = UserPermissions(
-                    submitScoutingData = true,
-                    inPitScouting = true,
-                    viewScoutingData = true,
-                )
+                69696969,
+                accountType = AccountType.ADMIN,
+                roles = listOf(
+                    Role(
+                        "admin", UserPermissions(
+                            standScouting = true,
+                            inPitScouting = true,
+                            viewScoutingData = true,
+                            makeAnnouncements = true,
+                            makeBlogPosts = true,
+                            verifyAllAttendance = true,
+                            verifySubteamAttendance = true,
+                        )
+                    )
+                ),
+                subteam = Subteam.SOFTWARE,
+                grade = 12,
+                token = "adfkasjfasjf",
             )
 
+
             "scout", "scouter", "test" -> User(
-                username,
-                "JWT",
                 "Scouter",
-                "Example",
+                "User",
+                username,
                 "email@example.com",
-                AccessLevel.BASE,
-                permissions = UserPermissions(
-                    submitScoutingData = true,
-                    inPitScouting = true,
-                    viewScoutingData = true,
-                )
+                69696969,
+                accountType = AccountType.BASE,
+                roles = listOf(
+                    Role(
+                        "scout", UserPermissions(
+                            standScouting = true,
+                            inPitScouting = true,
+                            viewScoutingData = true,
+                        )
+                    )
+                ),
+                subteam = Subteam.SOFTWARE,
+                grade = 12,
+                token = "adfkasjfasjf",
             )
 
             else -> User(
-                username,
-                "JWT",
                 "Base",
-                "Example",
+                "User",
+                username,
                 "email@example.com",
-                AccessLevel.BASE,
-                permissions = UserPermissions(
-                    submitScoutingData = false,
-                    inPitScouting = false,
-                    viewScoutingData = false,
-                )
+                69696969,
+                accountType = AccountType.BASE,
+                roles = listOf(
+                    Role(
+                        "scout", UserPermissions()
+                    )
+                ),
+                subteam = Subteam.SOFTWARE,
+                grade = 12,
+                token = "adfkasjfasjf",
             )
         }
         authState = AuthState.LOGGED_IN
@@ -80,19 +103,29 @@ class SettingsViewModel : ViewModel() {
         email: String,
         firstName: String,
         lastName: String,
-        subteam: Subteam
+        subteam: Subteam,
+        phone: Int,
+        grade: Int,
+        //TODO: parent and advisor account types
     ) {
         //TODO(username, password, email, firstName, lastName)
         //TODO: user = GetUser()
         user = User(
-            username,
-            "JWT",
             firstName,
             lastName,
+            username,
             email,
-            AccessLevel.NONE,
-            subteam = subteam
-        ) //TODO: remove this line
+            phone,
+            accountType = AccountType.UNVERIFIED,
+            roles = listOf(
+                Role(
+                    "scout", UserPermissions()
+                )
+            ),
+            subteam = subteam,
+            grade = grade,
+            token = null,
+        )
         authState = AuthState.AWAITING_VERIFICATION
     }
 }

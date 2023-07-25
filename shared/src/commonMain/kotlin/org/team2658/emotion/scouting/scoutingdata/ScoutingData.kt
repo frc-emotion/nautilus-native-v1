@@ -2,7 +2,7 @@ package org.team2658.emotion.scouting.scoutingdata
 
 import org.team2658.emotion.scouting.GameResult
 
-sealed class ScoutingData(
+open class ScoutingData(
     val competition: String,
     val teamNumber: Int,
     val matchNumber: Int,
@@ -11,4 +11,5 @@ sealed class ScoutingData(
     val gameResult: GameResult,
     val comments: String,
     val defensive: Boolean,
+    val brokeDown: Boolean,
 )

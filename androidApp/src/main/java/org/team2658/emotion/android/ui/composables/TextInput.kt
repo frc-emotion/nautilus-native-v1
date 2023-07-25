@@ -37,3 +37,27 @@ fun LabelledTextBoxSingleLine(
 
     }
 }
+
+@Composable
+fun TextArea(
+    label: String,
+    text: String,
+    modifier: Modifier = Modifier,
+    onValueChange: (String)->Unit,
+    keyboardType: KeyboardType = KeyboardType.Text,
+    innerLabel: String = "Enter $label"
+) {
+    Column(modifier = modifier){
+
+        Text(text=label, style = MaterialTheme.typography.labelLarge)
+        Spacer(modifier=Modifier.height(4.dp))
+        OutlinedTextField(value = text, onValueChange = onValueChange,
+            visualTransformation = if(keyboardType==KeyboardType.Password) PasswordVisualTransformation()
+            else VisualTransformation.None,
+            keyboardOptions = KeyboardOptions(keyboardType = keyboardType),
+            label = { Text(innerLabel) },
+            singleLine = false
+        )
+
+    }
+}

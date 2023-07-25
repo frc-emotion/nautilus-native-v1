@@ -22,4 +22,5 @@ data class RapidReact(
     gameResult = baseData.gameResult,
     teamNumber = baseData.teamNumber,
     penaltyPointsEarned = baseData.penaltyPointsEarned,
+    brokeDown = baseData.brokeDown,
 )

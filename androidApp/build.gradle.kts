@@ -5,11 +5,11 @@ plugins {
 
 android {
     namespace = "org.team2658.emotion.android"
-    compileSdk = 34
+    compileSdk = 33
     defaultConfig {
         applicationId = "org.team2658.emotion.android"
         minSdk = 21
-        targetSdk = 34
+        targetSdk = 33
         versionCode = 1
         versionName = "1.0"
     }

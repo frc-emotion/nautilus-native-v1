@@ -39,7 +39,7 @@ fun BaseScoutingForm(
     contents: @Composable () -> Unit,
     //put in inputs for game-specific fields in here
 ) {
-    var competition by rememberSaveable { mutableStateOf(competitions[0]) }
+    var competition by rememberSaveable { mutableStateOf(competitions.last()) } //default to most recent competition
     var teamNumber by rememberSaveable { mutableStateOf("") }
     var matchNumber by rememberSaveable { mutableStateOf("") }
     var defensive by rememberSaveable { mutableStateOf<Boolean?>(null) }
@@ -157,6 +157,7 @@ fun BaseScoutingForm(
             style = MaterialTheme.typography.labelLarge,
             color = MaterialTheme.colorScheme.error
         )
+        Spacer(modifier = Modifier.size(16.dp))
     }
     Row(verticalAlignment = Alignment.CenterVertically) {
         Button(onClick = {

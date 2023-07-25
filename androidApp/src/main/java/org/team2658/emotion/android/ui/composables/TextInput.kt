@@ -14,8 +14,6 @@ import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.dp
 
-//composables for different text input boxes
-
 @Composable
 fun LabelledTextBoxSingleLine(
     label: String,

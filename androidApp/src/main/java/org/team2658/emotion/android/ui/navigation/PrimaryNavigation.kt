@@ -12,9 +12,13 @@ import org.team2658.emotion.android.screens.home.HomeScreen
 import org.team2658.emotion.android.screens.scouting.ScoutingScreen
 import org.team2658.emotion.android.screens.settings.SettingsScreen
 import org.team2658.emotion.android.viewmodels.SettingsViewModel
+import org.team2658.emotion.android.viewmodels.StandScoutingViewModel
 
 @Composable
-fun LoggedInNavigator(settingsViewModel: SettingsViewModel) {
+fun LoggedInNavigator(
+    settingsViewModel: SettingsViewModel,
+    scoutingViewModel: StandScoutingViewModel
+) {
     val navController = rememberNavController();
 
     Scaffold(bottomBar = { NavBar(navController, settingsViewModel) }) { padding ->
@@ -33,7 +37,7 @@ fun LoggedInNavigator(settingsViewModel: SettingsViewModel) {
                 AdminScreen()
             }
             composable(AppScreens.SCOUTING.name) {
-                ScoutingScreen()
+                ScoutingScreen(scoutingViewModel, settingsViewModel)
             }
         }
     }

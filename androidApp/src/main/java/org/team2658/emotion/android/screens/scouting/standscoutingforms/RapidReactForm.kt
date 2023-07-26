@@ -1,12 +1,26 @@
 package org.team2658.emotion.android.screens.scouting.standscoutingforms
 
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.RadioButton
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.unit.dp
 import org.team2658.emotion.android.ui.composables.ErrorAlertDialog
+import org.team2658.emotion.android.ui.composables.LabelledTextBoxSingleLine
 import org.team2658.emotion.android.ui.composables.SuccessAlertDialog
+import org.team2658.emotion.android.ui.composables.YesNoSelector
 import org.team2658.emotion.android.viewmodels.SettingsViewModel
 import org.team2658.emotion.android.viewmodels.StandScoutingViewModel
 import org.team2658.emotion.scouting.scoutingdata.RapidReact
@@ -16,17 +30,17 @@ fun RapidReactForm(
     settingsViewModel: SettingsViewModel,
     scoutingViewModel: StandScoutingViewModel
 ) {
-    var leftTarmac by remember { mutableStateOf<Boolean?>(null) }
-    var autoLower by remember { mutableStateOf("") }
-    var autoUpper by remember { mutableStateOf("") }
-    var teleopLower by remember { mutableStateOf("") }
-    var teleopUpper by remember { mutableStateOf("") }
-    var cycleTime by remember { mutableStateOf("") }
-    var shotLocation by remember { mutableStateOf("") }
-    var climbScore by remember { mutableStateOf<ClimbScore>(ClimbScore.NONE) }
-    var humanShot by remember { mutableStateOf<Boolean?>(null) }
-    var cargoRP by remember { mutableStateOf<Boolean?>(null) }
-    var hangarRP by remember { mutableStateOf<Boolean?>(null) }
+    var leftTarmac by rememberSaveable { mutableStateOf<Boolean?>(null) }
+    var autoLower by rememberSaveable { mutableStateOf("") }
+    var autoUpper by rememberSaveable { mutableStateOf("") }
+    var teleopLower by rememberSaveable { mutableStateOf("") }
+    var teleopUpper by rememberSaveable { mutableStateOf("") }
+    var cycleTime by rememberSaveable { mutableStateOf("") }
+    var shotLocation by rememberSaveable { mutableStateOf("") }
+    var climbScore by rememberSaveable { mutableStateOf(ClimbScore.NONE) }
+    var humanShot by rememberSaveable { mutableStateOf<Boolean?>(null) }
+    var cargoRP by rememberSaveable { mutableStateOf<Boolean?>(null) }
+    var hangarRP by rememberSaveable { mutableStateOf<Boolean?>(null) }
 
     var showSuccessDialog by remember { mutableStateOf(false) }
     var showErrorDialog by remember { mutableStateOf(false) }
@@ -76,7 +90,100 @@ fun RapidReactForm(
         },
         contentInputsOkay = inputOk
     ) {
-        //TODO
+        //rapid react specific inputs
+        YesNoSelector(
+            label = "Left Tarmac",
+            value = leftTarmac,
+            setValue = { leftTarmac = it }
+        )
+        Spacer(modifier = Modifier.size(16.dp))
+        LabelledTextBoxSingleLine(
+            label = "Auto Lower Score",
+            text = autoLower,
+            onValueChange = { autoLower = it },
+            keyboardType = KeyboardType.Number
+        )
+        Spacer(modifier = Modifier.size(16.dp))
+        //TODO: change to custom incrementer component
+        LabelledTextBoxSingleLine(
+            label = "Auto Upper Score",
+            text = autoUpper,
+            onValueChange = { autoUpper = it },
+            keyboardType = KeyboardType.Number
+        )
+        Spacer(modifier = Modifier.size(16.dp))
+        LabelledTextBoxSingleLine(
+            label = "Teleop Lower Score",
+            text = teleopLower,
+            onValueChange = { teleopLower = it },
+            keyboardType = KeyboardType.Number
+        )
+        Spacer(modifier = Modifier.size(16.dp))
+        LabelledTextBoxSingleLine(
+            label = "Teleop Upper Score",
+            text = teleopUpper,
+            onValueChange = { teleopUpper = it },
+            keyboardType = KeyboardType.Number
+        )
+        Spacer(modifier = Modifier.size(16.dp))
+        LabelledTextBoxSingleLine(
+            label = "Cycle Time",
+            text = cycleTime,
+            onValueChange = { cycleTime = it },
+        )
+        Spacer(modifier = Modifier.size(16.dp))
+        LabelledTextBoxSingleLine(
+            label = "Shot Location",
+            text = shotLocation,
+            onValueChange = { shotLocation = it },
+        )
+        Spacer(modifier = Modifier.size(16.dp))
+        Text(text = "Climb Score", style = MaterialTheme.typography.labelLarge)
+        Spacer(modifier = Modifier.size(4.dp))
+        Row(verticalAlignment = Alignment.CenterVertically) {
+            RadioButton(
+                selected = climbScore == ClimbScore.ZERO,
+                onClick = { climbScore = ClimbScore.ZERO })
+            Text(text = "0", style = MaterialTheme.typography.labelLarge)
+            Spacer(modifier = Modifier.width(8.dp))
+            RadioButton(
+                selected = climbScore == ClimbScore.FOUR,
+                onClick = { climbScore = ClimbScore.FOUR })
+            Text(text = "4", style = MaterialTheme.typography.labelLarge)
+            Spacer(modifier = Modifier.width(8.dp))
+            RadioButton(
+                selected = climbScore == ClimbScore.SIX,
+                onClick = { climbScore = ClimbScore.SIX })
+            Text(text = "6", style = MaterialTheme.typography.labelLarge)
+            Spacer(modifier = Modifier.width(8.dp))
+            RadioButton(
+                selected = climbScore == ClimbScore.TEN,
+                onClick = { climbScore = ClimbScore.TEN })
+            Text(text = "10", style = MaterialTheme.typography.labelLarge)
+            Spacer(modifier = Modifier.width(8.dp))
+            RadioButton(
+                selected = climbScore == ClimbScore.FIFTEEN,
+                onClick = { climbScore = ClimbScore.FIFTEEN })
+            Text(text = "15", style = MaterialTheme.typography.labelLarge)
+        }
+        Spacer(modifier = Modifier.size(16.dp))
+        YesNoSelector(
+            label = "Human Shot",
+            value = humanShot,
+            setValue = { humanShot = it }
+        )
+        Spacer(modifier = Modifier.size(16.dp))
+        YesNoSelector(
+            label = "Cargo Ranking Point",
+            value = cargoRP,
+            setValue = { cargoRP = it }
+        )
+        Spacer(modifier = Modifier.size(16.dp))
+        YesNoSelector(
+            label = "Hangar Ranking Point",
+            value = hangarRP,
+            setValue = { hangarRP = it }
+        )
     }
 
     SuccessAlertDialog(show = showSuccessDialog) {

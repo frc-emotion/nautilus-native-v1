@@ -26,6 +26,7 @@ import androidx.compose.ui.unit.dp
 import org.team2658.emotion.android.ui.composables.DropDown
 import org.team2658.emotion.android.ui.composables.LabelledTextBoxSingleLine
 import org.team2658.emotion.android.ui.composables.TextArea
+import org.team2658.emotion.android.ui.composables.YesNoSelector
 import org.team2658.emotion.scouting.GameResult
 import org.team2658.emotion.scouting.scoutingdata.ScoutingData
 
@@ -98,25 +99,9 @@ fun BaseScoutingForm(
     Spacer(modifier = Modifier.size(16.dp))
     contents()
     Spacer(modifier = Modifier.size(16.dp))
-    Text(text = "Robot Was Defensive?", style = MaterialTheme.typography.labelLarge)
-    Spacer(modifier = Modifier.size(4.dp))
-    Row(verticalAlignment = Alignment.CenterVertically) {
-        RadioButton(selected = defensive == true, onClick = { defensive = true })
-        Text(text = "Yes", style = MaterialTheme.typography.labelLarge)
-        Spacer(modifier = Modifier.width(8.dp))
-        RadioButton(selected = defensive == false, onClick = { defensive = false })
-        Text(text = "No", style = MaterialTheme.typography.labelLarge)
-    }
+    YesNoSelector(label = "Robot Was Defensive?", value = defensive, setValue = { defensive = it })
     Spacer(modifier = Modifier.size(16.dp))
-    Text(text = "Robot Broke Down?", style = MaterialTheme.typography.labelLarge)
-    Spacer(modifier = Modifier.size(4.dp))
-    Row(verticalAlignment = Alignment.CenterVertically) {
-        RadioButton(selected = brokeDown == true, onClick = { brokeDown = true })
-        Text(text = "Yes", style = MaterialTheme.typography.labelLarge)
-        Spacer(modifier = Modifier.width(8.dp))
-        RadioButton(selected = brokeDown == false, onClick = { brokeDown = false })
-        Text(text = "No", style = MaterialTheme.typography.labelLarge)
-    }
+    YesNoSelector(label = "Robot Broke Down?", value = brokeDown, setValue = { brokeDown = it })
     Spacer(modifier = Modifier.size(16.dp))
     LabelledTextBoxSingleLine(
         label = "Penalty Points Earned",

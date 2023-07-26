@@ -83,6 +83,9 @@ fun BaseScoutingForm(
         clearContentInputs()
     }
 
+
+    Text(text = "Match Info", style = MaterialTheme.typography.titleLarge)
+    Spacer(modifier = Modifier.size(16.dp))
     DropDown(label = "Competition", value = competition) {
         competitions.forEachIndexed { index, comp ->
             DropdownMenuItem(text = { Text(comp) }, onClick = { competition = comp })
@@ -109,6 +112,8 @@ fun BaseScoutingForm(
     YesNoSelector(label = "Robot Was Defensive?", value = defensive, setValue = { defensive = it })
     Spacer(modifier = Modifier.size(16.dp))
     YesNoSelector(label = "Robot Broke Down?", value = brokeDown, setValue = { brokeDown = it })
+    Spacer(modifier = Modifier.size(16.dp))
+    Text(text = "Scores and Match Results", style = MaterialTheme.typography.titleLarge)
     Spacer(modifier = Modifier.size(16.dp))
     LabelledTextBoxSingleLine(
         label = "Penalty Points Earned",

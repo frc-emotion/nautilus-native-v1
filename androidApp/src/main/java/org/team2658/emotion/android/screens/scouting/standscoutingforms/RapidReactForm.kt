@@ -28,6 +28,7 @@ fun RapidReactForm(
     scoutingViewModel: StandScoutingViewModel
 ) {
     var leftTarmac by rememberSaveable { mutableStateOf<Boolean?>(null) }
+    //use rememberSaveable instead of remember so the state is saved if user changes tabs
     var autoLower by rememberSaveable { mutableStateOf("") }
     var autoUpper by rememberSaveable { mutableStateOf("") }
     var teleopLower by rememberSaveable { mutableStateOf("") }
@@ -51,7 +52,10 @@ fun RapidReactForm(
             && climbScore != ClimbScore.NONE
             && cargoRP != null
             && hangarRP != null
+
+
     val competitions = listOf("Beach Blitz 2022")
+    //TODO: get competition list via API call through viewmodel
 
     fun clearForm() {
         leftTarmac = null
@@ -67,7 +71,8 @@ fun RapidReactForm(
         hangarRP = null
     }
 
-    //TODO: get competition list via API call through viewmodel
+    Text(text = "Rapid React Scouting Form", style = MaterialTheme.typography.headlineLarge)
+    Spacer(modifier = Modifier.size(16.dp))
     BaseScoutingForm(
         competitions = competitions,
         onFormSubmit = { data ->
@@ -95,6 +100,8 @@ fun RapidReactForm(
         clearContentInputs = ::clearForm
     ) {
         //rapid react specific inputs
+        Text(text = "Auto", style = MaterialTheme.typography.titleLarge)
+        Spacer(modifier = Modifier.size(16.dp))
         YesNoSelector(
             label = "Left Tarmac",
             value = leftTarmac,
@@ -116,6 +123,8 @@ fun RapidReactForm(
             keyboardType = KeyboardType.Number
         )
         Spacer(modifier = Modifier.size(16.dp))
+        Text(text = "Teleop", style = MaterialTheme.typography.titleLarge)
+        Spacer(modifier = Modifier.size(16.dp))
         LabelledTextBoxSingleLine(
             label = "Teleop Lower Score",
             text = teleopLower,
@@ -129,6 +138,8 @@ fun RapidReactForm(
             onValueChange = { teleopUpper = it },
             keyboardType = KeyboardType.Number
         )
+        Spacer(modifier = Modifier.size(16.dp))
+        Text(text = "Robot and Play Style", style = MaterialTheme.typography.titleLarge)
         Spacer(modifier = Modifier.size(16.dp))
         LabelledTextBoxSingleLine(
             label = "Cycle Time",

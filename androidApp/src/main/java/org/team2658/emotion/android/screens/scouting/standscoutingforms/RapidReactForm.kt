@@ -53,6 +53,20 @@ fun RapidReactForm(
             && hangarRP != null
     val competitions = listOf("Beach Blitz 2022")
 
+    fun clearForm() {
+        leftTarmac = null
+        autoLower = ""
+        autoUpper = ""
+        teleopLower = ""
+        teleopUpper = ""
+        cycleTime = ""
+        shotLocation = ""
+        climbScore = ClimbScore.NONE
+        humanShot = null
+        cargoRP = null
+        hangarRP = null
+    }
+
     //TODO: get competition list via API call through viewmodel
     BaseScoutingForm(
         competitions = competitions,
@@ -78,19 +92,7 @@ fun RapidReactForm(
             )
         },
         contentInputsOkay = inputOk,
-        clearContentInputs = {
-            leftTarmac = null
-            autoLower = ""
-            autoUpper = ""
-            teleopLower = ""
-            teleopUpper = ""
-            cycleTime = ""
-            shotLocation = ""
-            climbScore = ClimbScore.NONE
-            humanShot = null
-            cargoRP = null
-            hangarRP = null
-        },
+        clearContentInputs = ::clearForm
     ) {
         //rapid react specific inputs
         YesNoSelector(

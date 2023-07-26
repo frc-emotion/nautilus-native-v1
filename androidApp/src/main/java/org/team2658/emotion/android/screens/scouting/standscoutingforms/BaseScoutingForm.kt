@@ -24,7 +24,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import org.team2658.emotion.android.ui.composables.DropDown
+import org.team2658.emotion.android.ui.composables.ErrorAlertDialog
 import org.team2658.emotion.android.ui.composables.LabelledTextBoxSingleLine
+import org.team2658.emotion.android.ui.composables.SuccessAlertDialog
 import org.team2658.emotion.android.ui.composables.TextArea
 import org.team2658.emotion.android.ui.composables.YesNoSelector
 import org.team2658.emotion.scouting.GameResult
@@ -33,10 +35,12 @@ import org.team2658.emotion.scouting.scoutingdata.ScoutingData
 @Composable
 fun BaseScoutingForm(
     competitions: List<String>,
-    onFormSubmit: (baseData: ScoutingData, clearForm: () -> Unit) -> Unit,
+    onFormSubmit: (baseData: ScoutingData) -> Int,
     //handle submit for individual game (Rapid React, ChargedUp, etc) and use callback to clear form after
     contentInputsOkay: Boolean,
     //make sure game-specific required fields are filled in and valid
+    clearContentInputs: () -> Unit,
+    //callback to clear game-specific fields
     contents: @Composable () -> Unit,
     //put in inputs for game-specific fields in here
 ) {
@@ -63,6 +67,8 @@ fun BaseScoutingForm(
     var showInvalidInputDialog by remember { mutableStateOf(false) }
     var showSubmitDialog by remember { mutableStateOf(false) }
     var showClearFormDialog by remember { mutableStateOf(false) }
+    var showSuccessDialog by remember { mutableStateOf(false) }
+    var showErrorDialog by remember { mutableStateOf(false) }
 
     fun clearForm() {
         competition = competitions[0]
@@ -74,10 +80,11 @@ fun BaseScoutingForm(
         penaltyPointsEarned = ""
         comments = ""
         brokeDown = null
+        clearContentInputs()
     }
 
     DropDown(label = "Competition", value = competition) {
-        competitions.forEachIndexed() { index, comp ->
+        competitions.forEachIndexed { index, comp ->
             DropdownMenuItem(text = { Text(comp) }, onClick = { competition = comp })
             if (index != competitions.lastIndex) {
                 Divider()
@@ -207,7 +214,7 @@ fun BaseScoutingForm(
             },
             confirmButton = {
                 Button(onClick = {
-                    onFormSubmit(
+                    val code = onFormSubmit(
                         ScoutingData(
                             competition = competition,
                             teamNumber = teamNumber.toInt(),
@@ -218,14 +225,33 @@ fun BaseScoutingForm(
                             penaltyPointsEarned = penaltyPointsEarned.toInt(),
                             brokeDown = brokeDown!!,
                             comments = comments
-                        ),
-                        ::clearForm
+                        )
                     )
+                    if (code == 0) {
+                        clearForm()
+                        showSuccessDialog = true
+                    } else {
+                        showErrorDialog = true
+                    }
                 }) {
                     Text(text = "Submit")
                 }
             },
+            title = {
+                Text(text = "Submit Form?")
+            },
+            text = {
+                Text(text = "Are you sure you want to submit the form?")
+            }
         )
+    }
+
+    SuccessAlertDialog(show = showSuccessDialog) {
+        showSuccessDialog = false
+    }
+
+    ErrorAlertDialog(show = showErrorDialog) {
+        showErrorDialog = false
     }
 
 }

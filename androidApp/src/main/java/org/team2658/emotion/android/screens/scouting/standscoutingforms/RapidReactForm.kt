@@ -10,16 +10,13 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
-import org.team2658.emotion.android.ui.composables.ErrorAlertDialog
 import org.team2658.emotion.android.ui.composables.LabelledTextBoxSingleLine
-import org.team2658.emotion.android.ui.composables.SuccessAlertDialog
 import org.team2658.emotion.android.ui.composables.YesNoSelector
 import org.team2658.emotion.android.viewmodels.SettingsViewModel
 import org.team2658.emotion.android.viewmodels.StandScoutingViewModel
@@ -42,8 +39,6 @@ fun RapidReactForm(
     var cargoRP by rememberSaveable { mutableStateOf<Boolean?>(null) }
     var hangarRP by rememberSaveable { mutableStateOf<Boolean?>(null) }
 
-    var showSuccessDialog by remember { mutableStateOf(false) }
-    var showErrorDialog by remember { mutableStateOf(false) }
 
     val inputOk = leftTarmac != null
             && autoLower.toIntOrNull() != null
@@ -61,8 +56,8 @@ fun RapidReactForm(
     //TODO: get competition list via API call through viewmodel
     BaseScoutingForm(
         competitions = competitions,
-        onFormSubmit = { data, clear ->
-            val success = 0 == scoutingViewModel.submitRapidReact(
+        onFormSubmit = { data ->
+            scoutingViewModel.submitRapidReact(
                 user = settingsViewModel.user,
                 data = RapidReact(
                     //no need to check for null safety or validity of inputs here
@@ -81,14 +76,21 @@ fun RapidReactForm(
                     hangarRP = hangarRP!!,
                 )
             )
-            if (success) {
-                showSuccessDialog = true
-                clear()
-            } else {
-                showErrorDialog = true
-            }
         },
-        contentInputsOkay = inputOk
+        contentInputsOkay = inputOk,
+        clearContentInputs = {
+            leftTarmac = null
+            autoLower = ""
+            autoUpper = ""
+            teleopLower = ""
+            teleopUpper = ""
+            cycleTime = ""
+            shotLocation = ""
+            climbScore = ClimbScore.NONE
+            humanShot = null
+            cargoRP = null
+            hangarRP = null
+        },
     ) {
         //rapid react specific inputs
         YesNoSelector(
@@ -184,14 +186,6 @@ fun RapidReactForm(
             value = hangarRP,
             setValue = { hangarRP = it }
         )
-    }
-
-    SuccessAlertDialog(show = showSuccessDialog) {
-        showSuccessDialog = false
-    }
-
-    ErrorAlertDialog(show = showErrorDialog) {
-        showErrorDialog = false
     }
 }
 

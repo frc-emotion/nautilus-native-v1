@@ -42,10 +42,10 @@ fun RapidReactForm(
 
 
     val inputOk = leftTarmac != null
-            && autoLower.toIntOrNull() != null
-            && autoUpper.toIntOrNull() != null
-            && teleopLower.toIntOrNull() != null
-            && teleopUpper.toIntOrNull() != null
+            && autoLower.trim().toIntOrNull() != null
+            && autoUpper.trim().toIntOrNull() != null
+            && teleopLower.trim().toIntOrNull() != null
+            && teleopUpper.trim().toIntOrNull() != null
             && cycleTime.trim().isNotBlank()
             && shotLocation.trim().isNotBlank()
             && humanShot != null
@@ -83,10 +83,10 @@ fun RapidReactForm(
                     //this function will only be called if inputOk is true
                     baseData = data,
                     leftTarmac = leftTarmac!!,
-                    autoLower = autoLower.toInt(),
-                    autoUpper = autoUpper.toInt(),
-                    teleopLower = teleopLower.toInt(),
-                    teleopUpper = teleopUpper.toInt(),
+                    autoLower = autoLower.trim().toInt(),
+                    autoUpper = autoUpper.trim().toInt(),
+                    teleopLower = teleopLower.trim().toInt(),
+                    teleopUpper = teleopUpper.trim().toInt(),
                     cycleTime = cycleTime,
                     shotLocation = shotLocation,
                     climbScore = climbScore.value,

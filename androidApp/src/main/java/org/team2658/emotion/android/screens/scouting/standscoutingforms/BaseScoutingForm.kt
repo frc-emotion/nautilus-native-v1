@@ -23,6 +23,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
+import kotlinx.coroutines.runBlocking
 import org.team2658.emotion.android.ui.composables.DropDown
 import org.team2658.emotion.android.ui.composables.ErrorAlertDialog
 import org.team2658.emotion.android.ui.composables.LabelledTextBoxSingleLine
@@ -35,7 +36,7 @@ import org.team2658.emotion.scouting.scoutingdata.ScoutingData
 @Composable
 fun BaseScoutingForm(
     competitions: List<String>,
-    onFormSubmit: (baseData: ScoutingData) -> Int,
+    onFormSubmit: suspend (baseData: ScoutingData) -> Int,
     //handle submit for individual game (Rapid React, ChargedUp, etc) and use callback to clear form after
     contentInputsOkay: Boolean,
     //make sure game-specific required fields are filled in and valid
@@ -219,24 +220,26 @@ fun BaseScoutingForm(
             },
             confirmButton = {
                 Button(onClick = {
-                    val code = onFormSubmit(
-                        ScoutingData(
-                            competition = competition,
-                            teamNumber = teamNumber.toInt(),
-                            matchNumber = matchNumber.toInt(),
-                            defensive = defensive!!,
-                            finalScore = finalScore.toInt(),
-                            gameResult = gameResult!!,
-                            penaltyPointsEarned = penaltyPointsEarned.toInt(),
-                            brokeDown = brokeDown!!,
-                            comments = comments
+                    runBlocking {
+                        val code = onFormSubmit(
+                            ScoutingData(
+                                competition = competition,
+                                teamNumber = teamNumber.toInt(),
+                                matchNumber = matchNumber.toInt(),
+                                defensive = defensive!!,
+                                finalScore = finalScore.toInt(),
+                                gameResult = gameResult!!,
+                                penaltyPointsEarned = penaltyPointsEarned.toInt(),
+                                brokeDown = brokeDown!!,
+                                comments = comments
+                            )
                         )
-                    )
-                    if (code == 0) {
-                        clearForm()
-                        showSuccessDialog = true
-                    } else {
-                        showErrorDialog = true
+                        if (code == 0) {
+                            clearForm()
+                            showSuccessDialog = true
+                        } else {
+                            showErrorDialog = true
+                        }
                     }
                 }) {
                     Text(text = "Submit")

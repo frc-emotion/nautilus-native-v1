@@ -13,7 +13,6 @@ import org.team2658.emotion.userauth.User
 
 @Composable
 fun SettingsLoggedIn(user: User?, onLogout: ()->Unit) {
-    val username = user?.username ?: ""
     Text(
         text = "Settings",
         style = MaterialTheme.typography.displayMedium,

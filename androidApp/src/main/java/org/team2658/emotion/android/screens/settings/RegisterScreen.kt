@@ -26,6 +26,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import kotlinx.coroutines.runBlocking
 import org.team2658.emotion.android.MainTheme
 import org.team2658.emotion.android.ui.composables.LabelledTextBoxSingleLine
 import org.team2658.emotion.toCapitalized
@@ -35,7 +36,7 @@ import java.lang.Integer.parseInt
 
 @Composable
 fun RegisterScreen(
-    onRegister: (
+    onRegister: suspend (
         username: String,
         password: String,
         email: String,
@@ -70,36 +71,42 @@ fun RegisterScreen(
         Spacer(modifier = Modifier.size(32.dp))
         LabelledTextBoxSingleLine(label = "First Name",
             text = firstName,
+            required = true,
             onValueChange = { text -> firstName = text }
         )
         Spacer(modifier = Modifier.size(16.dp))
         LabelledTextBoxSingleLine(label = "Last Name",
             text = lastName,
+            required = true,
             onValueChange = { text -> lastName = text }
         )
         Spacer(modifier = Modifier.size(16.dp))
         LabelledTextBoxSingleLine(
             label = "Email",
             text = email,
+            required = true,
             onValueChange = { text -> email = text },
             keyboardType = KeyboardType.Email
         )
         Spacer(modifier = Modifier.size(16.dp))
         LabelledTextBoxSingleLine(
             label = "Phone Number",
-            text = phone.toString(),
+            text = phone,
+            required = true,
             onValueChange = { text -> phone = text },
             keyboardType = KeyboardType.Phone
         )
         Spacer(modifier = Modifier.size(16.dp))
         LabelledTextBoxSingleLine(label = "Username",
             text = username,
+            required = true,
             onValueChange = { text -> username = text }
         )
         Spacer(modifier = Modifier.size(16.dp))
         LabelledTextBoxSingleLine(
             label = "Password",
             text = password,
+            required = true,
             onValueChange = { text -> password = text },
             keyboardType = KeyboardType.Password
         )
@@ -107,6 +114,7 @@ fun RegisterScreen(
         LabelledTextBoxSingleLine(
             label = "Confirm Password",
             text = passwordConfirm,
+            required = true,
             onValueChange = { text -> passwordConfirm = text },
             keyboardType = KeyboardType.Password,
             innerLabel = "Confirm Password"
@@ -143,16 +151,18 @@ fun RegisterScreen(
         Spacer(modifier = Modifier.size(32.dp))
         Button(onClick = {
             if (password == passwordConfirm && phone.toIntOrNull() !== null) {
-                onRegister(
-                    username,
-                    password,
-                    email,
-                    firstName,
-                    lastName,
-                    subteam,
-                    grade,
-                    parseInt(phone)
-                )
+                runBlocking {
+                    onRegister(
+                        username,
+                        password,
+                        email,
+                        firstName,
+                        lastName,
+                        subteam,
+                        grade,
+                        parseInt(phone)
+                    )
+                }
             } else {
                 //TODO: ALERT
                 AlertDialog.Builder(context)

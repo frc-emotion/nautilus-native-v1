@@ -99,12 +99,14 @@ fun BaseScoutingForm(
     LabelledTextBoxSingleLine(
         label = "Team Number",
         text = teamNumber,
+        required = true,
         keyboardType = KeyboardType.Number,
         onValueChange = { teamNumber = it })
     Spacer(modifier = Modifier.size(16.dp))
     LabelledTextBoxSingleLine(
         label = "Match Number",
         text = matchNumber,
+        required = true,
         keyboardType = KeyboardType.Number,
         onValueChange = { matchNumber = it })
     Spacer(modifier = Modifier.size(16.dp))
@@ -119,12 +121,14 @@ fun BaseScoutingForm(
     LabelledTextBoxSingleLine(
         label = "Penalty Points Earned",
         text = penaltyPointsEarned,
+        required = true,
         keyboardType = KeyboardType.Number,
         onValueChange = { penaltyPointsEarned = it })
     Spacer(modifier = Modifier.size(16.dp))
     LabelledTextBoxSingleLine(
         label = "Final Score",
         text = finalScore,
+        required = true,
         keyboardType = KeyboardType.Number,
         onValueChange = { finalScore = it })
     Spacer(modifier = Modifier.size(16.dp))

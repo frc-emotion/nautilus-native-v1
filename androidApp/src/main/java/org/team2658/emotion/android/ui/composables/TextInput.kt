@@ -27,7 +27,7 @@ fun LabelledTextBoxSingleLine(
     onValueChange: (String) -> Unit,
     keyboardType: KeyboardType = KeyboardType.Text,
     innerLabel: String = "Enter $label",
-    required: Boolean = true
+    required: Boolean = false
 ) {
     var showError by remember { mutableStateOf(false) }
     Column(modifier = modifier) {

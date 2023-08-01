@@ -8,11 +8,11 @@ import org.team2658.emotion.userauth.Subteam
 
 @Composable
 fun NotLoggedInScreen(
-    onLogin: (
+    onLogin: suspend (
         username: String,
         password: String
     ) -> Unit,
-    onRegister: (
+    onRegister: suspend (
         username: String,
         password: String,
         email: String,

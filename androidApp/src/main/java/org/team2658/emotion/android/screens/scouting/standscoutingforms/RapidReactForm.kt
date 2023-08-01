@@ -28,7 +28,7 @@ fun RapidReactForm(
     scoutingViewModel: StandScoutingViewModel
 ) {
     var leftTarmac by rememberSaveable { mutableStateOf<Boolean?>(null) }
-    //use rememberSaveable instead of remember so the state is saved if user changes tabs
+    //rememberSaveable instead of remember so the state is saved if user changes tabs
     var autoLower by rememberSaveable { mutableStateOf("") }
     var autoUpper by rememberSaveable { mutableStateOf("") }
     var teleopLower by rememberSaveable { mutableStateOf("") }
@@ -111,6 +111,7 @@ fun RapidReactForm(
         LabelledTextBoxSingleLine(
             label = "Auto Lower Score",
             text = autoLower,
+            required = true,
             onValueChange = { autoLower = it },
             keyboardType = KeyboardType.Number
         )
@@ -119,6 +120,7 @@ fun RapidReactForm(
         LabelledTextBoxSingleLine(
             label = "Auto Upper Score",
             text = autoUpper,
+            required = true,
             onValueChange = { autoUpper = it },
             keyboardType = KeyboardType.Number
         )
@@ -128,6 +130,7 @@ fun RapidReactForm(
         LabelledTextBoxSingleLine(
             label = "Teleop Lower Score",
             text = teleopLower,
+            required = true,
             onValueChange = { teleopLower = it },
             keyboardType = KeyboardType.Number
         )
@@ -135,6 +138,7 @@ fun RapidReactForm(
         LabelledTextBoxSingleLine(
             label = "Teleop Upper Score",
             text = teleopUpper,
+            required = true,
             onValueChange = { teleopUpper = it },
             keyboardType = KeyboardType.Number
         )
@@ -143,12 +147,14 @@ fun RapidReactForm(
         Spacer(modifier = Modifier.size(16.dp))
         LabelledTextBoxSingleLine(
             label = "Cycle Time",
+            required = true,
             text = cycleTime,
             onValueChange = { cycleTime = it },
         )
         Spacer(modifier = Modifier.size(16.dp))
         LabelledTextBoxSingleLine(
             label = "Shot Location",
+            required = true,
             text = shotLocation,
             onValueChange = { shotLocation = it },
         )

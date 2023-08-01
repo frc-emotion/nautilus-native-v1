@@ -4,6 +4,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
+import kotlinx.coroutines.delay
 import org.team2658.emotion.userauth.AccountType
 import org.team2658.emotion.userauth.AuthState
 import org.team2658.emotion.userauth.Role
@@ -21,8 +22,9 @@ class SettingsViewModel : ViewModel() {
         private set
 
 
-    fun login(username: String, password: String) {
+    suspend fun login(username: String, password: String) {
         //TODO: user = GetUser()
+        delay(100L) //to simulate waiting for network response
         user = when (username.trim()) {
             "nova", "novamondal", "admin" -> User(
                 "Nova",
@@ -97,7 +99,7 @@ class SettingsViewModel : ViewModel() {
         authState = AuthState.NOT_LOGGED_IN
     }
 
-    fun register(
+    suspend fun register(
         username: String,
         password: String,
         email: String,
@@ -110,6 +112,7 @@ class SettingsViewModel : ViewModel() {
     ) {
         //TODO(username, password, email, firstName, lastName)
         //TODO: user = GetUser()
+        delay(200L)
         user = User(
             firstName,
             lastName,

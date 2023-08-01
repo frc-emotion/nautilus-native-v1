@@ -15,11 +15,12 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
+import kotlinx.coroutines.runBlocking
 import org.team2658.emotion.android.ui.composables.LabelledTextBoxSingleLine
 
 @Composable
 fun LoginScreen(
-    onLogin: (
+    onLogin: suspend (
         username: String,
         password: String
     ) -> Unit,
@@ -35,17 +36,19 @@ fun LoginScreen(
         Spacer(modifier = Modifier.size(32.dp))
         LabelledTextBoxSingleLine(label = "Username",
             text = username,
+            required = true,
             onValueChange = { text -> username = text }
         )
         Spacer(modifier = Modifier.size(16.dp))
         LabelledTextBoxSingleLine(
             label = "Password",
             text = password,
+            required = true,
             onValueChange = { text -> password = text },
             keyboardType = KeyboardType.Password
         )
         Spacer(modifier = Modifier.size(32.dp))
-        Button(onClick = { onLogin(username, password) }) {
+        Button(onClick = { runBlocking { onLogin(username, password) } }) {
             Text(text = "Log In")
         }
         Spacer(modifier = Modifier.size(8.dp))

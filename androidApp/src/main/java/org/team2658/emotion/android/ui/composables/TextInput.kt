@@ -34,17 +34,25 @@ fun LabelledTextBoxSingleLine(
     imeAction: ImeAction = ImeAction.Default
 ) {
     var showError by remember { mutableStateOf(false) }
+    var focus by remember { mutableStateOf(false) }
+    
     Column(modifier = modifier) {
-
         Text(text = label, style = MaterialTheme.typography.labelLarge)
         Spacer(modifier = Modifier.height(4.dp))
         OutlinedTextField(
             value = text,
             onValueChange = onValueChange,
-            modifier = Modifier.onFocusChanged { if (!showError && it.isFocused) showError = true },
+            modifier = Modifier
+                .onFocusChanged {
+                    focus = it.isFocused
+                    if (!showError && it.isFocused) showError = true
+                },
             visualTransformation = if (keyboardType == KeyboardType.Password) PasswordVisualTransformation()
             else VisualTransformation.None,
-            keyboardOptions = KeyboardOptions(keyboardType = keyboardType, imeAction = imeAction),
+            keyboardOptions = KeyboardOptions(
+                keyboardType = keyboardType,
+                imeAction = imeAction
+            ),
             label = { Text(innerLabel) },
             singleLine = true,
             keyboardActions = keyboardActions,

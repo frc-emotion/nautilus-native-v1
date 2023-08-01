@@ -21,6 +21,7 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
@@ -55,6 +56,8 @@ fun BaseScoutingForm(
     var penaltyPointsEarned by rememberSaveable { mutableStateOf("") }
     var comments by rememberSaveable { mutableStateOf("") }
     var brokeDown by rememberSaveable { mutableStateOf<Boolean?>(null) }
+
+    val focusManager = LocalFocusManager.current
 
     val inputsOkay = competition.trim().isNotBlank()
             && teamNumber.toIntOrNull() != null
@@ -192,6 +195,7 @@ fun BaseScoutingForm(
             }
         }, confirmButton = {
             Button(onClick = {
+                focusManager.clearFocus()
                 clearForm()
                 showClearFormDialog = false
             }) {

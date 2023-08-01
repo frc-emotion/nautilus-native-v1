@@ -21,6 +21,7 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import kotlinx.coroutines.runBlocking
@@ -101,6 +102,7 @@ fun BaseScoutingForm(
         text = teamNumber,
         required = true,
         keyboardType = KeyboardType.Number,
+        imeAction = ImeAction.Next,
         onValueChange = { teamNumber = it })
     Spacer(modifier = Modifier.size(16.dp))
     LabelledTextBoxSingleLine(
@@ -122,6 +124,7 @@ fun BaseScoutingForm(
         label = "Penalty Points Earned",
         text = penaltyPointsEarned,
         required = true,
+        imeAction = ImeAction.Next,
         keyboardType = KeyboardType.Number,
         onValueChange = { penaltyPointsEarned = it })
     Spacer(modifier = Modifier.size(16.dp))
@@ -129,6 +132,7 @@ fun BaseScoutingForm(
         label = "Final Score",
         text = finalScore,
         required = true,
+        imeAction = ImeAction.Next,
         keyboardType = KeyboardType.Number,
         onValueChange = { finalScore = it })
     Spacer(modifier = Modifier.size(16.dp))

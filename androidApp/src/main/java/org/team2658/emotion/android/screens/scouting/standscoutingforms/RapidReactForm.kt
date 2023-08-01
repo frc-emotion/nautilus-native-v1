@@ -14,6 +14,7 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import org.team2658.emotion.android.ui.composables.LabelledTextBoxSingleLine
@@ -113,6 +114,7 @@ fun RapidReactForm(
             text = autoLower,
             required = true,
             onValueChange = { autoLower = it },
+            imeAction = ImeAction.Next,
             keyboardType = KeyboardType.Number
         )
         Spacer(modifier = Modifier.size(16.dp))
@@ -120,6 +122,7 @@ fun RapidReactForm(
         LabelledTextBoxSingleLine(
             label = "Auto Upper Score",
             text = autoUpper,
+            imeAction = ImeAction.Next,
             required = true,
             onValueChange = { autoUpper = it },
             keyboardType = KeyboardType.Number
@@ -132,6 +135,7 @@ fun RapidReactForm(
             text = teleopLower,
             required = true,
             onValueChange = { teleopLower = it },
+            imeAction = ImeAction.Next,
             keyboardType = KeyboardType.Number
         )
         Spacer(modifier = Modifier.size(16.dp))

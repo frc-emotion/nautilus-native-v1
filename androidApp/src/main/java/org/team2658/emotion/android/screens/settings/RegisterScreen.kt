@@ -23,6 +23,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -72,12 +73,14 @@ fun RegisterScreen(
         LabelledTextBoxSingleLine(label = "First Name",
             text = firstName,
             required = true,
+            imeAction = ImeAction.Next,
             onValueChange = { text -> firstName = text }
         )
         Spacer(modifier = Modifier.size(16.dp))
         LabelledTextBoxSingleLine(label = "Last Name",
             text = lastName,
             required = true,
+            imeAction = ImeAction.Next,
             onValueChange = { text -> lastName = text }
         )
         Spacer(modifier = Modifier.size(16.dp))
@@ -85,6 +88,7 @@ fun RegisterScreen(
             label = "Email",
             text = email,
             required = true,
+            imeAction = ImeAction.Next,
             onValueChange = { text -> email = text },
             keyboardType = KeyboardType.Email
         )
@@ -93,6 +97,7 @@ fun RegisterScreen(
             label = "Phone Number",
             text = phone,
             required = true,
+            imeAction = ImeAction.Next,
             onValueChange = { text -> phone = text },
             keyboardType = KeyboardType.Phone
         )
@@ -100,6 +105,7 @@ fun RegisterScreen(
         LabelledTextBoxSingleLine(label = "Username",
             text = username,
             required = true,
+            imeAction = ImeAction.Next,
             onValueChange = { text -> username = text }
         )
         Spacer(modifier = Modifier.size(16.dp))
@@ -107,6 +113,7 @@ fun RegisterScreen(
             label = "Password",
             text = password,
             required = true,
+            imeAction = ImeAction.Next,
             onValueChange = { text -> password = text },
             keyboardType = KeyboardType.Password
         )

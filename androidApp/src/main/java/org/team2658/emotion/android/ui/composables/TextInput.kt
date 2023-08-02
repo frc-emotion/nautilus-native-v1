@@ -5,6 +5,12 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.AddCircle
+import androidx.compose.material.icons.filled.RemoveCircle
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.LocalTextStyle
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
@@ -19,6 +25,7 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 
 @Composable
@@ -35,7 +42,7 @@ fun LabelledTextBoxSingleLine(
 ) {
     var showError by remember { mutableStateOf(false) }
     var focus by remember { mutableStateOf(false) }
-    
+
     Column(modifier = modifier) {
         Text(text = label, style = MaterialTheme.typography.labelLarge)
         Spacer(modifier = Modifier.height(4.dp))
@@ -134,6 +141,113 @@ fun TextArea(
             keyboardOptions = KeyboardOptions(keyboardType = keyboardType),
             label = { Text(innerLabel) },
             singleLine = false
+        )
+
+    }
+}
+
+@Composable
+fun NumberInput(
+    label: String,
+    value: Int?,
+    modifier: Modifier = Modifier,
+    onValueChange: (Int?) -> Unit,
+    placeholder: String = label,
+    required: Boolean = false,
+    keyboardActions: KeyboardActions = KeyboardActions.Default,
+    imeAction: ImeAction = ImeAction.Default,
+    incrementBy: Int = 1,
+    minValue: Int = 0,
+    maxValue: Int = 255,
+) {
+    var showError by remember { mutableStateOf(false) }
+    var focus by remember { mutableStateOf(false) }
+
+    Column(modifier = modifier) {
+        Text(text = label, style = MaterialTheme.typography.labelLarge)
+        Spacer(modifier = Modifier.height(4.dp))
+        OutlinedTextField(
+            value = if (value !== null) value.toString() else "",
+            onValueChange = {
+                if (it.isBlank()) {
+                    onValueChange(null)
+                }
+                if (it.toIntOrNull() != null && (it.toInt() in minValue..maxValue)
+                ) {
+                    onValueChange(it.toInt())
+                }
+            },
+            modifier = Modifier
+                .onFocusChanged {
+                    focus = it.isFocused
+                    if (!showError && it.isFocused) showError = true
+                },
+            keyboardOptions = KeyboardOptions(
+                keyboardType = KeyboardType.Number,
+                imeAction = imeAction
+            ),
+            placeholder = {
+                Text(
+                    text = placeholder,
+                    textAlign = TextAlign.Center,
+                )
+            },
+            singleLine = true,
+            keyboardActions = keyboardActions,
+            supportingText = {
+                if (required && (value == null)) {
+                    Text(text = "* Required")
+                }
+            },
+            isError = showError && required && (value == null),
+            leadingIcon = {
+                IconButton(onClick = {
+                    if (value != null && (value in (minValue + 1) until maxValue)) onValueChange(
+                        value - incrementBy
+                    )
+                }) {
+                    Icon(
+                        Icons.Filled.RemoveCircle,
+                        contentDescription = null,
+                        tint = MaterialTheme.colorScheme.error
+                    )
+                }
+            },
+            trailingIcon = {
+                IconButton(onClick = {
+                    if (value == null || (value in (minValue + 1) until maxValue)) onValueChange(
+                        (value ?: 0) + incrementBy
+                    )
+                }) {
+                    Icon(
+                        Icons.Filled.AddCircle,
+                        contentDescription = null,
+                        tint = MaterialTheme.colorScheme.primary
+                    )
+                }
+            },
+            textStyle = LocalTextStyle.current.copy(textAlign = TextAlign.Center),
+//            suffix = {
+//                Button(onClick = {
+//                    if (value == null || (value in (minValue + 1) until maxValue)) onValueChange(
+//                        (value ?: 0) + incrementBy
+//                    )
+//                }) {
+//                    Text("+")
+//                }
+//            },
+//            prefix = {
+//                Button(
+//                    onClick = {
+//                        if (value != null && (value in (minValue + 1) until maxValue)) onValueChange(
+//                            value - incrementBy
+//                        )
+//                    },
+//                    colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.error)
+//                ) {
+//                    Text("-")
+//                }
+//            }
         )
 
     }

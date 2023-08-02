@@ -14,10 +14,9 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.text.input.ImeAction
-import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import org.team2658.emotion.android.ui.composables.LabelledTextBoxSingleLine
+import org.team2658.emotion.android.ui.composables.NumberInput
 import org.team2658.emotion.android.ui.composables.YesNoSelector
 import org.team2658.emotion.android.viewmodels.SettingsViewModel
 import org.team2658.emotion.android.viewmodels.StandScoutingViewModel
@@ -30,10 +29,10 @@ fun RapidReactForm(
 ) {
     var leftTarmac by rememberSaveable { mutableStateOf<Boolean?>(null) }
     //rememberSaveable instead of remember so the state is saved if user changes tabs
-    var autoLower by rememberSaveable { mutableStateOf("") }
-    var autoUpper by rememberSaveable { mutableStateOf("") }
-    var teleopLower by rememberSaveable { mutableStateOf("") }
-    var teleopUpper by rememberSaveable { mutableStateOf("") }
+    var autoLower by rememberSaveable { mutableStateOf<Int?>(null) }
+    var autoUpper by rememberSaveable { mutableStateOf<Int?>(null) }
+    var teleopLower by rememberSaveable { mutableStateOf<Int?>(null) }
+    var teleopUpper by rememberSaveable { mutableStateOf<Int?>(null) }
     var cycleTime by rememberSaveable { mutableStateOf("") }
     var shotLocation by rememberSaveable { mutableStateOf("") }
     var climbScore by rememberSaveable { mutableStateOf(ClimbScore.NONE) }
@@ -43,10 +42,10 @@ fun RapidReactForm(
 
 
     val inputOk = leftTarmac != null
-            && autoLower.trim().toIntOrNull() != null
-            && autoUpper.trim().toIntOrNull() != null
-            && teleopLower.trim().toIntOrNull() != null
-            && teleopUpper.trim().toIntOrNull() != null
+            && autoLower != null
+            && autoUpper != null
+            && teleopLower != null
+            && teleopUpper != null
             && cycleTime.trim().isNotBlank()
             && shotLocation.trim().isNotBlank()
             && humanShot != null
@@ -60,10 +59,10 @@ fun RapidReactForm(
 
     fun clearForm() {
         leftTarmac = null
-        autoLower = ""
-        autoUpper = ""
-        teleopLower = ""
-        teleopUpper = ""
+        autoLower = null
+        autoUpper = null
+        teleopLower = null
+        teleopUpper = null
         cycleTime = ""
         shotLocation = ""
         climbScore = ClimbScore.NONE
@@ -84,10 +83,10 @@ fun RapidReactForm(
                     //this function will only be called if inputOk is true
                     baseData = data,
                     leftTarmac = leftTarmac!!,
-                    autoLower = autoLower.trim().toInt(),
-                    autoUpper = autoUpper.trim().toInt(),
-                    teleopLower = teleopLower.trim().toInt(),
-                    teleopUpper = teleopUpper.trim().toInt(),
+                    autoLower = autoLower!!,
+                    autoUpper = autoUpper!!,
+                    teleopLower = teleopLower!!,
+                    teleopUpper = teleopUpper!!,
                     cycleTime = cycleTime,
                     shotLocation = shotLocation,
                     climbScore = climbScore.value,
@@ -109,42 +108,42 @@ fun RapidReactForm(
             setValue = { leftTarmac = it }
         )
         Spacer(modifier = Modifier.size(16.dp))
-        LabelledTextBoxSingleLine(
+//        LabelledTextBoxSingleLine(
+//            label = "Auto Lower Score",
+//            text = autoLower,
+//            required = true,
+//            onValueChange = { autoLower = it },
+//            imeAction = ImeAction.Next,
+//            keyboardType = KeyboardType.Number
+//        )
+        NumberInput(
             label = "Auto Lower Score",
-            text = autoLower,
+            value = autoLower,
             required = true,
-            onValueChange = { autoLower = it },
-            imeAction = ImeAction.Next,
-            keyboardType = KeyboardType.Number
-        )
+            onValueChange = { autoLower = it })
         Spacer(modifier = Modifier.size(16.dp))
         //TODO: change to custom incrementer component
-        LabelledTextBoxSingleLine(
+        NumberInput(
             label = "Auto Upper Score",
-            text = autoUpper,
-            imeAction = ImeAction.Next,
-            required = true,
+            value = autoUpper,
             onValueChange = { autoUpper = it },
-            keyboardType = KeyboardType.Number
+            required = true
         )
         Spacer(modifier = Modifier.size(16.dp))
         Text(text = "Teleop", style = MaterialTheme.typography.titleLarge)
         Spacer(modifier = Modifier.size(16.dp))
-        LabelledTextBoxSingleLine(
+        NumberInput(
             label = "Teleop Lower Score",
-            text = teleopLower,
-            required = true,
+            value = teleopLower,
             onValueChange = { teleopLower = it },
-            imeAction = ImeAction.Next,
-            keyboardType = KeyboardType.Number
+            required = true
         )
         Spacer(modifier = Modifier.size(16.dp))
-        LabelledTextBoxSingleLine(
+        NumberInput(
             label = "Teleop Upper Score",
-            text = teleopUpper,
-            required = true,
+            value = teleopUpper,
             onValueChange = { teleopUpper = it },
-            keyboardType = KeyboardType.Number
+            required = true
         )
         Spacer(modifier = Modifier.size(16.dp))
         Text(text = "Robot and Play Style", style = MaterialTheme.typography.titleLarge)

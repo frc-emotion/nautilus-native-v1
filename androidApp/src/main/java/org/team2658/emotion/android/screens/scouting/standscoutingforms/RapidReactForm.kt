@@ -122,7 +122,6 @@ fun RapidReactForm(
             required = true,
             onValueChange = { autoLower = it })
         Spacer(modifier = Modifier.size(16.dp))
-        //TODO: change to custom incrementer component
         NumberInput(
             label = "Auto Upper Score",
             value = autoUpper,

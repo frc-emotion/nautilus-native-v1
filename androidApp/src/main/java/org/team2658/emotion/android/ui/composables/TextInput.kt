@@ -1,8 +1,11 @@
 package org.team2658.emotion.android.ui.composables
 
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
@@ -41,7 +44,6 @@ fun LabelledTextBoxSingleLine(
     imeAction: ImeAction = ImeAction.Default
 ) {
     var showError by remember { mutableStateOf(false) }
-    var focus by remember { mutableStateOf(false) }
 
     Column(modifier = modifier) {
         Text(text = label, style = MaterialTheme.typography.labelLarge)
@@ -51,7 +53,6 @@ fun LabelledTextBoxSingleLine(
             onValueChange = onValueChange,
             modifier = Modifier
                 .onFocusChanged {
-                    focus = it.isFocused
                     if (!showError && it.isFocused) showError = true
                 },
             visualTransformation = if (keyboardType == KeyboardType.Password) PasswordVisualTransformation()
@@ -161,7 +162,6 @@ fun NumberInput(
     maxValue: Int = 255,
 ) {
     var showError by remember { mutableStateOf(false) }
-    var focus by remember { mutableStateOf(false) }
 
     Column(modifier = modifier) {
         Text(text = label, style = MaterialTheme.typography.labelLarge)
@@ -179,9 +179,9 @@ fun NumberInput(
             },
             modifier = Modifier
                 .onFocusChanged {
-                    focus = it.isFocused
                     if (!showError && it.isFocused) showError = true
-                },
+                }
+                .width(IntrinsicSize.Max),
             keyboardOptions = KeyboardOptions(
                 keyboardType = KeyboardType.Number,
                 imeAction = imeAction
@@ -190,6 +190,7 @@ fun NumberInput(
                 Text(
                     text = placeholder,
                     textAlign = TextAlign.Center,
+                    modifier = Modifier.fillMaxWidth()
                 )
             },
             singleLine = true,
@@ -268,7 +269,6 @@ fun NumberInput(
     maxValue: Double = 255.0,
 ) {
     var showError by remember { mutableStateOf(false) }
-    var focus by remember { mutableStateOf(false) }
 
     Column(modifier = modifier) {
         Text(text = label, style = MaterialTheme.typography.labelLarge)
@@ -286,7 +286,6 @@ fun NumberInput(
             },
             modifier = Modifier
                 .onFocusChanged {
-                    focus = it.isFocused
                     if (!showError && it.isFocused) showError = true
                 },
             keyboardOptions = KeyboardOptions(

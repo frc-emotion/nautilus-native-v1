@@ -252,3 +252,110 @@ fun NumberInput(
 
     }
 }
+
+@Composable
+fun NumberInput(
+    label: String,
+    value: Double?,
+    modifier: Modifier = Modifier,
+    onValueChange: (Double?) -> Unit,
+    placeholder: String = label,
+    required: Boolean = false,
+    keyboardActions: KeyboardActions = KeyboardActions.Default,
+    imeAction: ImeAction = ImeAction.Default,
+    incrementBy: Double = 1.0,
+    minValue: Double = 0.0,
+    maxValue: Double = 255.0,
+) {
+    var showError by remember { mutableStateOf(false) }
+    var focus by remember { mutableStateOf(false) }
+
+    Column(modifier = modifier) {
+        Text(text = label, style = MaterialTheme.typography.labelLarge)
+        Spacer(modifier = Modifier.height(4.dp))
+        OutlinedTextField(
+            value = if (value !== null) value.toString() else "",
+            onValueChange = {
+                if (it.isBlank()) {
+                    onValueChange(null)
+                }
+                if (it.toDoubleOrNull() != null && it.toDouble() > minValue && it.toDouble() < maxValue
+                ) {
+                    onValueChange(it.toDouble())
+                }
+            },
+            modifier = Modifier
+                .onFocusChanged {
+                    focus = it.isFocused
+                    if (!showError && it.isFocused) showError = true
+                },
+            keyboardOptions = KeyboardOptions(
+                keyboardType = KeyboardType.Decimal,
+                imeAction = imeAction
+            ),
+            placeholder = {
+                Text(
+                    text = placeholder,
+                    textAlign = TextAlign.Center,
+                )
+            },
+            singleLine = true,
+            keyboardActions = keyboardActions,
+            supportingText = {
+                if (required && (value == null)) {
+                    Text(text = "* Required")
+                }
+            },
+            isError = showError && required && (value == null),
+            leadingIcon = {
+                IconButton(onClick = {
+                    if (value != null && value < maxValue && value > minValue) onValueChange(
+                        value - incrementBy
+                    )
+                }) {
+                    Icon(
+                        Icons.Filled.RemoveCircle,
+                        contentDescription = null,
+                        tint = MaterialTheme.colorScheme.error
+                    )
+                }
+            },
+            trailingIcon = {
+                IconButton(onClick = {
+                    if (value == null || (value < maxValue && value > minValue)) onValueChange(
+                        (value ?: 0.0) + incrementBy
+                    )
+                }) {
+                    Icon(
+                        Icons.Filled.AddCircle,
+                        contentDescription = null,
+                        tint = MaterialTheme.colorScheme.primary
+                    )
+                }
+            },
+            textStyle = LocalTextStyle.current.copy(textAlign = TextAlign.Center),
+//            suffix = {
+//                Button(onClick = {
+//                    if (value == null || (value in (minValue + 1) until maxValue)) onValueChange(
+//                        (value ?: 0) + incrementBy
+//                    )
+//                }) {
+//                    Text("+")
+//                }
+//            },
+//            prefix = {
+//                Button(
+//                    onClick = {
+//                        if (value != null && (value in (minValue + 1) until maxValue)) onValueChange(
+//                            value - incrementBy
+//                        )
+//                    },
+//                    colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.error)
+//                ) {
+//                    Text("-")
+//                }
+//            }
+        )
+
+    }
+}

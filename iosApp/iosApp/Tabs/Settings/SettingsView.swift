@@ -14,18 +14,20 @@ struct SettingsView: View {
                     } label: {
                         UserBar()
                     }
-                    NavigationLink {
-                        AccountView()
-                    } label: {
-                        Text("Account Settings")
-                    }
+//                    Not yet implemented
+//                    NavigationLink {
+//                        AccountView()
+//                    } label: {
+//                        Text("Account Settings")
+//                    }
                 }
                 Section {
-                    NavigationLink {
-                        BugReportView()
-                    } label: {
-                        Text("Report a Bug")
-                    }
+//                    Not yet implemented
+//                    NavigationLink {
+//                        BugReportView()
+//                    } label: {
+//                        Text("Report a Bug")
+//                    }
                     Button (action: {
                         Task {
                             await vm.signOut()

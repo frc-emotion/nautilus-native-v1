@@ -23,27 +23,31 @@ struct ApplicationSwitcher: View {
     var body: some View {
         if (vm.isLoggedIn) {
             TabView {
-                HomeView()
-                    .tabItem {
-                        Label("Home", systemImage: "house.fill")
-                    }
-                
+//                Unnecessary tabs are hidden right now
+//
+//                HomeView()
+//                    .tabItem {
+//                        Label("Home", systemImage: "house.fill")
+//                    }
+//
                 ScoutingView()
+                    .navigationTitle("Scouting")
                     .tabItem {
                         Label("Scouting", systemImage: "chart.bar.doc.horizontal.fill")
                     }
                 
-                DirectoryView()
-                    .tabItem {
-                        Label("People", systemImage: "person.2.fill")
-                    }
-                
-                AdminView()
-                    .tabItem {
-                        Label("Admin", systemImage: "person.badge.key.fill")
-                    }
-                
+//                DirectoryView()
+//                    .tabItem {
+//                        Label("People", systemImage: "person.2.fill")
+//                    }
+//
+//                AdminView()
+//                    .tabItem {
+//                        Label("Admin", systemImage: "person.badge.key.fill")
+//                    }
+//
                 SettingsView()
+                    .navigationTitle("Settings")
                     .tabItem {
                         Label("Settings", systemImage: "gear")
                     }

@@ -1,14 +1,12 @@
 //
-//  UserData.swift
-//  iosApp
+//  loader.swift
+//  Σ-Motion
 //
-//  Created by Jason Ballinger on 7/11/23.
+//  Created by Jason Ballinger on 7/18/23.
 //  Copyright © 2023 team2658. All rights reserved.
 //
 
 import Foundation
-
-var users: [User] = load("UsersList.json")
 
 func load<T: Decodable>(_ filename: String) -> T {
     let data: Data

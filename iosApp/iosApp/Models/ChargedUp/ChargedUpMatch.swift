@@ -35,3 +35,5 @@ struct ChargedUpMatch: Hashable, Codable {
     var tied: Bool
     var comments: String
 }
+
+var ChargedUpMatches: [ChargedUpMatch] = load("ChargedUpMatches.json")

@@ -23,3 +23,5 @@ struct User: Hashable, Equatable, Codable, Identifiable {
 extension User {
     static let deviceUser = User(id: 1000, firstname: "Jason", lastname: "Deviceuser", username: "jasondeviceuser", email: "jasondeviceuser@gmail.com", isAdmin: true, isVerified: true, token: "abcdefghijklmnopqrstuvwxyz1234567890")
 }
+
+var users: [User] = load("UsersList.json")

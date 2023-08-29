@@ -1,0 +1,3 @@
+[submodule "apikt"]
+	path = apikt
+	url = https://github.com/frc-emotion/apikt.git

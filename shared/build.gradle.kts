@@ -14,7 +14,7 @@ kotlin {
             }
         }
     }
-    
+
     listOf(
         iosX64(),
         iosArm64(),
@@ -29,6 +29,7 @@ kotlin {
         val commonMain by getting {
             dependencies {
                 //put your multiplatform dependencies here
+                implementation(files("libs/apikt.1-beta1.jar"))
             }
         }
         val commonTest by getting {

@@ -16,3 +16,4 @@ dependencyResolutionManagement {
 rootProject.name = "Emotion"
 include(":androidApp")
 include(":shared")
+include(":apikt")

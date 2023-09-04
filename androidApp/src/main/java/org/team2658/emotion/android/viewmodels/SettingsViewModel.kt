@@ -1,5 +1,6 @@
 package org.team2658.emotion.android.viewmodels
 
+import android.content.SharedPreferences
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
@@ -16,16 +17,25 @@ import org.team2658.emotion.userauth.Role
 import org.team2658.emotion.userauth.Subteam
 import org.team2658.emotion.userauth.User
 import org.team2658.emotion.userauth.UserPermissions
+import kotlin.reflect.KProperty
 
-class SettingsViewModel(private val ktorClient: EmotionClient) : ViewModel() {
-    //TODO: user is not persisted between app restarts, so user needs to log back in every time app is lauched. fix by persisting user in localstorage
-    var authState: AuthState by mutableStateOf(AuthState.NOT_LOGGED_IN)
-        private set
+class SettingsViewModel(private val ktorClient: EmotionClient, private val sharedPref: SharedPreferences) : ViewModel() {
+    //TODO: user is not persisted between app restarts, so user needs to log back in every time app is launched. fix by persisting user in localstorage
+
+
 
     //TODO: instantiate with GetUser once implemented
-    var user: User? by mutableStateOf(null)
+    var user: User? by mutableStateOf(User.fromJSON(sharedPref.getString("user", null)))
         private set
 
+    var authState: AuthState by mutableStateOf(
+        when(this.user?.accountType) {
+        AccountType.UNVERIFIED -> AuthState.AWAITING_VERIFICATION
+        AccountType.BASE, AccountType.LEAD, AccountType.ADMIN -> AuthState.LOGGED_IN
+        else -> AuthState.NOT_LOGGED_IN
+        }
+    )
+        private set
 
     suspend fun login(username: String, password: String) {
 //        //TODO: user = GetUser()
@@ -97,13 +107,21 @@ class SettingsViewModel(private val ktorClient: EmotionClient) : ViewModel() {
 //        }
 //        authState = AuthState.LOGGED_IN
         this.user = this.ktorClient.login(username, password)
+        with(sharedPref.edit()) {
+            putString("user", user?.toJSON())
+            apply()
+        }
         this.authState = if(this.user != null) AuthState.LOGGED_IN else AuthState.NOT_LOGGED_IN
     }
 
     fun logout() {
         //TODO()
-        user = null
-        authState = AuthState.NOT_LOGGED_IN
+        this.user = null
+        with(sharedPref.edit()) {
+            putString("user", null)
+            apply()
+        }
+        this.authState = AuthState.NOT_LOGGED_IN
     }
 
     suspend fun register(

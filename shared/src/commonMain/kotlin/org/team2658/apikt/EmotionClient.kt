@@ -47,39 +47,7 @@ class EmotionClient {
                 append("username", username)
                 append("password", password)
             }).body<UserResponse>()
-            User(
-                firstName = response.firstname,
-                lastName = response.lastname,
-                username = response.username,
-                email = response.email,
-                phoneNumber = response.phone?: -1,
-                token = response.token,
-                subteam = when(response.subteam) {
-                    "software" -> Subteam.SOFTWARE
-                    "build" -> Subteam.BUILD
-                    "marketing" -> Subteam.MARKETING
-                    "electrical" -> Subteam.ELECTRICAL
-                    "design" -> Subteam.DESIGN
-                    "executive" -> Subteam.EXECUTIVE
-                    else -> Subteam.NONE
-                },
-                grade = response.grade?: -1,
-                roles = response.roles?.map { Role(it.name, UserPermissions(
-                    verifyAllAttendance = it.permissions.verifyAllAttendance,
-                    verifySubteamAttendance = it.permissions.verifySubteamAttendance,
-                    makeAnnouncements = it.permissions.makeAnnouncements,
-                    makeBlogPosts = it.permissions.makeBlogPosts,
-                    inPitScouting = it.permissions.inPitScouting,
-                    standScouting = it.permissions.standScouting,
-                    viewScoutingData = it.permissions.viewScoutingData
-                )) } ?: listOf(),
-                accountType = when(response.accountType) {
-                    1 -> AccountType.BASE
-                    2 -> AccountType.LEAD
-                    3 -> AccountType.ADMIN
-                    else -> AccountType.UNVERIFIED
-                }
-            )
+           User.fromSerializable(response)
         }catch(e: Exception) { null }
     }
      suspend fun getTest() : org.team2658.apikt.responses.ExamplePostResponse {

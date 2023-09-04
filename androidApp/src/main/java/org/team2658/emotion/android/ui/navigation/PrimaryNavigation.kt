@@ -7,7 +7,7 @@ import androidx.compose.ui.Modifier
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import org.team2658.apikt.ExampleApi
+import org.team2658.apikt.EmotionClient
 import org.team2658.emotion.android.screens.admin.AdminScreen
 import org.team2658.emotion.android.screens.home.HomeScreen
 import org.team2658.emotion.android.screens.scouting.ScoutingScreen
@@ -19,7 +19,7 @@ import org.team2658.emotion.android.viewmodels.StandScoutingViewModel
 fun LoggedInNavigator(
     settingsViewModel: SettingsViewModel,
     scoutingViewModel: StandScoutingViewModel,
-    ktorClient: ExampleApi
+    ktorClient: EmotionClient
 ) {
     val navController = rememberNavController();
 

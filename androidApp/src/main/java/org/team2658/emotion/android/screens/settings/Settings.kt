@@ -20,11 +20,11 @@ fun SettingsScreen(viewModel: SettingsViewModel) {
 }
 
 
-@Preview
-@Composable
-fun SettingsPreview() {
-    val settingsViewModel = SettingsViewModel()
-    MainTheme(false) {
-        SettingsScreen(settingsViewModel)
-    }
-}
+//@Preview
+//@Composable
+//fun SettingsPreview() {
+//    val settingsViewModel = SettingsViewModel()
+//    MainTheme(false) {
+//        SettingsScreen(settingsViewModel)
+//    }
+//}

@@ -8,11 +8,12 @@ import org.team2658.apikt.responses.UserResponse
 import org.team2658.emotion.attendance.UserAttendance
 
 data class User(
+    val _id: String,
     val firstName: String,
     val lastName: String,
     val username: String,
     val email: String,
-    val phoneNumber: Int,
+    val phoneNumber: String,
     val token: String? = null,
     val subteam: Subteam,
     val grade: Int,
@@ -23,7 +24,7 @@ data class User(
 
     //student accounts
     val parents: List<User>? = null,
-    val attendance: List<UserAttendance>? = null,
+    val attendance: List<UserAttendance>,
 
     //parent accounts
     val children: List<User>? = null,
@@ -39,7 +40,7 @@ data class User(
                 lastName = usr.lastname,
                 username = usr.username,
                 email = usr.email,
-                phoneNumber = usr.phone?: -1,
+                phoneNumber = usr.phone?: "",
                 token = usr.token,
                 subteam = when(usr.subteam) {
                     "software" -> Subteam.SOFTWARE
@@ -65,7 +66,9 @@ data class User(
                     2 -> AccountType.LEAD
                     3 -> AccountType.ADMIN
                     else -> AccountType.UNVERIFIED
-                }
+                },
+                attendance = usr.attendance.toList(),
+                _id = usr._id
             )
         }
 
@@ -79,7 +82,7 @@ data class User(
     fun toSerializable(): UserResponse {
         return UserResponse(
             firstname = this.firstName,
-            _id = "",
+            _id = this._id,
             lastname = this.lastName,
             username = this.username,
             email = this.email,
@@ -104,7 +107,8 @@ data class User(
                 AccountType.LEAD -> 2
                 AccountType.ADMIN -> 3
                 AccountType.UNVERIFIED -> 0
-            }
+            },
+            attendance = this.attendance.toTypedArray()
         )
     }
 

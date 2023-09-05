@@ -1,9 +1,10 @@
 package org.team2658.emotion.attendance
 
+import kotlinx.serialization.Serializable
+
+@Serializable
 data class UserAttendance(
-    val totalHoursLogged: Double,
-    val meetingHoursLogged: Double,
-    val volunteeringHoursLogged: Double,
-    val competitionHoursLogged: Double,
-    val logs: List<AttendanceLog> = listOf()
+    val totalHoursLogged: Int,
+    val completedMarketingAssignment: Boolean,
+    val logs: List<String>
 )

@@ -50,7 +50,7 @@ class EmotionClient {
            User.fromSerializable(response)
         }catch(e: Exception) { null }
     }
-     suspend fun getTest() : org.team2658.apikt.responses.ExamplePostResponse {
+     suspend fun getTest(): ExamplePostResponse {
         return try {
             this.client.get("https://jsonplaceholder.typicode.com/posts/1").body()
         }
@@ -62,4 +62,16 @@ class EmotionClient {
         ) }
     }
 
+//    suspend fun register(
+//        username: String,
+//        password: String,
+//        email: String,
+//        firstName: String,
+//        lastName: String,
+//        subteam: Subteam,
+//        phone: Int,
+//        grade: Int,
+//    ): User? {
+//
+//    }
 }

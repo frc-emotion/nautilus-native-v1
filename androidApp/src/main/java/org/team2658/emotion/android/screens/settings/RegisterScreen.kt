@@ -17,6 +17,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -44,8 +45,8 @@ fun RegisterScreen(
         firstName: String,
         lastName: String,
         subteam: Subteam,
+        phone: String,
         grade: Int,
-        phone: Int,
     ) -> Unit,
     onLogin: () -> Unit
 ) {
@@ -56,7 +57,7 @@ fun RegisterScreen(
     var firstName by remember { mutableStateOf("") }
     var lastName by remember { mutableStateOf("") }
     var subteam by remember { mutableStateOf(Subteam.NONE) }
-    var grade by remember { mutableStateOf(-1) }
+    var grade by remember { mutableIntStateOf(-1) }
     var phone by remember { mutableStateOf("") }
     val context = LocalContext.current
 
@@ -166,8 +167,8 @@ fun RegisterScreen(
                         firstName,
                         lastName,
                         subteam,
+                        phone,
                         grade,
-                        parseInt(phone)
                     )
                 }
             } else {

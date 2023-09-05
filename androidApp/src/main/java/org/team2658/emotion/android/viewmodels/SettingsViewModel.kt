@@ -4,11 +4,7 @@ import android.content.SharedPreferences
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
-import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.ViewModelProvider
-import androidx.lifecycle.createSavedStateHandle
-import androidx.lifecycle.viewmodel.CreationExtras
 import kotlinx.coroutines.delay
 import org.team2658.apikt.EmotionClient
 import org.team2658.emotion.userauth.AccountType
@@ -17,16 +13,18 @@ import org.team2658.emotion.userauth.Role
 import org.team2658.emotion.userauth.Subteam
 import org.team2658.emotion.userauth.User
 import org.team2658.emotion.userauth.UserPermissions
-import kotlin.reflect.KProperty
 
 class SettingsViewModel(private val ktorClient: EmotionClient, private val sharedPref: SharedPreferences) : ViewModel() {
-    //TODO: user is not persisted between app restarts, so user needs to log back in every time app is launched. fix by persisting user in localstorage
-
-
-
-    //TODO: instantiate with GetUser once implemented
     var user: User? by mutableStateOf(User.fromJSON(sharedPref.getString("user", null)))
         private set
+
+    private fun setThisUser(user: User?) {
+        this.user = user
+        with(sharedPref.edit()) {
+            putString("user", user?.toJSON())
+            apply()
+        }
+    }
 
     var authState: AuthState by mutableStateOf(
         when(this.user?.accountType) {
@@ -38,89 +36,13 @@ class SettingsViewModel(private val ktorClient: EmotionClient, private val share
         private set
 
     suspend fun login(username: String, password: String) {
-//        //TODO: user = GetUser()
-//        delay(100L) //to simulate waiting for network response
-//        user = when (username.trim()) {
-//            "nova", "novamondal", "admin" -> User(
-//                "Nova",
-//                "Mondal",
-//                username,
-//                "email@example.com",
-//                69696969,
-//                accountType = AccountType.ADMIN,
-//                roles = listOf(
-//                    Role(
-//                        "admin", UserPermissions(
-//                            standScouting = true,
-//                            inPitScouting = true,
-//                            viewScoutingData = true,
-//                            makeAnnouncements = true,
-//                            makeBlogPosts = true,
-//                            verifyAllAttendance = true,
-//                            verifySubteamAttendance = true,
-//                        )
-//                    )
-//                ),
-//                subteam = Subteam.SOFTWARE,
-//                grade = 12,
-//                token = "adfkasjfasjf",
-//            )
-//
-//
-//            "scout", "scouter", "test" -> User(
-//                "Scouter",
-//                "User",
-//                username,
-//                "email@example.com",
-//                69696969,
-//                accountType = AccountType.BASE,
-//                roles = listOf(
-//                    Role(
-//                        "scout", UserPermissions(
-//                            standScouting = true,
-//                            inPitScouting = true,
-//                            viewScoutingData = true,
-//                        )
-//                    )
-//                ),
-//                subteam = Subteam.SOFTWARE,
-//                grade = 12,
-//                token = "adfkasjfasjf",
-//            )
-//
-//            else -> User(
-//                "Base",
-//                "User",
-//                username,
-//                "email@example.com",
-//                69696969,
-//                accountType = AccountType.BASE,
-//                roles = listOf(
-//                    Role(
-//                        "scout", UserPermissions()
-//                    )
-//                ),
-//                subteam = Subteam.SOFTWARE,
-//                grade = 12,
-//                token = "adfkasjfasjf",
-//            )
-//        }
-//        authState = AuthState.LOGGED_IN
-        this.user = this.ktorClient.login(username, password)
-        with(sharedPref.edit()) {
-            putString("user", user?.toJSON())
-            apply()
-        }
+        setThisUser(this.ktorClient.login(username, password))
         this.authState = if(this.user != null) AuthState.LOGGED_IN else AuthState.NOT_LOGGED_IN
     }
 
     fun logout() {
         //TODO()
-        this.user = null
-        with(sharedPref.edit()) {
-            putString("user", null)
-            apply()
-        }
+        setThisUser(null)
         this.authState = AuthState.NOT_LOGGED_IN
     }
 
@@ -131,7 +53,7 @@ class SettingsViewModel(private val ktorClient: EmotionClient, private val share
         firstName: String,
         lastName: String,
         subteam: Subteam,
-        phone: Int,
+        phone: String,
         grade: Int,
         //TODO: parent and advisor account types
     ) {
@@ -139,11 +61,11 @@ class SettingsViewModel(private val ktorClient: EmotionClient, private val share
         //TODO: user = GetUser()
         delay(200L)
         user = User(
-            firstName,
-            lastName,
-            username,
-            email,
-            phone,
+            firstName = firstName,
+            lastName = lastName,
+            username = username,
+            email = email,
+            phoneNumber = phone,
             accountType = AccountType.UNVERIFIED,
             roles = listOf(
                 Role(
@@ -153,6 +75,8 @@ class SettingsViewModel(private val ktorClient: EmotionClient, private val share
             subteam = subteam,
             grade = grade,
             token = null,
+            _id = "-1",
+            attendance = listOf()
         )
         authState = AuthState.AWAITING_VERIFICATION
     }

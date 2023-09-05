@@ -19,8 +19,8 @@ fun NotLoggedInScreen(
         firstName: String,
         lastName: String,
         subteam: Subteam,
+        phone: String,
         grade: Int,
-        phone: Int,
     ) -> Unit
 ) {
     val navController = rememberNavController()

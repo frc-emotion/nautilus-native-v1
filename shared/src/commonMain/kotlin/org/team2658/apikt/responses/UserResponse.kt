@@ -14,9 +14,9 @@ data class UserResponse(
     val token: String? = null,
     val subteam: String? = null,
     val grade: Int? = null,
-    val roles: Array<RoleResponse>? = null,
+    val roles: List<RoleResponse>? = null,
     val accountType: Int? = null, // isAdmin && isVerified are NOT supported. This client was developed for API v2.0.0 and later
-    val attendance: Array<UserAttendance>
+    val attendance: List<UserAttendance>
 //    val accountUpdateVersion: Int? = null,
 //    val socials: Array<String>? = null,
 //    val parents: Array<User>? = null,

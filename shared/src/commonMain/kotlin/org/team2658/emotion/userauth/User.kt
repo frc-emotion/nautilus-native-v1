@@ -67,7 +67,7 @@ data class User(
                     3 -> AccountType.ADMIN
                     else -> AccountType.UNVERIFIED
                 },
-                attendance = usr.attendance.toList(),
+                attendance = usr.attendance,
                 _id = usr._id
             )
         }
@@ -101,14 +101,14 @@ data class User(
                     standScouting = it.permissions.standScouting,
                     viewScoutingData = it.permissions.viewScoutingData
                 )
-            )}.toTypedArray(),
+            )},
             accountType = when(this.accountType) {
                 AccountType.BASE -> 1
                 AccountType.LEAD -> 2
                 AccountType.ADMIN -> 3
                 AccountType.UNVERIFIED -> 0
             },
-            attendance = this.attendance.toTypedArray()
+            attendance = this.attendance
         )
     }
 

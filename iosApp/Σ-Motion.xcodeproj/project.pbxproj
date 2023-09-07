@@ -14,6 +14,9 @@
 		93418D9D2A5BC4D100336A62 /* ScoutingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 93418D9C2A5BC4D100336A62 /* ScoutingView.swift */; };
 		93418DE42A5E362600336A62 /* UserView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 93418DE32A5E362600336A62 /* UserView.swift */; };
 		93418DE62A5E362D00336A62 /* UserBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = 93418DE52A5E362D00336A62 /* UserBar.swift */; };
+		93790E392AA921690003203D /* AttendanceView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 93790E382AA921690003203D /* AttendanceView.swift */; };
+		93790E3B2AA921F40003203D /* loader.swift in Sources */ = {isa = PBXBuildFile; fileRef = 93790E3A2AA921F40003203D /* loader.swift */; };
+		93790E442AAA63EA0003203D /* SwiftNFC in Frameworks */ = {isa = PBXBuildFile; productRef = 93790E432AAA63EA0003203D /* SwiftNFC */; };
 		93B9EAA82A5E5BA900D5B8A8 /* BugReportView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 93B9EAA72A5E5BA900D5B8A8 /* BugReportView.swift */; };
 		93B9EAAA2A5E5BD500D5B8A8 /* AccountView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 93B9EAA92A5E5BD500D5B8A8 /* AccountView.swift */; };
 		93B9EAAD2A5E5D3200D5B8A8 /* ChargedUpMatches.json in Resources */ = {isa = PBXBuildFile; fileRef = 93B9EAAC2A5E5D3200D5B8A8 /* ChargedUpMatches.json */; };
@@ -22,7 +25,6 @@
 		93B9EAB32A5E5D9A00D5B8A8 /* SeasonsData.json in Resources */ = {isa = PBXBuildFile; fileRef = 93B9EAB22A5E5D9A00D5B8A8 /* SeasonsData.json */; };
 		93B9EAC32A5E778C00D5B8A8 /* DirectoryView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 93B9EAC22A5E778C00D5B8A8 /* DirectoryView.swift */; };
 		93B9EAC52A5E779C00D5B8A8 /* User.swift in Sources */ = {isa = PBXBuildFile; fileRef = 93B9EAC42A5E779C00D5B8A8 /* User.swift */; };
-		93B9EAC72A5E77F200D5B8A8 /* UserData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 93B9EAC62A5E77F200D5B8A8 /* UserData.swift */; };
 		93B9EAC92A5E781D00D5B8A8 /* DirectoryBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = 93B9EAC82A5E781D00D5B8A8 /* DirectoryBar.swift */; };
 		93B9EACB2A5E800700D5B8A8 /* HomeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 93B9EACA2A5E800700D5B8A8 /* HomeView.swift */; };
 		93B9EACD2A5E801400D5B8A8 /* AdminView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 93B9EACC2A5E801400D5B8A8 /* AdminView.swift */; };
@@ -33,7 +35,6 @@
 		93B9EAE12A65DEB300D5B8A8 /* ChargedUpScoring.swift in Sources */ = {isa = PBXBuildFile; fileRef = 93B9EAE02A65DEB300D5B8A8 /* ChargedUpScoring.swift */; };
 		93B9EAE42A65DEE200D5B8A8 /* EditHistoryV1.swift in Sources */ = {isa = PBXBuildFile; fileRef = 93B9EAE32A65DEE200D5B8A8 /* EditHistoryV1.swift */; };
 		93B9EAE62A65E0FA00D5B8A8 /* UserStateViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 93B9EAE52A65E0FA00D5B8A8 /* UserStateViewModel.swift */; };
-		93B9EAEB2A65F6B400D5B8A8 /* YearViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 93B9EAEA2A65F6B400D5B8A8 /* YearViewModel.swift */; };
 		93B9EAED2A67211600D5B8A8 /* ForgotPasswordView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 93B9EAEC2A67211600D5B8A8 /* ForgotPasswordView.swift */; };
 		93B9EAF02A67255600D5B8A8 /* RapidReactMatch.swift in Sources */ = {isa = PBXBuildFile; fileRef = 93B9EAEF2A67255600D5B8A8 /* RapidReactMatch.swift */; };
 /* End PBXBuildFile section */
@@ -61,6 +62,9 @@
 		93418D9C2A5BC4D100336A62 /* ScoutingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScoutingView.swift; sourceTree = "<group>"; };
 		93418DE32A5E362600336A62 /* UserView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserView.swift; sourceTree = "<group>"; };
 		93418DE52A5E362D00336A62 /* UserBar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserBar.swift; sourceTree = "<group>"; };
+		93790E382AA921690003203D /* AttendanceView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AttendanceView.swift; sourceTree = "<group>"; };
+		93790E3A2AA921F40003203D /* loader.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = loader.swift; path = iosApp/Helpers/loader.swift; sourceTree = SOURCE_ROOT; };
+		93790E3C2AA92D800003203D /* Σ-Motion.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = "Σ-Motion.entitlements"; sourceTree = "<group>"; };
 		93B9EAA72A5E5BA900D5B8A8 /* BugReportView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BugReportView.swift; sourceTree = "<group>"; };
 		93B9EAA92A5E5BD500D5B8A8 /* AccountView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AccountView.swift; sourceTree = "<group>"; };
 		93B9EAAC2A5E5D3200D5B8A8 /* ChargedUpMatches.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = ChargedUpMatches.json; sourceTree = "<group>"; };
@@ -69,7 +73,6 @@
 		93B9EAB22A5E5D9A00D5B8A8 /* SeasonsData.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = SeasonsData.json; sourceTree = "<group>"; };
 		93B9EAC22A5E778C00D5B8A8 /* DirectoryView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DirectoryView.swift; sourceTree = "<group>"; };
 		93B9EAC42A5E779C00D5B8A8 /* User.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = User.swift; sourceTree = "<group>"; };
-		93B9EAC62A5E77F200D5B8A8 /* UserData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserData.swift; sourceTree = "<group>"; };
 		93B9EAC82A5E781D00D5B8A8 /* DirectoryBar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DirectoryBar.swift; sourceTree = "<group>"; };
 		93B9EACA2A5E800700D5B8A8 /* HomeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeView.swift; sourceTree = "<group>"; };
 		93B9EACC2A5E801400D5B8A8 /* AdminView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AdminView.swift; sourceTree = "<group>"; };
@@ -80,7 +83,6 @@
 		93B9EAE02A65DEB300D5B8A8 /* ChargedUpScoring.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChargedUpScoring.swift; sourceTree = "<group>"; };
 		93B9EAE32A65DEE200D5B8A8 /* EditHistoryV1.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EditHistoryV1.swift; sourceTree = "<group>"; };
 		93B9EAE52A65E0FA00D5B8A8 /* UserStateViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserStateViewModel.swift; sourceTree = "<group>"; };
-		93B9EAEA2A65F6B400D5B8A8 /* YearViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = YearViewModel.swift; sourceTree = "<group>"; };
 		93B9EAEC2A67211600D5B8A8 /* ForgotPasswordView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ForgotPasswordView.swift; sourceTree = "<group>"; };
 		93B9EAEF2A67255600D5B8A8 /* RapidReactMatch.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RapidReactMatch.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -90,6 +92,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				93790E442AAA63EA0003203D /* SwiftNFC in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -107,6 +110,7 @@
 		7555FF72242A565900829871 = {
 			isa = PBXGroup;
 			children = (
+				93790E3C2AA92D800003203D /* Σ-Motion.entitlements */,
 				7555FF7D242A565900829871 /* iosApp */,
 				7555FF7C242A565900829871 /* Products */,
 				7555FFB0242A642200829871 /* Frameworks */,
@@ -124,6 +128,7 @@
 		7555FF7D242A565900829871 /* iosApp */ = {
 			isa = PBXGroup;
 			children = (
+				93790E3F2AA930CC0003203D /* Helpers */,
 				93B9EAB42A5E67A500D5B8A8 /* Models */,
 				93B9EAAB2A5E5D0800D5B8A8 /* Resources */,
 				93418DE02A5E348E00336A62 /* Authentication */,
@@ -132,7 +137,6 @@
 				7555FF8C242A565B00829871 /* Info.plist */,
 				2152FB032600AC8F00CF470E /* iOSApp.swift */,
 				93B9EAE52A65E0FA00D5B8A8 /* UserStateViewModel.swift */,
-				93B9EAEA2A65F6B400D5B8A8 /* YearViewModel.swift */,
 				058557D7273AAEEB004C7B11 /* Preview Content */,
 			);
 			path = iosApp;
@@ -149,6 +153,7 @@
 			isa = PBXGroup;
 			children = (
 				93B9EACA2A5E800700D5B8A8 /* HomeView.swift */,
+				93790E382AA921690003203D /* AttendanceView.swift */,
 				93B9EAE72A65E4C700D5B8A8 /* Scouting */,
 				93B9EAE82A65E4D000D5B8A8 /* Directory */,
 				93B9EACC2A5E801400D5B8A8 /* AdminView.swift */,
@@ -178,6 +183,14 @@
 			path = Authentication;
 			sourceTree = "<group>";
 		};
+		93790E3F2AA930CC0003203D /* Helpers */ = {
+			isa = PBXGroup;
+			children = (
+				93790E3A2AA921F40003203D /* loader.swift */,
+			);
+			path = Helpers;
+			sourceTree = "<group>";
+		};
 		93B9EAAB2A5E5D0800D5B8A8 /* Resources */ = {
 			isa = PBXGroup;
 			children = (
@@ -195,7 +208,6 @@
 				93B9EAEE2A67254500D5B8A8 /* RapidReact */,
 				93B9EAE22A65DEB700D5B8A8 /* ChargedUp */,
 				93B9EAC42A5E779C00D5B8A8 /* User.swift */,
-				93B9EAC62A5E77F200D5B8A8 /* UserData.swift */,
 				93B9EAE32A65DEE200D5B8A8 /* EditHistoryV1.swift */,
 			);
 			path = Models;
@@ -263,6 +275,9 @@
 			dependencies = (
 			);
 			name = "Σ-Motion";
+			packageProductDependencies = (
+				93790E432AAA63EA0003203D /* SwiftNFC */,
+			);
 			productName = iosApp;
 			productReference = 7555FF7B242A565900829871 /* Σ-Motion.app */;
 			productType = "com.apple.product-type.application";
@@ -291,6 +306,9 @@
 				Base,
 			);
 			mainGroup = 7555FF72242A565900829871;
+			packageReferences = (
+				93790E422AAA63EA0003203D /* XCRemoteSwiftPackageReference "SwiftNFC" */,
+			);
 			productRefGroup = 7555FF7C242A565900829871 /* Products */;
 			projectDirPath = "";
 			projectRoot = "";
@@ -343,9 +361,9 @@
 			buildActionMask = 2147483647;
 			files = (
 				93418D9B2A5BC3F300336A62 /* SettingsView.swift in Sources */,
-				93B9EAEB2A65F6B400D5B8A8 /* YearViewModel.swift in Sources */,
 				93B9EAE12A65DEB300D5B8A8 /* ChargedUpScoring.swift in Sources */,
 				93B9EAD52A5F4FB800D5B8A8 /* AccountCreationView.swift in Sources */,
+				93790E392AA921690003203D /* AttendanceView.swift in Sources */,
 				93B9EACB2A5E800700D5B8A8 /* HomeView.swift in Sources */,
 				93418DE62A5E362D00336A62 /* UserBar.swift in Sources */,
 				93418DE42A5E362600336A62 /* UserView.swift in Sources */,
@@ -354,8 +372,8 @@
 				93B9EAC32A5E778C00D5B8A8 /* DirectoryView.swift in Sources */,
 				93418D9D2A5BC4D100336A62 /* ScoutingView.swift in Sources */,
 				93B9EAF02A67255600D5B8A8 /* RapidReactMatch.swift in Sources */,
-				93B9EAC72A5E77F200D5B8A8 /* UserData.swift in Sources */,
 				93B9EAED2A67211600D5B8A8 /* ForgotPasswordView.swift in Sources */,
+				93790E3B2AA921F40003203D /* loader.swift in Sources */,
 				93B9EAD12A5F387A00D5B8A8 /* LoginView.swift in Sources */,
 				93B9EAE42A65DEE200D5B8A8 /* EditHistoryV1.swift in Sources */,
 				93B9EAAA2A5E5BD500D5B8A8 /* AccountView.swift in Sources */,
@@ -492,6 +510,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_INCLUDE_ALL_APPICON_ASSETS = YES;
+				CODE_SIGN_ENTITLEMENTS = "Σ-Motion.entitlements";
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_ASSET_PATHS = "\"iosApp/Preview Content\"";
 				DEVELOPMENT_TEAM = 7L23FMFWGW;
@@ -528,6 +547,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_INCLUDE_ALL_APPICON_ASSETS = YES;
+				CODE_SIGN_ENTITLEMENTS = "Σ-Motion.entitlements";
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_ASSET_PATHS = "\"iosApp/Preview Content\"";
 				DEVELOPMENT_TEAM = 7L23FMFWGW;
@@ -581,6 +601,25 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		93790E422AAA63EA0003203D /* XCRemoteSwiftPackageReference "SwiftNFC" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/1998code/SwiftNFC";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 1.0.0;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		93790E432AAA63EA0003203D /* SwiftNFC */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 93790E422AAA63EA0003203D /* XCRemoteSwiftPackageReference "SwiftNFC" */;
+			productName = SwiftNFC;
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = 7555FF73242A565900829871 /* Project object */;
 }

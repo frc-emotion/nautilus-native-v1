@@ -30,10 +30,15 @@ struct ApplicationSwitcher: View {
 //                        Label("Home", systemImage: "house.fill")
 //                    }
 //
-                ScoutingView()
-                    .navigationTitle("Scouting")
+//                ScoutingView()
+//                    .navigationTitle("Scouting")
+//                    .tabItem {
+//                        Label("Scouting", systemImage: "chart.bar.doc.horizontal.fill")
+//                    }
+                
+                AttendanceView()
                     .tabItem {
-                        Label("Scouting", systemImage: "chart.bar.doc.horizontal.fill")
+                        Label("Attendance", systemImage: "calendar")
                     }
                 
 //                DirectoryView()

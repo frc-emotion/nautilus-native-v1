@@ -50,6 +50,31 @@ class EmotionClient {
            User.fromSerializable(response)
         }catch(e: Exception) { null }
     }
+
+    suspend fun register(
+        username: String,
+        password: String,
+        email: String,
+        firstName: String,
+        lastName: String,
+        subteam: Subteam,
+        phone: String,
+        grade: Int,
+    ): User? {
+        return try {
+            val response = this.client.submitForm(url = ROUTES.REGISTER, formParameters = parameters {
+                append("username", username)
+                append("password", password)
+                append("email", email)
+                append("firstname", firstName)
+                append("lastname", lastName)
+                append("subteam", subteam.name.lowercase())
+                append("phone", phone)
+                append("grade", grade.toString())
+            }).body<UserResponse>()
+            User.fromSerializable(response)
+        }catch(e: Exception) { null }
+    }
      suspend fun getTest(): ExamplePostResponse {
         return try {
             this.client.get("https://jsonplaceholder.typicode.com/posts/1").body()

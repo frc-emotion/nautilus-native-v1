@@ -68,10 +68,9 @@ fun LabelledTextBoxSingleLine(
                 if (required && text.isBlank()) {
                     Text(text = "* Required")
                 } else if (showError) when (keyboardType) {
-                    KeyboardType.Phone,
                     KeyboardType.Number,
                     KeyboardType.NumberPassword -> {
-                        if (text.toIntOrNull() == null) {
+                        if (text.toLongOrNull() == null) {
                             Text(
                                 text = "Input must be a whole number",
                                 style = MaterialTheme.typography.bodySmall
@@ -99,10 +98,9 @@ fun LabelledTextBoxSingleLine(
                 }
             },
             isError = showError && when (keyboardType) {
-                KeyboardType.Phone,
                 KeyboardType.Number,
                 KeyboardType.NumberPassword -> {
-                    text.toIntOrNull() == null
+                    text.toLongOrNull() == null
                 }
 
                 KeyboardType.Decimal -> {

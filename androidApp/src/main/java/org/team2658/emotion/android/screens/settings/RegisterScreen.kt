@@ -99,7 +99,7 @@ fun RegisterScreen(
             text = phone,
             required = true,
             imeAction = ImeAction.Next,
-            onValueChange = { text -> phone = text },
+            onValueChange = { phone = it },
             keyboardType = KeyboardType.Phone
         )
         Spacer(modifier = Modifier.size(16.dp))
@@ -158,7 +158,7 @@ fun RegisterScreen(
         }
         Spacer(modifier = Modifier.size(32.dp))
         Button(onClick = {
-            if (password == passwordConfirm && phone.toIntOrNull() !== null) {
+            if (password == passwordConfirm) {
                 runBlocking {
                     onRegister(
                         username,

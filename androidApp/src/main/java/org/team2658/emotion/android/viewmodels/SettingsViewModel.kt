@@ -57,27 +57,7 @@ class SettingsViewModel(private val ktorClient: EmotionClient, private val share
         grade: Int,
         //TODO: parent and advisor account types
     ) {
-        //TODO(username, password, email, firstName, lastName)
-        //TODO: user = GetUser()
-        delay(200L)
-        user = User(
-            firstName = firstName,
-            lastName = lastName,
-            username = username,
-            email = email,
-            phoneNumber = phone,
-            accountType = AccountType.UNVERIFIED,
-            roles = listOf(
-                Role(
-                    "scout", UserPermissions()
-                )
-            ),
-            subteam = subteam,
-            grade = grade,
-            token = null,
-            _id = "-1",
-            attendance = listOf()
-        )
-        authState = AuthState.AWAITING_VERIFICATION
+        setThisUser(this.ktorClient.register(username, password, email, firstName, lastName, subteam, phone, grade))
+        authState = if(this.user != null) AuthState.AWAITING_VERIFICATION else AuthState.NOT_LOGGED_IN
     }
 }

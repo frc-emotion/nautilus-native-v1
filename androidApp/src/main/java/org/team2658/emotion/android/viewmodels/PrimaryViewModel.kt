@@ -34,6 +34,10 @@ class PrimaryViewModel(private val ktorClient: EmotionClient, private val shared
     )
         private set
 
+    fun getClient(): EmotionClient {
+        return this.ktorClient
+    }
+
     suspend fun login(username: String, password: String) {
         setThisUser(this.ktorClient.login(username, password))
         this.authState = if(this.user != null) AuthState.LOGGED_IN else AuthState.NOT_LOGGED_IN

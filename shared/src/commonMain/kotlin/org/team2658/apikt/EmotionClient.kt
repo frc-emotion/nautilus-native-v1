@@ -111,13 +111,6 @@ class EmotionClient {
 //                        "createdBy" to user.username
 //                    })
 //                }.body<Meeting>()
-            } catch(e: ClientRequestException){
-                println(e.message)
-                null
-            }
-            catch(e: ServerResponseException) {
-                println(e.message)
-                null
             }
             catch (e: Exception) {
                 println("Issue with request")
@@ -125,6 +118,30 @@ class EmotionClient {
                 null }
         }
         println("issue with params")
+        return null
+    }
+
+    suspend fun attendMeeting(
+        user: User?,
+        meetingId: String,
+        tapTime: Long,
+    ): User? {
+        if(user != null && user.token?.isNotBlank() == true && user.accountType != AccountType.UNVERIFIED ) {
+            return try {
+                val response = this.client.submitForm(url = ROUTES.ATTEND_MEETING, formParameters = parameters {
+                    append("userId", user._id)
+                    append("meetingId", meetingId)
+                    append("tapTime", tapTime.toString())
+                }) {
+                    header(HttpHeaders.Authorization, "Bearer ${user.token}")
+                }.body<UserResponse>()
+                User.fromSerializable(response)
+            } catch(e: Exception) {
+                println("Issue with request")
+                println(e.message)
+                null
+            }
+        }
         return null
     }
      suspend fun getTest(): ExamplePostResponse {

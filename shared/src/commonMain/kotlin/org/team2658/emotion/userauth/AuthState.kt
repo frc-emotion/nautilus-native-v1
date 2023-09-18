@@ -1,4 +1,4 @@
-package org.team2658.emotion
+package org.team2658.emotion.userauth
 
 enum class AuthState {
     LOGGED_IN,

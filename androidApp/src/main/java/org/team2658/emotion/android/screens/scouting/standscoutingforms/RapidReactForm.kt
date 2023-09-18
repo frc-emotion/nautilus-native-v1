@@ -18,13 +18,13 @@ import androidx.compose.ui.unit.dp
 import org.team2658.emotion.android.ui.composables.LabelledTextBoxSingleLine
 import org.team2658.emotion.android.ui.composables.NumberInput
 import org.team2658.emotion.android.ui.composables.YesNoSelector
-import org.team2658.emotion.android.viewmodels.SettingsViewModel
+import org.team2658.emotion.android.viewmodels.PrimaryViewModel
 import org.team2658.emotion.android.viewmodels.StandScoutingViewModel
 import org.team2658.emotion.scouting.scoutingdata.RapidReact
 
 @Composable
 fun RapidReactForm(
-    settingsViewModel: SettingsViewModel,
+    primaryViewModel: PrimaryViewModel,
     scoutingViewModel: StandScoutingViewModel
 ) {
     var leftTarmac by rememberSaveable { mutableStateOf<Boolean?>(null) }
@@ -77,7 +77,7 @@ fun RapidReactForm(
         competitions = competitions,
         onFormSubmit = { data ->
             scoutingViewModel.submitRapidReact(
-                user = settingsViewModel.user,
+                user = primaryViewModel.user,
                 data = RapidReact(
                     //no need to check for null safety or validity of inputs here
                     //this function will only be called if inputOk is true

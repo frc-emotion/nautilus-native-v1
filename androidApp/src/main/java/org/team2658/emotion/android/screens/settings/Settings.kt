@@ -1,15 +1,13 @@
 package org.team2658.emotion.android.screens.settings
 
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.tooling.preview.Preview
 import org.team2658.emotion.userauth.AuthState
-import org.team2658.emotion.android.MainTheme
 import org.team2658.emotion.android.ui.composables.Screen
-import org.team2658.emotion.android.viewmodels.SettingsViewModel
+import org.team2658.emotion.android.viewmodels.PrimaryViewModel
 
 
 @Composable
-fun SettingsScreen(viewModel: SettingsViewModel) {
+fun SettingsScreen(viewModel: PrimaryViewModel) {
     Screen {
         when(viewModel.authState) {
             AuthState.NOT_LOGGED_IN -> NotLoggedInScreen(viewModel::login, viewModel::register)

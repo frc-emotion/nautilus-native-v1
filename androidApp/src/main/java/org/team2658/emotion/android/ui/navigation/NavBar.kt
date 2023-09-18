@@ -9,12 +9,12 @@ import androidx.compose.runtime.getValue
 import androidx.navigation.NavController
 import androidx.navigation.NavDestination.Companion.hierarchy
 import androidx.navigation.compose.currentBackStackEntryAsState
-import org.team2658.emotion.android.viewmodels.SettingsViewModel
+import org.team2658.emotion.android.viewmodels.PrimaryViewModel
 import org.team2658.emotion.toCapitalized
 import org.team2658.emotion.userauth.AccountType
 
 @Composable
-fun NavBar(navController: NavController, viewModel: SettingsViewModel) {
+fun NavBar(navController: NavController, viewModel: PrimaryViewModel) {
     val backStackEntry by navController.currentBackStackEntryAsState()
     val currentDestination = backStackEntry?.destination
     val items = when {

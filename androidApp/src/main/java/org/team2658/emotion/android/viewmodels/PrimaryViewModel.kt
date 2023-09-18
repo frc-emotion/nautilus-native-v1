@@ -5,16 +5,15 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
-import kotlinx.coroutines.delay
 import org.team2658.apikt.EmotionClient
+import org.team2658.emotion.attendance.Meeting
 import org.team2658.emotion.userauth.AccountType
 import org.team2658.emotion.userauth.AuthState
-import org.team2658.emotion.userauth.Role
 import org.team2658.emotion.userauth.Subteam
 import org.team2658.emotion.userauth.User
-import org.team2658.emotion.userauth.UserPermissions
+import java.util.Date
 
-class SettingsViewModel(private val ktorClient: EmotionClient, private val sharedPref: SharedPreferences) : ViewModel() {
+class PrimaryViewModel(private val ktorClient: EmotionClient, private val sharedPref: SharedPreferences) : ViewModel() {
     var user: User? by mutableStateOf(User.fromJSON(sharedPref.getString("user", null)))
         private set
 
@@ -59,5 +58,16 @@ class SettingsViewModel(private val ktorClient: EmotionClient, private val share
     ) {
         setThisUser(this.ktorClient.register(username, password, email, firstName, lastName, subteam, phone, grade))
         authState = if(this.user != null) AuthState.AWAITING_VERIFICATION else AuthState.NOT_LOGGED_IN
+    }
+
+    suspend fun testMeeting(): Meeting? {
+        return this.ktorClient.createMeeting(
+            user = this.user,
+            startTime = 0,
+            endTime = 1695075737873L,
+            type = "Test Meeting",
+            description = "This is a test meeting",
+            value = 1
+        )
     }
 }

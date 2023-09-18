@@ -12,18 +12,18 @@ import org.team2658.emotion.android.screens.admin.AdminScreen
 import org.team2658.emotion.android.screens.home.HomeScreen
 import org.team2658.emotion.android.screens.scouting.ScoutingScreen
 import org.team2658.emotion.android.screens.settings.SettingsScreen
-import org.team2658.emotion.android.viewmodels.SettingsViewModel
+import org.team2658.emotion.android.viewmodels.PrimaryViewModel
 import org.team2658.emotion.android.viewmodels.StandScoutingViewModel
 
 @Composable
 fun LoggedInNavigator(
-    settingsViewModel: SettingsViewModel,
+    primaryViewModel: PrimaryViewModel,
     scoutingViewModel: StandScoutingViewModel,
     ktorClient: EmotionClient
 ) {
     val navController = rememberNavController();
 
-    Scaffold(bottomBar = { NavBar(navController, settingsViewModel) }) { padding ->
+    Scaffold(bottomBar = { NavBar(navController, primaryViewModel) }) { padding ->
         NavHost(
             navController = navController,
             startDestination = AppScreens.HOME.name,
@@ -33,13 +33,13 @@ fun LoggedInNavigator(
                 HomeScreen(ktorClient)
             }
             composable(AppScreens.SETTINGS.name) {
-                SettingsScreen(settingsViewModel)
+                SettingsScreen(primaryViewModel)
             }
             composable(AppScreens.ADMIN.name) {
-                AdminScreen()
+                AdminScreen(primaryViewModel)
             }
             composable(AppScreens.SCOUTING.name) {
-                ScoutingScreen(scoutingViewModel, settingsViewModel)
+                ScoutingScreen(scoutingViewModel, primaryViewModel)
             }
         }
     }

@@ -2,7 +2,6 @@ package org.team2658.emotion.android
 
 import android.content.SharedPreferences
 import android.os.Bundle
-import android.preference.PreferenceManager.getDefaultSharedPreferences
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.viewModels
@@ -14,17 +13,13 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
-import androidx.lifecycle.createSavedStateHandle
-import androidx.lifecycle.viewmodel.CreationExtras
 import androidx.lifecycle.viewmodel.compose.viewModel
-import androidx.lifecycle.viewmodel.viewModelFactory
 import org.team2658.apikt.EmotionClient
 import org.team2658.emotion.android.screens.settings.SettingsScreen
 import org.team2658.emotion.android.ui.navigation.LoggedInNavigator
-import org.team2658.emotion.android.viewmodels.SettingsViewModel
+import org.team2658.emotion.android.viewmodels.PrimaryViewModel
 import org.team2658.emotion.android.viewmodels.StandScoutingViewModel
 import org.team2658.emotion.userauth.AuthState
 
@@ -37,23 +32,23 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         setContent {
             val sharedPrefs: SharedPreferences = LocalContext.current.getSharedPreferences("org.team2658.emotion.android", MODE_PRIVATE)
-            val settingsViewModel = viewModel<SettingsViewModel>(
+            val primaryViewModel = viewModel<PrimaryViewModel>(
                 factory = object: ViewModelProvider.Factory {
                     @Suppress("UNCHECKED_CAST")
                     override fun <T : ViewModel> create(
                         modelClass: Class<T>,
                     ):T {
-                        return SettingsViewModel(ktorClient, sharedPrefs) as T
+                        return PrimaryViewModel(ktorClient, sharedPrefs) as T
                     }
                 }
             )
             MainTheme {
-                if (settingsViewModel.authState == AuthState.LOGGED_IN) {
-                    LoggedInNavigator(settingsViewModel, scoutingViewModel, ktorClient)
+                if (primaryViewModel.authState == AuthState.LOGGED_IN) {
+                    LoggedInNavigator(primaryViewModel, scoutingViewModel, ktorClient)
                 } else {
                     Scaffold { padding ->
                         Box(modifier = Modifier.padding(padding)) {
-                            SettingsScreen(settingsViewModel)
+                            SettingsScreen(primaryViewModel)
                         }
                     }
                 }

@@ -2,18 +2,26 @@ package org.team2658.apikt
 
 import io.ktor.client.HttpClient
 import io.ktor.client.call.body
+import io.ktor.client.plugins.ClientRequestException
+import io.ktor.client.plugins.ServerResponseException
 import io.ktor.client.plugins.contentnegotiation.ContentNegotiation
 import io.ktor.client.plugins.defaultRequest
 import io.ktor.client.request.forms.submitForm
 import io.ktor.client.request.get
+import io.ktor.client.request.header
 import io.ktor.client.request.post
+import io.ktor.client.request.setBody
+import io.ktor.client.request.url
 import io.ktor.http.ContentType
+import io.ktor.http.HttpHeaders
 import io.ktor.http.contentType
+import io.ktor.http.headers
 import io.ktor.http.parameters
 import io.ktor.serialization.kotlinx.json.json
 import kotlinx.serialization.json.Json
 import org.team2658.apikt.responses.ExamplePostResponse
 import org.team2658.apikt.responses.UserResponse
+import org.team2658.emotion.attendance.Meeting
 import org.team2658.emotion.userauth.AccountType
 import org.team2658.emotion.userauth.Role
 import org.team2658.emotion.userauth.Subteam
@@ -74,6 +82,50 @@ class EmotionClient {
             }).body<UserResponse>()
             User.fromSerializable(response)
         }catch(e: Exception) { null }
+    }
+
+    suspend fun createMeeting(user: User?, startTime: Long, endTime: Long, type: String, description: String, value: Int): Meeting? {
+        if(user != null && user.token?.isNotBlank() == true &&( user.accountType == AccountType.ADMIN || (user.accountType == AccountType.LEAD && user.permissions.verifyAllAttendance))){
+            println(user.token)
+            return try {
+                this.client.submitForm(url = ROUTES.CREATE_MEETING, formParameters = parameters {
+                    append("createdBy", user.username)
+                    append("startTime", startTime.toString())
+                    append("endTime", endTime.toString())
+                    append("type", type)
+                    append("description", description)
+                    append("value", value.toString())
+                }){
+                    header(HttpHeaders.Authorization, "Bearer ${user.token}")
+                }.body<Meeting>()
+//                this.client.post {
+//                    url(ROUTES.CREATE_MEETING)
+//                    header(HttpHeaders.Authorization, "Bearer ${user.token}")
+//                    contentType(ContentType.Application.Json)
+//                    setBody(Json {
+//                        "startTime" to startTime
+//                        "endTime" to endTime
+//                        "type" to type
+//                        "description" to description
+//                        "value" to value
+//                        "createdBy" to user.username
+//                    })
+//                }.body<Meeting>()
+            } catch(e: ClientRequestException){
+                println(e.message)
+                null
+            }
+            catch(e: ServerResponseException) {
+                println(e.message)
+                null
+            }
+            catch (e: Exception) {
+                println("Issue with request")
+                println(e.message)
+                null }
+        }
+        println("issue with params")
+        return null
     }
      suspend fun getTest(): ExamplePostResponse {
         return try {

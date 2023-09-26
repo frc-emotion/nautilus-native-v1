@@ -14,6 +14,7 @@
 		93418D9D2A5BC4D100336A62 /* ScoutingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 93418D9C2A5BC4D100336A62 /* ScoutingView.swift */; };
 		93418DE42A5E362600336A62 /* UserView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 93418DE32A5E362600336A62 /* UserView.swift */; };
 		93418DE62A5E362D00336A62 /* UserBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = 93418DE52A5E362D00336A62 /* UserBar.swift */; };
+		93719C882AC0B35300E29446 /* CircularProgressView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 93719C872AC0B35300E29446 /* CircularProgressView.swift */; };
 		93790E392AA921690003203D /* AttendanceView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 93790E382AA921690003203D /* AttendanceView.swift */; };
 		93790E3B2AA921F40003203D /* loader.swift in Sources */ = {isa = PBXBuildFile; fileRef = 93790E3A2AA921F40003203D /* loader.swift */; };
 		93790E442AAA63EA0003203D /* SwiftNFC in Frameworks */ = {isa = PBXBuildFile; productRef = 93790E432AAA63EA0003203D /* SwiftNFC */; };
@@ -49,6 +50,7 @@
 		93418D9C2A5BC4D100336A62 /* ScoutingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScoutingView.swift; sourceTree = "<group>"; };
 		93418DE32A5E362600336A62 /* UserView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserView.swift; sourceTree = "<group>"; };
 		93418DE52A5E362D00336A62 /* UserBar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserBar.swift; sourceTree = "<group>"; };
+		93719C872AC0B35300E29446 /* CircularProgressView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CircularProgressView.swift; sourceTree = "<group>"; };
 		93790E382AA921690003203D /* AttendanceView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AttendanceView.swift; sourceTree = "<group>"; };
 		93790E3A2AA921F40003203D /* loader.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = loader.swift; path = iosApp/Helpers/loader.swift; sourceTree = SOURCE_ROOT; };
 		93790E3C2AA92D800003203D /* Σ-Motion.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = "Σ-Motion.entitlements"; sourceTree = "<group>"; };
@@ -115,6 +117,7 @@
 		7555FF7D242A565900829871 /* iosApp */ = {
 			isa = PBXGroup;
 			children = (
+				93719C842AC0B33200E29446 /* Elements */,
 				93790E3F2AA930CC0003203D /* Helpers */,
 				93B9EAB42A5E67A500D5B8A8 /* Models */,
 				93B9EAAB2A5E5D0800D5B8A8 /* Resources */,
@@ -168,6 +171,14 @@
 				93B9EAEC2A67211600D5B8A8 /* ForgotPasswordView.swift */,
 			);
 			path = Authentication;
+			sourceTree = "<group>";
+		};
+		93719C842AC0B33200E29446 /* Elements */ = {
+			isa = PBXGroup;
+			children = (
+				93719C872AC0B35300E29446 /* CircularProgressView.swift */,
+			);
+			path = Elements;
 			sourceTree = "<group>";
 		};
 		93790E3F2AA930CC0003203D /* Helpers */ = {
@@ -356,6 +367,7 @@
 				93B9EAA82A5E5BA900D5B8A8 /* BugReportView.swift in Sources */,
 				93B9EAC92A5E781D00D5B8A8 /* DirectoryBar.swift in Sources */,
 				93B9EAC32A5E778C00D5B8A8 /* DirectoryView.swift in Sources */,
+				93719C882AC0B35300E29446 /* CircularProgressView.swift in Sources */,
 				93418D9D2A5BC4D100336A62 /* ScoutingView.swift in Sources */,
 				93B9EAF02A67255600D5B8A8 /* RapidReactMatch.swift in Sources */,
 				93B9EAED2A67211600D5B8A8 /* ForgotPasswordView.swift in Sources */,

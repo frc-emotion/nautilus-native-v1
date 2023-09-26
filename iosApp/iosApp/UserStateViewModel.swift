@@ -7,6 +7,7 @@
 //
 
 import Foundation
+import shared
 
 enum UserStateError: Error {
     case signInError, signOutError, createAccountError
@@ -21,10 +22,23 @@ class UserStateViewModel: ObservableObject {
     func signIn(username: String, password: String) async -> Result<Bool, UserStateError> {
         isBusy = true
         do {
-            try await Task.sleep(nanoseconds: 1_000_000_000)
-            isLoggedIn = true
-            isBusy = false
-            return .success(true)
+            
+            print(username)
+            print(password)
+            
+            let client = EmotionClient()
+            let response = try await client.login(username: username, password: password)
+            
+            if (response != nil) {
+                print(response?.firstName)
+            } else {
+                print("no response")
+            }
+            
+//            try await Task.sleep(nanoseconds: 1_000_000_000)
+//            isLoggedIn = true
+//            isBusy = false
+            return .success(false)
         } catch {
             isBusy = false
             return .failure(.signInError)

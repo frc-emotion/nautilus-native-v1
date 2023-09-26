@@ -8,6 +8,7 @@
 
 import SwiftUI
 import SwiftNFC
+import shared
 
 struct AttendanceView: View {
     
@@ -18,20 +19,24 @@ struct AttendanceView: View {
         NFCR.read()
     }
     
-    func write() {
-        NFCW.msg = NFCR.msg
+    func write(message: String) {
+        NFCW.msg = message
         NFCW.write()
     }
     
     var body: some View {
-        NavigationView {
-           
+        VStack {
+            CircularProgressView(progress: 0.35, defaultColor: Color.green, progressColor: Color.green, innerText: "37")
+                .frame(width: 150, height: 150)
+            
+            Divider()
+                .padding(.vertical, 25)
+            
             Button {
                 read()
             } label: {
                 Text("read")
             }
-
         }
     }
 }

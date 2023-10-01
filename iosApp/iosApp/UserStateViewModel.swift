@@ -29,8 +29,8 @@ class UserStateViewModel: ObservableObject {
             let client = EmotionClient()
             let response = try await client.login(username: username, password: password)
             
-            if (response != nil) {
-                print(response?.firstName)
+            if let response {
+                print(response.firstName)
             } else {
                 print("no response")
             }

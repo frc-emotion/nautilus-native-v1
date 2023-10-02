@@ -26,6 +26,15 @@ class PrimaryViewModel(private val ktorClient: EmotionClient, private val shared
         }
     }
 
+    suspend fun updateMe() {
+        println("Fetching updated user")
+        val updated = this.ktorClient.getMe(this.user)
+            updated?.let {
+                updateUser(it)
+                println("Fetched updated user")
+            }
+    }
+
     var authState: AuthState by mutableStateOf(
         when(this.user?.accountType) {
         AccountType.UNVERIFIED -> AuthState.AWAITING_VERIFICATION

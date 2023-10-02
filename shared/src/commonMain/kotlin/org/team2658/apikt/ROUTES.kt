@@ -6,4 +6,5 @@ object ROUTES {
     const val REGISTER = "$BASE/users/register"
     const val CREATE_MEETING = "$BASE/attendance/createMeeting"
     const val ATTEND_MEETING = "$BASE/attendance/attendMeeting"
+    const val ME = "$BASE/users/me"
 }

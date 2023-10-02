@@ -22,6 +22,8 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewmodel.compose.viewModel
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.runBlocking
 import org.team2658.apikt.EmotionClient
 import org.team2658.emotion.android.screens.settings.SettingsScreen
 import org.team2658.emotion.android.ui.composables.Screen
@@ -35,10 +37,12 @@ class MainActivity : ComponentActivity() {
     private val scoutingViewModel by viewModels<StandScoutingViewModel>()
     private val ktorClient = EmotionClient()
     private val nfcViewmodel by viewModels<NFC_Viewmodel>()
+    private var init = false
 //    private val sharedPrefs = getPreferences(MODE_PRIVATE)
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        init = true
         println("onCreate")
         handleNFCIntent(intent)
         setContent {
@@ -53,6 +57,12 @@ class MainActivity : ComponentActivity() {
                     }
                 }
             )
+            if(init) {
+                runBlocking {
+                    primaryViewModel.updateMe()
+                }
+                init = false
+            }
             MainTheme {
                 if (primaryViewModel.authState == AuthState.LOGGED_IN) {
                     LoggedInNavigator(primaryViewModel, scoutingViewModel, ktorClient, nfcViewmodel)

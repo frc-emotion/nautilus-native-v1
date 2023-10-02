@@ -156,6 +156,19 @@ class EmotionClient {
         ) }
     }
 
+    suspend fun getMe(user: User?): User? {
+        if(user == null) return null
+        return try {
+            val response = this.client.get(ROUTES.ME) {
+                header(HttpHeaders.Authorization, "Bearer ${user.token}")
+            }.body<UserResponse>()
+            User.fromSerializable(response)
+        } catch(e: Exception) {
+            println(e)
+            null
+        }
+    }
+
 //    suspend fun register(
 //        username: String,
 //        password: String,

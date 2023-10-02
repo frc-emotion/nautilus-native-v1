@@ -94,11 +94,11 @@ class MainActivity : ComponentActivity() {
 
     override fun onNewIntent(intent: Intent?) {
         super.onNewIntent(intent)
+        println("New Intent")
        handleNFCIntent(intent)
     }
 
     private fun handleNFCIntent(intent: Intent?) {
-        println("New Intent")
         if(intent?.action == NfcAdapter.ACTION_TAG_DISCOVERED || intent?.action == NfcAdapter.ACTION_NDEF_DISCOVERED) {
             when {
                 SDK_INT >= 33 -> {

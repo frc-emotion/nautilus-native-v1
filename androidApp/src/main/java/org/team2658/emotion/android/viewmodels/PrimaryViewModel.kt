@@ -11,6 +11,8 @@ import org.team2658.emotion.userauth.AccountType
 import org.team2658.emotion.userauth.AuthState
 import org.team2658.emotion.userauth.Subteam
 import org.team2658.emotion.userauth.User
+import kotlin.properties.ReadWriteProperty
+import kotlin.reflect.KProperty
 
 class PrimaryViewModel(private val ktorClient: EmotionClient, private val sharedPref: SharedPreferences) : ViewModel() {
     var user: User? by mutableStateOf(User.fromJSON(sharedPref.getString("user", null)))
@@ -73,4 +75,16 @@ class PrimaryViewModel(private val ktorClient: EmotionClient, private val shared
             value = 1
         )
     }
+
+    var meeting: Meeting? by mutableStateOf(Meeting.fromJSON(sharedPref.getString("createdMeeting", null)))
+        private set
+
+    fun updateMeeting(meeting: Meeting?) {
+        this.meeting = meeting
+        with(sharedPref.edit()) {
+            putString("createdMeeting", meeting?.toJson())
+            apply()
+        }
+    }
+
 }

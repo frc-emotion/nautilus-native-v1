@@ -1,5 +1,6 @@
 package org.team2658.emotion.android.screens.scouting
 
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import org.team2658.emotion.android.screens.scouting.standscoutingforms.RapidReactForm
 import org.team2658.emotion.android.ui.composables.Screen
@@ -12,6 +13,7 @@ fun ScoutingScreen(
     primaryViewModel: PrimaryViewModel
 ) {
     Screen {
-        RapidReactForm(scoutingViewModel = scoutingViewModel, primaryViewModel = primaryViewModel)
+//        RapidReactForm(scoutingViewModel = scoutingViewModel, primaryViewModel = primaryViewModel)
+        Text("Scouting functionality is currently not available")
     }
 }

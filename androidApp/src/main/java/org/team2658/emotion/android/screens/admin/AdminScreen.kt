@@ -44,7 +44,7 @@ fun AdminScreen(viewModel: PrimaryViewModel, client: EmotionClient, nfc: NFC_Vie
     val dateState = rememberDatePickerState(initialSelectedDateMillis = LocalDateTime.now().toInstant(
         ZoneOffset.UTC).toEpochMilli(), initialDisplayMode = DisplayMode.Input)
     val startTimeState = rememberTimePickerState(initialHour = LocalDateTime.now().hour)
-    val endTimeState = rememberTimePickerState(initialHour = LocalDateTime.now().hour + meetingValue)
+    val endTimeState = rememberTimePickerState(initialHour = (LocalDateTime.now().hour + meetingValue).coerceAtMost(23))
 
     Screen {
         Text(text = "Create a Meeting or Activate a Tag", style = MaterialTheme.typography.headlineLarge)

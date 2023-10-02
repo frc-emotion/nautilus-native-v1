@@ -56,7 +56,10 @@ class EmotionClient {
                 append("password", password)
             }).body<UserResponse>()
            User.fromSerializable(response)
-        }catch(e: Exception) { null }
+        }catch(e: Exception) {
+            println(e)
+            null
+        }
     }
 
     suspend fun register(

@@ -43,10 +43,8 @@ fun HomeScreen(ktorClient: EmotionClient, nfcViewmodel: NFC_Viewmodel, primaryVi
         Text(text = "Attendance",
             style = MaterialTheme.typography.headlineLarge)
         Spacer(modifier = Modifier.size(32.dp))
-        Box(modifier = Modifier.height(48.dp)) {
-            LinearProgressIndicator(progress = ((primaryViewModel.user?.attendance?.get(0)?.totalHoursLogged?.toFloat()?: 0f) / 36.0f).coerceAtMost(1.0f), modifier = Modifier.fillMaxSize())
-            Text("${primaryViewModel.user?.attendance?.get(0)?.totalHoursLogged} / 36 hours", modifier = Modifier.padding(8.dp), color = MaterialTheme.colorScheme.onPrimary, style = MaterialTheme.typography.titleLarge)
-        }
+            LinearProgressIndicator(progress = ((primaryViewModel.user?.attendance?.get(0)?.totalHoursLogged?.toFloat()?: 0f) / 36.0f).coerceAtMost(1.0f), modifier = Modifier.height(32.dp).fillMaxWidth())
+            Text("${primaryViewModel.user?.attendance?.get(0)?.totalHoursLogged} / 36 hours", modifier = Modifier.padding(8.dp), style = MaterialTheme.typography.titleLarge)
         Spacer(modifier = Modifier.size(16.dp))
         Text(text=tagStatusText, style = MaterialTheme.typography.titleLarge)
         if(tagData != null) {
@@ -67,7 +65,6 @@ fun HomeScreen(ktorClient: EmotionClient, nfcViewmodel: NFC_Viewmodel, primaryVi
                 Text("Log Attendance")
             }
         }
-
         if(showSuccessDialog) {
             AlertDialog(onDismissRequest = {  }, confirmButton = { TextButton(onClick = { showSuccessDialog = false })  {
                 Text("Ok")

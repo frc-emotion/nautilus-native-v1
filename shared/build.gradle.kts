@@ -62,7 +62,7 @@ android {
     namespace = "org.team2658.emotion"
     compileSdk = 34
     defaultConfig {
-        minSdk = 21
+        minSdk = 26
     }
     buildToolsVersion = "34.0.0"
 }

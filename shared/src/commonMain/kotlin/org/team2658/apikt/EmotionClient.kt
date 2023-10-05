@@ -56,7 +56,10 @@ class EmotionClient {
                 append("password", password)
             }).body<UserResponse>()
            User.fromSerializable(response)
-        }catch(e: Exception) { null }
+        }catch(e: Exception) {
+            println(e)
+            null
+        }
     }
 
     suspend fun register(
@@ -154,6 +157,19 @@ class EmotionClient {
             title = "ERROR",
             body = "ERROR"
         ) }
+    }
+
+    suspend fun getMe(user: User?): User? {
+        if(user == null) return null
+        return try {
+            val response = this.client.get(ROUTES.ME) {
+                header(HttpHeaders.Authorization, "Bearer ${user.token}")
+            }.body<UserResponse>()
+            User.fromSerializable(response)
+        } catch(e: Exception) {
+            println(e)
+            null
+        }
     }
 
 //    suspend fun register(

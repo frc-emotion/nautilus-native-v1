@@ -37,9 +37,9 @@ class PrimaryViewModel(private val ktorClient: EmotionClient, private val shared
 
     var authState: AuthState by mutableStateOf(
         when(this.user?.accountType) {
-        AccountType.UNVERIFIED -> AuthState.AWAITING_VERIFICATION
-        AccountType.BASE, AccountType.LEAD, AccountType.ADMIN -> AuthState.LOGGED_IN
-        else -> AuthState.NOT_LOGGED_IN
+            AccountType.UNVERIFIED -> AuthState.AWAITING_VERIFICATION
+            AccountType.BASE, AccountType.LEAD, AccountType.ADMIN, AccountType.SUPERUSER -> AuthState.LOGGED_IN
+            null -> AuthState.NOT_LOGGED_IN
         }
     )
         private set

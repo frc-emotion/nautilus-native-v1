@@ -8,7 +8,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import org.team2658.apikt.EmotionClient
-import org.team2658.emotion.android.screens.admin.AdminScreen
+import org.team2658.emotion.android.screens.admin.LeadsScreen
 import org.team2658.emotion.android.screens.home.HomeScreen
 import org.team2658.emotion.android.screens.scouting.ScoutingScreen
 import org.team2658.emotion.android.screens.settings.SettingsScreen
@@ -37,8 +37,8 @@ fun LoggedInNavigator(
             composable(AppScreens.SETTINGS.name) {
                 SettingsScreen(primaryViewModel)
             }
-            composable(AppScreens.ADMIN.name) {
-                AdminScreen(viewModel = primaryViewModel, client = ktorClient, nfc = nfcViewmodel )
+            composable(AppScreens.LEADS.name) {
+                LeadsScreen(viewModel = primaryViewModel, client = ktorClient, nfc = nfcViewmodel )
             }
             composable(AppScreens.SCOUTING.name) {
                 ScoutingScreen(scoutingViewModel, primaryViewModel)

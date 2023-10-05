@@ -36,11 +36,25 @@ data class UserPermissions(
                 makeAnnouncements = list[6].value,
             )
         }
+
+        fun adminPermissions(): UserPermissions {
+            return UserPermissions(
+                standScouting = true,
+                viewScoutingData = true,
+                inPitScouting = true,
+                makeBlogPosts = true,
+                verifySubteamAttendance = true,
+                verifyAllAttendance = true,
+                makeAnnouncements = true,
+            )
+        }
     }
 }
 
 
 fun getPermissions(user: User): UserPermissions {
+
+    if(user.accountType == AccountType.ADMIN || user.accountType == AccountType.SUPERUSER) return UserPermissions.adminPermissions()
 
     val permissions = UserPermissions().asList().toMutableList()
 

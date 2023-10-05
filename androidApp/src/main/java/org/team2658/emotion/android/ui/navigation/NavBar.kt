@@ -18,10 +18,10 @@ fun NavBar(navController: NavController, viewModel: PrimaryViewModel) {
     val backStackEntry by navController.currentBackStackEntryAsState()
     val currentDestination = backStackEntry?.destination
     val items = when {
-        (viewModel.user?.accountType == AccountType.ADMIN) -> listOf(
+        (viewModel.user?.accountType == AccountType.ADMIN || viewModel.user?.accountType == AccountType.SUPERUSER || viewModel.user?.accountType == AccountType.LEAD) -> listOf(
             AppScreens.HOME,
             AppScreens.SCOUTING,
-            AppScreens.ADMIN,
+            AppScreens.LEADS,
             AppScreens.SETTINGS
         )
 

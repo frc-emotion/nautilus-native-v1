@@ -11,18 +11,28 @@ import org.team2658.emotion.userauth.AccountType
 import org.team2658.emotion.userauth.AuthState
 import org.team2658.emotion.userauth.Subteam
 import org.team2658.emotion.userauth.User
-import java.util.Date
+import kotlin.properties.ReadWriteProperty
+import kotlin.reflect.KProperty
 
 class PrimaryViewModel(private val ktorClient: EmotionClient, private val sharedPref: SharedPreferences) : ViewModel() {
     var user: User? by mutableStateOf(User.fromJSON(sharedPref.getString("user", null)))
         private set
 
-    private fun setThisUser(user: User?) {
+    fun updateUser(user: User?) {
         this.user = user
         with(sharedPref.edit()) {
             putString("user", user?.toJSON())
             apply()
         }
+    }
+
+    suspend fun updateMe() {
+        println("Fetching updated user")
+        val updated = this.ktorClient.getMe(this.user)
+            updated?.let {
+                updateUser(it)
+                println("Fetched updated user")
+            }
     }
 
     var authState: AuthState by mutableStateOf(
@@ -39,13 +49,13 @@ class PrimaryViewModel(private val ktorClient: EmotionClient, private val shared
     }
 
     suspend fun login(username: String, password: String) {
-        setThisUser(this.ktorClient.login(username, password))
+        updateUser(this.ktorClient.login(username, password))
         this.authState = if(this.user != null) AuthState.LOGGED_IN else AuthState.NOT_LOGGED_IN
     }
 
     fun logout() {
         //TODO()
-        setThisUser(null)
+        updateUser(null)
         this.authState = AuthState.NOT_LOGGED_IN
     }
 
@@ -60,7 +70,7 @@ class PrimaryViewModel(private val ktorClient: EmotionClient, private val shared
         grade: Int,
         //TODO: parent and advisor account types
     ) {
-        setThisUser(this.ktorClient.register(username, password, email, firstName, lastName, subteam, phone, grade))
+        updateUser(this.ktorClient.register(username, password, email, firstName, lastName, subteam, phone, grade))
         authState = if(this.user != null) AuthState.AWAITING_VERIFICATION else AuthState.NOT_LOGGED_IN
     }
 
@@ -74,4 +84,16 @@ class PrimaryViewModel(private val ktorClient: EmotionClient, private val shared
             value = 1
         )
     }
+
+    var meeting: Meeting? by mutableStateOf(Meeting.fromJSON(sharedPref.getString("createdMeeting", null)))
+        private set
+
+    fun updateMeeting(meeting: Meeting?) {
+        this.meeting = meeting
+        with(sharedPref.edit()) {
+            putString("createdMeeting", meeting?.toJson())
+            apply()
+        }
+    }
+
 }

@@ -42,7 +42,7 @@ data class User(
                 email = usr.email,
                 phoneNumber = usr.phone?: "",
                 token = usr.token,
-                subteam = when(usr.subteam) {
+                subteam = when(usr.subteam?.lowercase()) {
                     "software" -> Subteam.SOFTWARE
                     "build" -> Subteam.BUILD
                     "marketing" -> Subteam.MARKETING
@@ -65,6 +65,7 @@ data class User(
                     1 -> AccountType.BASE
                     2 -> AccountType.LEAD
                     3 -> AccountType.ADMIN
+                    4 -> AccountType.SUPERUSER
                     else -> AccountType.UNVERIFIED
                 },
                 attendance = usr.attendance,
@@ -106,6 +107,7 @@ data class User(
                 AccountType.BASE -> 1
                 AccountType.LEAD -> 2
                 AccountType.ADMIN -> 3
+                AccountType.SUPERUSER -> 4
                 AccountType.UNVERIFIED -> 0
             },
             attendance = this.attendance

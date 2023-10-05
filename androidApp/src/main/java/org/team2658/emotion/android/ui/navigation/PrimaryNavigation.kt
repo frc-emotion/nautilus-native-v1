@@ -12,6 +12,7 @@ import org.team2658.emotion.android.screens.admin.AdminScreen
 import org.team2658.emotion.android.screens.home.HomeScreen
 import org.team2658.emotion.android.screens.scouting.ScoutingScreen
 import org.team2658.emotion.android.screens.settings.SettingsScreen
+import org.team2658.emotion.android.viewmodels.NFC_Viewmodel
 import org.team2658.emotion.android.viewmodels.PrimaryViewModel
 import org.team2658.emotion.android.viewmodels.StandScoutingViewModel
 
@@ -19,7 +20,8 @@ import org.team2658.emotion.android.viewmodels.StandScoutingViewModel
 fun LoggedInNavigator(
     primaryViewModel: PrimaryViewModel,
     scoutingViewModel: StandScoutingViewModel,
-    ktorClient: EmotionClient
+    ktorClient: EmotionClient,
+    nfcViewmodel: NFC_Viewmodel
 ) {
     val navController = rememberNavController();
 
@@ -30,13 +32,13 @@ fun LoggedInNavigator(
             Modifier.padding(padding)
         ) {
             composable(AppScreens.HOME.name) {
-                HomeScreen(ktorClient)
+                HomeScreen(ktorClient = ktorClient, nfcViewmodel = nfcViewmodel, primaryViewModel = primaryViewModel)
             }
             composable(AppScreens.SETTINGS.name) {
                 SettingsScreen(primaryViewModel)
             }
             composable(AppScreens.ADMIN.name) {
-                AdminScreen(primaryViewModel)
+                AdminScreen(viewModel = primaryViewModel, client = ktorClient, nfc = nfcViewmodel )
             }
             composable(AppScreens.SCOUTING.name) {
                 ScoutingScreen(scoutingViewModel, primaryViewModel)

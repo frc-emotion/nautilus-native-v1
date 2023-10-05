@@ -22,23 +22,15 @@ class UserStateViewModel: ObservableObject {
     func signIn(username: String, password: String) async -> Result<Bool, UserStateError> {
         isBusy = true
         do {
-            
-            print(username)
-            print(password)
-            
             let client = EmotionClient()
             let response = try await client.login(username: username, password: password)
             
             if let response {
-                print(response.firstName)
+                return .success(true)
             } else {
-                print("no response")
+                // TODO: Provide error message to user via dialog or screen
+                return .success(false)
             }
-            
-//            try await Task.sleep(nanoseconds: 1_000_000_000)
-//            isLoggedIn = true
-//            isBusy = false
-            return .success(false)
         } catch {
             isBusy = false
             return .failure(.signInError)

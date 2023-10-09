@@ -15,6 +15,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -23,7 +24,10 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import kotlinx.coroutines.runBlocking
+import org.team2658.apikt.ChargedUpRequestParams
 import org.team2658.apikt.EmotionClient
+import org.team2658.apikt.models.ChargedUpModel
+import org.team2658.apikt.models.ChargedUpScores
 import org.team2658.emotion.android.ui.composables.Screen
 import org.team2658.emotion.android.viewmodels.NFC_Viewmodel
 import org.team2658.emotion.android.viewmodels.PrimaryViewModel
@@ -43,7 +47,10 @@ fun HomeScreen(ktorClient: EmotionClient, nfcViewmodel: NFC_Viewmodel, primaryVi
         Text(text = "Attendance",
             style = MaterialTheme.typography.headlineLarge)
         Spacer(modifier = Modifier.size(32.dp))
-            LinearProgressIndicator(progress = ((primaryViewModel.user?.attendance?.get(0)?.totalHoursLogged?.toFloat()?: 0f) / 36.0f).coerceAtMost(1.0f), modifier = Modifier.height(32.dp).fillMaxWidth())
+        if((primaryViewModel.user?.attendance?.size ?: 0) > 0) {
+            LinearProgressIndicator(progress = ((primaryViewModel.user?.attendance?.get(0)?.totalHoursLogged?.toFloat()?: 0f) / 36.0f).coerceAtMost(1.0f), modifier = Modifier
+                .height(32.dp)
+                .fillMaxWidth())
             Text("${primaryViewModel.user?.attendance?.get(0)?.totalHoursLogged} / 36 hours", modifier = Modifier.padding(8.dp), style = MaterialTheme.typography.titleLarge)
         Spacer(modifier = Modifier.size(16.dp))
         Text(text=tagStatusText, style = MaterialTheme.typography.titleLarge)
@@ -74,6 +81,10 @@ fun HomeScreen(ktorClient: EmotionClient, nfcViewmodel: NFC_Viewmodel, primaryVi
             AlertDialog(onDismissRequest = {  }, confirmButton = { TextButton(onClick = { showFailureDialog = false })  {
                 Text("Ok")
             }}, title = { Text("Error") }, text = { Text("Something went wrong logging attendance") })
+        }
+    }
+        else {
+            Text("No attendance data found")
         }
     }
 }

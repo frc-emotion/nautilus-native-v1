@@ -2,9 +2,9 @@ package org.team2658.emotion.userauth
 
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
-import org.team2658.apikt.responses.RolePermissionsResponse
-import org.team2658.apikt.responses.RoleResponse
-import org.team2658.apikt.responses.UserResponse
+import org.team2658.apikt.models.RolePermissionsModel
+import org.team2658.apikt.models.RoleModel
+import org.team2658.apikt.models.UserModel
 import org.team2658.emotion.attendance.UserAttendance
 
 data class User(
@@ -34,7 +34,7 @@ data class User(
 ) {
     val permissions = getPermissions(this)
     companion object {
-        fun fromSerializable(usr: UserResponse): User {
+        fun fromSerializable(usr: UserModel): User {
             return User(
                 firstName = usr.firstname,
                 lastName = usr.lastname,
@@ -75,13 +75,13 @@ data class User(
 
         fun fromJSON(json: String?): User? {
             return json?.let { try {
-                val usr = Json.decodeFromString<UserResponse>(json)
+                val usr = Json.decodeFromString<UserModel>(json)
                 fromSerializable(usr)
             }catch(e: Exception) { null } }
         }
     }
-    fun toSerializable(): UserResponse {
-        return UserResponse(
+    fun toSerializable(): UserModel {
+        return UserModel(
             firstname = this.firstName,
             _id = this._id,
             lastname = this.lastName,
@@ -91,9 +91,9 @@ data class User(
             token = this.token,
             subteam = this.subteam.name.lowercase(),
             grade = this.grade,
-            roles = this.roles.map{ RoleResponse(
+            roles = this.roles.map{ RoleModel(
                 name = it.name,
-                permissions = RolePermissionsResponse(
+                permissions = RolePermissionsModel(
                     verifyAllAttendance = it.permissions.verifyAllAttendance,
                     verifySubteamAttendance = it.permissions.verifySubteamAttendance,
                     makeAnnouncements = it.permissions.makeAnnouncements,

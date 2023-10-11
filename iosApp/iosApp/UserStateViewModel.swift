@@ -26,10 +26,14 @@ class UserStateViewModel: ObservableObject {
             let response = try await client.login(username: username, password: password)
             
             if let response {
+                print(response.firstName)
+                isLoggedIn = true
+                isBusy = false
                 return .success(true)
             } else {
                 // TODO: Provide error message to user via dialog or screen
-                return .success(false)
+                isBusy = false
+                return .failure(.signInError)
             }
         } catch {
             isBusy = false
@@ -37,13 +41,21 @@ class UserStateViewModel: ObservableObject {
         }
     }
     
-    func createAccount(firstname: String, lastname: String, email: String, password: String) async -> Result<Bool, UserStateError> {
+    func createAccount(firstname: String, lastname: String, username: String, email: String, password: String, subteam: shared.Subteam, phone: String, grade: Int32) async -> Result<Bool, UserStateError> {
         isBusy = true
         do {
-            try await Task.sleep(nanoseconds: 1_000_000_000)
-            isLoggedIn = true
-            isBusy = false
-            return .success(true)
+            let client = EmotionClient()
+            let response = try await client.register(username: username, password: password, email: email, firstName: firstname, lastName: lastname, subteam: subteam, phone: phone, grade: grade)
+            
+            // DONT CLEAR THE WARNING IT BREAKS THE CODE
+            if let response {
+                isLoggedIn = true
+                isBusy = false
+                return .success(true)
+            } else {
+                isBusy = false
+                return .failure(.createAccountError)
+            }
         } catch {
             isBusy = false
             return .failure(.createAccountError)

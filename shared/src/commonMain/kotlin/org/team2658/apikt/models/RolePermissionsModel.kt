@@ -1,9 +1,9 @@
-package org.team2658.apikt.responses
+package org.team2658.apikt.models
 
 import kotlinx.serialization.Serializable
 
 @Serializable
-data class RolePermissionsResponse(
+data class RolePermissionsModel(
     val standScouting: Boolean,
     val inPitScouting: Boolean,
     val viewScoutingData: Boolean,

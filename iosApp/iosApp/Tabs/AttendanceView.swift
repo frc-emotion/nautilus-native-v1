@@ -34,9 +34,11 @@ struct AttendanceView: View {
             
             Button {
                 read()
+                print(NFCR.msg)
             } label: {
                 Text("read")
             }
+            
         }
     }
 }

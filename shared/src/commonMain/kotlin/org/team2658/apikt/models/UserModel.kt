@@ -1,10 +1,10 @@
-package org.team2658.apikt.responses
+package org.team2658.apikt.models
 
 import kotlinx.serialization.Serializable
 import org.team2658.emotion.attendance.UserAttendance
 
 @Serializable
-data class UserResponse(
+data class UserModel(
     val _id: String,
     val firstname: String,
     val lastname: String,
@@ -14,7 +14,7 @@ data class UserResponse(
     val token: String? = null,
     val subteam: String? = null,
     val grade: Int? = null,
-    val roles: List<RoleResponse>? = null,
+    val roles: List<RoleModel>? = null,
     val accountType: Int? = null, // isAdmin && isVerified are NOT supported. This client was developed for API v2.0.0 and later
     val attendance: List<UserAttendance>
 //    val accountUpdateVersion: Int? = null,

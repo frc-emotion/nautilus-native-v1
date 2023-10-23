@@ -11,5 +11,5 @@ enum class AppScreens(val icon: ImageVector) {
     HOME(Icons.Filled.Home),
     SETTINGS(Icons.Filled.Settings),
     SCOUTING(Icons.Filled.Summarize),
-    ADMIN(Icons.Filled.AdminPanelSettings),
+    LEADS(Icons.Filled.AdminPanelSettings),
 }

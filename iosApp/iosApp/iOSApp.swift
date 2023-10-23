@@ -51,7 +51,7 @@ struct ApplicationSwitcher: View {
 //                        Label("Admin", systemImage: "person.badge.key.fill")
 //                    }
 //
-                SettingsView()
+                SettingsView(user: vm.userOut!)
                     .navigationTitle("Settings")
                     .tabItem {
                         Label("Settings", systemImage: "gear")

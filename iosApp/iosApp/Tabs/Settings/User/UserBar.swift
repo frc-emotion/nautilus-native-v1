@@ -7,8 +7,11 @@
 //
 
 import SwiftUI
+import shared
 
 struct UserBar: View {
+    var user: shared.User
+    
     var body: some View {
         HStack(alignment: .center, spacing: 15) {
             Image("profile-default")
@@ -16,9 +19,9 @@ struct UserBar: View {
                 .frame(width: 60, height: 60)
                 .clipShape(Circle())
             VStack(alignment: .leading, spacing: 2.0) {
-                Text("Jason Ballinger")
+                Text("\(user.firstName) \(user.lastName)")
                     .font(.title)
-                Text("Software Team Lead")
+                Text(user.email)
                     .font(.subheadline)
                     .foregroundColor(Color.gray)
             }
@@ -28,6 +31,6 @@ struct UserBar: View {
 
 struct UserBar_Previews: PreviewProvider {
     static var previews: some View {
-        UserBar()
+        UserBar(user: HelpfulVars().testuser)
     }
 }

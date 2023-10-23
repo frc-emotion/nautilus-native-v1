@@ -11,15 +11,14 @@ import SwiftUI
 struct DirectoryView: View {
     var body: some View {
         NavigationView {
-            List(users) { user in
-                NavigationLink {
-                    UserView(user: user)
-                } label: {
-                    DirectoryBar(user: user)
-                }
-            }
-            .navigationTitle("People")
+            //            List(users) { user in
+            //                NavigationLink {
+            //                    UserView(user: user)
+            //                } label: {
+            //                    DirectoryBar(user: user)
+            //                }
         }
+        .navigationTitle("People")
     }
 }
 

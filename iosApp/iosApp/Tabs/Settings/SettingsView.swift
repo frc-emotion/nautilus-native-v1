@@ -3,6 +3,7 @@ import shared
 
 struct SettingsView: View {
     
+    @State var user: shared.User
     @EnvironmentObject var vm: UserStateViewModel
     
     var body: some View {
@@ -10,9 +11,9 @@ struct SettingsView: View {
             List {
                 Section {
                     NavigationLink {
-                        UserView(user: users[1])
+                        UserView(user: user)
                     } label: {
-                        UserBar()
+                        UserBar(user: user)
                     }
 //                    Not yet implemented
 //                    NavigationLink {
@@ -46,6 +47,6 @@ struct SettingsView: View {
 
 struct SettingsView_Previews: PreviewProvider {
     static var previews: some View {
-        SettingsView()
+        SettingsView(user: HelpfulVars().testuser)
     }
 }

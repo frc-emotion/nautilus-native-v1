@@ -7,9 +7,10 @@
 //
 
 import SwiftUI
+import shared
 
 struct UserView: View {
-    var user: User
+    var user: shared.User
     
     var body: some View {
         ScrollView {
@@ -26,13 +27,13 @@ struct UserView: View {
                     }
                 }
                 VStack(alignment: .leading) {
-                    Text("\(user.firstname) \(user.lastname)")
+                    Text("\(user.firstName) \(user.lastName)")
                         .font(.title)
                     
                     HStack {
-                        Text("Software Team Lead")
+                        Text(user.email)
                         Spacer()
-                        Text("Senior")
+//                        Text("Senior")
                     }
                     .font(.subheadline).foregroundColor(.secondary)
                 }
@@ -51,6 +52,6 @@ struct UserView: View {
 
 struct UserView_Previews: PreviewProvider {
     static var previews: some View {
-        UserView(user: users[0])
+        UserView(user: HelpfulVars().testuser)
     }
 }

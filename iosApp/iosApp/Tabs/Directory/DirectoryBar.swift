@@ -7,19 +7,20 @@
 //
 
 import SwiftUI
+import shared
 
 struct DirectoryBar: View {
-    var user: User
+    var user: shared.User
     
     var body: some View {
         HStack {
-            Text("\(user.firstname) \(user.lastname)")
+            Text("\(user.firstName) \(user.lastName)")
         }
     }
 }
 
 struct DirectoryBar_Previews: PreviewProvider {
     static var previews: some View {
-        DirectoryBar(user: users[0])
+        DirectoryBar(user: HelpfulVars().testuser)
     }
 }

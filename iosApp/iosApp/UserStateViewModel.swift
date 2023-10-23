@@ -18,6 +18,8 @@ class UserStateViewModel: ObservableObject {
     
     @Published var isLoggedIn = false
     @Published var isBusy = false
+    @Published var userOut: shared.User?
+    let defaults = UserDefaults.standard
     
     func signIn(username: String, password: String) async -> Result<Bool, UserStateError> {
         isBusy = true
@@ -27,11 +29,16 @@ class UserStateViewModel: ObservableObject {
             
             if let response {
                 print(response.firstName)
+                userOut = response
+//                defaults.set(response, forKey: "User")
+//                let meow = defaults.object(forKey: "User")
+//                print(meow)
                 isLoggedIn = true
                 isBusy = false
                 return .success(true)
             } else {
                 // TODO: Provide error message to user via dialog or screen
+                print("fail")
                 isBusy = false
                 return .failure(.signInError)
             }
@@ -49,6 +56,7 @@ class UserStateViewModel: ObservableObject {
             
             // DONT CLEAR THE WARNING IT BREAKS THE CODE
             if let response {
+                userOut = response
                 isLoggedIn = true
                 isBusy = false
                 return .success(true)
@@ -65,14 +73,14 @@ class UserStateViewModel: ObservableObject {
     func signOut() async -> Result<Bool, UserStateError> {
         isBusy = true
         do {
-            try await Task.sleep(nanoseconds: 1_000_000_000)
+            userOut = nil
             isLoggedIn = false
             isBusy = false
             return .success(true)
-        } catch {
-            isBusy = false
-            return .failure(.signOutError)
-        }
+        } // catch {
+//            isBusy = false
+//            return .failure(.signOutError)
+//        }
     }
     
     func setLoggedOut() {

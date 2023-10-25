@@ -6,6 +6,8 @@
 //  Copyright © 2023 team2658. All rights reserved.
 //
 
+// TODO: Simulator previews aren't working and returns a HumanReadableError, however works in production and on-device previews.
+
 import SwiftUI
 import shared
 import CoreNFC
@@ -15,7 +17,8 @@ struct NFCButton: UIViewRepresentable {
     
     func makeUIView(context: UIViewRepresentableContext<NFCButton>) -> UIButton {
         let button = UIButton()
-        button.setTitle("Read NFC", for: .normal)
+        button.configuration?.buttonSize = .small
+        button.setTitle("Log Attendance", for: .normal)
         button.backgroundColor = UIColor.blue
         button.addTarget(context.coordinator, action: #selector(context.coordinator.beginScan(_:)), for: .touchUpInside)
         return button
@@ -44,7 +47,7 @@ struct NFCButton: UIViewRepresentable {
             }
             
             session = NFCNDEFReaderSession(delegate: self, queue: .main, invalidateAfterFirstRead: true)
-            session?.alertMessage = "Hold your iPhone near an NFC tag."
+            session?.alertMessage = "Hold your iPhone near the Attendance card."
             session?.begin()
         }
         
@@ -74,6 +77,13 @@ struct NFCButton: UIViewRepresentable {
     }
 }
 
+struct NFCButtonView: View {
+    @Binding var data: String
+    var body: some View {
+        NFCButton(data: self.$data)
+    }
+}
+
 struct AttendanceView: View {
     @State var data = ""
     
@@ -86,10 +96,11 @@ struct AttendanceView: View {
             CircularProgressView(progress: progress, defaultColor: Color.green, progressColor: Color.green, innerText: "\(Int(progress * 35))")
                 .frame(width: 150, height: 150)
             
-//            Divider()
-//                .padding(.vertical, 25)
+            Divider()
+                .padding(.vertical, 25)
             
-            NFCButton(data: self.$data)
+            NFCButtonView(data: $data)
+                .frame(width: 160, height: 50, alignment: .center)
             
 //            Button {
 //                

@@ -5,8 +5,14 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
+import kotlinx.coroutines.delay
+import org.team2658.apikt.ChargedUpRequestParams
 import org.team2658.apikt.EmotionClient
+import org.team2658.apikt.models.safeDivide
 import org.team2658.emotion.attendance.Meeting
+import org.team2658.emotion.scouting.GameResult
+import org.team2658.emotion.scouting.scoutingdata.ChargedUp
+import org.team2658.emotion.scouting.scoutingdata.RapidReact
 import org.team2658.emotion.userauth.AccountType
 import org.team2658.emotion.userauth.AuthState
 import org.team2658.emotion.userauth.Subteam
@@ -29,7 +35,7 @@ class PrimaryViewModel(private val ktorClient: EmotionClient, private val shared
     suspend fun updateMe() {
         println("Fetching updated user")
         val updated = this.ktorClient.getMe(this.user)
-            updated?.let {
+        updated?.let {
                 updateUser(it)
                 println("Fetched updated user")
             }
@@ -85,6 +91,10 @@ class PrimaryViewModel(private val ktorClient: EmotionClient, private val shared
         )
     }
 
+    suspend fun getCompetitions(year: String): List<String> {
+        return this.ktorClient.getCompetitions(year)
+    }
+
     var meeting: Meeting? by mutableStateOf(Meeting.fromJSON(sharedPref.getString("createdMeeting", null)))
         private set
 
@@ -94,6 +104,41 @@ class PrimaryViewModel(private val ktorClient: EmotionClient, private val shared
             putString("createdMeeting", meeting?.toJson())
             apply()
         }
+    }
+
+    suspend fun submitRapidReact(user: User?, data: RapidReact):Boolean {
+        delay(1000L)
+        return true;
+    }
+
+    suspend fun submitChargedUp(user: User?, data: ChargedUp):Boolean {
+        val params = ChargedUpRequestParams(
+            competition = data.competition,
+            teamNumber = data.teamNumber,
+            RPEarned = data.RPEarned,
+            totalRP = data.totalRP,
+            teleopPeriod = data.teleopPeriod,
+            autoPeriod = data.autoPeriod,
+            autoDock = data.autoDock,
+            autoEngage = data.autoEngage,
+            parked = data.parked,
+            teleopDock = data.teleopDock,
+            teleopEngage = data.teleopEngage,
+            comments = data.comments,
+            coneRate = safeDivide((data.teleopPeriod.totalCones + data.autoPeriod.totalCones), (data.teleopPeriod.totalScore + data.autoPeriod.totalScore)),
+            cubeRate = safeDivide((data.teleopPeriod.totalCubes + data.autoPeriod.totalCubes), (data.teleopPeriod.totalScore + data.autoPeriod.totalScore)),
+            didBreak = data.brokeDown,
+            matchNumber = data.matchNumber,
+            linkScore = data.linkScore,
+            isDefensive = data.defensive,
+            penaltyCount = data.penaltyPointsEarned,
+            score = data.finalScore,
+            tied = data.gameResult == GameResult.TIE,
+            won = data.gameResult == GameResult.WIN
+        )
+        val res = this.ktorClient.submitChargedUp(params, this.user)
+        println(res)
+        return ( res != null) //temporary, eventually set up to store offline if failed response
     }
 
 }

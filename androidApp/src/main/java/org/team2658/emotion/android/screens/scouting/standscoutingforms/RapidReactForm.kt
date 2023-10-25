@@ -8,6 +8,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.RadioButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
@@ -19,13 +20,11 @@ import org.team2658.emotion.android.ui.composables.LabelledTextBoxSingleLine
 import org.team2658.emotion.android.ui.composables.NumberInput
 import org.team2658.emotion.android.ui.composables.YesNoSelector
 import org.team2658.emotion.android.viewmodels.PrimaryViewModel
-import org.team2658.emotion.android.viewmodels.StandScoutingViewModel
 import org.team2658.emotion.scouting.scoutingdata.RapidReact
 
 @Composable
 fun RapidReactForm(
     primaryViewModel: PrimaryViewModel,
-    scoutingViewModel: StandScoutingViewModel
 ) {
     var leftTarmac by rememberSaveable { mutableStateOf<Boolean?>(null) }
     //rememberSaveable instead of remember so the state is saved if user changes tabs
@@ -54,8 +53,13 @@ fun RapidReactForm(
             && hangarRP != null
 
 
-    val competitions = listOf("Beach Blitz 2022")
+//    val competitions = listOf("Beach Blitz 2022")
     //TODO: get competition list via API call through viewmodel
+
+    var competitions:List<String> by rememberSaveable { mutableStateOf(listOf()) }
+    LaunchedEffect(Unit) {
+        competitions = primaryViewModel.getCompetitions("2022")
+    }
 
     fun clearForm() {
         leftTarmac = null
@@ -76,7 +80,7 @@ fun RapidReactForm(
     BaseScoutingForm(
         competitions = competitions,
         onFormSubmit = { data ->
-            scoutingViewModel.submitRapidReact(
+            primaryViewModel.submitRapidReact(
                 user = primaryViewModel.user,
                 data = RapidReact(
                     //no need to check for null safety or validity of inputs here

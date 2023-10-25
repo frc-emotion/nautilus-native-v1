@@ -55,4 +55,32 @@ data class ChargedUpScores(
     val totalCubes: Int,
     val coneRate: Double?,
     val cubeRate: Double?
-)
+) {
+    constructor(
+        botCones: Int,
+        botCubes: Int,
+        midCones: Int,
+        midCubes: Int,
+        topCones: Int,
+        topCubes: Int
+    ) : this(
+        botScore = botCones + botCubes,
+        botCones = botCones,
+        botCubes = botCubes,
+        midScore = midCones + midCubes,
+        midCones = midCones,
+        midCubes = midCubes,
+        topScore = topCones + topCubes,
+        topCones = topCones,
+        topCubes = topCubes,
+        totalScore = botCones + botCubes + midCones + midCubes + topCones + topCubes,
+        totalCones = botCones + midCones + topCones,
+        totalCubes = botCubes + midCubes + topCubes,
+        coneRate = safeDivide((botCones + midCones + topCones), (botCones + botCubes + midCones + midCubes + topCones + topCubes)),
+        cubeRate = safeDivide((botCubes + midCubes + topCubes), (botCones + botCubes + midCones + midCubes + topCones + topCubes))
+    )
+}
+
+fun safeDivide(a: Int, b: Int): Double? {
+    return if (b == 0) null else a.toDouble() / b.toDouble()
+}

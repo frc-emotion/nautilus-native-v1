@@ -86,7 +86,7 @@ class EmotionClient {
     }
 
     suspend fun createMeeting(user: User?, startTime: Long, endTime: Long, type: String, description: String, value: Int): Meeting? {
-        if(user != null && user.token?.isNotBlank() == true &&( user.accountType == AccountType.ADMIN || (user.accountType == AccountType.LEAD && user.permissions.verifyAllAttendance))){
+        if(user != null && user.token?.isNotBlank() == true && user.permissions.verifyAllAttendance){
             println(user.token)
             return try {
                 this.client.submitForm(url = ROUTES.CREATE_MEETING, formParameters = parameters {
@@ -155,6 +155,15 @@ class EmotionClient {
             title = "ERROR",
             body = "ERROR"
         ) }
+    }
+
+    suspend fun getCompetitions(year: String): List<String> {
+        return try {
+            this.client.get("${ROUTES.BASE}/seasons/$year/competitions").body()
+        } catch(e: Exception) {
+            println(e)
+            listOf()
+        }
     }
 
     suspend fun getMe(user: User?): User? {

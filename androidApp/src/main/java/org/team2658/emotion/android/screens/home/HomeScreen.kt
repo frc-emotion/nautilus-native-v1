@@ -1,21 +1,17 @@
 package org.team2658.emotion.android.screens.home
 
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
-import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -24,19 +20,16 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import kotlinx.coroutines.runBlocking
-import org.team2658.apikt.ChargedUpRequestParams
 import org.team2658.apikt.EmotionClient
-import org.team2658.apikt.models.ChargedUpModel
-import org.team2658.apikt.models.ChargedUpScores
 import org.team2658.emotion.android.ui.composables.Screen
-import org.team2658.emotion.android.viewmodels.NFC_Viewmodel
+import org.team2658.emotion.android.viewmodels.NFCViewmodel
 import org.team2658.emotion.android.viewmodels.PrimaryViewModel
 import java.time.LocalDateTime
 import java.time.ZoneOffset
 
 //example of using ktor api
 @Composable
-fun HomeScreen(ktorClient: EmotionClient, nfcViewmodel: NFC_Viewmodel, primaryViewModel: PrimaryViewModel) {
+fun HomeScreen(ktorClient: EmotionClient, nfcViewmodel: NFCViewmodel, primaryViewModel: PrimaryViewModel) {
     var tagData: String? by rememberSaveable {
         mutableStateOf(nfcViewmodel.getNdefPayload())
     }

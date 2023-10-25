@@ -7,38 +7,95 @@
 //
 
 import SwiftUI
-import SwiftNFC
 import shared
+import CoreNFC
 
-struct AttendanceView: View {
+struct NFCButton: UIViewRepresentable {
+    @Binding var data : String
     
-    @ObservedObject var NFCR = NFCReader()
-    @ObservedObject var NFCW = NFCWriter()
-    
-    func read() {
-        NFCR.read()
+    func makeUIView(context: UIViewRepresentableContext<NFCButton>) -> UIButton {
+        let button = UIButton()
+        button.setTitle("Read NFC", for: .normal)
+        button.backgroundColor = UIColor.blue
+        button.addTarget(context.coordinator, action: #selector(context.coordinator.beginScan(_:)), for: .touchUpInside)
+        return button
     }
     
-    func write(message: String) {
-        NFCW.msg = message
-        NFCW.write()
+    func updateUIView(_ uiView: UIButton, context: Context) {
+        // Do nothing
     }
     
-    var body: some View {
-        VStack {
-            CircularProgressView(progress: 0.35, defaultColor: Color.green, progressColor: Color.green, innerText: "37")
-                .frame(width: 150, height: 150)
-            
-            Divider()
-                .padding(.vertical, 25)
-            
-            Button {
-                read()
-                print(NFCR.msg)
-            } label: {
-                Text("read")
+    func makeCoordinator() -> NFCButton.Coordinator {
+        return Coordinator(data: $data)
+    }
+    
+    class Coordinator: NSObject, NFCNDEFReaderSessionDelegate {
+        var session: NFCNDEFReaderSession?
+        @Binding var data : String // must match type above
+        
+        init(data: Binding<String>) {
+            _data = data
+        }
+        
+        @objc func beginScan(_ sender: Any) {
+            guard NFCNDEFReaderSession.readingAvailable else {
+                print("Error: Device does not support NFC.")
+                return
             }
             
+            session = NFCNDEFReaderSession(delegate: self, queue: .main, invalidateAfterFirstRead: true)
+            session?.alertMessage = "Hold your iPhone near an NFC tag."
+            session?.begin()
+        }
+        
+        func readerSession(_ session: NFCNDEFReaderSession, didInvalidateWithError error: Error) {
+            if let readerError = error as? NFCReaderError {
+                if (readerError.code != .readerSessionInvalidationErrorFirstNDEFTagRead) && (readerError.code != .readerSessionInvalidationErrorUserCanceled) {
+                    print("Error")
+                }
+            }
+            
+            self.session = nil
+        }
+        
+        func readerSession(_ session: NFCNDEFReaderSession, didDetectNDEFs messages: [NFCNDEFMessage]) {
+            guard
+                let nfcMess = messages.first,
+                let record = nfcMess.records.first,
+                record.typeNameFormat == .absoluteURI || record.typeNameFormat == .nfcWellKnown,
+                let payload = String(data: record.payload, encoding: .utf8)
+            else {
+                return
+            }
+            
+            print(payload)
+            self.data = payload
+        }
+    }
+}
+
+struct AttendanceView: View {
+    @State var data = ""
+    
+    var body: some View {
+        let progress = 0.2
+ 
+        VStack {
+            Text(data)
+            
+            CircularProgressView(progress: progress, defaultColor: Color.green, progressColor: Color.green, innerText: "\(Int(progress * 35))")
+                .frame(width: 150, height: 150)
+            
+//            Divider()
+//                .padding(.vertical, 25)
+            
+            NFCButton(data: self.$data)
+            
+//            Button {
+//                
+//            } label: {
+//                Text("read")
+//            }
         }
     }
 }

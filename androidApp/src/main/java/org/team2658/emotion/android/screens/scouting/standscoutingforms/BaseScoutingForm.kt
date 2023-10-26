@@ -78,7 +78,6 @@ fun BaseScoutingForm(
     var showErrorDialog by remember { mutableStateOf(false) }
 
     fun clearForm() {
-        competition = competitions[0]
         teamNumber = ""
         matchNumber = ""
         defensive = null
@@ -93,7 +92,7 @@ fun BaseScoutingForm(
 
     Text(text = "Match Info", style = MaterialTheme.typography.titleLarge)
     Spacer(modifier = Modifier.size(16.dp))
-    DropDown(label = "Competition", value = competition) {
+    DropDown(label = "Competition", value = competition.ifBlank { "Select: " }) {
         if(competitions.isNotEmpty()) {
             competitions.forEachIndexed { index, comp ->
                 DropdownMenuItem(text = { Text(comp) }, onClick = { competition = comp })

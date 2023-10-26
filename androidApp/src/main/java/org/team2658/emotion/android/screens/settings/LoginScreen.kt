@@ -4,6 +4,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.text.KeyboardActions
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -24,12 +25,21 @@ import org.team2658.emotion.android.ui.composables.LabelledTextBoxSingleLine
 fun LoginScreen(
     onLogin: suspend (
         username: String,
-        password: String
+        password: String,
+        errorCallback: (String) -> Unit
     ) -> Unit,
     onCreateAccount: () -> Unit
 ) {
     var username by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
+
+    var showError by remember {mutableStateOf(false)}
+    var errorText by remember {mutableStateOf("")}
+    if(showError) {
+        AlertDialog(onDismissRequest = {  }, confirmButton = { TextButton(onClick = { showError = false })  {
+            Text("Ok")
+        }}, title = { Text("Error") }, text = { Text("Something went wrong\n $errorText") })
+    }
     Column {
         Text(
             text = "Log In to Use App",
@@ -55,12 +65,15 @@ fun LoginScreen(
                     onLogin(
                         username,
                         password
-                    )
+                    ){
+                        showError = true
+                        errorText = it
+                    }
                 }
             })
         )
         Spacer(modifier = Modifier.size(32.dp))
-        Button(onClick = { runBlocking { onLogin(username, password) } }) {
+        Button(onClick = { runBlocking { onLogin(username, password) {showError = true; errorText = it} } }) {
             Text(text = "Log In")
         }
         Spacer(modifier = Modifier.size(8.dp))

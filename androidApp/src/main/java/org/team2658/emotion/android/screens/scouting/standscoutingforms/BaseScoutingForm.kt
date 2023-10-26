@@ -38,7 +38,7 @@ import org.team2658.emotion.scouting.scoutingdata.ScoutingData
 @Composable
 fun BaseScoutingForm(
     competitions: List<String>,
-    onFormSubmit: suspend (baseData: ScoutingData) -> Int,
+    onFormSubmit: suspend (baseData: ScoutingData) -> Boolean, //true for success, false for failure
     //handle submit for individual game (Rapid React, ChargedUp, etc) and use callback to clear form after
     contentInputsOkay: Boolean,
     //make sure game-specific required fields are filled in and valid
@@ -47,7 +47,9 @@ fun BaseScoutingForm(
     contents: @Composable () -> Unit,
     //put in inputs for game-specific fields in here
 ) {
-    var competition by rememberSaveable { mutableStateOf(competitions.last()) } //default to most recent competition
+    var competition by rememberSaveable { mutableStateOf(
+        if (competitions.isNotEmpty()) competitions.last() else ""
+    ) } //default to most recent competition
     var teamNumber by rememberSaveable { mutableStateOf("") }
     var matchNumber by rememberSaveable { mutableStateOf("") }
     var defensive by rememberSaveable { mutableStateOf<Boolean?>(null) }
@@ -92,11 +94,15 @@ fun BaseScoutingForm(
     Text(text = "Match Info", style = MaterialTheme.typography.titleLarge)
     Spacer(modifier = Modifier.size(16.dp))
     DropDown(label = "Competition", value = competition) {
-        competitions.forEachIndexed { index, comp ->
-            DropdownMenuItem(text = { Text(comp) }, onClick = { competition = comp })
-            if (index != competitions.lastIndex) {
-                Divider()
+        if(competitions.isNotEmpty()) {
+            competitions.forEachIndexed { index, comp ->
+                DropdownMenuItem(text = { Text(comp) }, onClick = { competition = comp })
+                if (index != competitions.lastIndex) {
+                    Divider()
+                }
             }
+        } else {
+            DropdownMenuItem(text = { Text("No Competitions Found") }, onClick = { })
         }
     }
     Spacer(modifier = Modifier.size(16.dp))
@@ -117,6 +123,8 @@ fun BaseScoutingForm(
     Spacer(modifier = Modifier.size(16.dp))
     contents()
     Spacer(modifier = Modifier.size(16.dp))
+    Text(text = "Robot Information", style = MaterialTheme.typography.titleLarge)
+    Spacer(Modifier.size(16.dp))
     YesNoSelector(label = "Robot Was Defensive?", value = defensive, setValue = { defensive = it })
     Spacer(modifier = Modifier.size(16.dp))
     YesNoSelector(label = "Robot Broke Down?", value = brokeDown, setValue = { brokeDown = it })
@@ -233,7 +241,7 @@ fun BaseScoutingForm(
             confirmButton = {
                 Button(onClick = {
                     runBlocking {
-                        val code = onFormSubmit(
+                        val success = onFormSubmit(
                             ScoutingData(
                                 competition = competition,
                                 teamNumber = teamNumber.toInt(),
@@ -246,7 +254,7 @@ fun BaseScoutingForm(
                                 comments = comments
                             )
                         )
-                        if (code == 0) {
+                        if (success) {
                             clearForm()
                             showSuccessDialog = true
                         } else {

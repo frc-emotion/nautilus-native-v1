@@ -24,7 +24,7 @@ import org.team2658.apikt.EmotionClient
 import org.team2658.emotion.android.ui.composables.LabelledTextBoxSingleLine
 import org.team2658.emotion.android.ui.composables.NumberInput
 import org.team2658.emotion.android.ui.composables.Screen
-import org.team2658.emotion.android.viewmodels.NFC_Viewmodel
+import org.team2658.emotion.android.viewmodels.NFCViewmodel
 import org.team2658.emotion.android.viewmodels.PrimaryViewModel
 import org.team2658.emotion.attendance.Meeting
 import java.time.Instant
@@ -33,7 +33,7 @@ import java.time.ZoneOffset
 
 @Composable
 @OptIn(ExperimentalMaterial3Api::class)
-fun AttendanceVerificationPage(viewModel: PrimaryViewModel, client: EmotionClient, nfc: NFC_Viewmodel) {
+fun AttendanceVerificationPage(viewModel: PrimaryViewModel, client: EmotionClient, nfc: NFCViewmodel) {
 
     var showCreateMenu by remember { mutableStateOf(false) }
 

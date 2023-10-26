@@ -3,7 +3,6 @@ package org.team2658.emotion.android.viewmodels
 import android.nfc.NdefMessage
 import android.nfc.NdefRecord
 import android.nfc.Tag
-import android.nfc.tech.MifareUltralight
 import android.nfc.tech.Ndef
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -11,7 +10,7 @@ import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import java.nio.charset.Charset
 
-class NFC_Viewmodel: ViewModel() {
+class NFCViewmodel: ViewModel() {
     var nfcTag: Tag? by mutableStateOf(null)
         private set
 

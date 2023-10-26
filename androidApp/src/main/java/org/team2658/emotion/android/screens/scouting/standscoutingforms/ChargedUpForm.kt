@@ -85,7 +85,7 @@ fun ChargedUpForm(primaryViewModel: PrimaryViewModel) {
 
     fun clearForm() {
         autoBotCubes = null
-        autoBotCubes = null
+        autoBotCones = null
         autoMidCones = null
         autoMidCubes = null
         autoTopCubes = null

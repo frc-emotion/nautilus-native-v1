@@ -36,6 +36,7 @@ fun HomeScreen(ktorClient: EmotionClient, nfcViewmodel: NFCViewmodel, primaryVie
     var tagStatusText by remember{ mutableStateOf("Scan a tag to log attendance") }
     var showSuccessDialog by remember {mutableStateOf(false)}
     var showFailureDialog by remember { mutableStateOf(false)}
+    var failureDialogText by remember {mutableStateOf("")}
     Screen {
         Text(text = "Attendance",
             style = MaterialTheme.typography.headlineLarge)
@@ -52,7 +53,7 @@ fun HomeScreen(ktorClient: EmotionClient, nfcViewmodel: NFCViewmodel, primaryVie
             Spacer(modifier = Modifier.size(16.dp))
             Button(onClick = {
                runBlocking {
-                   val user = ktorClient.attendMeeting(primaryViewModel.user, tagData!!, LocalDateTime.now().toInstant(ZoneOffset.UTC).toEpochMilli())
+                   val user = ktorClient.attendMeeting(primaryViewModel.user, tagData!!, LocalDateTime.now().toInstant(ZoneOffset.UTC).toEpochMilli(), failureCallback = { showFailureDialog = true; failureDialogText = it })
                    if (user != null) {
                        tagStatusText = "Scan a tag to log attendance"
                        primaryViewModel.updateUser(user)
@@ -73,7 +74,7 @@ fun HomeScreen(ktorClient: EmotionClient, nfcViewmodel: NFCViewmodel, primaryVie
         if(showFailureDialog) {
             AlertDialog(onDismissRequest = {  }, confirmButton = { TextButton(onClick = { showFailureDialog = false })  {
                 Text("Ok")
-            }}, title = { Text("Error") }, text = { Text("Something went wrong logging attendance") })
+            }}, title = { Text("Error") }, text = { Text("Something went wrong logging attendance\n $failureDialogText") })
         }
     }
         else {

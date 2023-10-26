@@ -1,18 +1,16 @@
 package org.team2658.emotion.android.screens.settings
 
 import android.app.AlertDialog
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.Checkbox
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
@@ -26,14 +24,11 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import kotlinx.coroutines.runBlocking
-import org.team2658.emotion.android.MainTheme
 import org.team2658.emotion.android.ui.composables.LabelledTextBoxSingleLine
 import org.team2658.emotion.toCapitalized
 import org.team2658.emotion.userauth.Subteam
-import java.lang.Integer.parseInt
 
 
 @Composable
@@ -47,6 +42,7 @@ fun RegisterScreen(
         subteam: Subteam,
         phone: String,
         grade: Int,
+        errorCallback: (String) -> Unit
     ) -> Unit,
     onLogin: () -> Unit
 ) {
@@ -60,6 +56,14 @@ fun RegisterScreen(
     var grade by remember { mutableIntStateOf(-1) }
     var phone by remember { mutableStateOf("") }
     val context = LocalContext.current
+
+    var showError by remember {mutableStateOf(false)}
+    var errorText by remember {mutableStateOf("")}
+    if(showError) {
+        AlertDialog(onDismissRequest = {  }, confirmButton = { TextButton(onClick = { showError = false })  {
+            Text("Ok")
+        }}, title = { Text("Error") }, text = { Text("Something went wrong\n $errorText") })
+    }
 
     Column {
         Text(
@@ -168,8 +172,9 @@ fun RegisterScreen(
                         lastName,
                         subteam,
                         phone,
-                        grade,
-                    )
+                        grade)
+                        { errorText = it; showError = true }
+
                 }
             } else {
                 //TODO: ALERT
@@ -188,19 +193,4 @@ fun RegisterScreen(
         }
         Spacer(modifier = Modifier.height(300.dp))
     }
-}
-
-@Preview
-@Composable
-fun RegisterPreview() {
-    MainTheme {
-        Surface(
-            modifier = Modifier
-                .fillMaxSize()
-                .background(MaterialTheme.colorScheme.background)
-        ) {
-            RegisterScreen(onRegister = { _, _, _, _, _, _, _, _ -> }, onLogin = { })
-        }
-    }
-
 }

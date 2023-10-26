@@ -2,6 +2,8 @@ package org.team2658.apikt
 
 import io.ktor.client.HttpClient
 import io.ktor.client.call.body
+import io.ktor.client.plugins.ClientRequestException
+import io.ktor.client.plugins.ServerResponseException
 import io.ktor.client.plugins.contentnegotiation.ContentNegotiation
 import io.ktor.client.plugins.defaultRequest
 import io.ktor.client.request.forms.submitForm
@@ -9,6 +11,7 @@ import io.ktor.client.request.get
 import io.ktor.client.request.header
 import io.ktor.client.request.post
 import io.ktor.client.request.setBody
+import io.ktor.client.statement.bodyAsText
 import io.ktor.http.ContentType
 import io.ktor.http.HttpHeaders
 import io.ktor.http.contentType
@@ -47,14 +50,23 @@ class EmotionClient {
         this.client.close()
     }
 
-    suspend fun login(username: String, password: String): User? {
+    suspend fun login(username: String, password: String, errorCallback: (String) -> Unit = {}): User? {
         return try {
             val response = this.client.submitForm(url = ROUTES.LOGIN, formParameters = parameters {
                 append("username", username)
                 append("password", password)
             }).body<UserModel>()
            User.fromSerializable(response)
-        }catch(e: Exception) {
+        }
+        catch(e: ClientRequestException) {
+            errorCallback(e.response.bodyAsText())
+            null
+        }
+        catch(e: ServerResponseException) {
+            errorCallback(e.response.bodyAsText())
+            null
+        }
+        catch(e: Exception) {
             println(e)
             null
         }
@@ -69,6 +81,7 @@ class EmotionClient {
         subteam: Subteam,
         phone: String,
         grade: Int,
+        errorCallback: (String) -> Unit = {}
     ): User? {
         return try {
             val response = this.client.submitForm(url = ROUTES.REGISTER, formParameters = parameters {
@@ -82,10 +95,19 @@ class EmotionClient {
                 append("grade", grade.toString())
             }).body<UserModel>()
             User.fromSerializable(response)
-        }catch(e: Exception) { null }
+        }
+        catch(e: ClientRequestException) {
+            errorCallback(e.response.bodyAsText())
+            null
+        }
+        catch(e: ServerResponseException) {
+            errorCallback(e.response.bodyAsText())
+            null
+        }
+        catch(e: Exception) { null }
     }
 
-    suspend fun createMeeting(user: User?, startTime: Long, endTime: Long, type: String, description: String, value: Int): Meeting? {
+    suspend fun createMeeting(user: User?, startTime: Long, endTime: Long, type: String, description: String, value: Int, errorCallback: (String)-> Unit = {}): Meeting? {
         if(user != null && user.token?.isNotBlank() == true && user.permissions.verifyAllAttendance){
             println(user.token)
             return try {
@@ -113,6 +135,16 @@ class EmotionClient {
 //                    })
 //                }.body<Meeting>()
             }
+            catch(e: ClientRequestException) {
+                println(e.response.bodyAsText())
+                errorCallback(e.response.bodyAsText())
+                null
+            }
+            catch(e: ServerResponseException) {
+                println(e.response.bodyAsText())
+                errorCallback(e.response.bodyAsText())
+                null
+            }
             catch (e: Exception) {
                 println("Issue with request")
                 println(e.message)
@@ -126,6 +158,7 @@ class EmotionClient {
         user: User?,
         meetingId: String,
         tapTime: Long,
+        failureCallback: (String) -> Unit = {},
     ): User? {
         if(user != null && user.token?.isNotBlank() == true && user.accountType != AccountType.UNVERIFIED ) {
             return try {
@@ -137,7 +170,18 @@ class EmotionClient {
                     header(HttpHeaders.Authorization, "Bearer ${user.token}")
                 }.body<UserModel>()
                 User.fromSerializable(response)
-            } catch(e: Exception) {
+            }
+            catch(e: ClientRequestException){
+                println(e.response.bodyAsText())
+                failureCallback(e.response.bodyAsText())
+                null
+            }
+            catch(e: ServerResponseException) {
+                println(e.response.bodyAsText())
+                failureCallback(e.response.bodyAsText())
+                null
+            }
+            catch(e: Exception) {
                 println("Issue with request")
                 println(e.message)
                 null

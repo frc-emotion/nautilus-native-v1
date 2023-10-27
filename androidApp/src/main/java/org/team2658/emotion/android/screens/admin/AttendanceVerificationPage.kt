@@ -15,6 +15,7 @@ import androidx.compose.material3.rememberDatePickerState
 import androidx.compose.material3.rememberTimePickerState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
@@ -73,15 +74,7 @@ fun AttendanceVerificationPage(viewModel: PrimaryViewModel, client: EmotionClien
             val end = LocalDateTime.ofInstant(Instant.ofEpochMilli(meeting.endTime), ZoneOffset.UTC)
             Text(text = "Meeting Start Time: $start")
             Text(text = "Meeting End Time: $end")
-            var connected by remember { mutableStateOf( nfc.tagConnected() ) }
-            LaunchedEffect(Unit) {
-                while(connected) {
-                    println("updating tag connection state")
-                    connected = nfc.tagConnected()
-                    delay(1000L)
-                }
-                println("tag disconnected")
-            }
+            val connected by nfc.tagConnectionFlow.collectAsState(initial = false)
             Spacer(modifier = Modifier.size(8.dp))
             Button(onClick = {
                 if (connected) {

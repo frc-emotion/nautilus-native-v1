@@ -14,16 +14,20 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import kotlinx.coroutines.launch
 import org.team2658.apikt.models.ChargedUpScores
 import org.team2658.emotion.android.ui.composables.NumberInput
 import org.team2658.emotion.android.ui.composables.YesNoSelector
 import org.team2658.emotion.android.viewmodels.PrimaryViewModel
+import org.team2658.emotion.scouting.GameResult
 import org.team2658.emotion.scouting.scoutingdata.ChargedUp
+import org.team2658.emotion.scouting.scoutingdata.ScoutingData
 
 @Composable
 fun ChargedUpForm(primaryViewModel: PrimaryViewModel) {
@@ -286,6 +290,32 @@ fun ChargedUpForm(primaryViewModel: PrimaryViewModel) {
         YesNoSelector(label = "Sustainability Bonus?", value = sustainBonus, setValue = {sustainBonus = it })
         Spacer(Modifier.size(8.dp))
         YesNoSelector(label = "Activation Bonus", value = activationBonus, setValue = {activationBonus = it})
+
+        val scope = rememberCoroutineScope() //TEMPORARY FOR TESTING ONLY
+        Button(onClick = {
+            scope.launch {
+                primaryViewModel.submitChargedUp(
+                    user = primaryViewModel.user, data = ChargedUp(
+                        baseData = ScoutingData("test", 1, 1, 1, 1, GameResult.LOSS, "testing db meow", false, false),
+                        autoPeriod = ChargedUpScores(
+                            0, 0, 0, 0, 0, 0
+                        ),
+                        teleopPeriod = ChargedUpScores(
+                            0, 0, 0, 0, 0, 0
+                        ),
+                        linkScore = 0,
+                        autoDock = false,
+                        autoEngage = false,
+                        teleopDock = false,
+                        teleopEngage = false,
+                        parked = false,
+                        RPEarned = listOf(false, false)
+                    )
+                )
+            }
+        }) {
+            Text("Test DB")
+        }
     }
 }
 

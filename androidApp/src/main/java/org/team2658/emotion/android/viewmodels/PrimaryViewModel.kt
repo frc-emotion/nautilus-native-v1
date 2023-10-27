@@ -11,6 +11,7 @@ import kotlinx.coroutines.withContext
 import org.team2658.apikt.EmotionClient
 import org.team2658.emotion.android.room.dbs.ScoutingDB
 import org.team2658.emotion.android.room.entities.ChargedUpEntity
+import org.team2658.emotion.android.room.entities.StorageType
 import org.team2658.emotion.android.room.entities.chargedUpParamsFromEntity
 import org.team2658.emotion.attendance.Meeting
 import org.team2658.emotion.scouting.GameResult
@@ -147,7 +148,8 @@ class PrimaryViewModel(private val ktorClient: EmotionClient, private val shared
             parked = data.parked,
             isDefensive = data.defensive,
             didBreak = data.brokeDown,
-            comments = data.comments
+            comments = data.comments,
+            storageType = StorageType.TEMP
         )
         var success = false
         val params = chargedUpParamsFromEntity(entity)

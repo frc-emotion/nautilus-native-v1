@@ -39,7 +39,13 @@ data class ChargedUpEntity(
     val won: Boolean,
     val tied: Boolean,
     val comments: String,
+    val storageType: StorageType,
 )
+
+enum class StorageType {
+    TEMP,
+    LONG_TERM,
+}
 
 fun chargedUpParamsFromEntity(data: ChargedUpEntity): ChargedUpRequestParams {
     return ChargedUpRequestParams(

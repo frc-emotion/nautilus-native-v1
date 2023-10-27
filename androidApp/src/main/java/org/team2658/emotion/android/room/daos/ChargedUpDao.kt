@@ -15,6 +15,6 @@ interface ChargedUpDao {
     @Delete
     suspend fun deleteChargedUp(data: ChargedUpEntity): Int
 
-    @Query("SELECT * FROM chargedups")
-    fun getChargedUps(): List<ChargedUpEntity>
+    @Query("SELECT * FROM chargedups WHERE storageType = 'TEMP'")
+    fun getChargedUpTemp(): List<ChargedUpEntity>
 }

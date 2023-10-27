@@ -41,7 +41,7 @@ class MainActivity : ComponentActivity() {
             applicationContext,
             org.team2658.emotion.android.room.dbs.ScoutingDB::class.java,
             "scouting.db"
-        ).build()
+        ).fallbackToDestructiveMigration().build()
     }
 
 //    private val sharedPrefs = getPreferences(MODE_PRIVATE)

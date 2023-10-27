@@ -21,6 +21,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.room.Room
 import kotlinx.coroutines.runBlocking
 import org.team2658.apikt.EmotionClient
 import org.team2658.emotion.android.screens.settings.SettingsScreen
@@ -34,6 +35,15 @@ class MainActivity : ComponentActivity() {
     private val ktorClient = EmotionClient()
     private val nfcViewmodel by viewModels<NFCViewmodel>()
     private var init = false
+
+    private val db by lazy {
+        Room.databaseBuilder(
+            applicationContext,
+            org.team2658.emotion.android.room.dbs.ScoutingDB::class.java,
+            "scouting.db"
+        ).build()
+    }
+
 //    private val sharedPrefs = getPreferences(MODE_PRIVATE)
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -49,7 +59,7 @@ class MainActivity : ComponentActivity() {
                     override fun <T : ViewModel> create(
                         modelClass: Class<T>,
                     ):T {
-                        return PrimaryViewModel(ktorClient, sharedPrefs) as T
+                        return PrimaryViewModel(ktorClient, sharedPrefs, db) as T
                     }
                 }
             )

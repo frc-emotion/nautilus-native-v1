@@ -5,10 +5,13 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
-import org.team2658.apikt.ChargedUpRequestParams
+import kotlinx.coroutines.withContext
 import org.team2658.apikt.EmotionClient
-import org.team2658.apikt.models.safeDivide
+import org.team2658.emotion.android.room.dbs.ScoutingDB
+import org.team2658.emotion.android.room.entities.ChargedUpEntity
+import org.team2658.emotion.android.room.entities.chargedUpParamsFromEntity
 import org.team2658.emotion.attendance.Meeting
 import org.team2658.emotion.scouting.GameResult
 import org.team2658.emotion.scouting.scoutingdata.ChargedUp
@@ -17,12 +20,12 @@ import org.team2658.emotion.userauth.AccountType
 import org.team2658.emotion.userauth.AuthState
 import org.team2658.emotion.userauth.Subteam
 import org.team2658.emotion.userauth.User
-import kotlin.properties.ReadWriteProperty
-import kotlin.reflect.KProperty
 
-class PrimaryViewModel(private val ktorClient: EmotionClient, private val sharedPref: SharedPreferences) : ViewModel() {
+class PrimaryViewModel(private val ktorClient: EmotionClient, private val sharedPref: SharedPreferences, private val db: ScoutingDB) : ViewModel() {
     var user: User? by mutableStateOf(User.fromJSON(sharedPref.getString("user", null)))
         private set
+
+    val dao = db.chargedUpDao
 
     fun updateUser(user: User?) {
         this.user = user
@@ -93,7 +96,7 @@ class PrimaryViewModel(private val ktorClient: EmotionClient, private val shared
     }
 
     suspend fun getCompetitions(year: String): List<String> {
-        return this.ktorClient.getCompetitions(year)
+        return this.ktorClient.getCompetitions(year) //TODO: cache offline
     }
 
     var meeting: Meeting? by mutableStateOf(Meeting.fromJSON(sharedPref.getString("createdMeeting", null)))
@@ -113,33 +116,54 @@ class PrimaryViewModel(private val ktorClient: EmotionClient, private val shared
     }
 
     suspend fun submitChargedUp(user: User?, data: ChargedUp):Boolean {
-        val params = ChargedUpRequestParams(
+        val entity = ChargedUpEntity(
+            won = data.gameResult == GameResult.WIN,
+            tied = data.gameResult == GameResult.TIE,
+            score = data.finalScore,
+            penaltyCount = data.penaltyPointsEarned,
             competition = data.competition,
+            matchNumber = data.matchNumber,
             teamNumber = data.teamNumber,
-            RPEarned = data.RPEarned,
+            sustainRP = data.RPEarned[0],
+            activationRP = data.RPEarned[1],
             totalRP = data.totalRP,
-            teleopPeriod = data.teleopPeriod,
-            autoPeriod = data.autoPeriod,
+            autoBotCones = data.autoPeriod.botCones,
+            autoBotCubes = data.autoPeriod.botCubes,
+            autoMidCones = data.autoPeriod.midCones,
+            autoMidCubes = data.autoPeriod.midCubes,
+            autoTopCones = data.autoPeriod.topCones,
+            autoTopCubes = data.autoPeriod.topCubes,
+            teleopBotCones = data.teleopPeriod.botCones,
+            teleopBotCubes = data.teleopPeriod.botCubes,
+            teleopMidCones = data.teleopPeriod.midCones,
+            teleopMidCubes = data.teleopPeriod.midCubes,
+            teleopTopCones = data.teleopPeriod.topCones,
+            teleopTopCubes = data.teleopPeriod.topCubes,
+            linkScore = data.linkScore,
             autoDock = data.autoDock,
             autoEngage = data.autoEngage,
-            parked = data.parked,
             teleopDock = data.teleopDock,
             teleopEngage = data.teleopEngage,
-            comments = data.comments,
-            coneRate = safeDivide((data.teleopPeriod.totalCones + data.autoPeriod.totalCones), (data.teleopPeriod.totalScore + data.autoPeriod.totalScore)),
-            cubeRate = safeDivide((data.teleopPeriod.totalCubes + data.autoPeriod.totalCubes), (data.teleopPeriod.totalScore + data.autoPeriod.totalScore)),
-            didBreak = data.brokeDown,
-            matchNumber = data.matchNumber,
-            linkScore = data.linkScore,
+            parked = data.parked,
             isDefensive = data.defensive,
-            penaltyCount = data.penaltyPointsEarned,
-            score = data.finalScore,
-            tied = data.gameResult == GameResult.TIE,
-            won = data.gameResult == GameResult.WIN
+            didBreak = data.brokeDown,
+            comments = data.comments
         )
-        val res = this.ktorClient.submitChargedUp(params, this.user)
-        println(res)
-        return ( res != null) //temporary, eventually set up to store offline if failed response
+        var success = false
+        val params = chargedUpParamsFromEntity(entity)
+        withContext(Dispatchers.IO) {
+            val res = ktorClient.submitChargedUp(params, user)
+            println(res)
+            success = res != null
+            if (!success) try {
+                dao.insertChargedUp(entity)
+                success = true
+            } catch (e: Exception) {
+                println(e)
+            }
+        }
+        return success
     }
+
 
 }

@@ -24,6 +24,7 @@ import org.team2658.apikt.models.ChargedUpModel
 import org.team2658.apikt.models.ChargedUpScores
 import org.team2658.apikt.models.ExamplePost
 import org.team2658.apikt.models.UserModel
+import org.team2658.apikt.models.safeDivide
 import org.team2658.emotion.attendance.Meeting
 import org.team2658.emotion.userauth.AccountType
 import org.team2658.emotion.userauth.Subteam
@@ -223,7 +224,7 @@ class EmotionClient {
         }
     }
 
-    suspend fun submitChargedUp(data: ChargedUpRequestParams, user: User?): ChargedUpModel? {
+    suspend fun submitChargedUp(data: ChargedUpRequestParams, user: User?):String? {
         return if(user?.permissions?.standScouting == true && user.token?.isNotBlank() == true) {
             try {
 //                this.client.submitForm(url = ROUTES.CHARGEDUP, formParameters = parameters {
@@ -250,12 +251,13 @@ class EmotionClient {
 //                    append("tied", data.tied.toString())
 //                    append("comments", data.comments)
 //                }) {
+                println(data)
                 this.client.post(ROUTES.CHARGEDUP) {
                     header(HttpHeaders.Authorization, "Bearer ${user.token}")
                     setBody(data)
-                }.body<ChargedUpModel>()
+                }.bodyAsText()
             }catch(e: Exception) {
-                println(e)
+                println(e.message)
                 null
             }
         } else null
@@ -272,8 +274,8 @@ data class ChargedUpRequestParams(
     val totalRP: Int,
     val autoPeriod: ChargedUpScores,
     val teleopPeriod: ChargedUpScores,
-    val coneRate: Double?,
-    val cubeRate: Double?,
+    val coneRate: Double?= safeDivide((teleopPeriod.totalCones + autoPeriod.totalCones), (teleopPeriod.totalScore + autoPeriod.totalScore)),
+    val cubeRate: Double?= safeDivide((teleopPeriod.totalCubes + autoPeriod.totalCubes), (teleopPeriod.totalScore + autoPeriod.totalScore)),
     val linkScore: Int,
     val autoDock: Boolean,
     val autoEngage: Boolean,
@@ -287,4 +289,8 @@ data class ChargedUpRequestParams(
     val won: Boolean,
     val tied: Boolean,
     val comments: String,
-)
+    val teamName: String = "",
+){
+//    val coneRate = safeDivide((this.teleopPeriod.totalCones + this.autoPeriod.totalCones), (this.teleopPeriod.totalScore + this.autoPeriod.totalScore))
+//    val cubeRate = safeDivide((this.teleopPeriod.totalCubes + this.autoPeriod.totalCubes), (this.teleopPeriod.totalScore + this.autoPeriod.totalScore))
+}

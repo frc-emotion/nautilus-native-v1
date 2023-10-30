@@ -7,6 +7,7 @@ import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.withContext
 import org.team2658.apikt.EmotionClient
 import org.team2658.emotion.android.room.dbs.ScoutingDB
@@ -31,6 +32,15 @@ class PrimaryViewModel(private val ktorClient: EmotionClient, private val shared
 
     private val compsDao = db.compsDao
 
+    private val competitionYears = listOf("2023")
+
+    init {
+        runBlocking {
+            fetchComps(competitionYears)
+            updateMe()
+        }
+    }
+
     fun updateUser(user: User?) {
         this.user = user
         with(sharedPref.edit()) {
@@ -39,7 +49,7 @@ class PrimaryViewModel(private val ktorClient: EmotionClient, private val shared
         }
     }
 
-    suspend fun updateMe() {
+    private suspend fun updateMe() {
         println("Fetching updated user")
         val updated = this.ktorClient.getMe(this.user)
         updated?.let {
@@ -129,7 +139,7 @@ class PrimaryViewModel(private val ktorClient: EmotionClient, private val shared
         }
     }
 
-    suspend fun fetchComps(years: List<String>) {
+    private suspend fun fetchComps(years: List<String>) {
         withContext(Dispatchers.IO) {
             years.forEach {
                 fetchAndStoreCompetitionsForYear(it)

@@ -15,7 +15,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
@@ -46,11 +45,6 @@ class MainActivity : ComponentActivity() {
     }
 //    private val sharedPrefs = getPreferences(MODE_PRIVATE)
 
-    private suspend fun initializeApp(vm: PrimaryViewModel) {
-        vm.updateMe()
-        vm.fetchComps(competitionYears)
-    }
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         init = true
@@ -68,13 +62,6 @@ class MainActivity : ComponentActivity() {
                     }
                 }
             )
-
-            if(init) {
-                runBlocking {
-                    initializeApp(primaryViewModel)
-                }
-                init = false
-            }
 
             MainTheme {
                 if (primaryViewModel.authState == AuthState.LOGGED_IN) {

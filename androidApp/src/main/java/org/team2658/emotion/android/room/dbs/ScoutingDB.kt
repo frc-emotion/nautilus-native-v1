@@ -10,7 +10,7 @@ import org.team2658.emotion.android.room.entities.Competition
 
 @Database(
     entities = [ChargedUpEntity::class, Competition::class],
-    version = 4,
+    version = 5,
 )
 abstract class ScoutingDB: RoomDatabase() {
     abstract val chargedUpDao: ChargedUpDao

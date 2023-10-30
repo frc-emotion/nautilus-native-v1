@@ -2,6 +2,7 @@ package org.team2658.emotion.android
 
 import android.content.Intent
 import android.content.SharedPreferences
+import android.net.ConnectivityManager
 import android.nfc.NdefMessage
 import android.nfc.NfcAdapter
 import android.nfc.Tag
@@ -33,8 +34,6 @@ import org.team2658.emotion.userauth.AuthState
 class MainActivity : ComponentActivity() {
     private val ktorClient = EmotionClient()
     private val nfcViewmodel by viewModels<NFCViewmodel>()
-    private val competitionYears = listOf("2023")
-    private var init = false
 
     private val scoutingDB by lazy {
         Room.databaseBuilder(
@@ -45,9 +44,11 @@ class MainActivity : ComponentActivity() {
     }
 //    private val sharedPrefs = getPreferences(MODE_PRIVATE)
 
+//    private val connectivityManager = null
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        init = true
+        val connectivityManager = this.applicationContext?.getSystemService(CONNECTIVITY_SERVICE) as ConnectivityManager?
         println("onCreate")
         handleNFCIntent(intent)
         setContent {
@@ -58,7 +59,7 @@ class MainActivity : ComponentActivity() {
                     override fun <T : ViewModel> create(
                         modelClass: Class<T>,
                     ):T {
-                        return PrimaryViewModel(ktorClient, sharedPrefs, scoutingDB) as T
+                        return PrimaryViewModel(ktorClient, sharedPrefs, scoutingDB, connectivityManager) as T
                     }
                 }
             )

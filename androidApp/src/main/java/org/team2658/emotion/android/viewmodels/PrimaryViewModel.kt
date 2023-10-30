@@ -1,13 +1,16 @@
 package org.team2658.emotion.android.viewmodels
 
 import android.content.SharedPreferences
+import android.net.ConnectivityManager
+import android.net.NetworkCapabilities
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
-import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import org.team2658.apikt.EmotionClient
 import org.team2658.emotion.android.room.dbs.ScoutingDB
@@ -24,21 +27,18 @@ import org.team2658.emotion.userauth.AuthState
 import org.team2658.emotion.userauth.Subteam
 import org.team2658.emotion.userauth.User
 
-class PrimaryViewModel(private val ktorClient: EmotionClient, private val sharedPref: SharedPreferences, private val db: ScoutingDB) : ViewModel() {
+class PrimaryViewModel(private val ktorClient: EmotionClient, private val sharedPref: SharedPreferences, scoutingDB: ScoutingDB, private val connectivityManager: ConnectivityManager?) : ViewModel() {
     var user: User? by mutableStateOf(User.fromJSON(sharedPref.getString("user", null)))
         private set
 
-    private val chargedUpDao = db.chargedUpDao
+    private val chargedUpDao = scoutingDB.chargedUpDao
 
-    private val compsDao = db.compsDao
+    private val compsDao = scoutingDB.compsDao
 
     private val competitionYears = listOf("2023")
 
     init {
-        runBlocking {
-            fetchComps(competitionYears)
-            updateMe()
-        }
+        sync()
     }
 
     fun updateUser(user: User?) {
@@ -49,7 +49,7 @@ class PrimaryViewModel(private val ktorClient: EmotionClient, private val shared
         }
     }
 
-    private suspend fun updateMe() {
+    private suspend fun syncUser() {
         println("Fetching updated user")
         val updated = this.ktorClient.getMe(this.user)
         updated?.let {
@@ -139,9 +139,9 @@ class PrimaryViewModel(private val ktorClient: EmotionClient, private val shared
         }
     }
 
-    private suspend fun fetchComps(years: List<String>) {
+    private suspend fun syncComps() {
         withContext(Dispatchers.IO) {
-            years.forEach {
+            competitionYears.forEach {
                 fetchAndStoreCompetitionsForYear(it)
             }
         }
@@ -215,5 +215,37 @@ class PrimaryViewModel(private val ktorClient: EmotionClient, private val shared
         return success
     }
 
+    private suspend fun syncChargedUp() {
+        try{
+            withContext(Dispatchers.IO) {
+                val queue = chargedUpDao.getChargedUpTemp()
+                queue.forEach {
+                    val params = chargedUpParamsFromEntity(it)
+                    val res = ktorClient.submitChargedUp(params, user)
+                    if (res != null) {
+                        chargedUpDao.deleteChargedUp(it)
+                        println("UPLOADED $res")
+                    }
+                }
+            }
+        }catch(e: Exception) {
+            println(e)
+        }
+    }
+
+    private fun isOnline(): Boolean {
+        val netInfo = this.connectivityManager?.getNetworkCapabilities(this.connectivityManager.activeNetwork)
+        return netInfo != null && (netInfo.hasTransport(NetworkCapabilities.TRANSPORT_CELLULAR) || netInfo.hasTransport(NetworkCapabilities.TRANSPORT_WIFI))
+    }
+
+    fun sync(): Boolean {
+        if(!isOnline()) return false
+        viewModelScope.launch {
+            syncChargedUp()
+            syncComps()
+            syncUser()
+        }
+        return true
+    }
 
 }

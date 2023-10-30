@@ -11,6 +11,7 @@ import kotlinx.coroutines.withContext
 import org.team2658.apikt.EmotionClient
 import org.team2658.emotion.android.room.dbs.ScoutingDB
 import org.team2658.emotion.android.room.entities.ChargedUpEntity
+import org.team2658.emotion.android.room.entities.Competition
 import org.team2658.emotion.android.room.entities.StorageType
 import org.team2658.emotion.android.room.entities.chargedUpParamsFromEntity
 import org.team2658.emotion.attendance.Meeting
@@ -26,7 +27,9 @@ class PrimaryViewModel(private val ktorClient: EmotionClient, private val shared
     var user: User? by mutableStateOf(User.fromJSON(sharedPref.getString("user", null)))
         private set
 
-    val dao = db.chargedUpDao
+    private val chargedUpDao = db.chargedUpDao
+
+    private val compsDao = db.compsDao
 
     fun updateUser(user: User?) {
         this.user = user
@@ -97,8 +100,43 @@ class PrimaryViewModel(private val ktorClient: EmotionClient, private val shared
     }
 
     suspend fun getCompetitions(year: String): List<String> {
-        return this.ktorClient.getCompetitions(year) //TODO: cache offline
+        return withContext(Dispatchers.IO){
+            try {
+                compsDao.getComps(year).map { it.name }
+            } catch (e: Exception) {
+                println(e)
+                emptyList()
+            }
+        }
     }
+
+    private suspend fun fetchAndStoreCompetitionsForYear(year: String) {
+        withContext(Dispatchers.IO) {
+            val comps = ktorClient.getCompetitions(year)
+            println("fetching comps for $year")
+            if (comps.isNotEmpty()) {
+                println("comp list fetched: ")
+                println(comps)
+                try {
+                    compsDao.insertComps(comps.map { Competition(name = it, year = year) })
+                    println("inserted comps for $year")
+                    val stored = getCompetitions(year)
+                    println(stored)
+                } catch (e: Exception) {
+                    println(e)
+                }
+            }
+        }
+    }
+
+    suspend fun fetchComps(years: List<String>) {
+        withContext(Dispatchers.IO) {
+            years.forEach {
+                fetchAndStoreCompetitionsForYear(it)
+            }
+        }
+    }
+
 
     var meeting: Meeting? by mutableStateOf(Meeting.fromJSON(sharedPref.getString("createdMeeting", null)))
         private set
@@ -158,7 +196,7 @@ class PrimaryViewModel(private val ktorClient: EmotionClient, private val shared
             println(res)
             success = res != null
             if (!success) try {
-                dao.insertChargedUp(entity)
+                chargedUpDao.insertChargedUp(entity)
                 success = true
             } catch (e: Exception) {
                 println(e)

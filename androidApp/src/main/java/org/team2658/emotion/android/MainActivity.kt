@@ -15,6 +15,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
@@ -25,7 +26,6 @@ import androidx.room.Room
 import kotlinx.coroutines.runBlocking
 import org.team2658.apikt.EmotionClient
 import org.team2658.emotion.android.screens.settings.SettingsScreen
-import org.team2658.emotion.android.ui.composables.Screen
 import org.team2658.emotion.android.ui.navigation.LoggedInNavigator
 import org.team2658.emotion.android.viewmodels.NFCViewmodel
 import org.team2658.emotion.android.viewmodels.PrimaryViewModel
@@ -34,17 +34,22 @@ import org.team2658.emotion.userauth.AuthState
 class MainActivity : ComponentActivity() {
     private val ktorClient = EmotionClient()
     private val nfcViewmodel by viewModels<NFCViewmodel>()
+    private val competitionYears = listOf("2023")
     private var init = false
 
-    private val db by lazy {
+    private val scoutingDB by lazy {
         Room.databaseBuilder(
             applicationContext,
             org.team2658.emotion.android.room.dbs.ScoutingDB::class.java,
             "scouting.db"
         ).fallbackToDestructiveMigration().build()
     }
-
 //    private val sharedPrefs = getPreferences(MODE_PRIVATE)
+
+    private suspend fun initializeApp(vm: PrimaryViewModel) {
+        vm.updateMe()
+        vm.fetchComps(competitionYears)
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -59,16 +64,18 @@ class MainActivity : ComponentActivity() {
                     override fun <T : ViewModel> create(
                         modelClass: Class<T>,
                     ):T {
-                        return PrimaryViewModel(ktorClient, sharedPrefs, db) as T
+                        return PrimaryViewModel(ktorClient, sharedPrefs, scoutingDB) as T
                     }
                 }
             )
+
             if(init) {
                 runBlocking {
-                    primaryViewModel.updateMe()
+                    initializeApp(primaryViewModel)
                 }
                 init = false
             }
+
             MainTheme {
                 if (primaryViewModel.authState == AuthState.LOGGED_IN) {
                     LoggedInNavigator(primaryViewModel, ktorClient, nfcViewmodel)
@@ -79,23 +86,6 @@ class MainActivity : ComponentActivity() {
                         }
                     }
                 }
-//                Screen {
-//                    if(this.nfcViewmodel.nfcTag != null) {
-//                        Text("NFC Tag Detected")
-//                        Text(this.nfcViewmodel.nfcTag.toString())
-//                       Button(onClick = {
-//                            this.nfcViewmodel.writeToTag("Shravan is sexy")
-//                       }) {
-//                           Text("Write to tag")
-//                       }
-//                    }  else {
-//                            Text("No Tag")
-//                    }
-//                    if(this.nfcViewmodel.ndefMessages != null) {
-//                    Text(this.nfcViewmodel.ndefMessages.toString())
-//                        Text(this.nfcViewmodel.getNdefPayload().toString())
-//                    }
-//                }
             }
         }
     }

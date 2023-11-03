@@ -54,10 +54,10 @@ fun AttendanceVerificationPage(viewModel: PrimaryViewModel, client: EmotionClien
     val meeting: Meeting? = remember { viewModel.meeting }
     var meetingType by remember { mutableStateOf("meeting") }
     var meetingDescription by remember { mutableStateOf("") }
-    val dateState = rememberDatePickerState(initialSelectedDateMillis = LocalDateTime.now().toInstant(
+    val dateState = rememberDatePickerState(initialSelectedDateMillis = LocalDateTime.now(ZoneOffset.UTC).toInstant(
         ZoneOffset.UTC).toEpochMilli(), initialDisplayMode = DisplayMode.Input)
-    val startTimeState = rememberTimePickerState(initialHour = LocalDateTime.now().hour)
-    val endTimeState = rememberTimePickerState(initialHour = (LocalDateTime.now().hour + meetingValue).coerceAtMost(23))
+    val startTimeState = rememberTimePickerState(initialHour = LocalDateTime.now(ZoneOffset.UTC).hour)
+    val endTimeState = rememberTimePickerState(initialHour = (LocalDateTime.now(ZoneOffset.UTC).hour + meetingValue).coerceAtMost(23))
 
 
     var meow by remember { mutableStateOf(0L) }
@@ -98,10 +98,6 @@ fun AttendanceVerificationPage(viewModel: PrimaryViewModel, client: EmotionClien
             Text(text = if (showCreateMenu) "Close" else "Create a Meeting")
         }
 
-        Button(onClick = { meow = LocalDateTime.now().toInstant(ZoneOffset.UTC).toEpochMilli() }) {
-            Text("test time")
-        }
-        Text(text = meow.toString())
         if (showCreateMenu) {
             Text(text = "Create a Meeting", style = MaterialTheme.typography.titleLarge)
             Spacer(modifier = Modifier.size(16.dp))

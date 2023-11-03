@@ -19,7 +19,9 @@
 		93790E3B2AA921F40003203D /* loader.swift in Sources */ = {isa = PBXBuildFile; fileRef = 93790E3A2AA921F40003203D /* loader.swift */; };
 		93844FFB2ADB29E1003EE764 /* ChargedUpFormView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 93844FFA2ADB29E1003EE764 /* ChargedUpFormView.swift */; };
 		93B615162AE715F900732A3F /* helpfulVars.swift in Sources */ = {isa = PBXBuildFile; fileRef = 93B615152AE715F900732A3F /* helpfulVars.swift */; };
-		93B6154E2AEA08D100732A3F /* AttendanceProperties.m in Sources */ = {isa = PBXBuildFile; fileRef = 93B6154D2AEA08D100732A3F /* AttendanceProperties.m */; };
+		93B615502AEA163200732A3F /* NFCButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 93B6154F2AEA163200732A3F /* NFCButton.swift */; };
+		93B615522AEA167700732A3F /* attendanceHelpers.swift in Sources */ = {isa = PBXBuildFile; fileRef = 93B615512AEA167700732A3F /* attendanceHelpers.swift */; };
+		93B615542AEA174600732A3F /* serializer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 93B615532AEA174600732A3F /* serializer.swift */; };
 		93B9EAA82A5E5BA900D5B8A8 /* BugReportView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 93B9EAA72A5E5BA900D5B8A8 /* BugReportView.swift */; };
 		93B9EAAA2A5E5BD500D5B8A8 /* AccountView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 93B9EAA92A5E5BD500D5B8A8 /* AccountView.swift */; };
 		93B9EAAD2A5E5D3200D5B8A8 /* ChargedUpMatches.json in Resources */ = {isa = PBXBuildFile; fileRef = 93B9EAAC2A5E5D3200D5B8A8 /* ChargedUpMatches.json */; };
@@ -57,8 +59,9 @@
 		93790E3C2AA92D800003203D /* Σ-Motion.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = "Σ-Motion.entitlements"; sourceTree = "<group>"; };
 		93844FFA2ADB29E1003EE764 /* ChargedUpFormView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChargedUpFormView.swift; sourceTree = "<group>"; };
 		93B615152AE715F900732A3F /* helpfulVars.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = helpfulVars.swift; sourceTree = "<group>"; };
-		93B6154C2AEA08D000732A3F /* E-Motion-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "E-Motion-Bridging-Header.h"; sourceTree = "<group>"; };
-		93B6154D2AEA08D100732A3F /* AttendanceProperties.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AttendanceProperties.m; sourceTree = "<group>"; };
+		93B6154F2AEA163200732A3F /* NFCButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NFCButton.swift; sourceTree = "<group>"; };
+		93B615512AEA167700732A3F /* attendanceHelpers.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = attendanceHelpers.swift; sourceTree = "<group>"; };
+		93B615532AEA174600732A3F /* serializer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = serializer.swift; sourceTree = "<group>"; };
 		93B9EAA72A5E5BA900D5B8A8 /* BugReportView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BugReportView.swift; sourceTree = "<group>"; };
 		93B9EAA92A5E5BD500D5B8A8 /* AccountView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AccountView.swift; sourceTree = "<group>"; };
 		93B9EAAC2A5E5D3200D5B8A8 /* ChargedUpMatches.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = ChargedUpMatches.json; sourceTree = "<group>"; };
@@ -147,12 +150,10 @@
 			children = (
 				93B9EACA2A5E800700D5B8A8 /* HomeView.swift */,
 				93790E382AA921690003203D /* AttendanceView.swift */,
-				93B6154D2AEA08D100732A3F /* AttendanceProperties.m */,
 				93B9EAE72A65E4C700D5B8A8 /* Scouting */,
 				93B9EAE82A65E4D000D5B8A8 /* Directory */,
 				93B9EACC2A5E801400D5B8A8 /* AdminView.swift */,
 				93418DDD2A5E32EF00336A62 /* Settings */,
-				93B6154C2AEA08D000732A3F /* E-Motion-Bridging-Header.h */,
 			);
 			path = Tabs;
 			sourceTree = "<group>";
@@ -182,6 +183,7 @@
 			isa = PBXGroup;
 			children = (
 				93719C872AC0B35300E29446 /* CircularProgressView.swift */,
+				93B6154F2AEA163200732A3F /* NFCButton.swift */,
 			);
 			path = Elements;
 			sourceTree = "<group>";
@@ -191,6 +193,8 @@
 			children = (
 				93790E3A2AA921F40003203D /* loader.swift */,
 				93B615152AE715F900732A3F /* helpfulVars.swift */,
+				93B615512AEA167700732A3F /* attendanceHelpers.swift */,
+				93B615532AEA174600732A3F /* serializer.swift */,
 			);
 			path = Helpers;
 			sourceTree = "<group>";
@@ -385,17 +389,19 @@
 				93719C882AC0B35300E29446 /* CircularProgressView.swift in Sources */,
 				93418D9D2A5BC4D100336A62 /* ScoutingView.swift in Sources */,
 				93B9EAF02A67255600D5B8A8 /* RapidReactMatch.swift in Sources */,
+				93B615522AEA167700732A3F /* attendanceHelpers.swift in Sources */,
 				93B9EAED2A67211600D5B8A8 /* ForgotPasswordView.swift in Sources */,
 				93790E3B2AA921F40003203D /* loader.swift in Sources */,
+				93B615502AEA163200732A3F /* NFCButton.swift in Sources */,
 				93B9EAD12A5F387A00D5B8A8 /* LoginView.swift in Sources */,
 				93B9EAE42A65DEE200D5B8A8 /* EditHistoryV1.swift in Sources */,
+				93B615542AEA174600732A3F /* serializer.swift in Sources */,
 				93B9EAAA2A5E5BD500D5B8A8 /* AccountView.swift in Sources */,
 				93B9EACF2A5E803100D5B8A8 /* ScoutingFormView.swift in Sources */,
 				2152FB042600AC8F00CF470E /* iOSApp.swift in Sources */,
 				93B9EADF2A65DC2F00D5B8A8 /* ChargedUpMatch.swift in Sources */,
 				93B9EACD2A5E801400D5B8A8 /* AdminView.swift in Sources */,
 				93B9EAE62A65E0FA00D5B8A8 /* UserStateViewModel.swift in Sources */,
-				93B6154E2AEA08D100732A3F /* AttendanceProperties.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -551,7 +557,6 @@
 				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
 				SUPPORTS_MACCATALYST = NO;
 				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = YES;
-				SWIFT_OBJC_BRIDGING_HEADER = "iosApp/Tabs/E-Motion-Bridging-Header.h";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
@@ -591,7 +596,6 @@
 				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
 				SUPPORTS_MACCATALYST = NO;
 				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = YES;
-				SWIFT_OBJC_BRIDGING_HEADER = "iosApp/Tabs/E-Motion-Bridging-Header.h";
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};

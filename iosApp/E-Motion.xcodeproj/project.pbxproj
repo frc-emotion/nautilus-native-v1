@@ -21,7 +21,6 @@
 		93B615162AE715F900732A3F /* helpfulVars.swift in Sources */ = {isa = PBXBuildFile; fileRef = 93B615152AE715F900732A3F /* helpfulVars.swift */; };
 		93B615502AEA163200732A3F /* NFCButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 93B6154F2AEA163200732A3F /* NFCButton.swift */; };
 		93B615522AEA167700732A3F /* attendanceHelpers.swift in Sources */ = {isa = PBXBuildFile; fileRef = 93B615512AEA167700732A3F /* attendanceHelpers.swift */; };
-		93B615542AEA174600732A3F /* serializer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 93B615532AEA174600732A3F /* serializer.swift */; };
 		93B9EAA82A5E5BA900D5B8A8 /* BugReportView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 93B9EAA72A5E5BA900D5B8A8 /* BugReportView.swift */; };
 		93B9EAAA2A5E5BD500D5B8A8 /* AccountView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 93B9EAA92A5E5BD500D5B8A8 /* AccountView.swift */; };
 		93B9EAAD2A5E5D3200D5B8A8 /* ChargedUpMatches.json in Resources */ = {isa = PBXBuildFile; fileRef = 93B9EAAC2A5E5D3200D5B8A8 /* ChargedUpMatches.json */; };
@@ -61,7 +60,6 @@
 		93B615152AE715F900732A3F /* helpfulVars.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = helpfulVars.swift; sourceTree = "<group>"; };
 		93B6154F2AEA163200732A3F /* NFCButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NFCButton.swift; sourceTree = "<group>"; };
 		93B615512AEA167700732A3F /* attendanceHelpers.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = attendanceHelpers.swift; sourceTree = "<group>"; };
-		93B615532AEA174600732A3F /* serializer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = serializer.swift; sourceTree = "<group>"; };
 		93B9EAA72A5E5BA900D5B8A8 /* BugReportView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BugReportView.swift; sourceTree = "<group>"; };
 		93B9EAA92A5E5BD500D5B8A8 /* AccountView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AccountView.swift; sourceTree = "<group>"; };
 		93B9EAAC2A5E5D3200D5B8A8 /* ChargedUpMatches.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = ChargedUpMatches.json; sourceTree = "<group>"; };
@@ -194,7 +192,6 @@
 				93790E3A2AA921F40003203D /* loader.swift */,
 				93B615152AE715F900732A3F /* helpfulVars.swift */,
 				93B615512AEA167700732A3F /* attendanceHelpers.swift */,
-				93B615532AEA174600732A3F /* serializer.swift */,
 			);
 			path = Helpers;
 			sourceTree = "<group>";
@@ -395,7 +392,6 @@
 				93B615502AEA163200732A3F /* NFCButton.swift in Sources */,
 				93B9EAD12A5F387A00D5B8A8 /* LoginView.swift in Sources */,
 				93B9EAE42A65DEE200D5B8A8 /* EditHistoryV1.swift in Sources */,
-				93B615542AEA174600732A3F /* serializer.swift in Sources */,
 				93B9EAAA2A5E5BD500D5B8A8 /* AccountView.swift in Sources */,
 				93B9EACF2A5E803100D5B8A8 /* ScoutingFormView.swift in Sources */,
 				2152FB042600AC8F00CF470E /* iOSApp.swift in Sources */,

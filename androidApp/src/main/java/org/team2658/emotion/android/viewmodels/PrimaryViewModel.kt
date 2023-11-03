@@ -50,6 +50,12 @@ class PrimaryViewModel(private val ktorClient: EmotionClient, private val shared
         }
     }
 
+    suspend fun getChargedUpQueueLength(): Int {
+        return withContext(Dispatchers.IO) {
+            chargedUpDao.getChargedUpTemp().size
+        }
+    }
+
     private suspend fun syncUser() {
         println("Fetching updated user")
         val updated = this.ktorClient.getMe(this.user)

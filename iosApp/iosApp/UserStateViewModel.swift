@@ -18,7 +18,6 @@ class UserStateViewModel: ObservableObject {
     
     @Published var isLoggedIn = false
     @Published var isBusy = false
-    @Published var userOut: shared.User?
     let defaults = UserDefaults.standard
     
     func signIn(username: String, password: String) async -> Result<Bool, UserStateError> {
@@ -28,11 +27,8 @@ class UserStateViewModel: ObservableObject {
             let response = try await client.login(username: username, password: password)
             
             if let response {
-                print(response.firstName)
-                userOut = response
-//                defaults.set(response, forKey: "User")
-//                let meow = defaults.object(forKey: "User")
-//                print(meow)
+                let responseJson: String = response.toJSON()
+                defaults.set(responseJson, forKey: "User")
                 isLoggedIn = true
                 isBusy = false
                 return .success(true)
@@ -54,9 +50,9 @@ class UserStateViewModel: ObservableObject {
             let client = EmotionClient()
             let response = try await client.register(username: username, password: password, email: email, firstName: firstname, lastName: lastname, subteam: subteam, phone: phone, grade: grade)
             
-            // DONT CLEAR THE WARNING IT BREAKS THE CODE
             if let response {
-                userOut = response
+                let responseJson: String = response.toJSON()
+                defaults.set(responseJson, forKey: "User")
                 isLoggedIn = true
                 isBusy = false
                 return .success(true)
@@ -73,7 +69,7 @@ class UserStateViewModel: ObservableObject {
     func signOut() async -> Result<Bool, UserStateError> {
         isBusy = true
         do {
-            userOut = nil
+            defaults.removeObject(forKey: "User")
             isLoggedIn = false
             isBusy = false
             return .success(true)

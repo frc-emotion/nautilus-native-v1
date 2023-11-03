@@ -11,90 +11,39 @@
 import SwiftUI
 import shared
 import CoreNFC
+import UIKit
 
-struct NFCButton: UIViewRepresentable {
-    @Binding var data : String
+func getUTCDate(date: Int) {
+    let dateFormatter = DateFormatter()
+    dateFormatter.timeZone = TimeZone(abbreviation: "UTC")
     
-    func makeUIView(context: UIViewRepresentableContext<NFCButton>) -> UIButton {
-        let button = UIButton()
-        button.configuration?.buttonSize = .small
-        button.setTitle("Log Attendance", for: .normal)
-        button.backgroundColor = UIColor.blue
-        button.addTarget(context.coordinator, action: #selector(context.coordinator.beginScan(_:)), for: .touchUpInside)
-        return button
-    }
-    
-    func updateUIView(_ uiView: UIButton, context: Context) {
-        // Do nothing
-    }
-    
-    func makeCoordinator() -> NFCButton.Coordinator {
-        return Coordinator(data: $data)
-    }
-    
-    class Coordinator: NSObject, NFCNDEFReaderSessionDelegate {
-        var session: NFCNDEFReaderSession?
-        @Binding var data : String // must match type above
-        
-        init(data: Binding<String>) {
-            _data = data
-        }
-        
-        @objc func beginScan(_ sender: Any) {
-            guard NFCNDEFReaderSession.readingAvailable else {
-                print("Error: Device does not support NFC.")
-                return
-            }
-            
-            session = NFCNDEFReaderSession(delegate: self, queue: .main, invalidateAfterFirstRead: true)
-            session?.alertMessage = "Hold your iPhone near the Attendance card."
-            session?.begin()
-        }
-        
-        func readerSession(_ session: NFCNDEFReaderSession, didInvalidateWithError error: Error) {
-            if let readerError = error as? NFCReaderError {
-                if (readerError.code != .readerSessionInvalidationErrorFirstNDEFTagRead) && (readerError.code != .readerSessionInvalidationErrorUserCanceled) {
-                    print("Error")
-                }
-            }
-            
-            self.session = nil
-        }
-        
-        func readerSession(_ session: NFCNDEFReaderSession, didDetectNDEFs messages: [NFCNDEFMessage]) {
-            guard
-                let nfcMess = messages.first,
-                let record = nfcMess.records.first,
-//                record.typeNameFormat == .absoluteURI || record.typeNameFormat == .nfcWellKnown,
-                record.typeNameFormat == .media,
-                let payload = String(data: record.payload, encoding: .utf8)
-            else {
-                return
-            }
-            
-            print(payload)
-            self.data = payload
-        }
-    }
-}
-
-struct NFCButtonView: View {
-    @Binding var data: String
-    var body: some View {
-        NFCButton(data: self.$data)
-    }
 }
 
 struct AttendanceView: View {
-    @State var data = ""
+    //    let helpers = AttendanceHelpers()
+    @State var data: String = ""
+    @State var errorMsg: String = ""
+    @State var user: shared.User
+    let defaults = UserDefaults.standard
+    let client = shared.EmotionClient()
     
+//        let hours = user.attendance[0].totalHoursLogged
+
     var body: some View {
-        let progress = 0.2
- 
+        let hours: Int32 = if user.attendance.isEmpty {0} else {user.attendance[0].totalHoursLogged}
+        
+        let progress = Double(hours) / 36
+        
         VStack {
-            Text(data)
+            Button {
+                print(Int64((NSDate().timeIntervalSince1970) * 1000))
+            } label: {
+                Text("print current time")
+            }
             
-            CircularProgressView(progress: progress, defaultColor: Color.green, progressColor: Color.green, innerText: "\(Int(progress * 35))")
+            Text("tag data: \(data)\n\n")
+            
+            CircularProgressView(progress: progress, defaultColor: Color.green, progressColor: Color.green, innerText: "\(Int(hours))")
                 .frame(width: 150, height: 150)
             
             Divider()
@@ -102,18 +51,27 @@ struct AttendanceView: View {
             
             NFCButtonView(data: $data)
                 .frame(width: 160, height: 50, alignment: .center)
-            
-//            Button {
-//                
-//            } label: {
-//                Text("read")
-//            }
+        }
+        
+        .onChange(of: data) { newData in
+            print("Data changed to \(newData)")
+            print("attendance: \(User.Companion().fromJSON(json: defaults.string(forKey: "User"))!.attendance)")
+            Task {
+                let response = try await client.attendMeeting(user: User.Companion().fromJSON(json: defaults.string(forKey: "User")), meetingId: newData, tapTime:  Int64((NSDate().timeIntervalSince1970) * 1000))
+//                let newUser = try await client.getMe(user: User.Companion().fromJSON(json: defaults.string(forKey: "User")))
+                let newUser = defaults.set(response!.toJSON(), forKey: "User")
+                print(response)
+            }
+        }
+        
+        .onChange(of: defaults.string(forKey: "User")) { newUser in
+            user = shared.User.Companion().fromJSON(json: newUser)!
         }
     }
 }
 
 struct AttendanceView_Previews: PreviewProvider {
     static var previews: some View {
-        AttendanceView()
+        AttendanceView(user: HelpfulVars().testuser)
     }
 }

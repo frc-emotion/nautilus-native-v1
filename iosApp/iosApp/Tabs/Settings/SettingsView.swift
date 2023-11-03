@@ -2,8 +2,7 @@ import SwiftUI
 import shared
 
 struct SettingsView: View {
-    
-    @State var user: shared.User
+    let user: shared.User
     @EnvironmentObject var vm: UserStateViewModel
     
     var body: some View {

@@ -2,6 +2,7 @@ package org.team2658.emotion.android
 
 import android.content.Intent
 import android.content.SharedPreferences
+import android.net.ConnectivityManager
 import android.nfc.NdefMessage
 import android.nfc.NfcAdapter
 import android.nfc.Tag
@@ -13,34 +14,50 @@ import androidx.activity.viewModels
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Text
-import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewmodel.compose.viewModel
-import kotlinx.coroutines.runBlocking
+import androidx.room.Room
+import androidx.work.ExistingPeriodicWorkPolicy
+import androidx.work.PeriodicWorkRequestBuilder
+import androidx.work.WorkManager
 import org.team2658.apikt.EmotionClient
 import org.team2658.emotion.android.screens.settings.SettingsScreen
-import org.team2658.emotion.android.ui.composables.Screen
 import org.team2658.emotion.android.ui.navigation.LoggedInNavigator
 import org.team2658.emotion.android.viewmodels.NFCViewmodel
 import org.team2658.emotion.android.viewmodels.PrimaryViewModel
 import org.team2658.emotion.userauth.AuthState
+import java.util.concurrent.TimeUnit
 
+
+const val SYNC_INTERVAL = 1000L * 60L * 5L
 class MainActivity : ComponentActivity() {
     private val ktorClient = EmotionClient()
     private val nfcViewmodel by viewModels<NFCViewmodel>()
-    private var init = false
-//    private val sharedPrefs = getPreferences(MODE_PRIVATE)
+    private val scoutingDB by lazy {
+        Room.databaseBuilder(
+            applicationContext,
+            org.team2658.emotion.android.room.dbs.ScoutingDB::class.java,
+            "scouting.db"
+        ).fallbackToDestructiveMigration().build()
+    }
+
+    private lateinit var workManager: WorkManager
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        init = true
         println("onCreate")
+
+        val workRequest = PeriodicWorkRequestBuilder<SyncTrigger>(15, TimeUnit.MINUTES)
+            .build()
+
         handleNFCIntent(intent)
+
+        val connectivityManager = this.applicationContext?.getSystemService(CONNECTIVITY_SERVICE) as ConnectivityManager?
+        workManager = WorkManager.getInstance(this.applicationContext)
+
         setContent {
             val sharedPrefs: SharedPreferences = LocalContext.current.getSharedPreferences("org.team2658.emotion.android", MODE_PRIVATE)
             val primaryViewModel = viewModel<PrimaryViewModel>(
@@ -49,16 +66,28 @@ class MainActivity : ComponentActivity() {
                     override fun <T : ViewModel> create(
                         modelClass: Class<T>,
                     ):T {
-                        return PrimaryViewModel(ktorClient, sharedPrefs) as T
+                        return PrimaryViewModel(ktorClient, sharedPrefs, scoutingDB, connectivityManager) as T
                     }
                 }
             )
-            if(init) {
-                runBlocking {
-                    primaryViewModel.updateMe()
-                }
-                init = false
+
+//            //TODO: fix whatever the fuck this is
+//            LaunchedEffect(key1 = Unit) {
+//                while(true) {
+//                    primaryViewModel.sync()
+//                    delay(SYNC_INTERVAL)
+//                }
+//            }
+            workManager.enqueueUniquePeriodicWork(
+                "sync",
+                ExistingPeriodicWorkPolicy.KEEP,
+                workRequest
+            )
+            workManager.getWorkInfosForUniqueWorkLiveData("sync").observeForever {
+                println("BACKGROUND SYNC TRIGGERED")
+                primaryViewModel.sync()
             }
+
             MainTheme {
                 if (primaryViewModel.authState == AuthState.LOGGED_IN) {
                     LoggedInNavigator(primaryViewModel, ktorClient, nfcViewmodel)
@@ -69,29 +98,13 @@ class MainActivity : ComponentActivity() {
                         }
                     }
                 }
-//                Screen {
-//                    if(this.nfcViewmodel.nfcTag != null) {
-//                        Text("NFC Tag Detected")
-//                        Text(this.nfcViewmodel.nfcTag.toString())
-//                       Button(onClick = {
-//                            this.nfcViewmodel.writeToTag("Shravan is sexy")
-//                       }) {
-//                           Text("Write to tag")
-//                       }
-//                    }  else {
-//                            Text("No Tag")
-//                    }
-//                    if(this.nfcViewmodel.ndefMessages != null) {
-//                    Text(this.nfcViewmodel.ndefMessages.toString())
-//                        Text(this.nfcViewmodel.getNdefPayload().toString())
-//                    }
-//                }
             }
         }
     }
     override fun onDestroy() {
         super.onDestroy()
         ktorClient.close()
+        scoutingDB.close()
     }
 
     override fun onNewIntent(intent: Intent?) {
@@ -132,23 +145,10 @@ class MainActivity : ComponentActivity() {
                 else -> {
                     @Suppress("DEPRECATION")
                     intent.getParcelableArrayExtra(NfcAdapter.EXTRA_NDEF_MESSAGES)?.also { raw->
-                        this.nfcViewmodel.setNdef( raw.map {it as NdefMessage})
+                        this.nfcViewmodel.setNdef( raw.map { it as NdefMessage } )
                     }
                 }
             }
         }
-    }
-}
-
-@Composable
-fun GreetingView(text: String) {
-    Text(text = text)
-}
-
-@Preview
-@Composable
-fun DefaultPreview() {
-    MainTheme {
-        GreetingView("Hello, Android!")
     }
 }

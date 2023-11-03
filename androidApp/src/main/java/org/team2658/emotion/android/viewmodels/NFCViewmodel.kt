@@ -8,14 +8,38 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.flow
+import java.io.IOException
 import java.nio.charset.Charset
 
 class NFCViewmodel: ViewModel() {
-    var nfcTag: Tag? by mutableStateOf(null)
-        private set
+    private var nfcTag: Tag? by mutableStateOf(null)
 
-    var ndefMessages: List<NdefMessage>? by mutableStateOf(null)
-        private set
+    private fun tagConnected(): Boolean {
+        var out = false
+        this.nfcTag?.let {
+            try {
+                Ndef.get(it)?.use {tag ->
+                    tag.connect()
+                    out = tag.isConnected
+                }
+            }catch(e: IOException) {
+                out = false
+            }
+        }
+        if(!out) this.setTag(null)
+        return out
+    }
+
+    val tagConnectionFlow = flow<Boolean> {
+        while(true) {
+            emit(tagConnected())
+            delay(1000L)
+        }
+    }
+
+    private var ndefMessages: List<NdefMessage>? by mutableStateOf(null)
 
     fun setTag(tag: Tag?) {
         this.nfcTag = tag
@@ -30,18 +54,22 @@ class NFCViewmodel: ViewModel() {
         return String(this.ndefMessages!![0].records[0].payload, Charset.forName("US-ASCII"))
     }
 
-    fun writeToTag(text: String) {
-        if (this.nfcTag == null) return
-        val ndef = NdefMessage(NdefRecord.createMime("text/plain", text.toByteArray(Charset.forName("US-ASCII"))))
-//        MifareUltralight.get(this.nfcTag)?.use {
-//            it.connect()
-//            it.writePage(4, text.toByteArray(Charset.forName("US-ASCII")))
-//            println("Trying to write $text")
-//        }
+    fun writeToTag(text: String):Boolean {
+        if (this.nfcTag == null) return false
+
+        val ndef = NdefMessage(
+            NdefRecord.createMime(
+                "text/plain",
+                text.toByteArray(Charset.forName("US-ASCII"))
+            )
+        )
         Ndef.get(this.nfcTag)?.use {
-            it.connect()
-            it.writeNdefMessage(ndef)
-            println("Trying to write $text")
+                it.connect()
+                it.writeNdefMessage(ndef)
+                println("Trying to write $text")
+                setTag(null)
+                return true
         }
+        return false
     }
 }

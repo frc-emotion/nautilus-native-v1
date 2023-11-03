@@ -10,7 +10,8 @@ import org.team2658.emotion.userauth.Subteam
 fun NotLoggedInScreen(
     onLogin: suspend (
         username: String,
-        password: String
+        password: String,
+        errorCallback: (String) -> Unit
     ) -> Unit,
     onRegister: suspend (
         username: String,
@@ -21,6 +22,7 @@ fun NotLoggedInScreen(
         subteam: Subteam,
         phone: String,
         grade: Int,
+        errorCallback: (String) -> Unit
     ) -> Unit
 ) {
     val navController = rememberNavController()

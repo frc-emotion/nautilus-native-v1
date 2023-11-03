@@ -1,10 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.NFC" />
     <uses-feature android:name="android.hardware.nfc" android:required="true" />
     <application
         android:supportsRtl="true"
+        android:label="Σ-Motion"
+        android:icon = "@mipmap/ic_launcher"
         android:theme="@style/AppTheme">
         <!--        android:usesCleartextTraffic="true"-->
         <activity
@@ -16,7 +20,7 @@
             </intent-filter>
             <intent-filter>
                 <action android:name="android.nfc.action.NDEF_DISCOVERED"/>
-                <category android:name="android.intent.category.DEFAULT"/>
+                <category android:name="android.intent.category."/>
                 <data android:mimeType="text/plain" />
             </intent-filter>
             <intent-filter>

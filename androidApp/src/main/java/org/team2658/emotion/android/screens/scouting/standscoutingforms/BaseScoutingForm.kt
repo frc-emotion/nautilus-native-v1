@@ -14,9 +14,11 @@ import androidx.compose.material3.RadioButton
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
@@ -25,7 +27,12 @@ import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.coroutineScope
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.runInterruptible
+import kotlinx.coroutines.withContext
 import org.team2658.emotion.android.ui.composables.DropDown
 import org.team2658.emotion.android.ui.composables.ErrorAlertDialog
 import org.team2658.emotion.android.ui.composables.LabelledTextBoxSingleLine
@@ -78,7 +85,6 @@ fun BaseScoutingForm(
     var showErrorDialog by remember { mutableStateOf(false) }
 
     fun clearForm() {
-        competition = competitions[0]
         teamNumber = ""
         matchNumber = ""
         defensive = null
@@ -93,7 +99,7 @@ fun BaseScoutingForm(
 
     Text(text = "Match Info", style = MaterialTheme.typography.titleLarge)
     Spacer(modifier = Modifier.size(16.dp))
-    DropDown(label = "Competition", value = competition) {
+    DropDown(label = "Competition", value = competition.ifBlank { "Select: " }) {
         if(competitions.isNotEmpty()) {
             competitions.forEachIndexed { index, comp ->
                 DropdownMenuItem(text = { Text(comp) }, onClick = { competition = comp })
@@ -230,6 +236,8 @@ fun BaseScoutingForm(
         })
     }
 
+    val scope = rememberCoroutineScope()
+
     if (showSubmitDialog && inputsOkay) {
         AlertDialog(
             onDismissRequest = {},
@@ -240,7 +248,7 @@ fun BaseScoutingForm(
             },
             confirmButton = {
                 Button(onClick = {
-                    runBlocking {
+                      scope.launch {
                         val success = onFormSubmit(
                             ScoutingData(
                                 competition = competition,
@@ -278,8 +286,8 @@ fun BaseScoutingForm(
         showSuccessDialog = false
     }
 
-    ErrorAlertDialog(show = showErrorDialog) {
+   ErrorAlertDialog(show =showErrorDialog) {
         showErrorDialog = false
-    }
+   }
 
 }

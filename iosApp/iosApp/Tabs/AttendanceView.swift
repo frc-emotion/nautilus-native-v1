@@ -23,6 +23,9 @@ struct AttendanceView: View {
     //    let helpers = AttendanceHelpers()
     @State var data: String = ""
     @State var errorMsg: String = ""
+    
+    // AppStorage user updates automatically and stores User to the @State when it updates
+    @AppStorage("User") var storedUser: String!
     @State var user: shared.User
     let defaults = UserDefaults.standard
     let client = shared.EmotionClient()
@@ -64,7 +67,7 @@ struct AttendanceView: View {
             }
         }
         
-        .onChange(of: defaults.string(forKey: "User")) { newUser in
+        .onChange(of: storedUser) { newUser in
             user = shared.User.Companion().fromJSON(json: newUser)!
         }
     }

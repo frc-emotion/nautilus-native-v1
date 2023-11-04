@@ -57,7 +57,7 @@ struct AttendanceView: View {
             print("Data changed to \(newData)")
             print("attendance: \(User.Companion().fromJSON(json: defaults.string(forKey: "User"))!.attendance)")
             Task {
-                let response = try await client.attendMeeting(user: User.Companion().fromJSON(json: defaults.string(forKey: "User")), meetingId: newData, tapTime:  Int64((NSDate().timeIntervalSince1970) * 1000))
+                let response = try await client.attendMeeting(user: User.Companion().fromJSON(json: defaults.string(forKey: "User")), meetingId: newData, tapTime:  Int64((NSDate().timeIntervalSince1970) * 1000), failureCallback: { (errorMsg) -> () in print(errorMsg)})
 //                let newUser = try await client.getMe(user: User.Companion().fromJSON(json: defaults.string(forKey: "User")))
                 let newUser = defaults.set(response!.toJSON(), forKey: "User")
                 print(response)

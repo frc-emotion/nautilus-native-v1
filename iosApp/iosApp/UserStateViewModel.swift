@@ -24,7 +24,9 @@ class UserStateViewModel: ObservableObject {
         isBusy = true
         do {
             let client = EmotionClient()
-            let response = try await client.login(username: username, password: password)
+            let response = try await client.login(username: username, password: password, errorCallback: { (errorMsg) -> () in
+                    print(errorMsg)
+            })
             
             if let response {
                 let responseJson: String = response.toJSON()
@@ -43,12 +45,14 @@ class UserStateViewModel: ObservableObject {
             return .failure(.signInError)
         }
     }
-    
+
     func createAccount(firstname: String, lastname: String, username: String, email: String, password: String, subteam: shared.Subteam, phone: String, grade: Int32) async -> Result<Bool, UserStateError> {
         isBusy = true
         do {
             let client = EmotionClient()
-            let response = try await client.register(username: username, password: password, email: email, firstName: firstname, lastName: lastname, subteam: subteam, phone: phone, grade: grade)
+            let response = try await client.register(username: username, password: password, email: email, firstName: firstname, lastName: lastname, subteam: subteam, phone: phone, grade: grade, errorCallback: { (errorMsg) -> () in
+                    print(errorMsg)
+            })
             
             if let response {
                 let responseJson: String = response.toJSON()

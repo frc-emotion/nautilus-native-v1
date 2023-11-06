@@ -40,6 +40,7 @@
 		93B9EAE62A65E0FA00D5B8A8 /* UserStateViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 93B9EAE52A65E0FA00D5B8A8 /* UserStateViewModel.swift */; };
 		93B9EAED2A67211600D5B8A8 /* ForgotPasswordView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 93B9EAEC2A67211600D5B8A8 /* ForgotPasswordView.swift */; };
 		93B9EAF02A67255600D5B8A8 /* RapidReactMatch.swift in Sources */ = {isa = PBXBuildFile; fileRef = 93B9EAEF2A67255600D5B8A8 /* RapidReactMatch.swift */; };
+		93DB394D2AF9701000F257BE /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 93DB394C2AF9701000F257BE /* LaunchScreen.storyboard */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -79,6 +80,7 @@
 		93B9EAE52A65E0FA00D5B8A8 /* UserStateViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserStateViewModel.swift; sourceTree = "<group>"; };
 		93B9EAEC2A67211600D5B8A8 /* ForgotPasswordView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ForgotPasswordView.swift; sourceTree = "<group>"; };
 		93B9EAEF2A67255600D5B8A8 /* RapidReactMatch.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RapidReactMatch.swift; sourceTree = "<group>"; };
+		93DB394C2AF9701000F257BE /* LaunchScreen.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = LaunchScreen.storyboard; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -132,6 +134,7 @@
 				2152FB032600AC8F00CF470E /* iOSApp.swift */,
 				93B9EAE52A65E0FA00D5B8A8 /* UserStateViewModel.swift */,
 				058557D7273AAEEB004C7B11 /* Preview Content */,
+				93DB394C2AF9701000F257BE /* LaunchScreen.storyboard */,
 			);
 			path = iosApp;
 			sourceTree = "<group>";
@@ -338,6 +341,7 @@
 				93B9EAAD2A5E5D3200D5B8A8 /* ChargedUpMatches.json in Resources */,
 				93B9EAAF2A5E5D5200D5B8A8 /* RapidReactMatches.json in Resources */,
 				058557BB273AAA24004C7B11 /* Assets.xcassets in Resources */,
+				93DB394D2AF9701000F257BE /* LaunchScreen.storyboard in Resources */,
 				93B9EAB32A5E5D9A00D5B8A8 /* SeasonsData.json in Resources */,
 				93B9EAB12A5E5D7600D5B8A8 /* UsersList.json in Resources */,
 			);

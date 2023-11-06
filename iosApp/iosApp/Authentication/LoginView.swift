@@ -77,6 +77,20 @@ struct LoginView: View {
                 .padding(.top)
             }
         }
+        .onAppear(perform: {
+            let defaults = UserDefaults.standard
+            if (defaults.string(forKey: "User") != nil) {
+                let user = shared.User.Companion().fromJSON(json: defaults.string(forKey: "User"))
+                Task {
+                    let response: User? = try await shared.EmotionClient().getMe(user: user)
+                    if (response != nil) {
+                        vm.isLoggedIn = true
+                    } else {
+                        vm.isLoggedIn = false
+                    }
+                }
+            }
+        })
     }
 }
 

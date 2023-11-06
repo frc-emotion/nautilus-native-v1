@@ -34,12 +34,13 @@ fun SettingsLoggedIn(user: User?, vm: PrimaryViewModel) {
     Spacer(modifier = Modifier.size(32.dp))
     UserInfoCard(User = user)
 
-    Spacer(modifier = Modifier.size(16.dp))
-    OutlinedButton(onClick = { syncSuccess = vm.sync() }) {
-        Text(text = "Sync Scouting Data with Server")
-    }
-    Spacer(modifier = Modifier.size(8.dp))
-    Text(text = "ChargedUp submissions to sync: $chargedUpQueueLen")
+//    Spacer(modifier = Modifier.size(16.dp))
+//    OutlinedButton(onClick = { syncSuccess = vm.sync() }) {
+//        Text(text = "Sync Scouting Data with Server")
+//    }
+//    Spacer(modifier = Modifier.size(8.dp))
+//    Text(text = "ChargedUp submissions to sync: $chargedUpQueueLen")
+
     Spacer(modifier = Modifier.size(32.dp))
     Button(onClick = { vm.logout() }) {
         Text(text = "Log Out")

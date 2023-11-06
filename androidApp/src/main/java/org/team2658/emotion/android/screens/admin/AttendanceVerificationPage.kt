@@ -40,6 +40,8 @@ import java.time.LocalDateTime
 import java.time.LocalTime
 import java.time.ZoneOffset
 import java.time.ZonedDateTime
+import java.time.format.DateTimeFormatter
+import java.time.format.FormatStyle
 
 
 const val HOURS_TO_MINUTES = 60
@@ -61,6 +63,11 @@ fun dateTimeStateToEpochMs(dateState: DatePickerState, timeState: TimePickerStat
     return (dateState.selectedDateMillis?:0) + (adjustedTimeSeconds * SECONDS_TO_MS)
 }
 
+fun formatFromEpoch(epoch: EpochMS): String {
+    val zdt = ZonedDateTime.ofInstant(Instant.ofEpochMilli(epoch), ZoneOffset.systemDefault())
+    return zdt.format(DateTimeFormatter.ofLocalizedDateTime(FormatStyle.SHORT))
+}
+
 @Composable
 @OptIn(ExperimentalMaterial3Api::class)
 fun AttendanceVerificationPage(viewModel: PrimaryViewModel, client: EmotionClient, nfc: NFCViewmodel) {
@@ -74,7 +81,7 @@ fun AttendanceVerificationPage(viewModel: PrimaryViewModel, client: EmotionClien
     var showMeetingSuccessDialog by remember {mutableStateOf(false)}
 
     var meetingValue by remember { mutableIntStateOf(2) }
-    val meeting: Meeting? = remember { viewModel.meeting }
+    val meeting: Meeting? = viewModel.meeting
     var meetingType by remember { mutableStateOf("meeting") }
     var meetingDescription by remember { mutableStateOf("") }
 
@@ -95,9 +102,8 @@ fun AttendanceVerificationPage(viewModel: PrimaryViewModel, client: EmotionClien
             Text(text = "Meeting Type: ${meeting.type}")
             Text(text = "Meeting Description: ${meeting.description}")
             Text(text = "Meeting Value: ${meeting.value}")
-            val start =
-                LocalDateTime.ofInstant(Instant.ofEpochMilli(meeting.startTime), ZoneOffset.UTC)
-            val end = LocalDateTime.ofInstant(Instant.ofEpochMilli(meeting.endTime), ZoneOffset.UTC)
+            val start = formatFromEpoch(meeting.startTime)
+            val end = formatFromEpoch(meeting.endTime)
             Text(text = "Meeting Start Time: $start")
             Text(text = "Meeting End Time: $end")
             val connected by nfc.tagConnectionFlow.collectAsState(initial = false)

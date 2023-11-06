@@ -65,20 +65,20 @@ class PrimaryViewModel(private val ktorClient: EmotionClient, private val shared
             }
     }
 
-//    var authState: AuthState by mutableStateOf(
-//        when(this.user?.accountType) {
-//            AccountType.UNVERIFIED -> AuthState.AWAITING_VERIFICATION
-//            AccountType.BASE, AccountType.LEAD, AccountType.ADMIN, AccountType.SUPERUSER -> AuthState.LOGGED_IN
-//            null -> AuthState.NOT_LOGGED_IN
-//        }
-//    )
-//        private set
+    var authState: AuthState by mutableStateOf(
+        when(this.user?.accountType) {
+            AccountType.UNVERIFIED -> AuthState.AWAITING_VERIFICATION
+            AccountType.BASE, AccountType.LEAD, AccountType.ADMIN, AccountType.SUPERUSER -> AuthState.LOGGED_IN
+            null -> AuthState.NOT_LOGGED_IN
+        }
+    )
+        private set
 
-    val authState = when(this.user?.accountType) {
-        null -> AuthState.NOT_LOGGED_IN
-        AccountType.UNVERIFIED -> AuthState.AWAITING_VERIFICATION
-        AccountType.BASE, AccountType.LEAD, AccountType.ADMIN, AccountType.SUPERUSER -> AuthState.LOGGED_IN
-    }
+//    val authState = when(this.user?.accountType) {
+//        null -> AuthState.NOT_LOGGED_IN
+//        AccountType.UNVERIFIED -> AuthState.AWAITING_VERIFICATION
+//        AccountType.BASE, AccountType.LEAD, AccountType.ADMIN, AccountType.SUPERUSER -> AuthState.LOGGED_IN
+//    }
 
     fun getClient(): EmotionClient {
         return this.ktorClient
@@ -86,13 +86,13 @@ class PrimaryViewModel(private val ktorClient: EmotionClient, private val shared
 
     suspend fun login(username: String, password: String, errorCallback: (String) -> Unit) {
         updateUser(this.ktorClient.login(username, password, errorCallback))
-//        this.authState = if(this.user != null) AuthState.LOGGED_IN else AuthState.NOT_LOGGED_IN
+        this.authState = if(this.user != null) AuthState.LOGGED_IN else AuthState.NOT_LOGGED_IN
     }
 
     fun logout() {
         //TODO()
         updateUser(null)
-//        this.authState = AuthState.NOT_LOGGED_IN
+        this.authState = AuthState.NOT_LOGGED_IN
     }
 
     suspend fun register(
@@ -108,7 +108,7 @@ class PrimaryViewModel(private val ktorClient: EmotionClient, private val shared
         //TODO: parent and advisor account types
     ) {
         updateUser(this.ktorClient.register(username, password, email, firstName, lastName, subteam, phone, grade, errorCallback))
-//        authState = if(this.user != null) AuthState.AWAITING_VERIFICATION else AuthState.NOT_LOGGED_IN
+        authState = if(this.user != null) AuthState.AWAITING_VERIFICATION else AuthState.NOT_LOGGED_IN
     }
 
     suspend fun testMeeting(): Meeting? {

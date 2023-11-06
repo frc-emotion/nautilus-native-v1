@@ -5,26 +5,26 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.DatePicker
+import androidx.compose.material3.DatePickerState
 import androidx.compose.material3.DisplayMode
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.TimeInput
+import androidx.compose.material3.TimePickerState
 import androidx.compose.material3.rememberDatePickerState
 import androidx.compose.material3.rememberTimePickerState
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.mutableLongStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.runBlocking
 import org.team2658.apikt.EmotionClient
 import org.team2658.emotion.android.ui.composables.LabelledTextBoxSingleLine
@@ -35,8 +35,31 @@ import org.team2658.emotion.android.viewmodels.PrimaryViewModel
 import org.team2658.emotion.attendance.Meeting
 import java.io.IOException
 import java.time.Instant
+import java.time.LocalDate
 import java.time.LocalDateTime
+import java.time.LocalTime
 import java.time.ZoneOffset
+import java.time.ZonedDateTime
+
+
+const val HOURS_TO_MINUTES = 60
+const val MINUTES_TO_SECONDS = 60
+const val SECONDS_TO_MS = 1000
+const val HOURS_TO_SECONDS = HOURS_TO_MINUTES * MINUTES_TO_SECONDS
+const val MINUTES_TO_MS = MINUTES_TO_SECONDS * SECONDS_TO_MS
+const val HOURS_TO_MS = HOURS_TO_MINUTES * MINUTES_TO_MS
+
+typealias EpochMS = Long
+
+@OptIn(ExperimentalMaterial3Api::class)
+fun dateTimeStateToEpochMs(dateState: DatePickerState, timeState: TimePickerState): EpochMS {
+    val offset = ZoneOffset.systemDefault().rules.getOffset(LocalDateTime.now(ZoneOffset.UTC).toInstant(ZoneOffset.UTC))
+    val selectedHoursSeconds = timeState.hour * HOURS_TO_SECONDS
+    val selectedMinutesSeconds = timeState.minute * MINUTES_TO_SECONDS
+    val selectedTimeSeconds = selectedHoursSeconds + selectedMinutesSeconds
+    val adjustedTimeSeconds = selectedTimeSeconds - offset.totalSeconds
+    return (dateState.selectedDateMillis?:0) + (adjustedTimeSeconds * SECONDS_TO_MS)
+}
 
 @Composable
 @OptIn(ExperimentalMaterial3Api::class)
@@ -54,13 +77,14 @@ fun AttendanceVerificationPage(viewModel: PrimaryViewModel, client: EmotionClien
     val meeting: Meeting? = remember { viewModel.meeting }
     var meetingType by remember { mutableStateOf("meeting") }
     var meetingDescription by remember { mutableStateOf("") }
-    val dateState = rememberDatePickerState(initialSelectedDateMillis = LocalDateTime.now(ZoneOffset.UTC).toInstant(
-        ZoneOffset.UTC).toEpochMilli(), initialDisplayMode = DisplayMode.Input)
-    val startTimeState = rememberTimePickerState(initialHour = LocalDateTime.now(ZoneOffset.UTC).hour)
-    val endTimeState = rememberTimePickerState(initialHour = (LocalDateTime.now(ZoneOffset.UTC).hour + meetingValue).coerceAtMost(23))
 
+    val dateState = rememberDatePickerState(
+        initialSelectedDateMillis = LocalDateTime.now(ZoneOffset.UTC).toInstant(ZoneOffset.UTC).toEpochMilli(),
+        initialDisplayMode = DisplayMode.Input)
 
-    var meow by remember { mutableStateOf(0L) }
+    val startTimeState = rememberTimePickerState(initialHour = LocalDateTime.now().hour)
+    val endTimeState = rememberTimePickerState(initialHour = (LocalDateTime.now().hour + meetingValue).coerceAtMost(23))
+
     Screen {
         Text(text = "Create a Meeting or Activate a Tag", style = MaterialTheme.typography.headlineLarge)
         Spacer(modifier = Modifier.size(16.dp))
@@ -112,8 +136,8 @@ fun AttendanceVerificationPage(viewModel: PrimaryViewModel, client: EmotionClien
                 label = "Meeting Value",
                 value = meetingValue,
                 onValueChange = { meetingValue = it ?: 0 })
-            val startTimeMs = (dateState.selectedDateMillis ?: 0) + (startTimeState.hour * 3600000)
-            val endTimeMs = (dateState.selectedDateMillis ?: 0) + (endTimeState.hour * 3600000)
+            val startTimeMs = dateTimeStateToEpochMs(dateState, startTimeState)
+            val endTimeMs = dateTimeStateToEpochMs(dateState, endTimeState)
             LabelledTextBoxSingleLine(
                 label = "Meeting Type",
                 text = meetingType,

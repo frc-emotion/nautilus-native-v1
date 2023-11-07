@@ -32,7 +32,6 @@ import org.team2658.emotion.userauth.AuthState
 import java.util.concurrent.TimeUnit
 
 
-const val SYNC_INTERVAL = 1000L * 60L * 5L
 class MainActivity : ComponentActivity() {
     private val ktorClient = EmotionClient()
     private val nfcViewmodel by viewModels<NFCViewmodel>()
@@ -71,13 +70,6 @@ class MainActivity : ComponentActivity() {
                 }
             )
 
-//            //TODO: fix whatever the fuck this is
-//            LaunchedEffect(key1 = Unit) {
-//                while(true) {
-//                    primaryViewModel.sync()
-//                    delay(SYNC_INTERVAL)
-//                }
-//            }
             workManager.enqueueUniquePeriodicWork(
                 "sync",
                 ExistingPeriodicWorkPolicy.KEEP,

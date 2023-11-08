@@ -2,7 +2,9 @@ import SwiftUI
 import shared
 
 struct SettingsView: View {
-    let user: shared.User
+    let defaults = UserDefaults.standard
+    @AppStorage("User") var storedUser: String!
+    @State var user: shared.User
     @EnvironmentObject var vm: UserStateViewModel
     
     var body: some View {
@@ -30,6 +32,19 @@ struct SettingsView: View {
 //                    }
                     Button (action: {
                         Task {
+                            let response = try await shared.EmotionClient().getMe(user: user)
+                            if let response {
+                                defaults.set(response.toJSON(), forKey: "User")
+                            }
+                            
+                        }
+                    }) {
+                        Text("Refresh User")
+                            .fontWeight(.bold)
+                            .foregroundColor(Color.primary)
+                    }
+                    Button (action: {
+                        Task {
                             await vm.signOut()
                         }
                     }) {
@@ -38,8 +53,12 @@ struct SettingsView: View {
                             .foregroundColor(Color.red)
                     }
                 }
+                
             }
             .navigationTitle("Settings")
+            .onChange(of: storedUser) { newUser in
+                user = shared.User.Companion().fromJSON(json: newUser)!
+            }
         }
     }
 }

@@ -23,10 +23,6 @@
 		93B615522AEA167700732A3F /* attendanceHelpers.swift in Sources */ = {isa = PBXBuildFile; fileRef = 93B615512AEA167700732A3F /* attendanceHelpers.swift */; };
 		93B9EAA82A5E5BA900D5B8A8 /* BugReportView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 93B9EAA72A5E5BA900D5B8A8 /* BugReportView.swift */; };
 		93B9EAAA2A5E5BD500D5B8A8 /* AccountView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 93B9EAA92A5E5BD500D5B8A8 /* AccountView.swift */; };
-		93B9EAAD2A5E5D3200D5B8A8 /* ChargedUpMatches.json in Resources */ = {isa = PBXBuildFile; fileRef = 93B9EAAC2A5E5D3200D5B8A8 /* ChargedUpMatches.json */; };
-		93B9EAAF2A5E5D5200D5B8A8 /* RapidReactMatches.json in Resources */ = {isa = PBXBuildFile; fileRef = 93B9EAAE2A5E5D5200D5B8A8 /* RapidReactMatches.json */; };
-		93B9EAB12A5E5D7600D5B8A8 /* UsersList.json in Resources */ = {isa = PBXBuildFile; fileRef = 93B9EAB02A5E5D7600D5B8A8 /* UsersList.json */; };
-		93B9EAB32A5E5D9A00D5B8A8 /* SeasonsData.json in Resources */ = {isa = PBXBuildFile; fileRef = 93B9EAB22A5E5D9A00D5B8A8 /* SeasonsData.json */; };
 		93B9EAC32A5E778C00D5B8A8 /* DirectoryView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 93B9EAC22A5E778C00D5B8A8 /* DirectoryView.swift */; };
 		93B9EAC92A5E781D00D5B8A8 /* DirectoryBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = 93B9EAC82A5E781D00D5B8A8 /* DirectoryBar.swift */; };
 		93B9EACB2A5E800700D5B8A8 /* HomeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 93B9EACA2A5E800700D5B8A8 /* HomeView.swift */; };
@@ -34,12 +30,8 @@
 		93B9EACF2A5E803100D5B8A8 /* ScoutingFormView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 93B9EACE2A5E803100D5B8A8 /* ScoutingFormView.swift */; };
 		93B9EAD12A5F387A00D5B8A8 /* LoginView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 93B9EAD02A5F387A00D5B8A8 /* LoginView.swift */; };
 		93B9EAD52A5F4FB800D5B8A8 /* AccountCreationView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 93B9EAD42A5F4FB800D5B8A8 /* AccountCreationView.swift */; };
-		93B9EADF2A65DC2F00D5B8A8 /* ChargedUpMatch.swift in Sources */ = {isa = PBXBuildFile; fileRef = 93B9EADE2A65DC2F00D5B8A8 /* ChargedUpMatch.swift */; };
-		93B9EAE12A65DEB300D5B8A8 /* ChargedUpScoring.swift in Sources */ = {isa = PBXBuildFile; fileRef = 93B9EAE02A65DEB300D5B8A8 /* ChargedUpScoring.swift */; };
-		93B9EAE42A65DEE200D5B8A8 /* EditHistoryV1.swift in Sources */ = {isa = PBXBuildFile; fileRef = 93B9EAE32A65DEE200D5B8A8 /* EditHistoryV1.swift */; };
 		93B9EAE62A65E0FA00D5B8A8 /* UserStateViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 93B9EAE52A65E0FA00D5B8A8 /* UserStateViewModel.swift */; };
 		93B9EAED2A67211600D5B8A8 /* ForgotPasswordView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 93B9EAEC2A67211600D5B8A8 /* ForgotPasswordView.swift */; };
-		93B9EAF02A67255600D5B8A8 /* RapidReactMatch.swift in Sources */ = {isa = PBXBuildFile; fileRef = 93B9EAEF2A67255600D5B8A8 /* RapidReactMatch.swift */; };
 		93DB394D2AF9701000F257BE /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 93DB394C2AF9701000F257BE /* LaunchScreen.storyboard */; };
 /* End PBXBuildFile section */
 
@@ -63,10 +55,6 @@
 		93B615512AEA167700732A3F /* attendanceHelpers.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = attendanceHelpers.swift; sourceTree = "<group>"; };
 		93B9EAA72A5E5BA900D5B8A8 /* BugReportView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BugReportView.swift; sourceTree = "<group>"; };
 		93B9EAA92A5E5BD500D5B8A8 /* AccountView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AccountView.swift; sourceTree = "<group>"; };
-		93B9EAAC2A5E5D3200D5B8A8 /* ChargedUpMatches.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = ChargedUpMatches.json; sourceTree = "<group>"; };
-		93B9EAAE2A5E5D5200D5B8A8 /* RapidReactMatches.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = RapidReactMatches.json; sourceTree = "<group>"; };
-		93B9EAB02A5E5D7600D5B8A8 /* UsersList.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = UsersList.json; sourceTree = "<group>"; };
-		93B9EAB22A5E5D9A00D5B8A8 /* SeasonsData.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = SeasonsData.json; sourceTree = "<group>"; };
 		93B9EAC22A5E778C00D5B8A8 /* DirectoryView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DirectoryView.swift; sourceTree = "<group>"; };
 		93B9EAC82A5E781D00D5B8A8 /* DirectoryBar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DirectoryBar.swift; sourceTree = "<group>"; };
 		93B9EACA2A5E800700D5B8A8 /* HomeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeView.swift; sourceTree = "<group>"; };
@@ -74,12 +62,8 @@
 		93B9EACE2A5E803100D5B8A8 /* ScoutingFormView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScoutingFormView.swift; sourceTree = "<group>"; };
 		93B9EAD02A5F387A00D5B8A8 /* LoginView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoginView.swift; sourceTree = "<group>"; };
 		93B9EAD42A5F4FB800D5B8A8 /* AccountCreationView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AccountCreationView.swift; sourceTree = "<group>"; };
-		93B9EADE2A65DC2F00D5B8A8 /* ChargedUpMatch.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChargedUpMatch.swift; sourceTree = "<group>"; };
-		93B9EAE02A65DEB300D5B8A8 /* ChargedUpScoring.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChargedUpScoring.swift; sourceTree = "<group>"; };
-		93B9EAE32A65DEE200D5B8A8 /* EditHistoryV1.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EditHistoryV1.swift; sourceTree = "<group>"; };
 		93B9EAE52A65E0FA00D5B8A8 /* UserStateViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserStateViewModel.swift; sourceTree = "<group>"; };
 		93B9EAEC2A67211600D5B8A8 /* ForgotPasswordView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ForgotPasswordView.swift; sourceTree = "<group>"; };
-		93B9EAEF2A67255600D5B8A8 /* RapidReactMatch.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RapidReactMatch.swift; sourceTree = "<group>"; };
 		93DB394C2AF9701000F257BE /* LaunchScreen.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = LaunchScreen.storyboard; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -125,8 +109,6 @@
 			children = (
 				93719C842AC0B33200E29446 /* Elements */,
 				93790E3F2AA930CC0003203D /* Helpers */,
-				93B9EAB42A5E67A500D5B8A8 /* Models */,
-				93B9EAAB2A5E5D0800D5B8A8 /* Resources */,
 				93418DE02A5E348E00336A62 /* Authentication */,
 				93418DA22A5C852900336A62 /* Tabs */,
 				058557BA273AAA24004C7B11 /* Assets.xcassets */,
@@ -207,36 +189,6 @@
 			path = ChargedUp;
 			sourceTree = "<group>";
 		};
-		93B9EAAB2A5E5D0800D5B8A8 /* Resources */ = {
-			isa = PBXGroup;
-			children = (
-				93B9EAAC2A5E5D3200D5B8A8 /* ChargedUpMatches.json */,
-				93B9EAAE2A5E5D5200D5B8A8 /* RapidReactMatches.json */,
-				93B9EAB02A5E5D7600D5B8A8 /* UsersList.json */,
-				93B9EAB22A5E5D9A00D5B8A8 /* SeasonsData.json */,
-			);
-			path = Resources;
-			sourceTree = "<group>";
-		};
-		93B9EAB42A5E67A500D5B8A8 /* Models */ = {
-			isa = PBXGroup;
-			children = (
-				93B9EAEE2A67254500D5B8A8 /* RapidReact */,
-				93B9EAE22A65DEB700D5B8A8 /* ChargedUp */,
-				93B9EAE32A65DEE200D5B8A8 /* EditHistoryV1.swift */,
-			);
-			path = Models;
-			sourceTree = "<group>";
-		};
-		93B9EAE22A65DEB700D5B8A8 /* ChargedUp */ = {
-			isa = PBXGroup;
-			children = (
-				93B9EADE2A65DC2F00D5B8A8 /* ChargedUpMatch.swift */,
-				93B9EAE02A65DEB300D5B8A8 /* ChargedUpScoring.swift */,
-			);
-			path = ChargedUp;
-			sourceTree = "<group>";
-		};
 		93B9EAE72A65E4C700D5B8A8 /* Scouting */ = {
 			isa = PBXGroup;
 			children = (
@@ -263,14 +215,6 @@
 				93418DE52A5E362D00336A62 /* UserBar.swift */,
 			);
 			path = User;
-			sourceTree = "<group>";
-		};
-		93B9EAEE2A67254500D5B8A8 /* RapidReact */ = {
-			isa = PBXGroup;
-			children = (
-				93B9EAEF2A67255600D5B8A8 /* RapidReactMatch.swift */,
-			);
-			path = RapidReact;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -338,12 +282,8 @@
 			buildActionMask = 2147483647;
 			files = (
 				058557D9273AAEEB004C7B11 /* Preview Assets.xcassets in Resources */,
-				93B9EAAD2A5E5D3200D5B8A8 /* ChargedUpMatches.json in Resources */,
-				93B9EAAF2A5E5D5200D5B8A8 /* RapidReactMatches.json in Resources */,
 				058557BB273AAA24004C7B11 /* Assets.xcassets in Resources */,
 				93DB394D2AF9701000F257BE /* LaunchScreen.storyboard in Resources */,
-				93B9EAB32A5E5D9A00D5B8A8 /* SeasonsData.json in Resources */,
-				93B9EAB12A5E5D7600D5B8A8 /* UsersList.json in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -377,7 +317,6 @@
 			files = (
 				93418D9B2A5BC3F300336A62 /* SettingsView.swift in Sources */,
 				93844FFB2ADB29E1003EE764 /* ChargedUpFormView.swift in Sources */,
-				93B9EAE12A65DEB300D5B8A8 /* ChargedUpScoring.swift in Sources */,
 				93B9EAD52A5F4FB800D5B8A8 /* AccountCreationView.swift in Sources */,
 				93790E392AA921690003203D /* AttendanceView.swift in Sources */,
 				93B9EACB2A5E800700D5B8A8 /* HomeView.swift in Sources */,
@@ -389,17 +328,14 @@
 				93B9EAC32A5E778C00D5B8A8 /* DirectoryView.swift in Sources */,
 				93719C882AC0B35300E29446 /* CircularProgressView.swift in Sources */,
 				93418D9D2A5BC4D100336A62 /* ScoutingView.swift in Sources */,
-				93B9EAF02A67255600D5B8A8 /* RapidReactMatch.swift in Sources */,
 				93B615522AEA167700732A3F /* attendanceHelpers.swift in Sources */,
 				93B9EAED2A67211600D5B8A8 /* ForgotPasswordView.swift in Sources */,
 				93790E3B2AA921F40003203D /* loader.swift in Sources */,
 				93B615502AEA163200732A3F /* NFCButton.swift in Sources */,
 				93B9EAD12A5F387A00D5B8A8 /* LoginView.swift in Sources */,
-				93B9EAE42A65DEE200D5B8A8 /* EditHistoryV1.swift in Sources */,
 				93B9EAAA2A5E5BD500D5B8A8 /* AccountView.swift in Sources */,
 				93B9EACF2A5E803100D5B8A8 /* ScoutingFormView.swift in Sources */,
 				2152FB042600AC8F00CF470E /* iOSApp.swift in Sources */,
-				93B9EADF2A65DC2F00D5B8A8 /* ChargedUpMatch.swift in Sources */,
 				93B9EACD2A5E801400D5B8A8 /* AdminView.swift in Sources */,
 				93B9EAE62A65E0FA00D5B8A8 /* UserStateViewModel.swift in Sources */,
 			);

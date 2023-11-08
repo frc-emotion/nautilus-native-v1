@@ -29,23 +29,12 @@ struct AttendanceView: View {
     @State var user: shared.User
     let defaults = UserDefaults.standard
     let client = shared.EmotionClient()
-    
-//        let hours = user.attendance[0].totalHoursLogged
 
     var body: some View {
         let hours: Int32 = if user.attendance.isEmpty {0} else {user.attendance[0].totalHoursLogged}
-        
         let progress = Double(hours) / 36
         
         VStack {
-            Button {
-                print(Int64((NSDate().timeIntervalSince1970) * 1000))
-            } label: {
-                Text("print current time")
-            }
-            
-            Text("tag data: \(data)\n\n")
-            
             CircularProgressView(progress: progress, defaultColor: Color.green, progressColor: Color.green, innerText: "\(Int(hours))")
                 .frame(width: 150, height: 150)
             
@@ -57,13 +46,12 @@ struct AttendanceView: View {
         }
         
         .onChange(of: data) { newData in
-            print("Data changed to \(newData)")
-            print("attendance: \(User.Companion().fromJSON(json: defaults.string(forKey: "User"))!.attendance)")
-            Task {
-                let response = try await client.attendMeeting(user: User.Companion().fromJSON(json: defaults.string(forKey: "User")), meetingId: newData, tapTime:  Int64((NSDate().timeIntervalSince1970) * 1000), failureCallback: { (errorMsg) -> () in print(errorMsg)})
-//                let newUser = try await client.getMe(user: User.Companion().fromJSON(json: defaults.string(forKey: "User")))
-                defaults.set(response!.toJSON(), forKey: "User")
-//                print(response)
+            if newData != "" {
+                Task {
+                    let response = try await client.attendMeeting(user: User.Companion().fromJSON(json: defaults.string(forKey: "User")), meetingId: newData, tapTime:  Int64((NSDate().timeIntervalSince1970) * 1000), failureCallback: { (errorMsg) -> () in print(errorMsg)})
+                    defaults.set(response!.toJSON(), forKey: "User")
+                    data = ""
+                }
             }
         }
         

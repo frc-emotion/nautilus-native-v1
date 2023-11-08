@@ -6,12 +6,11 @@
 //  Copyright © 2023 team2658. All rights reserved.
 //
 
-// TODO: Simulator previews aren't working and returns a HumanReadableError, however works in production and on-device previews.
-
 import SwiftUI
 import shared
 import CoreNFC
 import UIKit
+import SwiftyJSON
 
 func getUTCDate(date: Int) {
     let dateFormatter = DateFormatter()
@@ -41,6 +40,13 @@ struct AttendanceView: View {
             Divider()
                 .padding(.vertical, 25)
             
+            if (errorMsg != "") {
+                Text(errorMsg)
+                    .fontWeight(.bold)
+                    .foregroundColor(Color.red)
+                    .padding(.bottom)
+            }
+            
             NFCButtonView(data: $data)
                 .frame(width: 160, height: 50, alignment: .center)
         }
@@ -48,8 +54,19 @@ struct AttendanceView: View {
         .onChange(of: data) { newData in
             if newData != "" {
                 Task {
-                    let response = try await client.attendMeeting(user: User.Companion().fromJSON(json: defaults.string(forKey: "User")), meetingId: newData, tapTime:  Int64((NSDate().timeIntervalSince1970) * 1000), failureCallback: { (errorMsg) -> () in print(errorMsg)})
-                    defaults.set(response!.toJSON(), forKey: "User")
+                    let response = try await client.attendMeeting(user: User.Companion().fromJSON(json: defaults.string(forKey: "User")), meetingId: newData, tapTime:  Int64((NSDate().timeIntervalSince1970) * 1000), failureCallback: { (errorMsgIn) -> () in
+                        
+                        if let errorMsgIn = errorMsgIn.data(using: .utf8, allowLossyConversion: false) {
+                            Task {
+                                let json = try JSON(data: errorMsgIn)
+                                errorMsg = "Error: " + json["message"].stringValue
+                            }
+                        }
+                    })
+                    if let response {
+                        defaults.set(response.toJSON(), forKey: "User")
+                        errorMsg = ""
+                    }
                     data = ""
                 }
             }

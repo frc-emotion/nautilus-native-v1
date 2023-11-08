@@ -14,8 +14,6 @@ data class ChargedUpModel(
     val totalRP: Int,
     val autoPeriod: ChargedUpScores,
     val teleopPeriod: ChargedUpScores,
-    val coneRate: Double?,
-    val cubeRate: Double?,
     val linkScore: Int,
     val autoDock: Boolean,
     val autoEngage: Boolean,

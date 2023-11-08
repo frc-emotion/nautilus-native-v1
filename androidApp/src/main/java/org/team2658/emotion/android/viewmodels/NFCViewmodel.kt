@@ -8,13 +8,15 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.flow
 import java.io.IOException
 import java.nio.charset.Charset
 
 class NFCViewmodel: ViewModel() {
     private var nfcTag: Tag? by mutableStateOf(null)
 
-    fun tagConnected(): Boolean {
+    private fun tagConnected(): Boolean {
         var out = false
         this.nfcTag?.let {
             try {
@@ -30,8 +32,14 @@ class NFCViewmodel: ViewModel() {
         return out
     }
 
-    var ndefMessages: List<NdefMessage>? by mutableStateOf(null)
-        private set
+    val tagConnectionFlow = flow<Boolean> {
+        while(true) {
+            emit(tagConnected())
+            delay(1000L)
+        }
+    }
+
+    private var ndefMessages: List<NdefMessage>? by mutableStateOf(null)
 
     fun setTag(tag: Tag?) {
         this.nfcTag = tag

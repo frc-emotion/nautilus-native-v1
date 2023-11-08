@@ -64,4 +64,5 @@ android {
     defaultConfig {
         minSdk = 26
     }
+    buildToolsVersion = "34.0.0"
 }

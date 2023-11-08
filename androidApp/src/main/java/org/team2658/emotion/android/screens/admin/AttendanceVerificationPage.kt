@@ -15,6 +15,7 @@ import androidx.compose.material3.rememberDatePickerState
 import androidx.compose.material3.rememberTimePickerState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
@@ -53,11 +54,13 @@ fun AttendanceVerificationPage(viewModel: PrimaryViewModel, client: EmotionClien
     val meeting: Meeting? = remember { viewModel.meeting }
     var meetingType by remember { mutableStateOf("meeting") }
     var meetingDescription by remember { mutableStateOf("") }
-    val dateState = rememberDatePickerState(initialSelectedDateMillis = LocalDateTime.now().toInstant(
+    val dateState = rememberDatePickerState(initialSelectedDateMillis = LocalDateTime.now(ZoneOffset.UTC).toInstant(
         ZoneOffset.UTC).toEpochMilli(), initialDisplayMode = DisplayMode.Input)
-    val startTimeState = rememberTimePickerState(initialHour = LocalDateTime.now().hour)
-    val endTimeState = rememberTimePickerState(initialHour = (LocalDateTime.now().hour + meetingValue).coerceAtMost(23))
+    val startTimeState = rememberTimePickerState(initialHour = LocalDateTime.now(ZoneOffset.UTC).hour)
+    val endTimeState = rememberTimePickerState(initialHour = (LocalDateTime.now(ZoneOffset.UTC).hour + meetingValue).coerceAtMost(23))
 
+
+    var meow by remember { mutableStateOf(0L) }
     Screen {
         Text(text = "Create a Meeting or Activate a Tag", style = MaterialTheme.typography.headlineLarge)
         Spacer(modifier = Modifier.size(16.dp))
@@ -73,15 +76,7 @@ fun AttendanceVerificationPage(viewModel: PrimaryViewModel, client: EmotionClien
             val end = LocalDateTime.ofInstant(Instant.ofEpochMilli(meeting.endTime), ZoneOffset.UTC)
             Text(text = "Meeting Start Time: $start")
             Text(text = "Meeting End Time: $end")
-            var connected by remember { mutableStateOf( nfc.tagConnected() ) }
-            LaunchedEffect(Unit) {
-                while(connected) {
-                    println("updating tag connection state")
-                    connected = nfc.tagConnected()
-                    delay(1000L)
-                }
-                println("tag disconnected")
-            }
+            val connected by nfc.tagConnectionFlow.collectAsState(initial = false)
             Spacer(modifier = Modifier.size(8.dp))
             Button(onClick = {
                 if (connected) {
@@ -102,6 +97,7 @@ fun AttendanceVerificationPage(viewModel: PrimaryViewModel, client: EmotionClien
         Button(onClick = { showCreateMenu = !showCreateMenu }) {
             Text(text = if (showCreateMenu) "Close" else "Create a Meeting")
         }
+
         if (showCreateMenu) {
             Text(text = "Create a Meeting", style = MaterialTheme.typography.titleLarge)
             Spacer(modifier = Modifier.size(16.dp))

@@ -12,7 +12,7 @@ fun SettingsScreen(viewModel: PrimaryViewModel) {
         when(viewModel.authState) {
             AuthState.NOT_LOGGED_IN -> NotLoggedInScreen(viewModel::login, viewModel::register)
             AuthState.AWAITING_VERIFICATION-> AwaitingVerificationScreen(viewModel::logout, viewModel.user)
-            AuthState.LOGGED_IN -> SettingsLoggedIn(viewModel.user, viewModel::logout)
+            AuthState.LOGGED_IN -> SettingsLoggedIn(viewModel.user, viewModel)
         }
     }
 }

@@ -18,9 +18,7 @@ import io.ktor.http.contentType
 import io.ktor.http.parameters
 import io.ktor.serialization.kotlinx.json.json
 import kotlinx.serialization.Serializable
-import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
-import org.team2658.apikt.models.ChargedUpModel
 import org.team2658.apikt.models.ChargedUpScores
 import org.team2658.apikt.models.ExamplePost
 import org.team2658.apikt.models.UserModel
@@ -227,30 +225,6 @@ class EmotionClient {
     suspend fun submitChargedUp(data: ChargedUpRequestParams, user: User?):String? {
         return if(user?.permissions?.standScouting == true && user.token?.isNotBlank() == true) {
             try {
-//                this.client.submitForm(url = ROUTES.CHARGEDUP, formParameters = parameters {
-//                    append("competition", data.competition)
-//                    append("matchNumber", data.matchNumber.toString())
-//                    append("teamNumber", data.teamNumber.toString())
-//                    append("RPEarned", Json.encodeToString(data.RPEarned))
-//                    append("totalRP", data.totalRP.toString())
-//                    append("autoPeriod", Json.encodeToString(data.autoPeriod))
-//                    append("teleopPeriod", Json.encodeToString(data.teleopPeriod))
-//                    append("coneRate", data.coneRate.toString())
-//                    append("cubeRate", data.cubeRate.toString())
-//                    append("linkScore", data.linkScore.toString())
-//                    append("autoDock", data.autoDock.toString())
-//                    append("autoEngage", data.autoEngage.toString())
-//                    append("teleopDock", data.teleopDock.toString())
-//                    append("teleopEngage", data.teleopEngage.toString())
-//                    append("parked", data.parked.toString())
-//                    append("isDefensive", data.isDefensive.toString())
-//                    append("didBreak", data.didBreak.toString())
-//                    append("penaltyCount", data.penaltyCount.toString())
-//                    append("score", data.score.toString())
-//                    append("won", data.won.toString())
-//                    append("tied", data.tied.toString())
-//                    append("comments", data.comments)
-//                }) {
                 println(data)
                 this.client.post(ROUTES.CHARGEDUP) {
                     header(HttpHeaders.Authorization, "Bearer ${user.token}")

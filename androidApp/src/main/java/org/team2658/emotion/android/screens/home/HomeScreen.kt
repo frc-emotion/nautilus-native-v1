@@ -1,5 +1,6 @@
 package org.team2658.emotion.android.screens.home
 
+import android.nfc.NdefMessage
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -26,13 +27,14 @@ import org.team2658.apikt.EmotionClient
 import org.team2658.emotion.android.ui.composables.Screen
 import org.team2658.emotion.android.viewmodels.NFCViewmodel
 import org.team2658.emotion.android.viewmodels.PrimaryViewModel
+import java.nio.charset.Charset
 import java.time.LocalDateTime
 import java.time.ZoneOffset
 
 @Composable
 fun HomeScreen(ktorClient: EmotionClient, nfcViewmodel: NFCViewmodel, primaryViewModel: PrimaryViewModel) {
-    var tagData: String? by rememberSaveable {
-        mutableStateOf(nfcViewmodel.getNdefPayload())
+    val tagData = nfcViewmodel.ndefMessages?.get(0)?.records?.get(0)?.payload?.let {
+        String(it, Charset.forName("UTF-8"))
     }
     var tagStatusText by remember{ mutableStateOf("Scan a tag to log attendance") }
     var showSuccessDialog by remember {mutableStateOf(false)}
@@ -62,7 +64,7 @@ fun HomeScreen(ktorClient: EmotionClient, nfcViewmodel: NFCViewmodel, primaryVie
                     if (user != null) {
                         tagStatusText = "Scan a tag to log attendance"
                         primaryViewModel.updateUser(user)
-                        tagData = null
+                        nfcViewmodel.setNdef(null)
                         showSuccessDialog = true
                     }else {
                         showFailureDialog = true

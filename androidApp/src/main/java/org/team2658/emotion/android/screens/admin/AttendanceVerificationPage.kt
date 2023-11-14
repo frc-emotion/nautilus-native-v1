@@ -86,7 +86,7 @@ fun AttendanceVerificationPage(viewModel: PrimaryViewModel, client: EmotionClien
     var meetingDescription by remember { mutableStateOf("") }
 
     val dateState = rememberDatePickerState(
-        initialSelectedDateMillis = LocalDateTime.now(ZoneOffset.UTC).toInstant(ZoneOffset.UTC).toEpochMilli(),
+        initialSelectedDateMillis = LocalDateTime.now().toInstant(ZoneOffset.UTC).toEpochMilli(),
         initialDisplayMode = DisplayMode.Input)
 
     val startTimeState = rememberTimePickerState(initialHour = LocalDateTime.now().hour)

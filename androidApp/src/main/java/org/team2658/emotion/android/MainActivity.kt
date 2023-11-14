@@ -1,11 +1,21 @@
 package org.team2658.emotion.android
 
+import android.app.PendingIntent
 import android.content.Intent
+import android.content.IntentFilter
 import android.content.SharedPreferences
 import android.net.ConnectivityManager
 import android.nfc.NdefMessage
 import android.nfc.NfcAdapter
+import android.nfc.NfcAdapter.ACTION_NDEF_DISCOVERED
+import android.nfc.NfcAdapter.ACTION_TAG_DISCOVERED
+import android.nfc.NfcAdapter.ACTION_TECH_DISCOVERED
+import android.nfc.NfcAdapter.getDefaultAdapter
 import android.nfc.Tag
+import android.nfc.tech.MifareUltralight
+import android.nfc.tech.Ndef
+import android.nfc.tech.NfcA
+import android.nfc.tech.NfcF
 import android.os.Build.VERSION.SDK_INT
 import android.os.Bundle
 import androidx.activity.ComponentActivity
@@ -42,17 +52,43 @@ class MainActivity : ComponentActivity() {
             "scouting.db"
         ).fallbackToDestructiveMigration().build()
     }
-
     private lateinit var workManager: WorkManager
+    private lateinit var pendingIntent: PendingIntent
+    private val intentFilters = arrayOf(
+        IntentFilter(ACTION_NDEF_DISCOVERED).apply {
+            addDataType("text/plain")
+        },
+        IntentFilter(ACTION_TAG_DISCOVERED)
+    )
+    private val techLists = arrayOf(
+        arrayOf(Ndef::class.java.name)
+    )
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
         println("onCreate")
 
         val workRequest = PeriodicWorkRequestBuilder<SyncTrigger>(15, TimeUnit.MINUTES)
             .build()
 
         handleNFCIntent(intent)
+        val tent = Intent(ACTION_TECH_DISCOVERED)
+        pendingIntent = if (SDK_INT >= 34) {
+            PendingIntent.getActivity(
+                this,
+                0,
+                tent,
+                PendingIntent.FLAG_ALLOW_UNSAFE_IMPLICIT_INTENT or PendingIntent.FLAG_MUTABLE
+            )
+        } else {
+            PendingIntent.getActivity(
+                this,
+                0,
+                tent,
+                PendingIntent.FLAG_MUTABLE
+            )
+        }
 
         val connectivityManager = this.applicationContext?.getSystemService(CONNECTIVITY_SERVICE) as ConnectivityManager?
         workManager = WorkManager.getInstance(this.applicationContext)
@@ -98,15 +134,29 @@ class MainActivity : ComponentActivity() {
         ktorClient.close()
         scoutingDB.close()
     }
-
     override fun onNewIntent(intent: Intent?) {
         super.onNewIntent(intent)
-        println("New Intent")
-       handleNFCIntent(intent)
+        println("onNewIntent")
+        handleNFCIntent(intent)
+    }
+
+    override fun onPause() {
+        super.onPause()
+        getDefaultAdapter(this)?.disableForegroundDispatch(this)
+    }
+
+    override fun onResume() {
+        super.onResume()
+        println("onResume")
+        getDefaultAdapter(this)?.enableForegroundDispatch(this, pendingIntent, intentFilters, techLists)
     }
 
     private fun handleNFCIntent(intent: Intent?) {
-        if(intent?.action == NfcAdapter.ACTION_TAG_DISCOVERED || intent?.action == NfcAdapter.ACTION_NDEF_DISCOVERED) {
+        println("Handling NFC Intent: ${intent?.action}")
+        if(intent?.action == NfcAdapter.ACTION_TAG_DISCOVERED
+            || intent?.action == ACTION_NDEF_DISCOVERED
+            || intent?.action == ACTION_TECH_DISCOVERED
+            ) {
             when {
                 SDK_INT >= 33 -> {
                     this.nfcViewmodel.setTag(
@@ -124,7 +174,7 @@ class MainActivity : ComponentActivity() {
                 }
             }
         }
-        if(intent?.action == NfcAdapter.ACTION_NDEF_DISCOVERED) {
+        if(intent?.action == ACTION_NDEF_DISCOVERED) {
             when {
                 SDK_INT >= 33 -> {
                         intent.getParcelableArrayExtra(NfcAdapter.EXTRA_NDEF_MESSAGES, NdefMessage::class.java)?.also { raw ->

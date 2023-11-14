@@ -12,10 +12,7 @@ import android.nfc.NfcAdapter.ACTION_TAG_DISCOVERED
 import android.nfc.NfcAdapter.ACTION_TECH_DISCOVERED
 import android.nfc.NfcAdapter.getDefaultAdapter
 import android.nfc.Tag
-import android.nfc.tech.MifareUltralight
 import android.nfc.tech.Ndef
-import android.nfc.tech.NfcA
-import android.nfc.tech.NfcF
 import android.os.Build.VERSION.SDK_INT
 import android.os.Bundle
 import androidx.activity.ComponentActivity
@@ -153,7 +150,7 @@ class MainActivity : ComponentActivity() {
 
     private fun handleNFCIntent(intent: Intent?) {
         println("Handling NFC Intent: ${intent?.action}")
-        if(intent?.action == NfcAdapter.ACTION_TAG_DISCOVERED
+        if(intent?.action == ACTION_TAG_DISCOVERED
             || intent?.action == ACTION_NDEF_DISCOVERED
             || intent?.action == ACTION_TECH_DISCOVERED
             ) {

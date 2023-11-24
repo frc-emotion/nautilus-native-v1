@@ -8,9 +8,10 @@
 
 import Foundation
 import shared
+import SwiftyJSON
 
 enum UserStateError: Error {
-    case signInError, signOutError, createAccountError
+    case signInError(message: String), signOutError(message: String), createAccountError(message: String)
 }
 
 @MainActor
@@ -20,12 +21,18 @@ class UserStateViewModel: ObservableObject {
     @Published var isBusy = false
     let defaults = UserDefaults.standard
     
-    func signIn(username: String, password: String) async -> Result<Bool, UserStateError> {
+    func signIn(username: String, password: String) async -> Result<String, UserStateError> {
         isBusy = true
+        var errorMsg = ""
         do {
             let client = EmotionClient()
-            let response = try await client.login(username: username, password: password, errorCallback: { (errorMsg) -> () in
-                    print(errorMsg)
+            let response = try await client.login(username: username, password: password, errorCallback: { (errorMsgIn) -> () in
+                if let errorMsgIn = errorMsgIn.data(using: .utf8, allowLossyConversion: false) {
+                    Task {
+                        let json = try JSON(data: errorMsgIn)
+                        errorMsg = "Error: " + json["message"].stringValue
+                    }
+                }
             })
             
             if let response {
@@ -33,25 +40,25 @@ class UserStateViewModel: ObservableObject {
                 defaults.set(responseJson, forKey: "User")
                 isLoggedIn = true
                 isBusy = false
-                return .success(true)
+                return .success("Succeeded")
             } else {
                 // TODO: Provide error message to user via dialog or screen
-                print("fail")
                 isBusy = false
-                return .failure(.signInError)
+                return .failure(.signInError(message: errorMsg))
             }
         } catch {
             isBusy = false
-            return .failure(.signInError)
+            return .failure(.signInError(message: "Unknown or uncaught Error when attempting to Sign In"))
         }
     }
 
     func createAccount(firstname: String, lastname: String, username: String, email: String, password: String, subteam: shared.Subteam, phone: String, grade: Int32) async -> Result<Bool, UserStateError> {
         isBusy = true
+        var errorMsg = ""
         do {
             let client = EmotionClient()
-            let response = try await client.register(username: username, password: password, email: email, firstName: firstname, lastName: lastname, subteam: subteam, phone: phone, grade: grade, errorCallback: { (errorMsg) -> () in
-                    print(errorMsg)
+            let response = try await client.register(username: username, password: password, email: email, firstName: firstname, lastName: lastname, subteam: subteam, phone: phone, grade: grade, errorCallback: { (errorMsgIn) -> () in
+                    errorMsg = errorMsgIn
             })
             
             if let response {
@@ -62,11 +69,11 @@ class UserStateViewModel: ObservableObject {
                 return .success(true)
             } else {
                 isBusy = false
-                return .failure(.createAccountError)
+                return .failure(.createAccountError(message: errorMsg))
             }
         } catch {
             isBusy = false
-            return .failure(.createAccountError)
+            return .failure(.createAccountError(message: "Unknown or uncaught Error when attempting to Create Account"))
         }
     }
     

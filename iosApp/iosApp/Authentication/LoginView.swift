@@ -11,10 +11,11 @@ import SwiftUI
 import shared
 
 struct LoginView: View {
-    
     @EnvironmentObject var vm: UserStateViewModel
     @State var username = ""
     @State var password = ""
+    @State var loginErrorMsg = ""
+    let client = shared.EmotionClient()
     
     var body: some View {
         NavigationView {
@@ -24,6 +25,14 @@ struct LoginView: View {
                 Text("Log in")
                     .font(.largeTitle)
                     .fontWeight(.bold)
+                
+                if (loginErrorMsg != "") {
+                    Text("\(loginErrorMsg)")
+                        .fontWeight(.bold)
+                        .foregroundColor(Color.red)
+                        .padding(.bottom, 20)
+                        .padding(.top, 1)
+                }
                 
                 TextField("Username", text: $username)
                     .padding(.horizontal)
@@ -39,20 +48,33 @@ struct LoginView: View {
                     .overlay(RoundedRectangle(cornerRadius: 5.0).strokeBorder(Color(UIColor.separator)))
                     .padding(.horizontal)
                 
-                HStack {
-                    Spacer()
-                    NavigationLink {
-                        ForgotPasswordView()
-                    } label: {
-                        Text("Forgot password?")
-                    }
-                }
-                .padding(.horizontal)
-                .padding(.vertical, 10.0)
+//                HStack {
+//                    Spacer()
+//                    NavigationLink {
+//                        ForgotPasswordView()
+//                    } label: {
+//                        Text("Forgot password?")
+//                    }
+//                }
+//                .padding(.horizontal)
+//                .padding(.vertical, 10.0)
                 
                 Button (action: {
                     Task {
-                        await vm.signIn(username: username, password: password)
+                        let result = await vm.signIn(username: username, password: password)
+                        switch result {
+                        case .success(_):
+                            loginErrorMsg = ""
+                            // do nothing
+                            break
+                        case .failure(let error):
+                            switch error {
+                            case .signInError(let message):
+                                loginErrorMsg = message
+                            default:
+                                print("Unknown error type")
+                            }
+                        }
                     }
                 }) {
                     Text("Login")
@@ -82,7 +104,7 @@ struct LoginView: View {
             if (defaults.string(forKey: "User") != nil) {
                 let user = shared.User.Companion().fromJSON(json: defaults.string(forKey: "User"))
                 Task {
-                    let response: User? = try await shared.EmotionClient().getMe(user: user)
+                    let response = try await client.getMe(user: user)
                     if (response != nil) {
                         vm.isLoggedIn = true
                     } else {

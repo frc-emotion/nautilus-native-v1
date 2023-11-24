@@ -27,11 +27,12 @@ struct AccountCreationView: View {
     @State var email = ""
     @State var username = ""
     @State var phone = ""
-    @State var grade = 0
+    @State var grade = ""
     @State var password = ""
     @State var passwordConfirm = ""
 //    @State var subteam = shared.Subteam.none
     @State var subteamString = "None"
+    @State var errorMsg = ""
     
 //    let realSubteams = [NewSubteam(id: 0, value: shared.Subteam.build, name: "Build"), NewSubteam(id: 1, value: shared.Subteam.design, name: "Design"), NewSubteam(id: 2, value: shared.Subteam.electrical, name: "Electrical"), NewSubteam(id: 3, value: shared.Subteam.software, name: "Software"), NewSubteam(id: 4, value: shared.Subteam.marketing, name: "Marketing")] as [NewSubteam]
     
@@ -43,6 +44,14 @@ struct AccountCreationView: View {
                 Text("Create Account")
                     .font(.largeTitle)
                     .fontWeight(.bold)
+                
+                if (errorMsg != "") {
+                    Text("\(errorMsg)")
+                        .fontWeight(.bold)
+                        .foregroundColor(Color.red)
+                        .padding(.bottom, 20)
+                        .padding(.top, 1)
+                }
                 
                 HStack {
                     TextField("First name", text: $firstname)
@@ -119,12 +128,25 @@ struct AccountCreationView: View {
                 .overlay(RoundedRectangle(cornerRadius: 5.0).strokeBorder(Color(UIColor.separator)))
                 .padding(.horizontal)
                 
+                TextField("Grade", text: $grade)
+                    .padding(.horizontal)
+                    .frame(height: 45.0)
+                    .overlay(RoundedRectangle(cornerRadius: 5.0).strokeBorder(Color(UIColor.separator)))
+                    .padding(.horizontal)
+                    .autocapitalization(.none)
+                    .disableAutocorrection(true)
+                    .keyboardType(.phonePad)
+                
                 
                 Button (action: {
                     Task {
                         var subteam: shared.Subteam
                         
                         if (password == passwordConfirm){
+                            if (Int(grade) ?? 0 > 12 || Int(grade) ?? 0 < 9) {
+                                errorMsg = "Enter a valid grade 9-12"
+                                return
+                            }
                             switch subteamString {
                             case "Build":
                                 subteam = shared.Subteam.build
@@ -150,9 +172,23 @@ struct AccountCreationView: View {
                             }
                             
                             // result of call is unused because UserStateViewModel will automatically navigate away once the user account is created.
-                            await vm.createAccount(firstname: firstname, lastname: lastname, username: username, email: email, password: password, subteam: subteam, phone: phone, grade: Int32(grade))
+                            let response = await vm.createAccount(firstname: firstname, lastname: lastname, username: username, email: email, password: password, subteam: subteam, phone: phone, grade: Int32(grade) ?? 0)
+                            
+                            switch response {
+                            case .success(_):
+                                errorMsg = ""
+                                // do nothing
+                                break
+                            case .failure(let error):
+                                switch error {
+                                case .createAccountError(let message):
+                                    errorMsg = message
+                                default:
+                                    errorMsg = "Unknown error"
+                                }
+                            }
                         } else {
-                            // error popup
+                            errorMsg = "Passwords do not match"
                         }
                     }
                 }) {

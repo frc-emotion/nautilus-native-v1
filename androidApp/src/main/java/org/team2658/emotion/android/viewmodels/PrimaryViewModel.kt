@@ -86,7 +86,7 @@ class PrimaryViewModel(private val ktorClient: EmotionClient, private val shared
 
     suspend fun login(username: String, password: String, errorCallback: (String) -> Unit) {
         updateUser(this.ktorClient.login(username, password, errorCallback))
-//        this.authState = if(this.user != null) AuthState.LOGGED_IN else AuthState.NOT_LOGGED_IN
+        this.authState = if(this.user != null) AuthState.LOGGED_IN else AuthState.NOT_LOGGED_IN
     }
 
     fun logout() {
@@ -108,7 +108,7 @@ class PrimaryViewModel(private val ktorClient: EmotionClient, private val shared
         //TODO: parent and advisor account types
     ) {
         updateUser(this.ktorClient.register(username, password, email, firstName, lastName, subteam, phone, grade, errorCallback))
-//        authState = if(this.user != null) AuthState.AWAITING_VERIFICATION else AuthState.NOT_LOGGED_IN
+        authState = if(this.user != null) AuthState.AWAITING_VERIFICATION else AuthState.NOT_LOGGED_IN
     }
 
     suspend fun testMeeting(): Meeting? {

@@ -215,8 +215,8 @@ fun NumberInput(
             },
             trailingIcon = {
                 IconButton(onClick = {
-                    if (value == null || (value in (minValue + 1) until maxValue)) onValueChange(
-                        (value ?: 0) + incrementBy
+                    if (value == null || (value in (minValue) until maxValue)) onValueChange(
+                        if(value == null) incrementBy else (value + incrementBy)
                     )
                 }) {
                     Icon(

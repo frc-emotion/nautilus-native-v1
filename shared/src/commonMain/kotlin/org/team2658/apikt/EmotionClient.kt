@@ -6,9 +6,11 @@ import io.ktor.client.plugins.ClientRequestException
 import io.ktor.client.plugins.ServerResponseException
 import io.ktor.client.plugins.contentnegotiation.ContentNegotiation
 import io.ktor.client.plugins.defaultRequest
+import io.ktor.client.request.delete
 import io.ktor.client.request.forms.submitForm
 import io.ktor.client.request.get
 import io.ktor.client.request.header
+import io.ktor.client.request.parameter
 import io.ktor.client.request.post
 import io.ktor.client.request.setBody
 import io.ktor.client.statement.bodyAsText
@@ -111,7 +113,7 @@ class EmotionClient {
             println(user.token)
             return try {
                 this.client.submitForm(url = ROUTES.CREATE_MEETING, formParameters = parameters {
-                    append("createdBy", user.username)
+                    append("createdBy", user._id)
                     append("startTime", startTime.toString())
                     append("endTime", endTime.toString())
                     append("type", type)
@@ -151,6 +153,30 @@ class EmotionClient {
         }
         println("issue with params")
         return null
+    }
+
+    suspend fun getMeetings(user: User?): List<Meeting>? {
+        if(user != null && user.token?.isNotBlank() == true && user.permissions.verifyAllAttendance) {
+            return try {
+                this.client.get("${ROUTES.BASE}/attendance/getMeetings") {
+                    header(HttpHeaders.Authorization, "Bearer ${user.token}")
+                }.body<List<Meeting>>()
+            }
+            catch(e: ClientRequestException) {
+                println(e.response.bodyAsText())
+                null
+            }
+            catch(e: ServerResponseException) {
+                println(e.response.bodyAsText())
+                null
+            }
+            catch(e: Exception) {
+                println("Issue with request")
+                println(e.message)
+                null
+            }
+        }
+        else return null
     }
 
     suspend fun attendMeeting(
@@ -200,6 +226,34 @@ class EmotionClient {
         ) }
     }
 
+    suspend fun getUserById(id: String, user: User?): User? {
+        return if(user != null && user.token?.isNotBlank() == true && user.isAdminOrLead) {
+            try {
+                val response: List<UserModel> = this.client.get("${ROUTES.BASE}/users?_id=$id")
+                { header(HttpHeaders.Authorization, "Bearer ${user.token}") }
+                    .body()
+                println(response)
+                User.fromSerializable(response.first())
+            } catch (e: Exception) {
+                println(e)
+                null
+            }
+        }else null
+    }
+
+    suspend fun deleteMeeting(id: String, user: User?): Boolean { // true for success
+        return if(user != null && user.token?.isNotBlank() == true && user.permissions.verifyAllAttendance) {
+            try {
+                this.client.delete("${ROUTES.BASE}/attendance/deleteMeeting/$id") {
+                    header(HttpHeaders.Authorization, "Bearer ${user.token}")
+                }
+                true
+            } catch (e: Exception) {
+                println(e)
+                false
+            }
+        }else false
+    }
     suspend fun getCompetitions(year: String): List<String> {
         return try {
             this.client.get("${ROUTES.BASE}/seasons/$year/competitions").body()

@@ -24,7 +24,7 @@ fun Screen(content: @Composable () -> Unit) {
         .fillMaxSize()
         .clickable(
             indication = null,
-            interactionSource = interactionSource) { focusManager.clearFocus() }
+            interactionSource = interactionSource) { focusManager.clearFocus() },
     ) {
         Column(
             modifier = Modifier

@@ -36,7 +36,7 @@ fun LoggedInNavigator(
                 SettingsScreen(primaryViewModel)
             }
             composable(AppScreens.LEADS.name) {
-                LeadsScreen(viewModel = primaryViewModel, client = ktorClient, nfc = nfcViewmodel )
+                LeadsScreen(viewModel = primaryViewModel, nfc = nfcViewmodel )
             }
             composable(AppScreens.SCOUTING.name) {
                 ScoutingScreen(primaryViewModel)

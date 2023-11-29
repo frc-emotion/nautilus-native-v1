@@ -60,7 +60,8 @@ fun HomeScreen(ktorClient: EmotionClient, nfcViewmodel: NFCViewmodel, primaryVie
             Spacer(modifier = Modifier.size(16.dp))
             Button(onClick = {
                 coroutineScope.launch {
-                    val user = ktorClient.attendMeeting(primaryViewModel.user, tagData!!, LocalDateTime.now(ZoneOffset.UTC).toInstant(ZoneOffset.UTC).toEpochMilli(), failureCallback = { showFailureDialog = true; failureDialogText = it })
+                    val user = ktorClient.attendMeeting(primaryViewModel.user,
+                        tagData, LocalDateTime.now(ZoneOffset.UTC).toInstant(ZoneOffset.UTC).toEpochMilli(), failureCallback = { showFailureDialog = true; failureDialogText = it })
                     if (user != null) {
                         tagStatusText = "Scan a tag to log attendance"
                         primaryViewModel.updateUser(user)

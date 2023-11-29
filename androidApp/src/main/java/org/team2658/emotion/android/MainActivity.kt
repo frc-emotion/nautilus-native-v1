@@ -49,6 +49,13 @@ class MainActivity : ComponentActivity() {
             "scouting.db"
         ).fallbackToDestructiveMigration().build()
     }
+    private val attendanceDB by lazy {
+        Room.databaseBuilder(
+            applicationContext,
+            org.team2658.emotion.android.room.dbs.AttendanceDB::class.java,
+            "attendance.db"
+        ).fallbackToDestructiveMigration().build()
+    }
     private lateinit var workManager: WorkManager
     private lateinit var pendingIntent: PendingIntent
     private val intentFilters = arrayOf(
@@ -98,7 +105,7 @@ class MainActivity : ComponentActivity() {
                     override fun <T : ViewModel> create(
                         modelClass: Class<T>,
                     ):T {
-                        return PrimaryViewModel(ktorClient, sharedPrefs, scoutingDB, connectivityManager) as T
+                        return PrimaryViewModel(ktorClient, sharedPrefs, scoutingDB, connectivityManager, attendanceDB) as T
                     }
                 }
             )

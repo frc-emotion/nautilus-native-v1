@@ -8,15 +8,16 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import androidx.work.WorkManager
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import org.team2658.apikt.EmotionClient
+import org.team2658.emotion.android.room.dbs.AttendanceDB
 import org.team2658.emotion.android.room.dbs.ScoutingDB
 import org.team2658.emotion.android.room.entities.ChargedUpEntity
 import org.team2658.emotion.android.room.entities.Competition
+import org.team2658.emotion.android.room.entities.MeetingEntity
 import org.team2658.emotion.android.room.entities.StorageType
 import org.team2658.emotion.android.room.entities.chargedUpParamsFromEntity
 import org.team2658.emotion.attendance.Meeting
@@ -27,14 +28,25 @@ import org.team2658.emotion.userauth.AccountType
 import org.team2658.emotion.userauth.AuthState
 import org.team2658.emotion.userauth.Subteam
 import org.team2658.emotion.userauth.User
+import java.time.LocalDateTime
+import java.time.ZoneOffset
 
-class PrimaryViewModel(private val ktorClient: EmotionClient, private val sharedPref: SharedPreferences, scoutingDB: ScoutingDB, private val connectivityManager: ConnectivityManager?) : ViewModel() {
+class PrimaryViewModel(private val ktorClient: EmotionClient,
+                       private val sharedPref: SharedPreferences,
+                       scoutingDB: ScoutingDB,
+                       private val connectivityManager:
+                       ConnectivityManager?,
+                       attendanceDB: AttendanceDB,
+                       private val clearNFC: () -> Unit
+    ) : ViewModel() {
     var user: User? by mutableStateOf(User.fromJSON(sharedPref.getString("user", null)))
         private set
 
     private val chargedUpDao = scoutingDB.chargedUpDao
 
     private val compsDao = scoutingDB.compsDao
+
+    private val meetingDao = attendanceDB.meetingDao
 
     private val competitionYears = listOf("2023")
 
@@ -44,6 +56,11 @@ class PrimaryViewModel(private val ktorClient: EmotionClient, private val shared
 
     fun updateUser(user: User?) {
         this.user = user
+        authState = when(user?.accountType) {
+            AccountType.UNVERIFIED -> AuthState.AWAITING_VERIFICATION
+            AccountType.BASE, AccountType.LEAD, AccountType.ADMIN, AccountType.SUPERUSER -> AuthState.LOGGED_IN
+            null -> AuthState.NOT_LOGGED_IN
+        }
         with(sharedPref.edit()) {
             putString("user", user?.toJSON())
             apply()
@@ -65,20 +82,15 @@ class PrimaryViewModel(private val ktorClient: EmotionClient, private val shared
             }
     }
 
-//    var authState: AuthState by mutableStateOf(
-//        when(this.user?.accountType) {
-//            AccountType.UNVERIFIED -> AuthState.AWAITING_VERIFICATION
-//            AccountType.BASE, AccountType.LEAD, AccountType.ADMIN, AccountType.SUPERUSER -> AuthState.LOGGED_IN
-//            null -> AuthState.NOT_LOGGED_IN
-//        }
-//    )
-//        private set
+    var authState: AuthState by mutableStateOf(
+        when(this.user?.accountType) {
+            AccountType.UNVERIFIED -> AuthState.AWAITING_VERIFICATION
+            AccountType.BASE, AccountType.LEAD, AccountType.ADMIN, AccountType.SUPERUSER -> AuthState.LOGGED_IN
+            null -> AuthState.NOT_LOGGED_IN
+        }
+    )
+        private set
 
-    val authState = when(this.user?.accountType) {
-        null -> AuthState.NOT_LOGGED_IN
-        AccountType.UNVERIFIED -> AuthState.AWAITING_VERIFICATION
-        AccountType.BASE, AccountType.LEAD, AccountType.ADMIN, AccountType.SUPERUSER -> AuthState.LOGGED_IN
-    }
 
     fun getClient(): EmotionClient {
         return this.ktorClient
@@ -86,13 +98,30 @@ class PrimaryViewModel(private val ktorClient: EmotionClient, private val shared
 
     suspend fun login(username: String, password: String, errorCallback: (String) -> Unit) {
         updateUser(this.ktorClient.login(username, password, errorCallback))
-        this.authState = if(this.user != null) AuthState.LOGGED_IN else AuthState.NOT_LOGGED_IN
+
+        this.authState = when(this.user?.accountType){
+            null -> AuthState.NOT_LOGGED_IN
+            AccountType.UNVERIFIED -> AuthState.AWAITING_VERIFICATION
+            AccountType.BASE, AccountType.LEAD, AccountType.ADMIN, AccountType.SUPERUSER -> AuthState.LOGGED_IN
+        }
+    }
+
+    private suspend fun cleanupDBS() {
+        withContext(Dispatchers.IO) {
+            cleanCompsCache()
+            clearChargedUpCache()
+            clearMeetingsCache()
+        }
+
     }
 
     fun logout() {
         //TODO()
         updateUser(null)
-//        this.authState = AuthState.NOT_LOGGED_IN
+        clearNFC()
+        viewModelScope.launch { cleanupDBS() }
+
+        this.authState = AuthState.NOT_LOGGED_IN
     }
 
     suspend fun register(
@@ -111,17 +140,6 @@ class PrimaryViewModel(private val ktorClient: EmotionClient, private val shared
         authState = if(this.user != null) AuthState.AWAITING_VERIFICATION else AuthState.NOT_LOGGED_IN
     }
 
-    suspend fun testMeeting(): Meeting? {
-        return this.ktorClient.createMeeting(
-            user = this.user,
-            startTime = 0,
-            endTime = 1695075737873L,
-            type = "Test Meeting",
-            description = "This is a test meeting",
-            value = 1
-        )
-    }
-
     suspend fun getCompetitions(year: String): List<String> {
         return withContext(Dispatchers.IO){
             try {
@@ -130,6 +148,15 @@ class PrimaryViewModel(private val ktorClient: EmotionClient, private val shared
                 println(e)
                 emptyList()
             }
+        }
+    }
+
+    private suspend fun cleanCompsCache() {
+        withContext(Dispatchers.IO) {
+           competitionYears.forEach {
+               val all = compsDao.getComps(it)
+               compsDao.deleteComps(all)
+           }
         }
     }
 
@@ -161,14 +188,68 @@ class PrimaryViewModel(private val ktorClient: EmotionClient, private val shared
     }
 
 
-    var meeting: Meeting? by mutableStateOf(Meeting.fromJSON(sharedPref.getString("createdMeeting", null)))
-        private set
+    //TODO
+    suspend fun syncMeetings() {
+        withContext(Dispatchers.IO) {
+            val new = ktorClient.getMeetings(user)
+            println("new: $new")
+            new?.let { ls ->
+                meetingDao.insertMeetings(ls.map {mtg -> MeetingEntity.fromShared(mtg, ktorClient.getUserById(mtg.createdBy, user)?.username) })
+            }
 
-    fun updateMeeting(meeting: Meeting?) {
-        this.meeting = meeting
-        with(sharedPref.edit()) {
-            putString("createdMeeting", meeting?.toJson())
-            apply()
+            val outdated = meetingDao.getOutdated(LocalDateTime.now(ZoneOffset.UTC).toInstant(ZoneOffset.UTC).toEpochMilli())
+            if (outdated.isNotEmpty()) {
+                meetingDao.deleteMeetings(outdated)
+            }
+        }
+    }
+
+    private suspend fun clearMeetingsCache() {
+        withContext(Dispatchers.IO) {
+            meetingDao.deleteMeetings(meetingDao.getAll())
+        }
+    }
+
+    suspend fun getMeetings(): List<Pair<Meeting, String?>> {
+        return withContext(Dispatchers.IO) {
+            meetingDao
+                .getCurrent(LocalDateTime.now(ZoneOffset.UTC).toInstant(ZoneOffset.UTC).toEpochMilli())
+                .map{
+                    MeetingEntity.toShared(it)
+                }
+        }
+    }
+
+    suspend fun createMeeting(
+        type: String,
+        description: String,
+        startTime: Long,
+        endTime: Long,
+        value: Int,
+        successCallback: (Meeting) -> Unit
+    ) {
+        withContext(Dispatchers.IO) {
+            val meeting = ktorClient.createMeeting(
+                user = user,
+                type = type,
+                description = description,
+                startTime = startTime,
+                endTime = endTime,
+                value = value,
+            )
+            if (meeting != null) {
+                successCallback(meeting)
+                meetingDao.insertMeetings(listOf(MeetingEntity.fromShared(meeting, user?.username)))
+            }
+        }
+    }
+
+    suspend fun deleteMeeting(meetingId: String) {
+        withContext(Dispatchers.IO) {
+            if(ktorClient.deleteMeeting(meetingId, user)) {
+                val mtg = meetingDao.getOne(meetingId)
+                mtg?.let {meetingDao.deleteMeetings(listOf(it))}
+            }
         }
     }
 
@@ -243,6 +324,12 @@ class PrimaryViewModel(private val ktorClient: EmotionClient, private val shared
             }
         }catch(e: Exception) {
             println(e)
+        }
+    }
+
+    private suspend fun clearChargedUpCache() {
+        withContext(Dispatchers.IO) {
+            chargedUpDao.deleteChargedUps(chargedUpDao.getAllChargedUps())
         }
     }
 

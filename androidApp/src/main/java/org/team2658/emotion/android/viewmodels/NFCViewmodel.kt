@@ -8,50 +8,77 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.flow
-import java.io.IOException
+import kotlinx.coroutines.withContext
 import java.nio.charset.Charset
 
 class NFCViewmodel: ViewModel() {
     private var nfcTag: Tag? by mutableStateOf(null)
 
-    private fun tagConnected(): Boolean {
-        var out = false
-        this.nfcTag?.let {
-            try {
-                Ndef.get(it)?.use {tag ->
-                    tag.connect()
-                    out = tag.isConnected
+    private suspend fun tagConnected(): Boolean {
+        return withContext(Dispatchers.IO) {
+            var out = false
+            nfcTag?.let {
+                try {
+                    Ndef.get(it)?.use { tag ->
+                        out = try {
+                            tag.connect()
+                            try {
+                                tag.isConnected
+                            } catch (e: Exception) {
+                                setTag(null)
+                                false
+                            }
+                        } catch (e: Exception) {
+                            setTag(null)
+                            false
+                        }
+                    }
+                } catch (e: Exception) {
+                    setTag(null)
+                    out = false
                 }
-            }catch(e: IOException) {
-                out = false
+                if (!out) setTag(null)
             }
+            return@withContext out
         }
-        if(!out) this.setTag(null)
-        return out
     }
 
-    val tagConnectionFlow = flow<Boolean> {
+    val tagConnectionFlow = flow {
         while(true) {
             emit(tagConnected())
-            delay(1000L)
+            delay(500L)
         }
     }
 
-    private var ndefMessages: List<NdefMessage>? by mutableStateOf(null)
+    var ndefMessages: List<NdefMessage>? by mutableStateOf(null)
+        private set
 
-    fun setTag(tag: Tag?) {
-        this.nfcTag = tag
-    }
 
     fun setNdef(messages: List<NdefMessage>?) {
        this.ndefMessages = messages
     }
 
-    fun getNdefPayload(): String? {
-        if (this.ndefMessages == null) return null
-        return String(this.ndefMessages!![0].records[0].payload, Charset.forName("US-ASCII"))
+    fun setTag(tag: Tag?) {
+        this.nfcTag = tag
+        tag?.let {
+            try {
+                Ndef.get(it)?.use { ndef ->
+                    try {
+                        ndef.connect()
+                        ndefMessages = listOf(ndef.ndefMessage)
+                    } catch (e: Exception) {
+                        this.ndefMessages = null
+                    }
+                }
+            }catch (e: Exception) {
+                this.nfcTag = null
+            }
+        }
+        println("payload: ${ndefMessages?.get(0)?.records?.get(0)?.payload?.toString(Charset.forName("US-ASCII"))}")
+        println("ndefMessages: $ndefMessages")
     }
 
     fun writeToTag(text: String):Boolean {
@@ -59,7 +86,7 @@ class NFCViewmodel: ViewModel() {
 
         val ndef = NdefMessage(
             NdefRecord.createMime(
-                "text/plain",
+                "application/emotion",
                 text.toByteArray(Charset.forName("US-ASCII"))
             )
         )
@@ -71,5 +98,10 @@ class NFCViewmodel: ViewModel() {
                 return true
         }
         return false
+    }
+
+    fun clearNFC() {
+        setTag(null)
+        setNdef(null)
     }
 }

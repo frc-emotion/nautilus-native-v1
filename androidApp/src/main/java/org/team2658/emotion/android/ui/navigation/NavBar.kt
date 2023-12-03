@@ -20,7 +20,7 @@ fun NavBar(navController: NavController, viewModel: PrimaryViewModel) {
     val items = when {
         (viewModel.user?.accountType == AccountType.ADMIN || viewModel.user?.accountType == AccountType.SUPERUSER || viewModel.user?.accountType == AccountType.LEAD) -> listOf(
             AppScreens.HOME,
-            AppScreens.SCOUTING,
+//            AppScreens.SCOUTING,
             AppScreens.LEADS,
             AppScreens.SETTINGS
         )
@@ -30,7 +30,7 @@ fun NavBar(navController: NavController, viewModel: PrimaryViewModel) {
                 || (viewModel.user?.permissions?.viewScoutingData == true)
         -> listOf(
             AppScreens.HOME,
-            AppScreens.SCOUTING,
+//            AppScreens.SCOUTING,
             AppScreens.SETTINGS
         )
 

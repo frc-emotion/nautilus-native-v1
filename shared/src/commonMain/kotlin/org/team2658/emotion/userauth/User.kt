@@ -33,6 +33,7 @@ data class User(
     val employer: Employer? = null,
 ) {
     val permissions = getPermissions(this)
+    val isAdminOrLead = this.accountType == AccountType.ADMIN || this.accountType == AccountType.LEAD || this.accountType == AccountType.SUPERUSER
     companion object {
         fun fromSerializable(usr: UserModel): User {
             return User(

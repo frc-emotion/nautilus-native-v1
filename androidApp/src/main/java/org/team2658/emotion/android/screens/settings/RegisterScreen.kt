@@ -11,6 +11,7 @@ import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.Checkbox
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.RadioButton
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
@@ -18,6 +19,8 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -25,6 +28,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 import org.team2658.emotion.android.ui.composables.LabelledTextBoxSingleLine
 import org.team2658.emotion.toCapitalized
@@ -46,16 +50,17 @@ fun RegisterScreen(
     ) -> Unit,
     onLogin: () -> Unit
 ) {
-    var username by remember { mutableStateOf("") }
-    var password by remember { mutableStateOf("") }
-    var passwordConfirm by remember { mutableStateOf("") }
-    var email by remember { mutableStateOf("") }
-    var firstName by remember { mutableStateOf("") }
-    var lastName by remember { mutableStateOf("") }
-    var subteam by remember { mutableStateOf(Subteam.NONE) }
-    var grade by remember { mutableIntStateOf(-1) }
-    var phone by remember { mutableStateOf("") }
+    var username by rememberSaveable { mutableStateOf("") }
+    var password by rememberSaveable { mutableStateOf("") }
+    var passwordConfirm by rememberSaveable { mutableStateOf("") }
+    var email by rememberSaveable { mutableStateOf("") }
+    var firstName by rememberSaveable { mutableStateOf("") }
+    var lastName by rememberSaveable { mutableStateOf("") }
+    var subteam by rememberSaveable { mutableStateOf(Subteam.NONE) }
+    var grade by rememberSaveable { mutableIntStateOf(-1) }
+    var phone by rememberSaveable { mutableStateOf("") }
     val context = LocalContext.current
+    val scope = rememberCoroutineScope()
 
     var showError by remember {mutableStateOf(false)}
     var errorText by remember {mutableStateOf("")}
@@ -144,7 +149,7 @@ fun RegisterScreen(
             Row(
                 verticalAlignment = Alignment.CenterVertically,
             ) {
-                Checkbox(checked = (entry == subteam), onCheckedChange = { subteam = entry })
+                RadioButton(selected = (entry == subteam), onClick = { subteam = entry })
                 Spacer(modifier = Modifier.width(2.dp))
                 Text(text = entry.name.toCapitalized(), style = MaterialTheme.typography.bodyLarge)
             }
@@ -155,7 +160,7 @@ fun RegisterScreen(
             Row(
                 verticalAlignment = Alignment.CenterVertically,
             ) {
-                Checkbox(checked = (i == grade), onCheckedChange = { grade = i })
+                RadioButton(selected = (i == grade), onClick = { grade = i })
                 Spacer(modifier = Modifier.width(2.dp))
                 Text(text = "Grade $i", style = MaterialTheme.typography.bodyLarge)
             }
@@ -163,7 +168,7 @@ fun RegisterScreen(
         Spacer(modifier = Modifier.size(32.dp))
         Button(onClick = {
             if (password == passwordConfirm) {
-                runBlocking {
+                scope.launch {
                     onRegister(
                         username,
                         password,
@@ -174,7 +179,6 @@ fun RegisterScreen(
                         phone,
                         grade)
                         { errorText = it; showError = true }
-
                 }
             } else {
                 //TODO: ALERT

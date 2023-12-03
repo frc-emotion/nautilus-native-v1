@@ -98,6 +98,7 @@ class PrimaryViewModel(private val ktorClient: EmotionClient,
 
     suspend fun login(username: String, password: String, errorCallback: (String) -> Unit) {
         updateUser(this.ktorClient.login(username, password, errorCallback))
+
         this.authState = when(this.user?.accountType){
             null -> AuthState.NOT_LOGGED_IN
             AccountType.UNVERIFIED -> AuthState.AWAITING_VERIFICATION
@@ -111,6 +112,7 @@ class PrimaryViewModel(private val ktorClient: EmotionClient,
             clearChargedUpCache()
             clearMeetingsCache()
         }
+
     }
 
     fun logout() {

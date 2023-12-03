@@ -27,7 +27,7 @@ android {
         compose = true
     }
     composeOptions {
-        kotlinCompilerExtensionVersion = "1.5.2"
+        kotlinCompilerExtensionVersion = "1.5.3"
     }
     packaging {
         resources {
@@ -45,13 +45,10 @@ android {
             signingConfig = signingConfigs.getByName("release")
         }
     }
-    compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_1_8
-        targetCompatibility = JavaVersion.VERSION_1_8
-    }
     kotlinOptions {
         jvmTarget = "1.8"
     }
+    buildToolsVersion = "34.0.0"
 }
 
 dependencies {

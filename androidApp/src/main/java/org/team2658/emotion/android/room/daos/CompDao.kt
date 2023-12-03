@@ -1,6 +1,7 @@
 package org.team2658.emotion.android.room.daos
 
 import androidx.room.Dao
+import androidx.room.Delete
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
@@ -13,4 +14,7 @@ interface CompDao {
 
     @Query("SELECT * FROM competitions WHERE year = :year")
     fun getComps(year: String): List<Competition>
+
+    @Delete
+    suspend fun deleteComps(comps: List<Competition>)
 }

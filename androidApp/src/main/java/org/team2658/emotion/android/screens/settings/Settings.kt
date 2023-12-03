@@ -1,9 +1,9 @@
 package org.team2658.emotion.android.screens.settings
 
 import androidx.compose.runtime.Composable
-import org.team2658.emotion.userauth.AuthState
 import org.team2658.emotion.android.ui.composables.Screen
 import org.team2658.emotion.android.viewmodels.PrimaryViewModel
+import org.team2658.emotion.userauth.AuthState
 
 
 @Composable
@@ -11,8 +11,7 @@ fun SettingsScreen(viewModel: PrimaryViewModel) {
     Screen {
         when(viewModel.authState) {
             AuthState.NOT_LOGGED_IN -> NotLoggedInScreen(viewModel::login, viewModel::register)
-            AuthState.AWAITING_VERIFICATION-> AwaitingVerificationScreen(viewModel::logout, viewModel.user)
-            AuthState.LOGGED_IN -> SettingsLoggedIn(viewModel.user, viewModel)
+            AuthState.LOGGED_IN, AuthState.AWAITING_VERIFICATION -> SettingsLoggedIn(viewModel.user, viewModel)
         }
     }
 }

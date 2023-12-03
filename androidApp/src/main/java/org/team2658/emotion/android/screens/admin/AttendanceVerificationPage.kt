@@ -1,25 +1,16 @@
 package org.team2658.emotion.android.screens.admin
 
 import android.content.DialogInterface
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Add
-import androidx.compose.material.icons.filled.AddCircle
 import androidx.compose.material.icons.filled.Cancel
 import androidx.compose.material.icons.filled.DeleteForever
-import androidx.compose.material.icons.filled.Favorite
-import androidx.compose.material.icons.filled.LibraryAdd
-import androidx.compose.material.icons.filled.NoteAdd
 import androidx.compose.material.icons.filled.PostAdd
 import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.DatePicker
 import androidx.compose.material3.DatePickerState
 import androidx.compose.material3.DisplayMode
@@ -27,7 +18,6 @@ import androidx.compose.material3.Divider
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
-import androidx.compose.material3.IconButtonColors
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
@@ -109,12 +99,14 @@ fun AttendanceVerificationPage(viewModel: PrimaryViewModel, nfc: NFCViewmodel) {
         initialSelectedDateMillis = LocalDateTime.now().toInstant(ZoneOffset.UTC).toEpochMilli(),
         initialDisplayMode = DisplayMode.Input)
 
-    val initialHour = when(LocalDateTime.now().minute) {
-       in 0..15 -> LocalDateTime.now().hour
-        else -> (LocalDateTime.now().hour + 1).coerceAtMost(23)
+    val initialHour = LocalDateTime.now().hour
+    val initialMinute = (LocalDateTime.now().minute - (LocalDateTime.now().minute % 15)).coerceAtLeast(0)
+    val endingHour = when(initialMinute) {
+        in 0..45 -> initialHour + meetingValue
+        else -> initialHour + 1 + meetingValue
     }
-    val startTimeState = rememberTimePickerState(initialHour = initialHour)
-    val endTimeState = rememberTimePickerState(initialHour = (initialHour + meetingValue).coerceAtMost(23))
+    val startTimeState = rememberTimePickerState(initialHour = initialHour, initialMinute = initialMinute)
+    val endTimeState = rememberTimePickerState(initialHour = (endingHour).coerceAtMost(23), initialMinute = initialMinute)
 
     var meetings: List<Pair<Meeting, String?>> by remember { mutableStateOf(listOf()) }
 

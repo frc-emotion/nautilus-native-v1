@@ -8,7 +8,6 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import androidx.work.WorkManager
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -37,7 +36,9 @@ class PrimaryViewModel(private val ktorClient: EmotionClient,
                        scoutingDB: ScoutingDB,
                        private val connectivityManager:
                        ConnectivityManager?,
-                       attendanceDB: AttendanceDB) : ViewModel() {
+                       attendanceDB: AttendanceDB,
+                       private val clearNFC: () -> Unit
+    ) : ViewModel() {
     var user: User? by mutableStateOf(User.fromJSON(sharedPref.getString("user", null)))
         private set
 
@@ -55,6 +56,11 @@ class PrimaryViewModel(private val ktorClient: EmotionClient,
 
     fun updateUser(user: User?) {
         this.user = user
+        authState = when(user?.accountType) {
+            AccountType.UNVERIFIED -> AuthState.AWAITING_VERIFICATION
+            AccountType.BASE, AccountType.LEAD, AccountType.ADMIN, AccountType.SUPERUSER -> AuthState.LOGGED_IN
+            null -> AuthState.NOT_LOGGED_IN
+        }
         with(sharedPref.edit()) {
             putString("user", user?.toJSON())
             apply()
@@ -92,12 +98,27 @@ class PrimaryViewModel(private val ktorClient: EmotionClient,
 
     suspend fun login(username: String, password: String, errorCallback: (String) -> Unit) {
         updateUser(this.ktorClient.login(username, password, errorCallback))
-        this.authState = if(this.user != null) AuthState.LOGGED_IN else AuthState.NOT_LOGGED_IN
+        this.authState = when(this.user?.accountType){
+            null -> AuthState.NOT_LOGGED_IN
+            AccountType.UNVERIFIED -> AuthState.AWAITING_VERIFICATION
+            AccountType.BASE, AccountType.LEAD, AccountType.ADMIN, AccountType.SUPERUSER -> AuthState.LOGGED_IN
+        }
+    }
+
+    private suspend fun cleanupDBS() {
+        withContext(Dispatchers.IO) {
+            cleanCompsCache()
+            clearChargedUpCache()
+            clearMeetingsCache()
+        }
     }
 
     fun logout() {
         //TODO()
         updateUser(null)
+        clearNFC()
+        viewModelScope.launch { cleanupDBS() }
+
         this.authState = AuthState.NOT_LOGGED_IN
     }
 
@@ -125,6 +146,15 @@ class PrimaryViewModel(private val ktorClient: EmotionClient,
                 println(e)
                 emptyList()
             }
+        }
+    }
+
+    private suspend fun cleanCompsCache() {
+        withContext(Dispatchers.IO) {
+           competitionYears.forEach {
+               val all = compsDao.getComps(it)
+               compsDao.deleteComps(all)
+           }
         }
     }
 
@@ -169,6 +199,12 @@ class PrimaryViewModel(private val ktorClient: EmotionClient,
             if (outdated.isNotEmpty()) {
                 meetingDao.deleteMeetings(outdated)
             }
+        }
+    }
+
+    private suspend fun clearMeetingsCache() {
+        withContext(Dispatchers.IO) {
+            meetingDao.deleteMeetings(meetingDao.getAll())
         }
     }
 
@@ -286,6 +322,12 @@ class PrimaryViewModel(private val ktorClient: EmotionClient,
             }
         }catch(e: Exception) {
             println(e)
+        }
+    }
+
+    private suspend fun clearChargedUpCache() {
+        withContext(Dispatchers.IO) {
+            chargedUpDao.deleteChargedUps(chargedUpDao.getAllChargedUps())
         }
     }
 

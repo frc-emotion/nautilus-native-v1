@@ -12,7 +12,6 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.withContext
-import java.io.IOException
 import java.nio.charset.Charset
 
 class NFCViewmodel: ViewModel() {
@@ -29,13 +28,16 @@ class NFCViewmodel: ViewModel() {
                             try {
                                 tag.isConnected
                             } catch (e: Exception) {
+                                setTag(null)
                                 false
                             }
                         } catch (e: Exception) {
+                            setTag(null)
                             false
                         }
                     }
                 } catch (e: Exception) {
+                    setTag(null)
                     out = false
                 }
                 if (!out) setTag(null)
@@ -62,13 +64,17 @@ class NFCViewmodel: ViewModel() {
     fun setTag(tag: Tag?) {
         this.nfcTag = tag
         tag?.let {
-            Ndef.get(it)?.use {ndef ->
-                try {
-                    ndef.connect()
-                    ndefMessages = listOf(ndef.ndefMessage)
-                }catch(e: Exception) {
-                    this.ndefMessages = null
+            try {
+                Ndef.get(it)?.use { ndef ->
+                    try {
+                        ndef.connect()
+                        ndefMessages = listOf(ndef.ndefMessage)
+                    } catch (e: Exception) {
+                        this.ndefMessages = null
+                    }
                 }
+            }catch (e: Exception) {
+                this.nfcTag = null
             }
         }
         println("payload: ${ndefMessages?.get(0)?.records?.get(0)?.payload?.toString(Charset.forName("US-ASCII"))}")
@@ -80,7 +86,7 @@ class NFCViewmodel: ViewModel() {
 
         val ndef = NdefMessage(
             NdefRecord.createMime(
-                "text/plain",
+                "application/emotion",
                 text.toByteArray(Charset.forName("US-ASCII"))
             )
         )
@@ -92,5 +98,10 @@ class NFCViewmodel: ViewModel() {
                 return true
         }
         return false
+    }
+
+    fun clearNFC() {
+        setTag(null)
+        setNdef(null)
     }
 }

@@ -1,6 +1,5 @@
 package org.team2658.emotion.android.screens.home
 
-import android.nfc.NdefMessage
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -17,12 +16,10 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.runBlocking
 import org.team2658.apikt.EmotionClient
 import org.team2658.emotion.android.ui.composables.Screen
 import org.team2658.emotion.android.viewmodels.NFCViewmodel
@@ -36,7 +33,6 @@ fun HomeScreen(ktorClient: EmotionClient, nfcViewmodel: NFCViewmodel, primaryVie
     val tagData = nfcViewmodel.ndefMessages?.get(0)?.records?.get(0)?.payload?.let {
         String(it, Charset.forName("UTF-8"))
     }
-    var tagStatusText by remember{ mutableStateOf("Scan a tag to log attendance") }
     var showSuccessDialog by remember {mutableStateOf(false)}
     var showFailureDialog by remember { mutableStateOf(false)}
     var failureDialogText by remember {mutableStateOf("")}
@@ -54,16 +50,14 @@ fun HomeScreen(ktorClient: EmotionClient, nfcViewmodel: NFCViewmodel, primaryVie
         } else {
             Text("No attendance data found")
         }
-        Text(text=tagStatusText, style = MaterialTheme.typography.titleLarge)
+        Text(text= if(tagData?.isNotBlank() == true) "Tag Scanned" else "Scan a Tag to Log Attendance", style = MaterialTheme.typography.titleLarge)
         tagData?.let {
-            tagStatusText = "Tag Scanned"
             Spacer(modifier = Modifier.size(16.dp))
             Button(onClick = {
                 coroutineScope.launch {
                     val user = ktorClient.attendMeeting(primaryViewModel.user,
                         tagData, LocalDateTime.now(ZoneOffset.UTC).toInstant(ZoneOffset.UTC).toEpochMilli(), failureCallback = { showFailureDialog = true; failureDialogText = it })
                     if (user != null) {
-                        tagStatusText = "Scan a tag to log attendance"
                         primaryViewModel.updateUser(user)
                         nfcViewmodel.setNdef(null)
                         showSuccessDialog = true

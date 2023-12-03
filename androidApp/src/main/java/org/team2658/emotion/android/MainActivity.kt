@@ -67,6 +67,7 @@ class MainActivity : ComponentActivity() {
     private val techLists = arrayOf(
         arrayOf(Ndef::class.java.name)
     )
+    private var adapter: NfcAdapter? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -76,8 +77,10 @@ class MainActivity : ComponentActivity() {
         val workRequest = PeriodicWorkRequestBuilder<SyncTrigger>(15, TimeUnit.MINUTES)
             .build()
 
+        adapter = getDefaultAdapter(this)
+
         handleNFCIntent(intent)
-        val tent = Intent(ACTION_TECH_DISCOVERED)
+        val tent = intent.setAction(ACTION_TECH_DISCOVERED)
         pendingIntent = if (SDK_INT >= 34) {
             PendingIntent.getActivity(
                 this,
@@ -105,10 +108,12 @@ class MainActivity : ComponentActivity() {
                     override fun <T : ViewModel> create(
                         modelClass: Class<T>,
                     ):T {
-                        return PrimaryViewModel(ktorClient, sharedPrefs, scoutingDB, connectivityManager, attendanceDB) as T
+                        return PrimaryViewModel(ktorClient, sharedPrefs, scoutingDB, connectivityManager, attendanceDB, nfcViewmodel::clearNFC) as T
                     }
                 }
             )
+
+            primaryViewModel.sync()
 
             workManager.enqueueUniquePeriodicWork(
                 "sync",
@@ -137,7 +142,9 @@ class MainActivity : ComponentActivity() {
         super.onDestroy()
         ktorClient.close()
         scoutingDB.close()
+        attendanceDB.close()
     }
+
     override fun onNewIntent(intent: Intent?) {
         super.onNewIntent(intent)
         println("onNewIntent")
@@ -146,21 +153,20 @@ class MainActivity : ComponentActivity() {
 
     override fun onPause() {
         super.onPause()
-        getDefaultAdapter(this)?.disableForegroundDispatch(this)
+        adapter?.disableForegroundDispatch(this)
+        println("onPause")
+        adapter = null
     }
 
     override fun onResume() {
         super.onResume()
         println("onResume")
-        getDefaultAdapter(this)?.enableForegroundDispatch(this, pendingIntent, intentFilters, techLists)
+        adapter?.enableForegroundDispatch(this, pendingIntent, intentFilters, techLists)
     }
 
     private fun handleNFCIntent(intent: Intent?) {
         println("Handling NFC Intent: ${intent?.action}")
-        if(intent?.action == ACTION_TAG_DISCOVERED
-            || intent?.action == ACTION_NDEF_DISCOVERED
-            || intent?.action == ACTION_TECH_DISCOVERED
-            ) {
+        if(intent?.action == ACTION_TECH_DISCOVERED || intent?.action == ACTION_NDEF_DISCOVERED) {
             when {
                 SDK_INT >= 33 -> {
                     this.nfcViewmodel.setTag(

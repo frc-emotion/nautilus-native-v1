@@ -12,8 +12,8 @@ android {
         applicationId = "org.team2658.scouting"
         minSdk = 26
         targetSdk = 34
-        versionCode = 8
-        versionName = "2.0.3"
+        versionCode = 10
+        versionName = "2.0.5"
     }
     signingConfigs {
         create("release") {
@@ -60,8 +60,8 @@ dependencies {
     implementation("androidx.compose.ui:ui-tooling:1.5.4")
     implementation("androidx.compose.ui:ui-tooling-preview:1.5.4")
     implementation("androidx.compose.foundation:foundation:1.5.4")
-//    implementation("androidx.compose.material:material:1.4.3")
-    implementation("androidx.activity:activity-compose:1.8.0")
+//    implementation("androidx.compose.material:material:1.5.4")
+    implementation("androidx.activity:activity-compose:1.8.1")
     implementation("androidx.compose.material3:material3:1.1.2")
     implementation("androidx.compose.material:material-icons-extended")
     implementation("androidx.navigation:navigation-compose:2.7.5")

@@ -10,7 +10,6 @@ import io.ktor.client.request.delete
 import io.ktor.client.request.forms.submitForm
 import io.ktor.client.request.get
 import io.ktor.client.request.header
-import io.ktor.client.request.parameter
 import io.ktor.client.request.post
 import io.ktor.client.request.setBody
 import io.ktor.client.statement.bodyAsText
@@ -26,7 +25,6 @@ import org.team2658.apikt.models.ExamplePost
 import org.team2658.apikt.models.UserModel
 import org.team2658.apikt.models.safeDivide
 import org.team2658.emotion.attendance.Meeting
-import org.team2658.emotion.userauth.AccountType
 import org.team2658.emotion.userauth.Subteam
 import org.team2658.emotion.userauth.User
 
@@ -185,10 +183,9 @@ class EmotionClient {
         tapTime: Long,
         failureCallback: (String) -> Unit = {},
     ): User? {
-        if(user != null && user.token?.isNotBlank() == true && user.accountType != AccountType.UNVERIFIED ) {
+        return if(user != null && user.token?.isNotBlank() == true ) {
             return try {
                 val response = this.client.submitForm(url = ROUTES.ATTEND_MEETING, formParameters = parameters {
-                    append("userId", user._id)
                     append("meetingId", meetingId)
                     append("tapTime", tapTime.toString())
                 }) {
@@ -209,10 +206,13 @@ class EmotionClient {
             catch(e: Exception) {
                 println("Issue with request")
                 println(e.message)
+                failureCallback(e.message?: "Unknown error")
                 null
             }
+        } else {
+            failureCallback("Error: User not logged in")
+            null
         }
-        return null
     }
      suspend fun getTest(): ExamplePost {
         return try {
@@ -273,6 +273,29 @@ class EmotionClient {
         } catch(e: Exception) {
             println(e)
             null
+        }
+    }
+
+    suspend fun deleteMe(user: User?, callback: (Boolean, String) -> Unit): Boolean {
+        if(user == null) return false
+        return try {
+            this.client.delete(ROUTES.ME) {
+                header(HttpHeaders.Authorization, "Bearer ${user.token}")
+            }
+            callback(true, "Successfully deleted account")
+            true
+        }catch(e: ClientRequestException) {
+            callback(false, e.response.bodyAsText())
+            false
+        }
+        catch(e: ServerResponseException) {
+            callback(false, e.response.bodyAsText())
+            false
+        }
+        catch(e: Exception) {
+            println(e)
+            callback(false, e.message ?: "Unknown error")
+            false
         }
     }
 

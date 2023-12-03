@@ -26,6 +26,7 @@ fun Screen(content: @Composable () -> Unit) {
             indication = null,
             interactionSource = interactionSource) { focusManager.clearFocus() },
     ) {
+
         Column(
             modifier = Modifier
                 .padding(32.dp)

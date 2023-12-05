@@ -57,7 +57,7 @@ struct SettingsView: View {
             }
             .navigationTitle("Settings")
             .onChange(of: storedUser) { newUser in
-                user = shared.User.Companion().fromJSON(json: newUser)!
+                user = shared.User.Companion().fromJSON(json: newUser) ?? shared.User.Companion().fromJSON(json: storedUser)!
             }
         }
     }

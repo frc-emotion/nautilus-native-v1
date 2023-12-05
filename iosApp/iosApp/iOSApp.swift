@@ -37,12 +37,12 @@ struct ApplicationSwitcher: View {
                 //                    .tabItem {
                 //                        Label("Scouting", systemImage: "chart.bar.doc.horizontal.fill")
                 //                    }
-                
-                AttendanceView(user: DaUser)
-                    .tabItem {
-                        Label("Attendance", systemImage: "calendar")
-                    }
-                
+                if (DaUser.accountType != shared.AccountType.unverified) {
+                    AttendanceView(user: DaUser)
+                        .tabItem {
+                            Label("Attendance", systemImage: "calendar")
+                        }
+                }
                 //                DirectoryView()
                 //                    .tabItem {
                 //                        Label("People", systemImage: "person.2.fill")

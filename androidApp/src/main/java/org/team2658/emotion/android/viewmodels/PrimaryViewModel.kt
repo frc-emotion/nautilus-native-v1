@@ -197,10 +197,10 @@ class PrimaryViewModel(private val ktorClient: EmotionClient,
                 meetingDao.insertMeetings(ls.map {mtg -> MeetingEntity.fromShared(mtg, ktorClient.getUserById(mtg.createdBy, user)?.username) })
             }
 
-            val outdated = meetingDao.getOutdated(LocalDateTime.now(ZoneOffset.UTC).toInstant(ZoneOffset.UTC).toEpochMilli())
-            if (outdated.isNotEmpty()) {
-                meetingDao.deleteMeetings(outdated)
-            }
+//            val outdated = meetingDao.getOutdated(LocalDateTime.now(ZoneOffset.UTC).toInstant(ZoneOffset.UTC).toEpochMilli())
+//            if (outdated.isNotEmpty()) {
+//                meetingDao.deleteMeetings(outdated)
+//            }
         }
     }
 
@@ -214,10 +214,18 @@ class PrimaryViewModel(private val ktorClient: EmotionClient,
         return withContext(Dispatchers.IO) {
             meetingDao
                 .getCurrent(LocalDateTime.now(ZoneOffset.UTC).toInstant(ZoneOffset.UTC).toEpochMilli())
-                .map{
-                    MeetingEntity.toShared(it)
-                }
+                .map{ MeetingEntity.toShared(it) }
         }
+    }
+
+    suspend fun getOutdatedMeetings(): List<Pair<Meeting, String?>> {
+        return if((this.user?.accountType?.value?:0) >= AccountType.ADMIN.value)
+            withContext(Dispatchers.IO) {
+            meetingDao
+                .getOutdated(LocalDateTime.now(ZoneOffset.UTC).toInstant(ZoneOffset.UTC).toEpochMilli())
+                .map{ MeetingEntity.toShared(it) }
+        }
+        else emptyList()
     }
 
     suspend fun createMeeting(

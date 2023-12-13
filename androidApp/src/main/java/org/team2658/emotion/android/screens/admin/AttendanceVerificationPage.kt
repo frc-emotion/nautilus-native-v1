@@ -5,6 +5,7 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.size
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.CalendarMonth
 import androidx.compose.material.icons.filled.Cancel
 import androidx.compose.material.icons.filled.DeleteForever
 import androidx.compose.material.icons.filled.PostAdd
@@ -44,6 +45,7 @@ import org.team2658.emotion.android.ui.composables.Screen
 import org.team2658.emotion.android.viewmodels.NFCViewmodel
 import org.team2658.emotion.android.viewmodels.PrimaryViewModel
 import org.team2658.emotion.attendance.Meeting
+import org.team2658.emotion.userauth.AccountType
 import java.io.IOException
 import java.time.Instant
 import java.time.LocalDateTime
@@ -110,9 +112,17 @@ fun AttendanceVerificationPage(viewModel: PrimaryViewModel, nfc: NFCViewmodel) {
 
     var meetings: List<Pair<Meeting, String?>> by remember { mutableStateOf(listOf()) }
 
-    LaunchedEffect(Unit) {
+    var showPast by remember { mutableStateOf(false) }
+    var pastMeetings: List<Pair<Meeting, String?>> by remember { mutableStateOf(listOf()) }
+
+    suspend fun loadMeetings() {
         viewModel.syncMeetings()
         meetings = viewModel.getMeetings()
+        pastMeetings = viewModel.getOutdatedMeetings()
+    }
+
+    LaunchedEffect(Unit) {
+        loadMeetings()
     }
 
     @Composable
@@ -160,9 +170,59 @@ fun AttendanceVerificationPage(viewModel: PrimaryViewModel, nfc: NFCViewmodel) {
         }
     }
 
+    @Composable
+    fun MeetingItem(meeting: Meeting, username: String?) {
+        Text(text = "Meeting id: ${meeting._id}", style = MaterialTheme.typography.titleMedium)
+        Text(text = "Meeting Type: ${meeting.type}")
+        Text(text = "Meeting Description: ${meeting.description}")
+        Text(text = "Meeting Value: ${meeting.value}")
+        val start = formatFromEpoch(meeting.startTime)
+        val end = formatFromEpoch(meeting.endTime)
+        Text(text = "Meeting Start Time: $start")
+        Text(text = "Meeting End Time: $end")
+        Text(text = "Meeting Created By: $username")
+        val connected by nfc.tagConnectionFlow.collectAsState(initial = false)
+        Spacer(modifier = Modifier.size(8.dp))
+        Row {
+            Button(onClick = {
+                if (connected) {
+                    try {
+                        showSuccessDialog = nfc.writeToTag(meeting._id)
+                        successText = meeting._id
+                    }catch(e: IOException) {
+                        showNFCErrorDialog = true
+                    } catch (e: Exception) {
+                        println(e)
+                    }
+                }
+            }, enabled = connected) {
+                Text("Write to Tag")
+            }
+            Spacer(modifier = Modifier.size(8.dp))
+            IconButton(onClick = {
+                android.app.AlertDialog.Builder(context)
+                    .setTitle("Delete Meeting")
+                    .setMessage("Are you sure you want to permanently delete this meeting?")
+                    .setNegativeButton("Confirm") { _: DialogInterface, _: Int ->
+                        scope.launch {
+                            viewModel.deleteMeeting(meeting._id)
+                            viewModel.syncMeetings()
+                            meetings = viewModel.getMeetings()
+                        }
+                    }
+                    .show()
+            }) {
+                Icon(Icons.Filled.DeleteForever, contentDescription = "Delete Meeting")
+            }
+        }
+        Spacer(modifier = Modifier.size(16.dp))
+        Divider()
+        Spacer(modifier = Modifier.size(16.dp))
+    }
+
     Screen {
         Row {
-            Text(text = "Available Meetings", style = MaterialTheme.typography.headlineLarge)
+            Text(text = "Meetings", style = MaterialTheme.typography.headlineLarge)
             Spacer(modifier = Modifier.size(4.dp))
             IconButton(
                 onClick = { showCreateMenu = !showCreateMenu },
@@ -175,11 +235,19 @@ fun AttendanceVerificationPage(viewModel: PrimaryViewModel, nfc: NFCViewmodel) {
             }
             IconButton(onClick = {
                 scope.launch {
-                    viewModel.syncMeetings()
-                    meetings = viewModel.getMeetings()
+                    loadMeetings()
                 }
             }) {
                 Icon(Icons.Filled.Refresh, contentDescription = "Refresh", tint = MaterialTheme.colorScheme.secondary)
+            }
+
+            if((viewModel.user?.accountType?.value ?: 0) >= AccountType.ADMIN.value) {
+                IconButton(onClick = { showPast = !showPast }) {
+                    Icon(Icons.Filled.CalendarMonth,
+                        contentDescription = "Old",
+                        tint = if(!showPast) MaterialTheme.colorScheme.tertiary else MaterialTheme.colorScheme.outline
+                    )
+                }
             }
 
         }
@@ -188,57 +256,21 @@ fun AttendanceVerificationPage(viewModel: PrimaryViewModel, nfc: NFCViewmodel) {
         }
         Spacer(modifier = Modifier.size(16.dp))
         if(meetings.isNotEmpty()){
-            meetings.forEach{ (meeting, username) ->
-                Text(text = "Meeting id: ${meeting._id}", style = MaterialTheme.typography.titleMedium)
-                    Text(text = "Meeting Type: ${meeting.type}")
-                    Text(text = "Meeting Description: ${meeting.description}")
-                    Text(text = "Meeting Value: ${meeting.value}")
-                    val start = formatFromEpoch(meeting.startTime)
-                    val end = formatFromEpoch(meeting.endTime)
-                    Text(text = "Meeting Start Time: $start")
-                    Text(text = "Meeting End Time: $end")
-                    Text(text = "Meeting Created By: $username")
-                    val connected by nfc.tagConnectionFlow.collectAsState(initial = false)
-                    Spacer(modifier = Modifier.size(8.dp))
-                    Row {
-                        Button(onClick = {
-                            if (connected) {
-                                try {
-                                    showSuccessDialog = nfc.writeToTag(meeting._id)
-                                    successText = meeting._id
-                                }catch(e: IOException) {
-                                    showNFCErrorDialog = true
-                                } catch (e: Exception) {
-                                    println(e)
-                                }
-                            }
-                        }, enabled = connected) {
-                            Text("Write to Tag")
-                        }
-                        Spacer(modifier = Modifier.size(8.dp))
-                        IconButton(onClick = {
-                            android.app.AlertDialog.Builder(context)
-                                .setTitle("Delete Meeting")
-                                .setMessage("Are you sure you want to permanently delete this meeting?")
-                                .setNegativeButton("Confirm") { _: DialogInterface, _: Int ->
-                                    scope.launch {
-                                        viewModel.deleteMeeting(meeting._id)
-                                        viewModel.syncMeetings()
-                                        meetings = viewModel.getMeetings()
-                                    }
-                                }
-                                .show()
-                        }) {
-                            Icon(Icons.Filled.DeleteForever, contentDescription = "Delete Meeting")
-                        }
-                    }
-                    Spacer(modifier = Modifier.size(16.dp))
-                    Divider()
-                    Spacer(modifier = Modifier.size(16.dp))
-            }
+            meetings.forEach{ (meeting, username) -> MeetingItem(meeting, username ) }
         }
         else {
             Text(text = "No meetings available", style = MaterialTheme.typography.titleMedium)
+        }
+        if(((viewModel.user?.accountType?.value ?: 0) >= AccountType.ADMIN.value) && showPast) {
+            Spacer(modifier = Modifier.size(16.dp))
+            Text(text = "Past Meetings", style = MaterialTheme.typography.headlineLarge)
+            Spacer(modifier = Modifier.size(8.dp))
+            if(pastMeetings.isNotEmpty()){
+                pastMeetings.forEach{ (meeting, username) -> MeetingItem(meeting, username ) }
+            }
+            else {
+                Text(text = "None Found", style = MaterialTheme.typography.titleMedium)
+            }
         }
     }
 

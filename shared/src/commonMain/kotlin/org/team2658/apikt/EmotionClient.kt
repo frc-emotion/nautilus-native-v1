@@ -25,6 +25,7 @@ import org.team2658.apikt.models.ExamplePost
 import org.team2658.apikt.models.UserModel
 import org.team2658.apikt.models.safeDivide
 import org.team2658.emotion.attendance.Meeting
+import org.team2658.emotion.userauth.AccountType
 import org.team2658.emotion.userauth.Subteam
 import org.team2658.emotion.userauth.User
 
@@ -154,9 +155,13 @@ class EmotionClient {
     }
 
     suspend fun getMeetings(user: User?): List<Meeting>? {
-        if(user != null && user.token?.isNotBlank() == true && user.permissions.verifyAllAttendance) {
+        val route = when(user?.accountType?.value) {
+            in AccountType.ADMIN.value..Int.MAX_VALUE -> "${ROUTES.BASE}/attendance/getAll"
+            else -> "${ROUTES.BASE}/attendance/getMeetings"
+        }
+        if(user != null && user.token?.isNotBlank() == true && user.permissions.verifyAllAttendance && user.accountType.value >= AccountType.LEAD.value) {
             return try {
-                this.client.get("${ROUTES.BASE}/attendance/getMeetings") {
+                this.client.get(route) {
                     header(HttpHeaders.Authorization, "Bearer ${user.token}")
                 }.body<List<Meeting>>()
             }

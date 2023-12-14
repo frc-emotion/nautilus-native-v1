@@ -247,7 +247,7 @@ class EmotionClient {
     }
 
     suspend fun deleteMeeting(id: String, user: User?): Boolean { // true for success
-        return if(user != null && user.token?.isNotBlank() == true && user.permissions.verifyAllAttendance) {
+        return if(user != null && user.token?.isNotBlank() == true && user.isAdminOrLead) {
             try {
                 this.client.delete("${ROUTES.BASE}/attendance/deleteMeeting/$id") {
                     header(HttpHeaders.Authorization, "Bearer ${user.token}")
@@ -257,7 +257,7 @@ class EmotionClient {
                 println(e)
                 false
             }
-        }else false
+        } else false
     }
     suspend fun getCompetitions(year: String): List<String> {
         return try {

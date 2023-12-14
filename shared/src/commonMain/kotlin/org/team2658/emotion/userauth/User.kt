@@ -34,6 +34,7 @@ data class User(
 ) {
     val permissions = getPermissions(this)
     val isAdminOrLead = this.accountType.value >= AccountType.LEAD.value
+    val isAdmin = this.accountType.value >= AccountType.ADMIN.value
     companion object {
         fun fromSerializable(usr: UserModel): User {
             return User(

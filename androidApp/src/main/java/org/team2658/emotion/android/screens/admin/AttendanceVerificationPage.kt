@@ -46,7 +46,6 @@ import org.team2658.emotion.android.viewmodels.NFCViewmodel
 import org.team2658.emotion.android.viewmodels.PrimaryViewModel
 import org.team2658.emotion.attendance.Meeting
 import org.team2658.emotion.userauth.AccountType
-import java.io.IOException
 import java.time.Instant
 import java.time.LocalDateTime
 import java.time.ZoneOffset
@@ -86,9 +85,10 @@ fun AttendanceVerificationPage(viewModel: PrimaryViewModel, nfc: NFCViewmodel) {
     val scope = rememberCoroutineScope()
     var showCreateMenu by remember { mutableStateOf(false) }
 
-    var showNFCErrorDialog by remember {mutableStateOf(false)}
-    var showSuccessDialog by remember {mutableStateOf(false)}
-    var successText by remember {mutableStateOf("")}
+//    var showNFCErrorDialog by remember {mutableStateOf(false)}
+    var writeResult by remember {mutableStateOf(NFCWriteResult(false, ""))}
+
+    var creationSuccessId by remember {mutableStateOf("")}
     var showMeetingSuccessDialog by remember {mutableStateOf(false)}
 
     var meetingValue by remember { mutableIntStateOf(2) }
@@ -114,6 +114,14 @@ fun AttendanceVerificationPage(viewModel: PrimaryViewModel, nfc: NFCViewmodel) {
 
     var showPast by remember { mutableStateOf(false) }
     var pastMeetings: List<Pair<Meeting, String?>> by remember { mutableStateOf(listOf()) }
+
+    var deletionSuccess by remember { mutableStateOf("")}
+
+    var meetingIdToWrite by remember { mutableStateOf("") }
+    val scanningForTag = meetingIdToWrite.isNotBlank()
+
+    val connected by nfc.tagConnectionFlow.collectAsState(initial = false)
+
 
     suspend fun loadMeetings() {
         viewModel.syncMeetings()
@@ -159,8 +167,8 @@ fun AttendanceVerificationPage(viewModel: PrimaryViewModel, nfc: NFCViewmodel) {
                     endTime = endTimeMs,
                     value = meetingValue,
                 ) {
-                    showSuccessDialog = true
-                    successText = it._id
+                    showMeetingSuccessDialog = true
+                    creationSuccessId = it._id
                 }
                 viewModel.syncMeetings()
                 meetings = viewModel.getMeetings()
@@ -181,38 +189,41 @@ fun AttendanceVerificationPage(viewModel: PrimaryViewModel, nfc: NFCViewmodel) {
         Text(text = "Meeting Start Time: $start")
         Text(text = "Meeting End Time: $end")
         Text(text = "Meeting Created By: $username")
-        val connected by nfc.tagConnectionFlow.collectAsState(initial = false)
         Spacer(modifier = Modifier.size(8.dp))
         Row {
             Button(onClick = {
-                if (connected) {
-                    try {
-                        showSuccessDialog = nfc.writeToTag(meeting._id)
-                        successText = meeting._id
-                    }catch(e: IOException) {
-                        showNFCErrorDialog = true
-                    } catch (e: Exception) {
-                        println(e)
-                    }
-                }
-            }, enabled = connected) {
+//                if (connected) {
+//                    try {
+//                        showSuccessDialog = nfc.writeToTag(meeting._id)
+//                        creationSuccessId = meeting._id
+//                    }catch(e: IOException) {
+//                        showNFCErrorDialog = true
+//                    } catch (e: Exception) {
+//                        println(e)
+//                    }
+//                }
+                meetingIdToWrite = meeting._id
+            }) {
                 Text("Write to Tag")
             }
             Spacer(modifier = Modifier.size(8.dp))
-            IconButton(onClick = {
-                android.app.AlertDialog.Builder(context)
-                    .setTitle("Delete Meeting")
-                    .setMessage("Are you sure you want to permanently delete this meeting?")
-                    .setNegativeButton("Confirm") { _: DialogInterface, _: Int ->
-                        scope.launch {
-                            viewModel.deleteMeeting(meeting._id)
-                            viewModel.syncMeetings()
-                            meetings = viewModel.getMeetings()
+            if(viewModel.user?.isAdmin == true) {
+                IconButton(onClick = {
+                    android.app.AlertDialog.Builder(context)
+                        .setTitle("Delete Meeting")
+                        .setMessage("Are you sure you want to permanently delete this meeting?")
+                        .setPositiveButton("Confirm") { _: DialogInterface, _: Int ->
+                            scope.launch {
+                                viewModel.deleteMeeting(meeting._id) { deletionSuccess = it }
+                                viewModel.syncMeetings()
+                                meetings = viewModel.getMeetings()
+                            }
                         }
-                    }
-                    .show()
-            }) {
-                Icon(Icons.Filled.DeleteForever, contentDescription = "Delete Meeting")
+                        .setNegativeButton("Cancel") { _: DialogInterface, _: Int -> }
+                        .show()
+                }) {
+                    Icon(Icons.Filled.DeleteForever, contentDescription = "Delete Meeting")
+                }
             }
         }
         Spacer(modifier = Modifier.size(16.dp))
@@ -274,32 +285,44 @@ fun AttendanceVerificationPage(viewModel: PrimaryViewModel, nfc: NFCViewmodel) {
         }
     }
 
-    if(showNFCErrorDialog) {
+    if(writeResult.meetingId.isNotBlank()) {
         AlertDialog(onDismissRequest = {}, confirmButton = {
             TextButton(onClick = {
-                showNFCErrorDialog = false
+                writeResult = NFCWriteResult(false, "")
             }) {
                 Text(text = "OK")
             }
         }, title = {
-            Text(text = "NFC Tag Error")
+            Text(text = if(writeResult.success) "Successfully wrote ${writeResult.meetingId}" else "Error")
         }, text = {
-            Text(text = "Something went wrong accessing the NFC tag. Please make sure the tag is in range and not damaged.")
+            Text(text = if(writeResult.success) "Successfully wrote ${writeResult.meetingId} to NFC Tag" else "Error writing to tag, please make sure the tag is in range and not damaged" )
         })
+
     }
 
-    if(showSuccessDialog) {
+    if(scanningForTag) {
         AlertDialog(onDismissRequest = {}, confirmButton = {
             TextButton(onClick = {
-                showSuccessDialog = false
+                meetingIdToWrite = ""
             }) {
-                Text(text = "OK")
+                Text(text = "Cancel")
             }
         }, title = {
-            Text(text = "Successfully wrote to tag")
+            Text(text = "Scan a Tag")
         }, text = {
-            Text(text = "Meeting $successText was written to tag successfully")
+            Text(text = "Tap a tag to the back of your phone to write meeting $meetingIdToWrite to it. Make sure NFC is enabled on your phone")
         })
+        if(connected){
+            writeResult = try {
+                val success = nfc.writeToTag(meetingIdToWrite)
+                NFCWriteResult(success, meetingIdToWrite)
+            } catch (e: Exception) {
+                println(e)
+                NFCWriteResult(false, meetingIdToWrite)
+            } finally {
+                meetingIdToWrite = ""
+            }
+        }
     }
 
     if(showMeetingSuccessDialog) {
@@ -312,7 +335,23 @@ fun AttendanceVerificationPage(viewModel: PrimaryViewModel, nfc: NFCViewmodel) {
         }, title = {
             Text(text = "Successfully created meeting")
         }, text = {
-            Text(text = "Meeting $successText was created successfully")
+            Text(text = "Meeting $creationSuccessId was created successfully")
+        })
+    }
+
+    if(deletionSuccess.isNotEmpty()) {
+        AlertDialog(onDismissRequest = {}, confirmButton = {
+            TextButton(onClick = {
+                deletionSuccess = ""
+            }) {
+                Text(text = "OK")
+            }
+        }, title = {
+            Text(text = deletionSuccess)
+        }, text = {
+            Text(text = deletionSuccess)
         })
     }
 }
+
+data class NFCWriteResult(val success: Boolean, val meetingId: String)

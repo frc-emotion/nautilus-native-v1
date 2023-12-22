@@ -39,11 +39,12 @@ struct AccountCreationView: View {
     let subteams = ["None", "Build", "Design", "Electrical", "Software", "Marketing", "Executive"]
     
     var body: some View {
-        NavigationView {
+        ScrollView {
             VStack {
                 Text("Create Account")
                     .font(.largeTitle)
                     .fontWeight(.bold)
+                    .padding(.top, 80)
                 
                 if (errorMsg != "") {
                     Text("\(errorMsg)")
@@ -136,6 +137,8 @@ struct AccountCreationView: View {
                     .autocapitalization(.none)
                     .disableAutocorrection(true)
                     .keyboardType(.phonePad)
+                    
+                    
                 
                 
                 Button (action: {

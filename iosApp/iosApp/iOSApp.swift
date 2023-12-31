@@ -58,7 +58,7 @@ struct ApplicationSwitcher: View {
                     }
             }
         } else {
-            LoginView()
+            AuthenticationView()
         }
     }
 }

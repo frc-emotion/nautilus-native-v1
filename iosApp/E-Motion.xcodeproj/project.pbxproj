@@ -17,6 +17,7 @@
 		93418D9D2A5BC4D100336A62 /* ScoutingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 93418D9C2A5BC4D100336A62 /* ScoutingView.swift */; };
 		93418DE42A5E362600336A62 /* UserView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 93418DE32A5E362600336A62 /* UserView.swift */; };
 		93418DE62A5E362D00336A62 /* UserBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = 93418DE52A5E362D00336A62 /* UserBar.swift */; };
+		934F47272B413AF0009DA4FA /* AuthenticationView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 934F47262B413AF0009DA4FA /* AuthenticationView.swift */; };
 		93719C882AC0B35300E29446 /* CircularProgressView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 93719C872AC0B35300E29446 /* CircularProgressView.swift */; };
 		93790E392AA921690003203D /* AttendanceView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 93790E382AA921690003203D /* AttendanceView.swift */; };
 		93790E3B2AA921F40003203D /* loader.swift in Sources */ = {isa = PBXBuildFile; fileRef = 93790E3A2AA921F40003203D /* loader.swift */; };
@@ -49,6 +50,7 @@
 		93418D9C2A5BC4D100336A62 /* ScoutingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScoutingView.swift; sourceTree = "<group>"; };
 		93418DE32A5E362600336A62 /* UserView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserView.swift; sourceTree = "<group>"; };
 		93418DE52A5E362D00336A62 /* UserBar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserBar.swift; sourceTree = "<group>"; };
+		934F47262B413AF0009DA4FA /* AuthenticationView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthenticationView.swift; sourceTree = "<group>"; };
 		93719C872AC0B35300E29446 /* CircularProgressView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CircularProgressView.swift; sourceTree = "<group>"; };
 		93790E382AA921690003203D /* AttendanceView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AttendanceView.swift; sourceTree = "<group>"; };
 		93790E3A2AA921F40003203D /* loader.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = loader.swift; path = iosApp/Helpers/loader.swift; sourceTree = SOURCE_ROOT; };
@@ -164,6 +166,7 @@
 				93B9EAD02A5F387A00D5B8A8 /* LoginView.swift */,
 				93B9EAD42A5F4FB800D5B8A8 /* AccountCreationView.swift */,
 				93B9EAEC2A67211600D5B8A8 /* ForgotPasswordView.swift */,
+				934F47262B413AF0009DA4FA /* AuthenticationView.swift */,
 			);
 			path = Authentication;
 			sourceTree = "<group>";
@@ -350,6 +353,7 @@
 				8C43502A2B216A3A009918D0 /* NFCManager.swift in Sources */,
 				93B9EACD2A5E801400D5B8A8 /* AdminView.swift in Sources */,
 				93B9EAE62A65E0FA00D5B8A8 /* UserStateViewModel.swift in Sources */,
+				934F47272B413AF0009DA4FA /* AuthenticationView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

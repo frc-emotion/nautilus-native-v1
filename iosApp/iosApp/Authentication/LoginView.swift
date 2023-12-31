@@ -86,17 +86,6 @@ struct LoginView: View {
                 
                 
                 Spacer()
-                Divider()
-                
-                HStack {
-                    Text("Don't have an account?")
-                    NavigationLink {
-                        AccountCreationView()
-                    } label: {
-                        Text("Create one.")
-                    }
-                }
-                .padding(.top)
             }
         }
         .onAppear(perform: {

@@ -100,15 +100,13 @@ struct LoginView: View {
             }
         }
         .onAppear(perform: {
-            let defaults = UserDefaults.standard
-            if (defaults.string(forKey: "User") != nil) {
-                let user = shared.User.Companion().fromJSON(json: defaults.string(forKey: "User"))
+            if (vm.user != nil) {
                 Task {
-                    let response = try await client.getMe(user: user)
+                    let response = try await client.getMe(user: vm.user)
                     if (response != nil) {
-                        vm.isLoggedIn = true
+                        vm.user = response
                     } else {
-                        vm.isLoggedIn = false
+                        vm.user = nil
                     }
                 }
             }

@@ -17,12 +17,12 @@ enum UserStateError: Error {
 @MainActor
 class UserStateViewModel: ObservableObject {
     
-    @Published var isLoggedIn = false
-    @Published var isBusy = false
-    let defaults = UserDefaults.standard
+//    @Published var isLoggedIn = false
+//    @Published var isBusy = false
+    @Published var user: shared.User?
+//    let defaults = UserDefaults.standard
     
     func signIn(username: String, password: String) async -> Result<String, UserStateError> {
-        isBusy = true
         var errorMsg = ""
         do {
             let client = EmotionClient()
@@ -36,24 +36,18 @@ class UserStateViewModel: ObservableObject {
             })
             
             if let response {
-                let responseJson: String = response.toJSON()
-                defaults.set(responseJson, forKey: "User")
-                isLoggedIn = true
-                isBusy = false
+                user = response
                 return .success("Succeeded")
             } else {
                 // TODO: Provide error message to user via dialog or screen
-                isBusy = false
                 return .failure(.signInError(message: errorMsg))
             }
         } catch {
-            isBusy = false
             return .failure(.signInError(message: "Unknown or uncaught Error when attempting to Sign In"))
         }
     }
 
     func createAccount(firstname: String, lastname: String, username: String, email: String, password: String, subteam: shared.Subteam, phone: String, grade: Int32) async -> Result<Bool, UserStateError> {
-        isBusy = true
         var errorMsg = ""
         do {
             let client = EmotionClient()
@@ -62,35 +56,23 @@ class UserStateViewModel: ObservableObject {
             })
             
             if let response {
-                let responseJson: String = response.toJSON()
-                defaults.set(responseJson, forKey: "User")
-                isLoggedIn = true
-                isBusy = false
+                user = response
                 return .success(true)
             } else {
-                isBusy = false
                 return .failure(.createAccountError(message: errorMsg))
             }
         } catch {
-            isBusy = false
             return .failure(.createAccountError(message: "Unknown or uncaught Error when attempting to Create Account"))
         }
     }
     
     func signOut() async -> Result<Bool, UserStateError> {
-        isBusy = true
         do {
-            defaults.removeObject(forKey: "User")
-            isLoggedIn = false
-            isBusy = false
+            user = nil
             return .success(true)
         } // catch {
 //            isBusy = false
 //            return .failure(.signOutError)
 //        }
-    }
-    
-    func setLoggedOut() {
-        isLoggedIn = false
     }
 }

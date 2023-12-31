@@ -17,12 +17,10 @@ struct iOSApp: App {
 }
 
 struct ApplicationSwitcher: View {
-    let defaults = UserDefaults.standard
     @EnvironmentObject var vm: UserStateViewModel
     
     var body: some View {
-        if (vm.isLoggedIn) {
-            let DaUser = shared.User.Companion().fromJSON(json: defaults.string(forKey: "User"))!
+        if (vm.user != nil) {
             //        if (true) {
             TabView {
                 //                Unnecessary tabs are hidden right now
@@ -37,8 +35,8 @@ struct ApplicationSwitcher: View {
                 //                    .tabItem {
                 //                        Label("Scouting", systemImage: "chart.bar.doc.horizontal.fill")
                 //                    }
-                if (DaUser.accountType != shared.AccountType.unverified) {
-                    AttendanceView(user: DaUser)
+                if (vm.user!.accountType != shared.AccountType.unverified) {
+                    AttendanceView(user: vm.user!)
                         .tabItem {
                             Label("Attendance", systemImage: "calendar")
                         }
@@ -53,7 +51,7 @@ struct ApplicationSwitcher: View {
                 //                        Label("Admin", systemImage: "person.badge.key.fill")
                 //                    }
                 //
-                SettingsView(user: DaUser)
+                SettingsView(user: vm.user!)
                     .navigationTitle("Settings")
                     .tabItem {
                         Label("Settings", systemImage: "gear")

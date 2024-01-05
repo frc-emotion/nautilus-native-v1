@@ -18,6 +18,36 @@
 		93418DE42A5E362600336A62 /* UserView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 93418DE32A5E362600336A62 /* UserView.swift */; };
 		93418DE62A5E362D00336A62 /* UserBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = 93418DE52A5E362D00336A62 /* UserBar.swift */; };
 		934F47272B413AF0009DA4FA /* AuthenticationView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 934F47262B413AF0009DA4FA /* AuthenticationView.swift */; };
+		9353B4E32B47E0AB004BEAEF /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 93418D9A2A5BC3F300336A62 /* SettingsView.swift */; };
+		9353B4E42B47E0AB004BEAEF /* ChargedUpFormView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 93844FFA2ADB29E1003EE764 /* ChargedUpFormView.swift */; };
+		9353B4E52B47E0AB004BEAEF /* AccountCreationView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 93B9EAD42A5F4FB800D5B8A8 /* AccountCreationView.swift */; };
+		9353B4E62B47E0AB004BEAEF /* AttendanceView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 93790E382AA921690003203D /* AttendanceView.swift */; };
+		9353B4E72B47E0AB004BEAEF /* HomeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 93B9EACA2A5E800700D5B8A8 /* HomeView.swift */; };
+		9353B4E82B47E0AB004BEAEF /* helpfulVars.swift in Sources */ = {isa = PBXBuildFile; fileRef = 93B615152AE715F900732A3F /* helpfulVars.swift */; };
+		9353B4E92B47E0AB004BEAEF /* UserBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = 93418DE52A5E362D00336A62 /* UserBar.swift */; };
+		9353B4EA2B47E0AB004BEAEF /* UserView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 93418DE32A5E362600336A62 /* UserView.swift */; };
+		9353B4EB2B47E0AB004BEAEF /* BugReportView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 93B9EAA72A5E5BA900D5B8A8 /* BugReportView.swift */; };
+		9353B4EC2B47E0AB004BEAEF /* DirectoryBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = 93B9EAC82A5E781D00D5B8A8 /* DirectoryBar.swift */; };
+		9353B4ED2B47E0AB004BEAEF /* DirectoryView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 93B9EAC22A5E778C00D5B8A8 /* DirectoryView.swift */; };
+		9353B4EE2B47E0AB004BEAEF /* CircularProgressView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 93719C872AC0B35300E29446 /* CircularProgressView.swift */; };
+		9353B4EF2B47E0AB004BEAEF /* ScoutingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 93418D9C2A5BC4D100336A62 /* ScoutingView.swift */; };
+		9353B4F02B47E0AB004BEAEF /* attendanceHelpers.swift in Sources */ = {isa = PBXBuildFile; fileRef = 93B615512AEA167700732A3F /* attendanceHelpers.swift */; };
+		9353B4F12B47E0AB004BEAEF /* ForgotPasswordView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 93B9EAEC2A67211600D5B8A8 /* ForgotPasswordView.swift */; };
+		9353B4F22B47E0AB004BEAEF /* loader.swift in Sources */ = {isa = PBXBuildFile; fileRef = 93790E3A2AA921F40003203D /* loader.swift */; };
+		9353B4F32B47E0AB004BEAEF /* NFCButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 93B6154F2AEA163200732A3F /* NFCButton.swift */; };
+		9353B4F42B47E0AB004BEAEF /* LoginView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 93B9EAD02A5F387A00D5B8A8 /* LoginView.swift */; };
+		9353B4F52B47E0AB004BEAEF /* AccountView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 93B9EAA92A5E5BD500D5B8A8 /* AccountView.swift */; };
+		9353B4F62B47E0AB004BEAEF /* ScoutingFormView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 93B9EACE2A5E803100D5B8A8 /* ScoutingFormView.swift */; };
+		9353B4F72B47E0AB004BEAEF /* iOSApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2152FB032600AC8F00CF470E /* iOSApp.swift */; };
+		9353B4F82B47E0AB004BEAEF /* NFCManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8C4350292B216A3A009918D0 /* NFCManager.swift */; };
+		9353B4F92B47E0AB004BEAEF /* AdminView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 93B9EACC2A5E801400D5B8A8 /* AdminView.swift */; };
+		9353B4FA2B47E0AB004BEAEF /* UserStateViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 93B9EAE52A65E0FA00D5B8A8 /* UserStateViewModel.swift */; };
+		9353B4FB2B47E0AB004BEAEF /* AuthenticationView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 934F47262B413AF0009DA4FA /* AuthenticationView.swift */; };
+		9353B4FD2B47E0AB004BEAEF /* SwiftyJSON in Frameworks */ = {isa = PBXBuildFile; productRef = 9353B4E02B47E0AB004BEAEF /* SwiftyJSON */; };
+		9353B4FE2B47E0AB004BEAEF /* SwiftyJSON in Frameworks */ = {isa = PBXBuildFile; productRef = 9353B4DE2B47E0AB004BEAEF /* SwiftyJSON */; };
+		9353B5002B47E0AB004BEAEF /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 058557D8273AAEEB004C7B11 /* Preview Assets.xcassets */; };
+		9353B5012B47E0AB004BEAEF /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 058557BA273AAA24004C7B11 /* Assets.xcassets */; };
+		9353B5022B47E0AB004BEAEF /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 93DB394C2AF9701000F257BE /* LaunchScreen.storyboard */; };
 		93719C882AC0B35300E29446 /* CircularProgressView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 93719C872AC0B35300E29446 /* CircularProgressView.swift */; };
 		93790E392AA921690003203D /* AttendanceView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 93790E382AA921690003203D /* AttendanceView.swift */; };
 		93790E3B2AA921F40003203D /* loader.swift in Sources */ = {isa = PBXBuildFile; fileRef = 93790E3A2AA921F40003203D /* loader.swift */; };
@@ -51,6 +81,8 @@
 		93418DE32A5E362600336A62 /* UserView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserView.swift; sourceTree = "<group>"; };
 		93418DE52A5E362D00336A62 /* UserBar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserBar.swift; sourceTree = "<group>"; };
 		934F47262B413AF0009DA4FA /* AuthenticationView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthenticationView.swift; sourceTree = "<group>"; };
+		9353B5062B47E0AB004BEAEF /* E-Motion Dev.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "E-Motion Dev.app"; sourceTree = BUILT_PRODUCTS_DIR; };
+		9353B5072B47E0AB004BEAEF /* E-Motion copy-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; name = "E-Motion copy-Info.plist"; path = "/Users/jasonballinger/Desktop/teamapp/iosApp/E-Motion copy-Info.plist"; sourceTree = "<absolute>"; };
 		93719C872AC0B35300E29446 /* CircularProgressView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CircularProgressView.swift; sourceTree = "<group>"; };
 		93790E382AA921690003203D /* AttendanceView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AttendanceView.swift; sourceTree = "<group>"; };
 		93790E3A2AA921F40003203D /* loader.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = loader.swift; path = iosApp/Helpers/loader.swift; sourceTree = SOURCE_ROOT; };
@@ -83,6 +115,15 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		9353B4FC2B47E0AB004BEAEF /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				9353B4FD2B47E0AB004BEAEF /* SwiftyJSON in Frameworks */,
+				9353B4FE2B47E0AB004BEAEF /* SwiftyJSON in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
@@ -101,6 +142,7 @@
 				7555FF7D242A565900829871 /* iosApp */,
 				7555FF7C242A565900829871 /* Products */,
 				7555FFB0242A642200829871 /* Frameworks */,
+				9353B5072B47E0AB004BEAEF /* E-Motion copy-Info.plist */,
 			);
 			sourceTree = "<group>";
 		};
@@ -108,6 +150,7 @@
 			isa = PBXGroup;
 			children = (
 				7555FF7B242A565900829871 /* E-Motion.app */,
+				9353B5062B47E0AB004BEAEF /* E-Motion Dev.app */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -252,6 +295,28 @@
 			productReference = 7555FF7B242A565900829871 /* E-Motion.app */;
 			productType = "com.apple.product-type.application";
 		};
+		9353B4DD2B47E0AB004BEAEF /* E-Motion Dev */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 9353B5032B47E0AB004BEAEF /* Build configuration list for PBXNativeTarget "E-Motion Dev" */;
+			buildPhases = (
+				9353B4E12B47E0AB004BEAEF /* ShellScript */,
+				9353B4E22B47E0AB004BEAEF /* Sources */,
+				9353B4FC2B47E0AB004BEAEF /* Frameworks */,
+				9353B4FF2B47E0AB004BEAEF /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = "E-Motion Dev";
+			packageProductDependencies = (
+				9353B4DE2B47E0AB004BEAEF /* SwiftyJSON */,
+				9353B4E02B47E0AB004BEAEF /* SwiftyJSON */,
+			);
+			productName = iosApp;
+			productReference = 9353B5062B47E0AB004BEAEF /* E-Motion Dev.app */;
+			productType = "com.apple.product-type.application";
+		};
 /* End PBXNativeTarget section */
 
 /* Begin PBXProject section */
@@ -286,6 +351,7 @@
 			projectRoot = "";
 			targets = (
 				7555FF7A242A565900829871 /* E-Motion */,
+				9353B4DD2B47E0AB004BEAEF /* E-Motion Dev */,
 			);
 		};
 /* End PBXProject section */
@@ -301,10 +367,38 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		9353B4FF2B47E0AB004BEAEF /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				9353B5002B47E0AB004BEAEF /* Preview Assets.xcassets in Resources */,
+				9353B5012B47E0AB004BEAEF /* Assets.xcassets in Resources */,
+				9353B5022B47E0AB004BEAEF /* LaunchScreen.storyboard in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXShellScriptBuildPhase section */
 		7555FFB5242A651A00829871 /* ShellScript */ = {
+			isa = PBXShellScriptBuildPhase;
+			alwaysOutOfDate = 1;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+			);
+			outputFileListPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "cd \"$SRCROOT/..\"\n./gradlew :shared:embedAndSignAppleFrameworkForXcode\n";
+		};
+		9353B4E12B47E0AB004BEAEF /* ShellScript */ = {
 			isa = PBXShellScriptBuildPhase;
 			alwaysOutOfDate = 1;
 			buildActionMask = 2147483647;
@@ -354,6 +448,38 @@
 				93B9EACD2A5E801400D5B8A8 /* AdminView.swift in Sources */,
 				93B9EAE62A65E0FA00D5B8A8 /* UserStateViewModel.swift in Sources */,
 				934F47272B413AF0009DA4FA /* AuthenticationView.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		9353B4E22B47E0AB004BEAEF /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				9353B4E32B47E0AB004BEAEF /* SettingsView.swift in Sources */,
+				9353B4E42B47E0AB004BEAEF /* ChargedUpFormView.swift in Sources */,
+				9353B4E52B47E0AB004BEAEF /* AccountCreationView.swift in Sources */,
+				9353B4E62B47E0AB004BEAEF /* AttendanceView.swift in Sources */,
+				9353B4E72B47E0AB004BEAEF /* HomeView.swift in Sources */,
+				9353B4E82B47E0AB004BEAEF /* helpfulVars.swift in Sources */,
+				9353B4E92B47E0AB004BEAEF /* UserBar.swift in Sources */,
+				9353B4EA2B47E0AB004BEAEF /* UserView.swift in Sources */,
+				9353B4EB2B47E0AB004BEAEF /* BugReportView.swift in Sources */,
+				9353B4EC2B47E0AB004BEAEF /* DirectoryBar.swift in Sources */,
+				9353B4ED2B47E0AB004BEAEF /* DirectoryView.swift in Sources */,
+				9353B4EE2B47E0AB004BEAEF /* CircularProgressView.swift in Sources */,
+				9353B4EF2B47E0AB004BEAEF /* ScoutingView.swift in Sources */,
+				9353B4F02B47E0AB004BEAEF /* attendanceHelpers.swift in Sources */,
+				9353B4F12B47E0AB004BEAEF /* ForgotPasswordView.swift in Sources */,
+				9353B4F22B47E0AB004BEAEF /* loader.swift in Sources */,
+				9353B4F32B47E0AB004BEAEF /* NFCButton.swift in Sources */,
+				9353B4F42B47E0AB004BEAEF /* LoginView.swift in Sources */,
+				9353B4F52B47E0AB004BEAEF /* AccountView.swift in Sources */,
+				9353B4F62B47E0AB004BEAEF /* ScoutingFormView.swift in Sources */,
+				9353B4F72B47E0AB004BEAEF /* iOSApp.swift in Sources */,
+				9353B4F82B47E0AB004BEAEF /* NFCManager.swift in Sources */,
+				9353B4F92B47E0AB004BEAEF /* AdminView.swift in Sources */,
+				9353B4FA2B47E0AB004BEAEF /* UserStateViewModel.swift in Sources */,
+				9353B4FB2B47E0AB004BEAEF /* AuthenticationView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -557,6 +683,85 @@
 			};
 			name = Release;
 		};
+		9353B5042B47E0AB004BEAEF /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIconDev;
+				ASSETCATALOG_COMPILER_INCLUDE_ALL_APPICON_ASSETS = YES;
+				CLANG_ENABLE_MODULES = YES;
+				CODE_SIGN_ENTITLEMENTS = "Σ-Motion.entitlements";
+				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_ASSET_PATHS = "\"iosApp/Preview Content\"";
+				DEVELOPMENT_TEAM = 7L23FMFWGW;
+				ENABLE_PREVIEWS = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = NO;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(SRCROOT)/../shared/build/xcode-frameworks/$(CONFIGURATION)/$(SDK_NAME)",
+				);
+				INFOPLIST_FILE = "E-Motion copy-Info.plist";
+				INFOPLIST_KEY_CFBundleDisplayName = "E-Motion";
+				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.utilities";
+				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				OTHER_LDFLAGS = (
+					"$(inherited)",
+					"-framework",
+					shared,
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = "org.team2658.scouting-dev";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
+				SUPPORTS_MACCATALYST = NO;
+				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = NO;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = 1;
+			};
+			name = Debug;
+		};
+		9353B5052B47E0AB004BEAEF /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIconDev;
+				ASSETCATALOG_COMPILER_INCLUDE_ALL_APPICON_ASSETS = YES;
+				CLANG_ENABLE_MODULES = YES;
+				CODE_SIGN_ENTITLEMENTS = "Σ-Motion.entitlements";
+				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_ASSET_PATHS = "\"iosApp/Preview Content\"";
+				DEVELOPMENT_TEAM = 7L23FMFWGW;
+				ENABLE_PREVIEWS = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = NO;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(SRCROOT)/../shared/build/xcode-frameworks/$(CONFIGURATION)/$(SDK_NAME)",
+				);
+				INFOPLIST_FILE = "E-Motion copy-Info.plist";
+				INFOPLIST_KEY_CFBundleDisplayName = "E-Motion";
+				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.utilities";
+				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				OTHER_LDFLAGS = (
+					"$(inherited)",
+					"-framework",
+					shared,
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = "org.team2658.scouting-dev";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
+				SUPPORTS_MACCATALYST = NO;
+				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = NO;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = 1;
+			};
+			name = Release;
+		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
@@ -578,10 +783,27 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
+		9353B5032B47E0AB004BEAEF /* Build configuration list for PBXNativeTarget "E-Motion Dev" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				9353B5042B47E0AB004BEAEF /* Debug */,
+				9353B5052B47E0AB004BEAEF /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
 /* End XCConfigurationList section */
 
 /* Begin XCRemoteSwiftPackageReference section */
 		93344F4B2AFC22010045541A /* XCRemoteSwiftPackageReference "SwiftyJSON" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/SwiftyJSON/SwiftyJSON.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 5.0.1;
+			};
+		};
+		9353B4DF2B47E0AB004BEAEF /* XCRemoteSwiftPackageReference "SwiftyJSON" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/SwiftyJSON/SwiftyJSON.git";
 			requirement = {
@@ -600,6 +822,16 @@
 		93344F4C2AFC22010045541A /* SwiftyJSON */ = {
 			isa = XCSwiftPackageProductDependency;
 			package = 93344F4B2AFC22010045541A /* XCRemoteSwiftPackageReference "SwiftyJSON" */;
+			productName = SwiftyJSON;
+		};
+		9353B4DE2B47E0AB004BEAEF /* SwiftyJSON */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 9353B4DF2B47E0AB004BEAEF /* XCRemoteSwiftPackageReference "SwiftyJSON" */;
+			productName = SwiftyJSON;
+		};
+		9353B4E02B47E0AB004BEAEF /* SwiftyJSON */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 9353B4DF2B47E0AB004BEAEF /* XCRemoteSwiftPackageReference "SwiftyJSON" */;
 			productName = SwiftyJSON;
 		};
 /* End XCSwiftPackageProductDependency section */

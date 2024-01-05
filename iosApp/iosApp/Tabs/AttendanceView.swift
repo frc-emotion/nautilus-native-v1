@@ -37,8 +37,12 @@ struct AttendanceView: View {
             CircularProgressView(progress: progress, defaultColor: Color.green, progressColor: Color.green, innerText: "\(Int(hours))")
                 .frame(width: 150, height: 150)
             
-            Divider()
+            Text("Total Hours Required: 36")
+                .fontWeight(.bold)
                 .padding(.vertical, 25)
+            
+            Divider()
+                .padding(.bottom, 15)
             
             if (errorMsg != "") {
                 Text(errorMsg)

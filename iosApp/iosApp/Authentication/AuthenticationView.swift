@@ -10,11 +10,18 @@ import Foundation
 import SwiftUI
 
 struct AuthenticationView: View {
+    @Environment(\.colorScheme) var colorScheme
+    
     var body: some View {
         NavigationView {
             VStack {
                 VStack {
-                    Image(.launch)
+                    if (colorScheme == .dark) {
+                        Image(.launch)
+                            .colorInvert()
+                    } else {
+                        Image(.launch)
+                    }
                     Text("E-Motion")
                         .font(.largeTitle)
                         .fontWeight(.bold)
@@ -47,9 +54,10 @@ struct AuthenticationView: View {
             }
             .padding(.bottom, 10)
         }
-        
     }
 }
+
+
 
 #Preview {
     AuthenticationView()

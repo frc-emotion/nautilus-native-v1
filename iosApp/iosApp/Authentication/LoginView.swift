@@ -41,12 +41,14 @@ struct LoginView: View {
                     .padding(.horizontal)
                     .autocapitalization(.none)
                     .disableAutocorrection(true)
+                    .submitLabel(.next)
                 
                 SecureField("Password", text: $password)
                     .padding(.horizontal)
                     .frame(height: 45.0)
                     .overlay(RoundedRectangle(cornerRadius: 5.0).strokeBorder(Color(UIColor.separator)))
                     .padding(.horizontal)
+                    .submitLabel(.done)
                 
 //                HStack {
 //                    Spacer()
@@ -83,23 +85,23 @@ struct LoginView: View {
                 }
                 .padding(.horizontal)
                 .buttonStyle(.borderedProminent)
-                
+                .keyboardShortcut(.defaultAction)
                 
                 Spacer()
             }
         }
-        .onAppear(perform: {
-            if (vm.user != nil) {
-                Task {
-                    let response = try await client.getMe(user: vm.user)
-                    if (response != nil) {
-                        vm.user = response
-                    } else {
-                        vm.user = nil
-                    }
-                }
-            }
-        })
+//        .onAppear(perform: {
+//            if (vm.user != nil) {
+//                Task {
+//                    let response = try await client.getMe(user: vm.user)
+//                    if (response != nil) {
+//                        vm.user = response
+//                    } else {
+//                        vm.user = nil
+//                    }
+//                }
+//            }
+//        })
     }
 }
 

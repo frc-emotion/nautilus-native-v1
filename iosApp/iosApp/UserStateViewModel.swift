@@ -75,4 +75,8 @@ class UserStateViewModel: ObservableObject {
 //            return .failure(.signOutError)
 //        }
     }
+    
+    func setUser(userIn: shared.User) {
+        user = userIn
+    }
 }

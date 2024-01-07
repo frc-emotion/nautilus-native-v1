@@ -21,7 +21,6 @@ import io.ktor.serialization.kotlinx.json.json
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.Json
 import org.team2658.apikt.models.ChargedUpScores
-import org.team2658.apikt.models.ExamplePost
 import org.team2658.apikt.models.UserModel
 import org.team2658.apikt.models.safeDivide
 import org.team2658.emotion.attendance.Meeting
@@ -219,17 +218,6 @@ class EmotionClient {
             null
         }
     }
-     suspend fun getTest(): ExamplePost {
-        return try {
-            this.client.get("https://jsonplaceholder.typicode.com/posts/1").body()
-        }
-        catch(e: Exception) { ExamplePost(
-            userId = -1,
-            id = -1,
-            title = "ERROR",
-            body = "ERROR"
-        ) }
-    }
 
     suspend fun getUserById(id: String, user: User?): User? {
         return if(user != null && user.token?.isNotBlank() == true && user.isAdminOrLead) {
@@ -243,7 +231,22 @@ class EmotionClient {
                 println(e)
                 null
             }
-        }else null
+        } else null
+    }
+
+    suspend fun getUsers(user: User?): List<User>? {
+        return if(user != null && user.token?.isNotBlank() == true && user.isAdminOrLead) {
+            try {
+                val response: List<UserModel> = this.client.get("${ROUTES.BASE}/users")
+                { header(HttpHeaders.Authorization, "Bearer ${user.token}") }
+                    .body()
+                println(response)
+                response.map { User.fromSerializable(it) }
+            } catch (e: Exception) {
+                println(e)
+                null
+            }
+        } else null
     }
 
     suspend fun deleteMeeting(id: String, user: User?): Boolean { // true for success

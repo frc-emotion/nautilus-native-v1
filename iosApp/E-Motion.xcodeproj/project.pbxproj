@@ -10,9 +10,16 @@
 		058557BB273AAA24004C7B11 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 058557BA273AAA24004C7B11 /* Assets.xcassets */; };
 		058557D9273AAEEB004C7B11 /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 058557D8273AAEEB004C7B11 /* Preview Assets.xcassets */; };
 		2152FB042600AC8F00CF470E /* iOSApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2152FB032600AC8F00CF470E /* iOSApp.swift */; };
-		8C43502A2B216A3A009918D0 /* NFCManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8C4350292B216A3A009918D0 /* NFCManager.swift */; };
 		932B1E062B3F669C00CAC851 /* SwiftyJSON in Frameworks */ = {isa = PBXBuildFile; productRef = 932B1E052B3F669C00CAC851 /* SwiftyJSON */; };
 		93344F4D2AFC22010045541A /* SwiftyJSON in Frameworks */ = {isa = PBXBuildFile; productRef = 93344F4C2AFC22010045541A /* SwiftyJSON */; };
+		9339CC502B4B526D000DA3FC /* NFCWriter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9339CC4F2B4B526D000DA3FC /* NFCWriter.swift */; };
+		9339CC512B4B526D000DA3FC /* NFCWriter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9339CC4F2B4B526D000DA3FC /* NFCWriter.swift */; };
+		9339CC542B4B5DAB000DA3FC /* MeetingsListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9339CC532B4B5DAB000DA3FC /* MeetingsListView.swift */; };
+		9339CC552B4B5DAB000DA3FC /* MeetingsListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9339CC532B4B5DAB000DA3FC /* MeetingsListView.swift */; };
+		9339CC572B4B5EA9000DA3FC /* MeetingBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9339CC562B4B5EA9000DA3FC /* MeetingBar.swift */; };
+		9339CC582B4B5EA9000DA3FC /* MeetingBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9339CC562B4B5EA9000DA3FC /* MeetingBar.swift */; };
+		9339CC5A2B4B6125000DA3FC /* MeetingCreationView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9339CC592B4B6125000DA3FC /* MeetingCreationView.swift */; };
+		9339CC5B2B4B6125000DA3FC /* MeetingCreationView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9339CC592B4B6125000DA3FC /* MeetingCreationView.swift */; };
 		93418D9B2A5BC3F300336A62 /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 93418D9A2A5BC3F300336A62 /* SettingsView.swift */; };
 		93418D9D2A5BC4D100336A62 /* ScoutingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 93418D9C2A5BC4D100336A62 /* ScoutingView.swift */; };
 		93418DE42A5E362600336A62 /* UserView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 93418DE32A5E362600336A62 /* UserView.swift */; };
@@ -31,14 +38,12 @@
 		9353B4ED2B47E0AB004BEAEF /* DirectoryView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 93B9EAC22A5E778C00D5B8A8 /* DirectoryView.swift */; };
 		9353B4EE2B47E0AB004BEAEF /* CircularProgressView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 93719C872AC0B35300E29446 /* CircularProgressView.swift */; };
 		9353B4EF2B47E0AB004BEAEF /* ScoutingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 93418D9C2A5BC4D100336A62 /* ScoutingView.swift */; };
-		9353B4F02B47E0AB004BEAEF /* attendanceHelpers.swift in Sources */ = {isa = PBXBuildFile; fileRef = 93B615512AEA167700732A3F /* attendanceHelpers.swift */; };
 		9353B4F12B47E0AB004BEAEF /* ForgotPasswordView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 93B9EAEC2A67211600D5B8A8 /* ForgotPasswordView.swift */; };
 		9353B4F32B47E0AB004BEAEF /* NFCButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 93B6154F2AEA163200732A3F /* NFCButton.swift */; };
 		9353B4F42B47E0AB004BEAEF /* LoginView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 93B9EAD02A5F387A00D5B8A8 /* LoginView.swift */; };
 		9353B4F52B47E0AB004BEAEF /* AccountView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 93B9EAA92A5E5BD500D5B8A8 /* AccountView.swift */; };
 		9353B4F62B47E0AB004BEAEF /* ScoutingFormView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 93B9EACE2A5E803100D5B8A8 /* ScoutingFormView.swift */; };
 		9353B4F72B47E0AB004BEAEF /* iOSApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2152FB032600AC8F00CF470E /* iOSApp.swift */; };
-		9353B4F82B47E0AB004BEAEF /* NFCManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8C4350292B216A3A009918D0 /* NFCManager.swift */; };
 		9353B4F92B47E0AB004BEAEF /* AdminView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 93B9EACC2A5E801400D5B8A8 /* AdminView.swift */; };
 		9353B4FA2B47E0AB004BEAEF /* UserStateViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 93B9EAE52A65E0FA00D5B8A8 /* UserStateViewModel.swift */; };
 		9353B4FB2B47E0AB004BEAEF /* AuthenticationView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 934F47262B413AF0009DA4FA /* AuthenticationView.swift */; };
@@ -52,7 +57,6 @@
 		93844FFB2ADB29E1003EE764 /* ChargedUpFormView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 93844FFA2ADB29E1003EE764 /* ChargedUpFormView.swift */; };
 		93B615162AE715F900732A3F /* helpfulVars.swift in Sources */ = {isa = PBXBuildFile; fileRef = 93B615152AE715F900732A3F /* helpfulVars.swift */; };
 		93B615502AEA163200732A3F /* NFCButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 93B6154F2AEA163200732A3F /* NFCButton.swift */; };
-		93B615522AEA167700732A3F /* attendanceHelpers.swift in Sources */ = {isa = PBXBuildFile; fileRef = 93B615512AEA167700732A3F /* attendanceHelpers.swift */; };
 		93B9EAA82A5E5BA900D5B8A8 /* BugReportView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 93B9EAA72A5E5BA900D5B8A8 /* BugReportView.swift */; };
 		93B9EAAA2A5E5BD500D5B8A8 /* AccountView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 93B9EAA92A5E5BD500D5B8A8 /* AccountView.swift */; };
 		93B9EAC32A5E778C00D5B8A8 /* DirectoryView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 93B9EAC22A5E778C00D5B8A8 /* DirectoryView.swift */; };
@@ -73,7 +77,10 @@
 		2152FB032600AC8F00CF470E /* iOSApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = iOSApp.swift; sourceTree = "<group>"; };
 		7555FF7B242A565900829871 /* E-Motion.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "E-Motion.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		7555FF8C242A565B00829871 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		8C4350292B216A3A009918D0 /* NFCManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NFCManager.swift; sourceTree = "<group>"; };
+		9339CC4F2B4B526D000DA3FC /* NFCWriter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NFCWriter.swift; sourceTree = "<group>"; };
+		9339CC532B4B5DAB000DA3FC /* MeetingsListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MeetingsListView.swift; sourceTree = "<group>"; };
+		9339CC562B4B5EA9000DA3FC /* MeetingBar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MeetingBar.swift; sourceTree = "<group>"; };
+		9339CC592B4B6125000DA3FC /* MeetingCreationView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MeetingCreationView.swift; sourceTree = "<group>"; };
 		93418D9A2A5BC3F300336A62 /* SettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsView.swift; sourceTree = "<group>"; };
 		93418D9C2A5BC4D100336A62 /* ScoutingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScoutingView.swift; sourceTree = "<group>"; };
 		93418DE32A5E362600336A62 /* UserView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserView.swift; sourceTree = "<group>"; };
@@ -87,7 +94,6 @@
 		93844FFA2ADB29E1003EE764 /* ChargedUpFormView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChargedUpFormView.swift; sourceTree = "<group>"; };
 		93B615152AE715F900732A3F /* helpfulVars.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = helpfulVars.swift; sourceTree = "<group>"; };
 		93B6154F2AEA163200732A3F /* NFCButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NFCButton.swift; sourceTree = "<group>"; };
-		93B615512AEA167700732A3F /* attendanceHelpers.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = attendanceHelpers.swift; sourceTree = "<group>"; };
 		93B9EAA72A5E5BA900D5B8A8 /* BugReportView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BugReportView.swift; sourceTree = "<group>"; };
 		93B9EAA92A5E5BD500D5B8A8 /* AccountView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AccountView.swift; sourceTree = "<group>"; };
 		93B9EAC22A5E778C00D5B8A8 /* DirectoryView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DirectoryView.swift; sourceTree = "<group>"; };
@@ -176,11 +182,22 @@
 			name = Frameworks;
 			sourceTree = "<group>";
 		};
+		9339CC522B4B5D9A000DA3FC /* Attendance */ = {
+			isa = PBXGroup;
+			children = (
+				93790E382AA921690003203D /* AttendanceView.swift */,
+				9339CC532B4B5DAB000DA3FC /* MeetingsListView.swift */,
+				9339CC562B4B5EA9000DA3FC /* MeetingBar.swift */,
+				9339CC592B4B6125000DA3FC /* MeetingCreationView.swift */,
+			);
+			path = Attendance;
+			sourceTree = "<group>";
+		};
 		93418DA22A5C852900336A62 /* Tabs */ = {
 			isa = PBXGroup;
 			children = (
+				9339CC522B4B5D9A000DA3FC /* Attendance */,
 				93B9EACA2A5E800700D5B8A8 /* HomeView.swift */,
-				93790E382AA921690003203D /* AttendanceView.swift */,
 				93B9EAE72A65E4C700D5B8A8 /* Scouting */,
 				93B9EAE82A65E4D000D5B8A8 /* Directory */,
 				93B9EACC2A5E801400D5B8A8 /* AdminView.swift */,
@@ -216,6 +233,7 @@
 			children = (
 				93719C872AC0B35300E29446 /* CircularProgressView.swift */,
 				93B6154F2AEA163200732A3F /* NFCButton.swift */,
+				9339CC4F2B4B526D000DA3FC /* NFCWriter.swift */,
 			);
 			path = Elements;
 			sourceTree = "<group>";
@@ -224,8 +242,6 @@
 			isa = PBXGroup;
 			children = (
 				93B615152AE715F900732A3F /* helpfulVars.swift */,
-				93B615512AEA167700732A3F /* attendanceHelpers.swift */,
-				8C4350292B216A3A009918D0 /* NFCManager.swift */,
 			);
 			path = Helpers;
 			sourceTree = "<group>";
@@ -419,12 +435,14 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				9339CC572B4B5EA9000DA3FC /* MeetingBar.swift in Sources */,
 				93418D9B2A5BC3F300336A62 /* SettingsView.swift in Sources */,
 				93844FFB2ADB29E1003EE764 /* ChargedUpFormView.swift in Sources */,
 				93B9EAD52A5F4FB800D5B8A8 /* AccountCreationView.swift in Sources */,
 				93790E392AA921690003203D /* AttendanceView.swift in Sources */,
 				93B9EACB2A5E800700D5B8A8 /* HomeView.swift in Sources */,
 				93B615162AE715F900732A3F /* helpfulVars.swift in Sources */,
+				9339CC5A2B4B6125000DA3FC /* MeetingCreationView.swift in Sources */,
 				93418DE62A5E362D00336A62 /* UserBar.swift in Sources */,
 				93418DE42A5E362600336A62 /* UserView.swift in Sources */,
 				93B9EAA82A5E5BA900D5B8A8 /* BugReportView.swift in Sources */,
@@ -432,15 +450,15 @@
 				93B9EAC32A5E778C00D5B8A8 /* DirectoryView.swift in Sources */,
 				93719C882AC0B35300E29446 /* CircularProgressView.swift in Sources */,
 				93418D9D2A5BC4D100336A62 /* ScoutingView.swift in Sources */,
-				93B615522AEA167700732A3F /* attendanceHelpers.swift in Sources */,
 				93B9EAED2A67211600D5B8A8 /* ForgotPasswordView.swift in Sources */,
 				93B615502AEA163200732A3F /* NFCButton.swift in Sources */,
 				93B9EAD12A5F387A00D5B8A8 /* LoginView.swift in Sources */,
 				93B9EAAA2A5E5BD500D5B8A8 /* AccountView.swift in Sources */,
 				93B9EACF2A5E803100D5B8A8 /* ScoutingFormView.swift in Sources */,
 				2152FB042600AC8F00CF470E /* iOSApp.swift in Sources */,
-				8C43502A2B216A3A009918D0 /* NFCManager.swift in Sources */,
 				93B9EACD2A5E801400D5B8A8 /* AdminView.swift in Sources */,
+				9339CC542B4B5DAB000DA3FC /* MeetingsListView.swift in Sources */,
+				9339CC502B4B526D000DA3FC /* NFCWriter.swift in Sources */,
 				93B9EAE62A65E0FA00D5B8A8 /* UserStateViewModel.swift in Sources */,
 				934F47272B413AF0009DA4FA /* AuthenticationView.swift in Sources */,
 			);
@@ -450,12 +468,14 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				9339CC582B4B5EA9000DA3FC /* MeetingBar.swift in Sources */,
 				9353B4E32B47E0AB004BEAEF /* SettingsView.swift in Sources */,
 				9353B4E42B47E0AB004BEAEF /* ChargedUpFormView.swift in Sources */,
 				9353B4E52B47E0AB004BEAEF /* AccountCreationView.swift in Sources */,
 				9353B4E62B47E0AB004BEAEF /* AttendanceView.swift in Sources */,
 				9353B4E72B47E0AB004BEAEF /* HomeView.swift in Sources */,
 				9353B4E82B47E0AB004BEAEF /* helpfulVars.swift in Sources */,
+				9339CC5B2B4B6125000DA3FC /* MeetingCreationView.swift in Sources */,
 				9353B4E92B47E0AB004BEAEF /* UserBar.swift in Sources */,
 				9353B4EA2B47E0AB004BEAEF /* UserView.swift in Sources */,
 				9353B4EB2B47E0AB004BEAEF /* BugReportView.swift in Sources */,
@@ -463,15 +483,15 @@
 				9353B4ED2B47E0AB004BEAEF /* DirectoryView.swift in Sources */,
 				9353B4EE2B47E0AB004BEAEF /* CircularProgressView.swift in Sources */,
 				9353B4EF2B47E0AB004BEAEF /* ScoutingView.swift in Sources */,
-				9353B4F02B47E0AB004BEAEF /* attendanceHelpers.swift in Sources */,
 				9353B4F12B47E0AB004BEAEF /* ForgotPasswordView.swift in Sources */,
 				9353B4F32B47E0AB004BEAEF /* NFCButton.swift in Sources */,
 				9353B4F42B47E0AB004BEAEF /* LoginView.swift in Sources */,
 				9353B4F52B47E0AB004BEAEF /* AccountView.swift in Sources */,
 				9353B4F62B47E0AB004BEAEF /* ScoutingFormView.swift in Sources */,
 				9353B4F72B47E0AB004BEAEF /* iOSApp.swift in Sources */,
-				9353B4F82B47E0AB004BEAEF /* NFCManager.swift in Sources */,
 				9353B4F92B47E0AB004BEAEF /* AdminView.swift in Sources */,
+				9339CC552B4B5DAB000DA3FC /* MeetingsListView.swift in Sources */,
+				9339CC512B4B526D000DA3FC /* NFCWriter.swift in Sources */,
 				9353B4FA2B47E0AB004BEAEF /* UserStateViewModel.swift in Sources */,
 				9353B4FB2B47E0AB004BEAEF /* AuthenticationView.swift in Sources */,
 			);

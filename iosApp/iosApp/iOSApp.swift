@@ -5,6 +5,10 @@ import shared
 struct iOSApp: App {
     @StateObject var userStateViewModel = UserStateViewModel()
     
+    init() {
+        
+    }
+    
     var body: some Scene {
         WindowGroup {
             NavigationView {
@@ -42,7 +46,6 @@ struct ApplicationSwitcher: View {
                         }
                     
                     DirectoryView(user: vm.user!)
-                        .navigationTitle("People")
                         .tabItem {
                             Label("People", systemImage: "person.2.fill")
                         }

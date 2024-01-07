@@ -13,9 +13,10 @@ struct DirectoryView: View {
     @State var user: shared.User
     @State var users: [shared.User]?
     var body: some View {
-        // currently does not include users not associated with a team
-        var subteams = [shared.Subteam.executive, shared.Subteam.build, shared.Subteam.design, shared.Subteam.electrical, shared.Subteam.software, shared.Subteam.marketing]
         NavigationView {
+            let subteams = [shared.Subteam.executive, shared.Subteam.build, shared.Subteam.design, shared.Subteam.electrical, shared.Subteam.software, shared.Subteam.marketing]
+//            TODO: do it the proper way:
+//            var subs = shared.Subteam.entries
             if (users != nil) {
                 List(subteams, id: \.self) { subteam in
                     Section(header: Text(subteam.name)) {
@@ -30,18 +31,17 @@ struct DirectoryView: View {
                         }
                     }
                 }
+                .navigationTitle("People")
             } else {
                 ProgressView()
             }
         }
-        .navigationTitle("People")
         .onAppear() {
             Task {
-                users = try await shared.EmotionClient().getUsers(user: user)
-                print(users)
+                let response = try await shared.EmotionClient().getUsers(user: user)
+                if (response != nil) { users = response }
             }
         }
-//        .navigationTitle("People")
     }
 }
 

@@ -40,11 +40,14 @@ struct ApplicationSwitcher: View {
                         .tabItem {
                             Label("Attendance", systemImage: "calendar")
                         }
+                    
+                    DirectoryView(user: vm.user!)
+                        .navigationTitle("People")
+                        .tabItem {
+                            Label("People", systemImage: "person.2.fill")
+                        }
                 }
-                //                DirectoryView()
-                //                    .tabItem {
-                //                        Label("People", systemImage: "person.2.fill")
-                //                    }
+                //
                 //
                 //                AdminView()
                 //                    .tabItem {

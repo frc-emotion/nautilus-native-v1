@@ -33,7 +33,6 @@
 		9353B4EF2B47E0AB004BEAEF /* ScoutingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 93418D9C2A5BC4D100336A62 /* ScoutingView.swift */; };
 		9353B4F02B47E0AB004BEAEF /* attendanceHelpers.swift in Sources */ = {isa = PBXBuildFile; fileRef = 93B615512AEA167700732A3F /* attendanceHelpers.swift */; };
 		9353B4F12B47E0AB004BEAEF /* ForgotPasswordView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 93B9EAEC2A67211600D5B8A8 /* ForgotPasswordView.swift */; };
-		9353B4F22B47E0AB004BEAEF /* loader.swift in Sources */ = {isa = PBXBuildFile; fileRef = 93790E3A2AA921F40003203D /* loader.swift */; };
 		9353B4F32B47E0AB004BEAEF /* NFCButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 93B6154F2AEA163200732A3F /* NFCButton.swift */; };
 		9353B4F42B47E0AB004BEAEF /* LoginView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 93B9EAD02A5F387A00D5B8A8 /* LoginView.swift */; };
 		9353B4F52B47E0AB004BEAEF /* AccountView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 93B9EAA92A5E5BD500D5B8A8 /* AccountView.swift */; };
@@ -50,7 +49,6 @@
 		9353B5022B47E0AB004BEAEF /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 93DB394C2AF9701000F257BE /* LaunchScreen.storyboard */; };
 		93719C882AC0B35300E29446 /* CircularProgressView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 93719C872AC0B35300E29446 /* CircularProgressView.swift */; };
 		93790E392AA921690003203D /* AttendanceView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 93790E382AA921690003203D /* AttendanceView.swift */; };
-		93790E3B2AA921F40003203D /* loader.swift in Sources */ = {isa = PBXBuildFile; fileRef = 93790E3A2AA921F40003203D /* loader.swift */; };
 		93844FFB2ADB29E1003EE764 /* ChargedUpFormView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 93844FFA2ADB29E1003EE764 /* ChargedUpFormView.swift */; };
 		93B615162AE715F900732A3F /* helpfulVars.swift in Sources */ = {isa = PBXBuildFile; fileRef = 93B615152AE715F900732A3F /* helpfulVars.swift */; };
 		93B615502AEA163200732A3F /* NFCButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 93B6154F2AEA163200732A3F /* NFCButton.swift */; };
@@ -85,7 +83,6 @@
 		9353B5072B47E0AB004BEAEF /* E-Motion copy-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; name = "E-Motion copy-Info.plist"; path = "/Users/jasonballinger/Desktop/teamapp/iosApp/E-Motion copy-Info.plist"; sourceTree = "<absolute>"; };
 		93719C872AC0B35300E29446 /* CircularProgressView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CircularProgressView.swift; sourceTree = "<group>"; };
 		93790E382AA921690003203D /* AttendanceView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AttendanceView.swift; sourceTree = "<group>"; };
-		93790E3A2AA921F40003203D /* loader.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = loader.swift; path = iosApp/Helpers/loader.swift; sourceTree = SOURCE_ROOT; };
 		93790E3C2AA92D800003203D /* Σ-Motion.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = "Σ-Motion.entitlements"; sourceTree = "<group>"; };
 		93844FFA2ADB29E1003EE764 /* ChargedUpFormView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChargedUpFormView.swift; sourceTree = "<group>"; };
 		93B615152AE715F900732A3F /* helpfulVars.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = helpfulVars.swift; sourceTree = "<group>"; };
@@ -226,7 +223,6 @@
 		93790E3F2AA930CC0003203D /* Helpers */ = {
 			isa = PBXGroup;
 			children = (
-				93790E3A2AA921F40003203D /* loader.swift */,
 				93B615152AE715F900732A3F /* helpfulVars.swift */,
 				93B615512AEA167700732A3F /* attendanceHelpers.swift */,
 				8C4350292B216A3A009918D0 /* NFCManager.swift */,
@@ -438,7 +434,6 @@
 				93418D9D2A5BC4D100336A62 /* ScoutingView.swift in Sources */,
 				93B615522AEA167700732A3F /* attendanceHelpers.swift in Sources */,
 				93B9EAED2A67211600D5B8A8 /* ForgotPasswordView.swift in Sources */,
-				93790E3B2AA921F40003203D /* loader.swift in Sources */,
 				93B615502AEA163200732A3F /* NFCButton.swift in Sources */,
 				93B9EAD12A5F387A00D5B8A8 /* LoginView.swift in Sources */,
 				93B9EAAA2A5E5BD500D5B8A8 /* AccountView.swift in Sources */,
@@ -470,7 +465,6 @@
 				9353B4EF2B47E0AB004BEAEF /* ScoutingView.swift in Sources */,
 				9353B4F02B47E0AB004BEAEF /* attendanceHelpers.swift in Sources */,
 				9353B4F12B47E0AB004BEAEF /* ForgotPasswordView.swift in Sources */,
-				9353B4F22B47E0AB004BEAEF /* loader.swift in Sources */,
 				9353B4F32B47E0AB004BEAEF /* NFCButton.swift in Sources */,
 				9353B4F42B47E0AB004BEAEF /* LoginView.swift in Sources */,
 				9353B4F52B47E0AB004BEAEF /* AccountView.swift in Sources */,

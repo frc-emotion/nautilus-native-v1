@@ -7,6 +7,7 @@
 //
 
 import SwiftUI
+import shared
 
 struct DirectoryView: View {
     var body: some View {

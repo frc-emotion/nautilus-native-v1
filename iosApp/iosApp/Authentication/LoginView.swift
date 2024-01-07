@@ -41,12 +41,14 @@ struct LoginView: View {
                     .padding(.horizontal)
                     .autocapitalization(.none)
                     .disableAutocorrection(true)
+                    .submitLabel(.next)
                 
                 SecureField("Password", text: $password)
                     .padding(.horizontal)
                     .frame(height: 45.0)
                     .overlay(RoundedRectangle(cornerRadius: 5.0).strokeBorder(Color(UIColor.separator)))
                     .padding(.horizontal)
+                    .submitLabel(.done)
                 
 //                HStack {
 //                    Spacer()
@@ -83,36 +85,23 @@ struct LoginView: View {
                 }
                 .padding(.horizontal)
                 .buttonStyle(.borderedProminent)
-                
+                .keyboardShortcut(.defaultAction)
                 
                 Spacer()
-                Divider()
-                
-                HStack {
-                    Text("Don't have an account?")
-                    NavigationLink {
-                        AccountCreationView()
-                    } label: {
-                        Text("Create one.")
-                    }
-                }
-                .padding(.top)
             }
         }
-        .onAppear(perform: {
-            let defaults = UserDefaults.standard
-            if (defaults.string(forKey: "User") != nil) {
-                let user = shared.User.Companion().fromJSON(json: defaults.string(forKey: "User"))
-                Task {
-                    let response = try await client.getMe(user: user)
-                    if (response != nil) {
-                        vm.isLoggedIn = true
-                    } else {
-                        vm.isLoggedIn = false
-                    }
-                }
-            }
-        })
+//        .onAppear(perform: {
+//            if (vm.user != nil) {
+//                Task {
+//                    let response = try await client.getMe(user: vm.user)
+//                    if (response != nil) {
+//                        vm.user = response
+//                    } else {
+//                        vm.user = nil
+//                    }
+//                }
+//            }
+//        })
     }
 }
 

@@ -33,17 +33,19 @@ struct AccountCreationView: View {
 //    @State var subteam = shared.Subteam.none
     @State var subteamString = "None"
     @State var errorMsg = ""
+    @FocusState private var numpadFocused: Bool
     
 //    let realSubteams = [NewSubteam(id: 0, value: shared.Subteam.build, name: "Build"), NewSubteam(id: 1, value: shared.Subteam.design, name: "Design"), NewSubteam(id: 2, value: shared.Subteam.electrical, name: "Electrical"), NewSubteam(id: 3, value: shared.Subteam.software, name: "Software"), NewSubteam(id: 4, value: shared.Subteam.marketing, name: "Marketing")] as [NewSubteam]
     
     let subteams = ["None", "Build", "Design", "Electrical", "Software", "Marketing", "Executive"]
     
     var body: some View {
-        NavigationView {
+        ScrollView {
             VStack {
                 Text("Create Account")
                     .font(.largeTitle)
                     .fontWeight(.bold)
+                    .padding(.top, 80)
                 
                 if (errorMsg != "") {
                     Text("\(errorMsg)")
@@ -88,6 +90,7 @@ struct AccountCreationView: View {
                         .autocapitalization(.none)
                         .disableAutocorrection(true)
                         .keyboardType(.phonePad)
+                        .focused($numpadFocused)
                 }
                 
                 TextField("Email", text: $email)
@@ -136,7 +139,7 @@ struct AccountCreationView: View {
                     .autocapitalization(.none)
                     .disableAutocorrection(true)
                     .keyboardType(.phonePad)
-                
+                    .focused($numpadFocused)
                 
                 Button (action: {
                     Task {
@@ -199,6 +202,10 @@ struct AccountCreationView: View {
                 .padding(.horizontal)
                 .padding(.top, 15)
                 .buttonStyle(.borderedProminent)
+            }
+            .submitLabel(.done)
+            .onTapGesture {
+                numpadFocused = false
             }
         }
     }

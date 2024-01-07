@@ -9,7 +9,6 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
-import androidx.compose.material3.Checkbox
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.RadioButton
 import androidx.compose.material3.Text
@@ -29,8 +28,9 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.runBlocking
 import org.team2658.emotion.android.ui.composables.LabelledTextBoxSingleLine
+import org.team2658.emotion.android.ui.composables.LoginInput
+import org.team2658.emotion.android.ui.composables.LoginType
 import org.team2658.emotion.toCapitalized
 import org.team2658.emotion.userauth.Subteam
 
@@ -119,23 +119,25 @@ fun RegisterScreen(
             onValueChange = { text -> username = text }
         )
         Spacer(modifier = Modifier.size(16.dp))
-        LabelledTextBoxSingleLine(
-            label = "Password",
-            text = password,
-            required = true,
-            imeAction = ImeAction.Next,
-            onValueChange = { text -> password = text },
-            keyboardType = KeyboardType.Password
-        )
+//        LabelledTextBoxSingleLine(
+//            label = "Password",
+//            text = password,
+//            required = true,
+//            imeAction = ImeAction.Next,
+//            onValueChange = { text -> password = text },
+//            keyboardType = KeyboardType.Password
+//        )
+        LoginInput(type = LoginType.PASSWORD, text = password, onValueChange = { password = it } )
         Spacer(modifier = Modifier.size(16.dp))
-        LabelledTextBoxSingleLine(
-            label = "Confirm Password",
-            text = passwordConfirm,
-            required = true,
-            onValueChange = { text -> passwordConfirm = text },
-            keyboardType = KeyboardType.Password,
-            innerLabel = "Confirm Password"
-        )
+//        LabelledTextBoxSingleLine(
+//            label = "Confirm Password",
+//            text = passwordConfirm,
+//            required = true,
+//            onValueChange = { text -> passwordConfirm = text },
+//            keyboardType = KeyboardType.Password,
+//            innerLabel = "Confirm Password"
+//        )
+        LoginInput(type = LoginType.CONFIRM_PASSWORD, text = passwordConfirm, onValueChange = { passwordConfirm = it } )
         if (password != passwordConfirm) {
             Text(
                 text = "Passwords do not match",

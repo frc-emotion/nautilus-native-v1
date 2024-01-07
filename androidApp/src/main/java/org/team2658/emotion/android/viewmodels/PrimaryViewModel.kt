@@ -194,13 +194,14 @@ class PrimaryViewModel(private val ktorClient: EmotionClient,
             val new = ktorClient.getMeetings(user)
             println("new: $new")
             new?.let { ls ->
-                meetingDao.insertMeetings(ls.map {mtg -> MeetingEntity.fromShared(mtg, ktorClient.getUserById(mtg.createdBy, user)?.username) })
+                clearMeetingsCache()
+                meetingDao.insertMeetings(ls.map {mtg -> MeetingEntity.fromShared(mtg, ktorClient.getUserById(mtg.createdBy, user)?.username?: mtg.createdBy) })
             }
 
-            val outdated = meetingDao.getOutdated(LocalDateTime.now(ZoneOffset.UTC).toInstant(ZoneOffset.UTC).toEpochMilli())
-            if (outdated.isNotEmpty()) {
-                meetingDao.deleteMeetings(outdated)
-            }
+//            val outdated = meetingDao.getOutdated(LocalDateTime.now(ZoneOffset.UTC).toInstant(ZoneOffset.UTC).toEpochMilli())
+//            if (outdated.isNotEmpty()) {
+//                meetingDao.deleteMeetings(outdated)
+//            }
         }
     }
 
@@ -214,10 +215,18 @@ class PrimaryViewModel(private val ktorClient: EmotionClient,
         return withContext(Dispatchers.IO) {
             meetingDao
                 .getCurrent(LocalDateTime.now(ZoneOffset.UTC).toInstant(ZoneOffset.UTC).toEpochMilli())
-                .map{
-                    MeetingEntity.toShared(it)
-                }
+                .map{ MeetingEntity.toShared(it) }
         }
+    }
+
+    suspend fun getOutdatedMeetings(): List<Pair<Meeting, String?>> {
+        return if((this.user?.accountType?.value?:0) >= AccountType.ADMIN.value)
+            withContext(Dispatchers.IO) {
+            meetingDao
+                .getOutdated(LocalDateTime.now(ZoneOffset.UTC).toInstant(ZoneOffset.UTC).toEpochMilli())
+                .map{ MeetingEntity.toShared(it) }
+        }
+        else emptyList()
     }
 
     suspend fun createMeeting(
@@ -244,11 +253,18 @@ class PrimaryViewModel(private val ktorClient: EmotionClient,
         }
     }
 
-    suspend fun deleteMeeting(meetingId: String) {
+    suspend fun deleteMeeting(meetingId: String, callback: (String) -> Unit) {
+        if(this.user?.isAdmin != true) {
+            callback("You do not have permission to delete meetings")
+            return
+        }
         withContext(Dispatchers.IO) {
             if(ktorClient.deleteMeeting(meetingId, user)) {
                 val mtg = meetingDao.getOne(meetingId)
                 mtg?.let {meetingDao.deleteMeetings(listOf(it))}
+                callback("Successfully deleted meeting")
+            } else {
+                callback("Failed to delete meeting")
             }
         }
     }
@@ -347,6 +363,17 @@ class PrimaryViewModel(private val ktorClient: EmotionClient,
             syncUser()
         }
         return true
+    }
+
+    suspend fun deleteMe(password: String, callback: (Boolean, String) -> Unit) {
+        withContext(Dispatchers.IO) {
+            if(ktorClient.login(user?.username?: "", password) { _ -> } != null) {
+                ktorClient.deleteMe(user) { b, s -> callback(b, s) }
+            } else {
+                callback(false, "Incorrect password")
+            }
+        }
+
     }
 
 }

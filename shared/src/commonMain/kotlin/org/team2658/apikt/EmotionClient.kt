@@ -21,10 +21,10 @@ import io.ktor.serialization.kotlinx.json.json
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.Json
 import org.team2658.apikt.models.ChargedUpScores
-import org.team2658.apikt.models.ExamplePost
 import org.team2658.apikt.models.UserModel
 import org.team2658.apikt.models.safeDivide
 import org.team2658.emotion.attendance.Meeting
+import org.team2658.emotion.userauth.AccountType
 import org.team2658.emotion.userauth.Subteam
 import org.team2658.emotion.userauth.User
 
@@ -154,9 +154,13 @@ class EmotionClient {
     }
 
     suspend fun getMeetings(user: User?): List<Meeting>? {
-        if(user != null && user.token?.isNotBlank() == true && user.permissions.verifyAllAttendance) {
+        val route = when(user?.accountType?.value) {
+            in AccountType.ADMIN.value..Int.MAX_VALUE -> "${ROUTES.BASE}/attendance/getAll"
+            else -> "${ROUTES.BASE}/attendance/getMeetings"
+        }
+        if(user != null && user.token?.isNotBlank() == true && user.permissions.verifyAllAttendance && user.accountType.value >= AccountType.LEAD.value) {
             return try {
-                this.client.get("${ROUTES.BASE}/attendance/getMeetings") {
+                this.client.get(route) {
                     header(HttpHeaders.Authorization, "Bearer ${user.token}")
                 }.body<List<Meeting>>()
             }
@@ -214,17 +218,6 @@ class EmotionClient {
             null
         }
     }
-     suspend fun getTest(): ExamplePost {
-        return try {
-            this.client.get("https://jsonplaceholder.typicode.com/posts/1").body()
-        }
-        catch(e: Exception) { ExamplePost(
-            userId = -1,
-            id = -1,
-            title = "ERROR",
-            body = "ERROR"
-        ) }
-    }
 
     suspend fun getUserById(id: String, user: User?): User? {
         return if(user != null && user.token?.isNotBlank() == true && user.isAdminOrLead) {
@@ -238,11 +231,26 @@ class EmotionClient {
                 println(e)
                 null
             }
-        }else null
+        } else null
+    }
+
+    suspend fun getUsers(user: User?): List<User>? {
+        return if(user != null && user.token?.isNotBlank() == true && user.isAdminOrLead) {
+            try {
+                val response: List<UserModel> = this.client.get("${ROUTES.BASE}/users")
+                { header(HttpHeaders.Authorization, "Bearer ${user.token}") }
+                    .body()
+                println(response)
+                response.map { User.fromSerializable(it) }
+            } catch (e: Exception) {
+                println(e)
+                null
+            }
+        } else null
     }
 
     suspend fun deleteMeeting(id: String, user: User?): Boolean { // true for success
-        return if(user != null && user.token?.isNotBlank() == true && user.permissions.verifyAllAttendance) {
+        return if(user != null && user.token?.isNotBlank() == true && user.isAdminOrLead) {
             try {
                 this.client.delete("${ROUTES.BASE}/attendance/deleteMeeting/$id") {
                     header(HttpHeaders.Authorization, "Bearer ${user.token}")
@@ -252,7 +260,7 @@ class EmotionClient {
                 println(e)
                 false
             }
-        }else false
+        } else false
     }
     suspend fun getCompetitions(year: String): List<String> {
         return try {

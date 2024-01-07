@@ -59,10 +59,11 @@ class MainActivity : ComponentActivity() {
     private lateinit var workManager: WorkManager
     private lateinit var pendingIntent: PendingIntent
     private val intentFilters = arrayOf(
-        IntentFilter(ACTION_NDEF_DISCOVERED).apply {
-            addDataType("text/plain")
-        },
-        IntentFilter(ACTION_TAG_DISCOVERED)
+//        IntentFilter(ACTION_NDEF_DISCOVERED).apply {
+//            addDataType("*/*")
+//        },
+//        IntentFilter(ACTION_TAG_DISCOVERED),
+        IntentFilter(ACTION_TECH_DISCOVERED)
     )
     private val techLists = arrayOf(
         arrayOf(Ndef::class.java.name)
@@ -148,25 +149,31 @@ class MainActivity : ComponentActivity() {
     override fun onNewIntent(intent: Intent?) {
         super.onNewIntent(intent)
         println("onNewIntent")
+        println("pending intent: $pendingIntent")
         handleNFCIntent(intent)
     }
 
     override fun onPause() {
         super.onPause()
         adapter?.disableForegroundDispatch(this)
+        println("pending intent: $pendingIntent")
         println("onPause")
         adapter = null
     }
 
     override fun onResume() {
         super.onResume()
+        if(adapter == null) {
+            adapter = getDefaultAdapter(this)
+        }
         println("onResume")
+        println("pending intent: $pendingIntent")
         adapter?.enableForegroundDispatch(this, pendingIntent, intentFilters, techLists)
     }
 
     private fun handleNFCIntent(intent: Intent?) {
         println("Handling NFC Intent: ${intent?.action}")
-        if(intent?.action == ACTION_TECH_DISCOVERED || intent?.action == ACTION_NDEF_DISCOVERED) {
+        if(intent?.action == ACTION_TECH_DISCOVERED || intent?.action == ACTION_NDEF_DISCOVERED || intent?.action == ACTION_TAG_DISCOVERED) {
             when {
                 SDK_INT >= 33 -> {
                     this.nfcViewmodel.setTag(

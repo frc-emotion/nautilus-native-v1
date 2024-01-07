@@ -2,8 +2,8 @@ package org.team2658.emotion.userauth
 
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
-import org.team2658.apikt.models.RolePermissionsModel
 import org.team2658.apikt.models.RoleModel
+import org.team2658.apikt.models.RolePermissionsModel
 import org.team2658.apikt.models.UserModel
 import org.team2658.emotion.attendance.UserAttendance
 
@@ -33,7 +33,8 @@ data class User(
     val employer: Employer? = null,
 ) {
     val permissions = getPermissions(this)
-    val isAdminOrLead = this.accountType == AccountType.ADMIN || this.accountType == AccountType.LEAD || this.accountType == AccountType.SUPERUSER
+    val isAdminOrLead = this.accountType.value >= AccountType.LEAD.value
+    val isAdmin = this.accountType.value >= AccountType.ADMIN.value
     companion object {
         fun fromSerializable(usr: UserModel): User {
             return User(
@@ -62,13 +63,7 @@ data class User(
                     standScouting = it.permissions.standScouting,
                     viewScoutingData = it.permissions.viewScoutingData
                 )) } ?: listOf(),
-                accountType = when(usr.accountType) {
-                    1 -> AccountType.BASE
-                    2 -> AccountType.LEAD
-                    3 -> AccountType.ADMIN
-                    4 -> AccountType.SUPERUSER
-                    else -> AccountType.UNVERIFIED
-                },
+                accountType = AccountType.of(usr.accountType),
                 attendance = usr.attendance,
                 _id = usr._id
             )
@@ -81,7 +76,7 @@ data class User(
             }catch(e: Exception) { null } }
         }
     }
-    fun toSerializable(): UserModel {
+    private fun toSerializable(): UserModel {
         return UserModel(
             firstname = this.firstName,
             _id = this._id,
@@ -104,13 +99,7 @@ data class User(
                     viewScoutingData = it.permissions.viewScoutingData
                 )
             )},
-            accountType = when(this.accountType) {
-                AccountType.BASE -> 1
-                AccountType.LEAD -> 2
-                AccountType.ADMIN -> 3
-                AccountType.SUPERUSER -> 4
-                AccountType.UNVERIFIED -> 0
-            },
+            accountType = this.accountType.value,
             attendance = this.attendance
         )
     }

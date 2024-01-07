@@ -12,6 +12,8 @@ import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AddCircle
 import androidx.compose.material.icons.filled.RemoveCircle
+import androidx.compose.material.icons.filled.Visibility
+import androidx.compose.material.icons.filled.VisibilityOff
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.LocalTextStyle
@@ -23,8 +25,15 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.autofill.AutofillNode
+import androidx.compose.ui.autofill.AutofillType
 import androidx.compose.ui.focus.onFocusChanged
+import androidx.compose.ui.layout.boundsInWindow
+import androidx.compose.ui.layout.onGloballyPositioned
+import androidx.compose.ui.platform.LocalAutofill
+import androidx.compose.ui.platform.LocalAutofillTree
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
@@ -118,6 +127,72 @@ fun LabelledTextBoxSingleLine(
             }
         )
 
+    }
+}
+
+@OptIn(ExperimentalComposeUiApi::class)
+@Composable
+fun LoginInput(
+    type: LoginType,
+    text: String,
+    onValueChange: (String) -> Unit,
+) {
+    //AutoFill Handling and text field configuration based on input type
+    val (keyboardType, autoFillTypes) = when (type) {
+        LoginType.PASSWORD, LoginType.CONFIRM_PASSWORD -> Pair(KeyboardType.Password, listOf(AutofillType.Password))
+        LoginType.USERNAME_OR_EMAIL -> Pair(KeyboardType.Email, listOf(AutofillType.EmailAddress, AutofillType.Username))
+    }
+    val label = when (type) {
+        LoginType.PASSWORD -> "Password"
+        LoginType.CONFIRM_PASSWORD -> "Confirm Password"
+        LoginType.USERNAME_OR_EMAIL -> "Username or Email"
+    }
+
+    val autoFillNode = AutofillNode(autofillTypes = autoFillTypes, onFill= { onValueChange(it)} )
+    val autofill = LocalAutofill.current
+    LocalAutofillTree.current += autoFillNode
+
+
+    //Controlling visibility of text
+    var passwordHidden by remember { mutableStateOf(true) }
+    val textHidden = passwordHidden && type != LoginType.USERNAME_OR_EMAIL
+
+    Column {
+        Text(text = label, style = MaterialTheme.typography.labelLarge)
+        Spacer(modifier = Modifier.height(4.dp))
+        OutlinedTextField(
+            value = text,
+            onValueChange = onValueChange,
+            modifier = Modifier
+                .onGloballyPositioned { autoFillNode.boundingBox = it.boundsInWindow() }
+                .onFocusChanged { state ->
+                    autofill?.run {
+                        if (state.isFocused) {
+                            requestAutofillForNode(autoFillNode)
+                        }
+                        else {
+                            cancelAutofillForNode(autoFillNode)
+                        }
+                    }
+                },
+            visualTransformation = if (textHidden) PasswordVisualTransformation() else VisualTransformation.None,
+            keyboardOptions = KeyboardOptions(keyboardType = keyboardType, imeAction = ImeAction.Next),
+            label = { Text(label) },
+            singleLine = true,
+//            keyboardActions = keyboardActions,
+            trailingIcon = {
+                if(type != LoginType.USERNAME_OR_EMAIL) {
+                    IconButton(onClick = { passwordHidden = !passwordHidden }) {
+                        Icon(
+                            if (passwordHidden) Icons.Filled.VisibilityOff
+                            else Icons.Filled.Visibility,
+                            contentDescription = "Toggle Password Visibility",
+//                            tint = MaterialTheme.colorScheme.primary
+                        )
+                    }
+                }
+            }
+        )
     }
 }
 
@@ -356,4 +431,10 @@ fun NumberInput(
         )
 
     }
+}
+
+enum class LoginType {
+    PASSWORD,
+    CONFIRM_PASSWORD,
+    USERNAME_OR_EMAIL,
 }

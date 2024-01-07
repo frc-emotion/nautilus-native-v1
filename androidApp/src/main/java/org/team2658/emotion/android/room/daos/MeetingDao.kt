@@ -15,7 +15,7 @@ interface MeetingDao {
     @Delete
     suspend fun deleteMeetings(data: List<MeetingEntity>): Int
 
-    @Query("SELECT * FROM meetings WHERE startTime <= :currentTime AND endTime >= :currentTime ORDER BY startTime DESC")
+    @Query("SELECT * FROM meetings WHERE endTime >= :currentTime ORDER BY startTime DESC")
     fun getCurrent(currentTime: Long): List<MeetingEntity>
 
     @Query("SELECT * FROM meetings WHERE endTime <= :currentTime")

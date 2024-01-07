@@ -41,6 +41,7 @@ import java.util.concurrent.TimeUnit
 
 class MainActivity : ComponentActivity() {
     private val ktorClient = EmotionClient()
+
     private val nfcViewmodel by viewModels<NFCViewmodel>()
     private val scoutingDB by lazy {
         Room.databaseBuilder(
@@ -74,6 +75,7 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
 
         println("onCreate")
+
 
         val workRequest = PeriodicWorkRequestBuilder<SyncTrigger>(15, TimeUnit.MINUTES)
             .build()

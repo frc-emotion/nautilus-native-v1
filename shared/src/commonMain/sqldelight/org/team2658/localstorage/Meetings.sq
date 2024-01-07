@@ -1,0 +1,31 @@
+CREATE TABLE meeting (
+    id TEXT PRIMARY KEY NOT NULL,
+    startTime INTEGER NOT NULL,
+    endTime INTEGER NOT NULL,
+    type TEXT NOT NULL,
+    description TEXT NOT NULL,
+    value INTEGER NOT NULL,
+    createdBy TEXT NOT NULL
+);
+
+insertOne:
+INSERT INTO meeting (id, startTime, endTime, type, description, value, createdBy)
+VALUES (?, ?, ?, ?, ?, ?, ?);
+
+removeAll:
+DELETE FROM meeting;
+
+removeOne:
+DELETE FROM meeting WHERE id = ?;
+
+getAll:
+SELECT * FROM meeting;
+
+getOne:
+SELECT * FROM meeting WHERE id = ?;
+
+getCurrent:
+SELECT * FROM meeting WHERE endTime >= :currentTime ORDER BY startTime DESC;
+
+getOutdated:
+SELECT * FROM meeting WHERE endTime < :currentTime ORDER BY startTime DESC;

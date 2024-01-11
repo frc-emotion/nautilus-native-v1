@@ -79,9 +79,16 @@ struct LoginView: View {
                         }
                     }
                 }) {
-                    Text("Login")
-                        .frame(height: 30.0)
-                        .frame(maxWidth: .infinity)
+                    HStack {
+                        Text("Login")
+                            .frame(height: 30.0)
+                            .frame(maxWidth: .infinity)
+                        #if !DEBUG
+                        if (vm.isBusy) {
+                            ProgressView()
+                        }
+                        #endif
+                    }
                 }
                 .padding(.horizontal)
                 .buttonStyle(.borderedProminent)

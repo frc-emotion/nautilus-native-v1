@@ -9,21 +9,15 @@ import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import org.team2658.apikt.EmotionClient
 import org.team2658.emotion.android.room.dbs.AttendanceDB
 import org.team2658.emotion.android.room.dbs.ScoutingDB
-import org.team2658.emotion.android.room.entities.ChargedUpEntity
 import org.team2658.emotion.android.room.entities.Competition
 import org.team2658.emotion.android.room.entities.MeetingEntity
-import org.team2658.emotion.android.room.entities.StorageType
 import org.team2658.emotion.android.room.entities.chargedUpParamsFromEntity
 import org.team2658.emotion.attendance.Meeting
-import org.team2658.emotion.scouting.GameResult
-import org.team2658.emotion.scouting.scoutingdata.ChargedUp
-import org.team2658.emotion.scouting.scoutingdata.RapidReact
 import org.team2658.emotion.userauth.AccountType
 import org.team2658.emotion.userauth.AuthState
 import org.team2658.emotion.userauth.Subteam
@@ -269,61 +263,61 @@ class PrimaryViewModel(private val ktorClient: EmotionClient,
         }
     }
 
-    suspend fun submitRapidReact(user: User?, data: RapidReact):Boolean {
-        delay(1000L)
-        return true;
-    }
-
-    suspend fun submitChargedUp(user: User?, data: ChargedUp):Boolean {
-        val entity = ChargedUpEntity(
-            won = data.gameResult == GameResult.WIN,
-            tied = data.gameResult == GameResult.TIE,
-            score = data.finalScore,
-            penaltyCount = data.penaltyPointsEarned,
-            competition = data.competition,
-            matchNumber = data.matchNumber,
-            teamNumber = data.teamNumber,
-            sustainRP = data.RPEarned[0],
-            activationRP = data.RPEarned[1],
-            totalRP = data.totalRP,
-            autoBotCones = data.autoPeriod.botCones,
-            autoBotCubes = data.autoPeriod.botCubes,
-            autoMidCones = data.autoPeriod.midCones,
-            autoMidCubes = data.autoPeriod.midCubes,
-            autoTopCones = data.autoPeriod.topCones,
-            autoTopCubes = data.autoPeriod.topCubes,
-            teleopBotCones = data.teleopPeriod.botCones,
-            teleopBotCubes = data.teleopPeriod.botCubes,
-            teleopMidCones = data.teleopPeriod.midCones,
-            teleopMidCubes = data.teleopPeriod.midCubes,
-            teleopTopCones = data.teleopPeriod.topCones,
-            teleopTopCubes = data.teleopPeriod.topCubes,
-            linkScore = data.linkScore,
-            autoDock = data.autoDock,
-            autoEngage = data.autoEngage,
-            teleopDock = data.teleopDock,
-            teleopEngage = data.teleopEngage,
-            parked = data.parked,
-            isDefensive = data.defensive,
-            didBreak = data.brokeDown,
-            comments = data.comments,
-            storageType = StorageType.TEMP
-        )
-        var success = false
-        val params = chargedUpParamsFromEntity(entity)
-        withContext(Dispatchers.IO) {
-            val res = ktorClient.submitChargedUp(params, user)
-            println(res)
-            success = res != null
-            if (!success) try {
-                chargedUpDao.insertChargedUp(entity)
-                success = true
-            } catch (e: Exception) {
-                println(e)
-            }
-        }
-        return success
-    }
+//    suspend fun submitRapidReact(user: User?, data: RapidReact):Boolean {
+//        delay(1000L)
+//        return true;
+//    }
+//
+//    suspend fun submitChargedUp(user: User?, data: ChargedUp):Boolean {
+//        val entity = ChargedUpEntity(
+//            won = data.gameResult == GameResult.WIN,
+//            tied = data.gameResult == GameResult.TIE,
+//            score = data.finalScore,
+//            penaltyCount = data.penaltyPointsEarned,
+//            competition = data.competition,
+//            matchNumber = data.matchNumber,
+//            teamNumber = data.teamNumber,
+//            sustainRP = data.RPEarned[0],
+//            activationRP = data.RPEarned[1],
+//            totalRP = data.totalRP,
+//            autoBotCones = data.autoPeriod.botCones,
+//            autoBotCubes = data.autoPeriod.botCubes,
+//            autoMidCones = data.autoPeriod.midCones,
+//            autoMidCubes = data.autoPeriod.midCubes,
+//            autoTopCones = data.autoPeriod.topCones,
+//            autoTopCubes = data.autoPeriod.topCubes,
+//            teleopBotCones = data.teleopPeriod.botCones,
+//            teleopBotCubes = data.teleopPeriod.botCubes,
+//            teleopMidCones = data.teleopPeriod.midCones,
+//            teleopMidCubes = data.teleopPeriod.midCubes,
+//            teleopTopCones = data.teleopPeriod.topCones,
+//            teleopTopCubes = data.teleopPeriod.topCubes,
+//            linkScore = data.linkScore,
+//            autoDock = data.autoDock,
+//            autoEngage = data.autoEngage,
+//            teleopDock = data.teleopDock,
+//            teleopEngage = data.teleopEngage,
+//            parked = data.parked,
+//            isDefensive = data.defensive,
+//            didBreak = data.brokeDown,
+//            comments = data.comments,
+//            storageType = StorageType.TEMP
+//        )
+//        var success = false
+//        val params = chargedUpParamsFromEntity(entity)
+//        withContext(Dispatchers.IO) {
+//            val res = ktorClient.submitChargedUp(params, user)
+//            println(res)
+//            success = res != null
+//            if (!success) try {
+//                chargedUpDao.insertChargedUp(entity)
+//                success = true
+//            } catch (e: Exception) {
+//                println(e)
+//            }
+//        }
+//        return success
+//    }
 
     private suspend fun syncChargedUp() {
         try{

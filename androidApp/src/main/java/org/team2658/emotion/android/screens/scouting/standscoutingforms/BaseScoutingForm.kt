@@ -14,7 +14,6 @@ import androidx.compose.material3.RadioButton
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -27,12 +26,7 @@ import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.runBlocking
-import kotlinx.coroutines.runInterruptible
-import kotlinx.coroutines.withContext
 import org.team2658.emotion.android.ui.composables.DropDown
 import org.team2658.emotion.android.ui.composables.ErrorAlertDialog
 import org.team2658.emotion.android.ui.composables.LabelledTextBoxSingleLine
@@ -40,7 +34,6 @@ import org.team2658.emotion.android.ui.composables.SuccessAlertDialog
 import org.team2658.emotion.android.ui.composables.TextArea
 import org.team2658.emotion.android.ui.composables.YesNoSelector
 import org.team2658.emotion.scouting.GameResult
-import org.team2658.emotion.scouting.scoutingdata.ScoutingData
 
 @Composable
 fun BaseScoutingForm(
@@ -256,10 +249,11 @@ fun BaseScoutingForm(
                                 matchNumber = matchNumber.toInt(),
                                 defensive = defensive!!,
                                 finalScore = finalScore.toInt(),
-                                gameResult = gameResult!!,
+                                won = gameResult == GameResult.WIN,
+                                tied = gameResult == GameResult.TIE,
                                 penaltyPointsEarned = penaltyPointsEarned.toInt(),
                                 brokeDown = brokeDown!!,
-                                comments = comments
+                                comments = comments,
                             )
                         )
                         if (success) {

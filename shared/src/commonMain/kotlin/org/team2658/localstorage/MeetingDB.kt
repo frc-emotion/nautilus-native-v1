@@ -2,9 +2,8 @@ package org.team2658.localstorage
 
 import org.team2658.emotion.attendance.Meeting
 
-internal class MeetingDB(factory: DatabaseDriverFactory) {
-    private val database = Meetings(factory.createDriver())
-    private val dbQuery = database.meetingsQueries
+internal class MeetingDB(db: AppDatabase) {
+    private val dbQuery = db.meetingsQueries
 
     fun getAll(): List<Meeting> {
         return this.dbQuery.getAll().executeAsList().map {
@@ -16,6 +15,23 @@ internal class MeetingDB(factory: DatabaseDriverFactory) {
                 description = it.description,
                 value = it.value_.toInt(),
                 createdBy = it.createdBy
+            )
+        }
+    }
+
+    fun getAllWithUsernames(): List<Pair<Meeting, String?>> {
+        return this.dbQuery.getAllWithUsername().executeAsList().map {
+            Pair(
+                Meeting(
+                    _id = it.id,
+                    startTime = it.startTime,
+                    endTime = it.endTime,
+                    type = it.type,
+                    description = it.description,
+                    value = it.value_.toInt(),
+                    createdBy = it.createdBy
+                ),
+                it.username
             )
         }
     }
@@ -36,12 +52,12 @@ internal class MeetingDB(factory: DatabaseDriverFactory) {
         meetings.forEach { this.insert(it) }
     }
 
-    fun delete(meeting: Meeting) {
-        this.dbQuery.removeOne(meeting._id)
+    fun delete(id: String) {
+        this.dbQuery.removeOne(id)
     }
 
-    fun delete(meetings: List<Meeting>) {
-        meetings.forEach { this.delete(it) }
+    fun delete(ids: List<String>) {
+        ids.forEach { this.delete(it) }
     }
 
     fun deleteAll() {
@@ -62,6 +78,23 @@ internal class MeetingDB(factory: DatabaseDriverFactory) {
         }
     }
 
+    fun getCurrentWithUsernames(currentTime: Long): List<Pair<Meeting, String?>> {
+        return this.dbQuery.getCurrentWithUsername(currentTime).executeAsList().map {
+            Pair(
+                Meeting(
+                    _id = it.id,
+                    startTime = it.startTime,
+                    endTime = it.endTime,
+                    type = it.type,
+                    description = it.description,
+                    value = it.value_.toInt(),
+                    createdBy = it.createdBy
+                ),
+                it.username
+            )
+        }
+    }
+
     fun getOutdated(currentTime: Long): List<Meeting> {
         return this.dbQuery.getOutdated(currentTime).executeAsList().map {
             Meeting(
@@ -76,6 +109,23 @@ internal class MeetingDB(factory: DatabaseDriverFactory) {
         }
     }
 
+    fun getOutdatedWithUsernames(currentTime: Long): List<Pair<Meeting, String?>> {
+        return this.dbQuery.getOutdatedWithUsername(currentTime).executeAsList().map {
+            Pair(
+                Meeting(
+                    _id = it.id,
+                    startTime = it.startTime,
+                    endTime = it.endTime,
+                    type = it.type,
+                    description = it.description,
+                    value = it.value_.toInt(),
+                    createdBy = it.createdBy
+                ),
+                it.username
+            )
+        }
+    }
+
     fun getOne(id: String): Meeting? {
         return this.dbQuery.getOne(id).executeAsOneOrNull()?.let {
             Meeting(
@@ -86,6 +136,23 @@ internal class MeetingDB(factory: DatabaseDriverFactory) {
                 description = it.description,
                 value = it.value_.toInt(),
                 createdBy = it.createdBy
+            )
+        }
+    }
+
+    fun getOneWithUsername(id: String): Pair<Meeting, String?>? {
+        return this.dbQuery.getOneWithUsername(id).executeAsOneOrNull()?.let {
+            Pair(
+                Meeting(
+                    _id = it.id,
+                    startTime = it.startTime,
+                    endTime = it.endTime,
+                    type = it.type,
+                    description = it.description,
+                    value = it.value_.toInt(),
+                    createdBy = it.createdBy
+                ),
+                it.username
             )
         }
     }

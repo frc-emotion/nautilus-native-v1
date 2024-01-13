@@ -1,10 +1,8 @@
 package org.team2658.emotion.android.screens.scouting.standscoutingforms
 
 
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.size
 import androidx.compose.material3.Button
 import androidx.compose.material3.MaterialTheme
@@ -14,20 +12,14 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import kotlinx.coroutines.launch
-import org.team2658.apikt.models.ChargedUpScores
 import org.team2658.emotion.android.ui.composables.NumberInput
 import org.team2658.emotion.android.ui.composables.YesNoSelector
 import org.team2658.emotion.android.viewmodels.PrimaryViewModel
-import org.team2658.emotion.scouting.GameResult
-import org.team2658.emotion.scouting.scoutingdata.ChargedUp
-import org.team2658.emotion.scouting.scoutingdata.ScoutingData
 
 @Composable
 fun ChargedUpForm(primaryViewModel: PrimaryViewModel) {
@@ -129,34 +121,34 @@ fun ChargedUpForm(primaryViewModel: PrimaryViewModel) {
     Spacer(modifier = Modifier.size(16.dp))
     BaseScoutingForm(
         competitions = competitions,
-        onFormSubmit = {
-                        primaryViewModel.submitChargedUp(primaryViewModel.user,
-                           ChargedUp(baseData = it,
-                               autoPeriod = ChargedUpScores(
-                                   botCones = autoBotCones!!,
-                                   botCubes = autoBotCubes!!,
-                                   midCones = autoMidCones!!,
-                                   midCubes = autoMidCubes!!,
-                                   topCones = autoTopCones!!,
-                                   topCubes = autoTopCubes!!
-                               ),
-                               teleopPeriod = ChargedUpScores(
-                                   botCubes = teleopBotCubes!!,
-                                   botCones = teleopBotCones!!,
-                                   midCones = teleopMidCones!!,
-                                   midCubes = teleopMidCubes!!,
-                                   topCones = teleopTopCones!!,
-                                   topCubes = teleopTopCubes!!
-                               ),
-                               linkScore = linkScore!!,
-                               autoDock = autoDocked!!,
-                               autoEngage = autoEngage!!,
-                               teleopDock = teleopDocked!!,
-                               teleopEngage = teleopEngage!!,
-                               parked = parked!!,
-                               RPEarned = listOf(sustainBonus!!, activationBonus!!)
-                               )
-                       )
+        onFormSubmit = { _ -> false
+//                        primaryViewModel.submitChargedUp(primaryViewModel.user,
+//                           ChargedUp(baseData = it,
+//                               autoPeriod = ChargedUpScores(
+//                                   botCones = autoBotCones!!,
+//                                   botCubes = autoBotCubes!!,
+//                                   midCones = autoMidCones!!,
+//                                   midCubes = autoMidCubes!!,
+//                                   topCones = autoTopCones!!,
+//                                   topCubes = autoTopCubes!!
+//                               ),
+//                               teleopPeriod = ChargedUpScores(
+//                                   botCubes = teleopBotCubes!!,
+//                                   botCones = teleopBotCones!!,
+//                                   midCones = teleopMidCones!!,
+//                                   midCubes = teleopMidCubes!!,
+//                                   topCones = teleopTopCones!!,
+//                                   topCubes = teleopTopCubes!!
+//                               ),
+//                               linkScore = linkScore!!,
+//                               autoDock = autoDocked!!,
+//                               autoEngage = autoEngage!!,
+//                               teleopDock = teleopDocked!!,
+//                               teleopEngage = teleopEngage!!,
+//                               parked = parked!!,
+//                               RPEarned = listOf(sustainBonus!!, activationBonus!!)
+//                               )
+//                       )
         },
         contentInputsOkay = inputOk,
         clearContentInputs = ::clearForm )

@@ -28,7 +28,7 @@ kotlin {
     }
 
     sourceSets {
-        val ktorVersion = "2.3.4"
+        val ktorVersion = "2.3.7"
         val sqlDelightVersion = "2.0.1"
         val commonMain by getting {
             dependencies {
@@ -77,7 +77,7 @@ dependencies {
 
 sqldelight {
     databases {
-        create("Meetings") {
+        create("AppDatabase") {
             packageName.set("org.team2658.localstorage")
         }
     }

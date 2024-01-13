@@ -1,0 +1,20 @@
+CREATE TABLE competition (
+    name TEXT NOT NULL,
+    year TEXT NOT NULL,
+    PRIMARY KEY (name, year)
+);
+
+insert:
+INSERT INTO competition (name, year) VALUES (?, ?);
+
+deleteOne:
+DELETE FROM competition WHERE name = ? AND year = ?;
+
+deleteAll:
+DELETE FROM competition;
+
+getAll:
+SELECT * FROM competition;
+
+getYear:
+SELECT * FROM competition WHERE year = ?;

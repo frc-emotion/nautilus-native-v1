@@ -22,15 +22,7 @@ data class User(
     val accountUpdateVersion: Int = 1,
     val socials: List<Social> = listOf(),
 
-    //student accounts
-    val parents: List<User>? = null,
     val attendance: List<UserAttendance>,
-
-    //parent accounts
-    val children: List<User>? = null,
-    val spouse: User? = null,
-    val donationAmounts: List<Double>? = null,
-    val employer: Employer? = null,
 ) {
     val permissions = getPermissions(this)
     val isAdminOrLead = this.accountType.value >= AccountType.LEAD.value
@@ -44,15 +36,18 @@ data class User(
                 email = usr.email,
                 phoneNumber = usr.phone?: "",
                 token = usr.token,
-                subteam = when(usr.subteam?.lowercase()) {
-                    "software" -> Subteam.SOFTWARE
-                    "build" -> Subteam.BUILD
-                    "marketing" -> Subteam.MARKETING
-                    "electrical" -> Subteam.ELECTRICAL
-                    "design" -> Subteam.DESIGN
-                    "executive" -> Subteam.EXECUTIVE
-                    else -> Subteam.NONE
-                },
+//                subteam = when(usr.subteam?.lowercase()) {
+//                    "software" -> Subteam.SOFTWARE
+//                    "build" -> Subteam.BUILD
+//                    "marketing" -> Subteam.MARKETING
+//                    "electrical" -> Subteam.ELECTRICAL
+//                    "design" -> Subteam.DESIGN
+//                    "executive" -> Subteam.EXECUTIVE
+//                    else -> Subteam.NONE
+//                },
+                subteam = try {
+                    Subteam.valueOf(usr.subteam?.trim()?.uppercase() ?: "NONE")
+                }catch (_: Exception) { Subteam.NONE },
                 grade = usr.grade?: -1,
                 roles = usr.roles?.map { Role(it.name, UserPermissions(
                     verifyAllAttendance = it.permissions.verifyAllAttendance,

@@ -20,7 +20,6 @@ import org.team2658.emotion.android.ui.composables.LabelledTextBoxSingleLine
 import org.team2658.emotion.android.ui.composables.NumberInput
 import org.team2658.emotion.android.ui.composables.YesNoSelector
 import org.team2658.emotion.android.viewmodels.PrimaryViewModel
-import org.team2658.emotion.scouting.scoutingdata.RapidReact
 
 @Composable
 fun RapidReactForm(
@@ -79,26 +78,27 @@ fun RapidReactForm(
     Spacer(modifier = Modifier.size(16.dp))
     BaseScoutingForm(
         competitions = competitions,
-        onFormSubmit = { data ->
-            primaryViewModel.submitRapidReact(
-                user = primaryViewModel.user,
-                data = RapidReact(
-                    //no need to check for null safety or validity of inputs here
-                    //this function will only be called if inputOk is true
-                    baseData = data,
-                    leftTarmac = leftTarmac!!,
-                    autoLower = autoLower!!,
-                    autoUpper = autoUpper!!,
-                    teleopLower = teleopLower!!,
-                    teleopUpper = teleopUpper!!,
-                    cycleTime = cycleTime,
-                    shotLocation = shotLocation,
-                    climbScore = climbScore.value,
-                    humanShot = humanShot!!,
-                    cargoRP = cargoRP!!,
-                    hangarRP = hangarRP!!,
-                )
-            )
+        onFormSubmit = { _ -> false
+  //        data ->
+//            primaryViewModel.submitRapidReact(
+//                user = primaryViewModel.user,
+//                data = RapidReact(
+//                    //no need to check for null safety or validity of inputs here
+//                    //this function will only be called if inputOk is true
+//                    baseData = data,
+//                    leftTarmac = leftTarmac!!,
+//                    autoLower = autoLower!!,
+//                    autoUpper = autoUpper!!,
+//                    teleopLower = teleopLower!!,
+//                    teleopUpper = teleopUpper!!,
+//                    cycleTime = cycleTime,
+//                    shotLocation = shotLocation,
+//                    climbScore = climbScore.value,
+//                    humanShot = humanShot!!,
+//                    cargoRP = cargoRP!!,
+//                    hangarRP = hangarRP!!,
+//                )
+//            )
         },
         contentInputsOkay = inputOk,
         clearContentInputs = ::clearForm

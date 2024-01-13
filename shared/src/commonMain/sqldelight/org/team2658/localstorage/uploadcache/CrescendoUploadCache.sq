@@ -1,0 +1,43 @@
+import kotlin.Boolean;
+
+CREATE TABLE crescendoUpload (
+    competition TEXT NOT NULL,
+    teamNumber INTEGER NOT NULL,
+    matchNumber INTEGER NOT NULL,
+    score INTEGER NOT NULL,
+    penalty INTEGER NOT NULL,
+    won INTEGER AS Boolean NOT NULL,
+    tie INTEGER AS Boolean NOT NULL,
+    comments TEXT NOT NULL,
+    defensive INTEGER AS Boolean NOT NULL,
+    brokeDown INTEGER AS Boolean NOT NULL,
+    rankingPoints INTEGER NOT NULL,
+    autoLeave INTEGER AS Boolean NOT NULL,
+    autoAmp INTEGER NOT NULL,
+    autoSpeaker INTEGER NOT NULL,
+    teleopAmp INTEGER NOT NULL,
+    teleopSpeakerUnamp INTEGER NOT NULL,
+    teleopSpeakerAmp INTEGER NOT NULL,
+    stageState TEXT NOT NULL,
+    harmony INTEGER NOT NULL,
+    trapNotes INTEGER NOT NULL,
+    melody INTEGER AS Boolean NOT NULL,
+    ensemble INTEGER AS Boolean NOT NULL,
+    _id INTEGER PRIMARY KEY
+);
+
+insert:
+INSERT INTO crescendoUpload (competition, teamNumber, matchNumber, score, penalty, won, tie, comments, defensive, brokeDown, rankingPoints, autoLeave, autoAmp, autoSpeaker, teleopAmp, teleopSpeakerUnamp, teleopSpeakerAmp, stageState, harmony, trapNotes, melody, ensemble)
+VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?);
+
+getAll:
+SELECT * FROM crescendoUpload;
+
+get:
+SELECT * FROM crescendoUpload WHERE _id = ?;
+
+delete:
+DELETE FROM crescendoUpload WHERE _id = ?;
+
+deleteAll:
+DELETE FROM crescendoUpload;

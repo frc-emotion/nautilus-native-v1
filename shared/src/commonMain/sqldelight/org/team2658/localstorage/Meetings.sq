@@ -21,11 +21,23 @@ DELETE FROM meeting WHERE id = ?;
 getAll:
 SELECT * FROM meeting;
 
+getAllWithUsername:
+SELECT meeting.*, username FROM meeting LEFT OUTER JOIN user ON meeting.createdBy = user.id;
+
 getOne:
 SELECT * FROM meeting WHERE id = ?;
+
+getOneWithUsername:
+SELECT meeting.*, username FROM meeting LEFT OUTER JOIN user ON meeting.createdBy = user.id WHERE meeting.id = ?;
 
 getCurrent:
 SELECT * FROM meeting WHERE endTime >= :currentTime ORDER BY startTime DESC;
 
+getCurrentWithUsername:
+SELECT meeting.*, username FROM meeting LEFT OUTER JOIN user ON meeting.createdBy = user.id WHERE endTime >= :currentTime ORDER BY startTime DESC;
+
 getOutdated:
 SELECT * FROM meeting WHERE endTime < :currentTime ORDER BY startTime DESC;
+
+getOutdatedWithUsername:
+SELECT meeting.*, username FROM meeting LEFT OUTER JOIN user ON meeting.createdBy = user.id WHERE endTime < :currentTime ORDER BY startTime DESC;

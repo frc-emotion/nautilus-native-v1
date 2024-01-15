@@ -50,15 +50,15 @@ struct DirectoryView: View {
                     .alert("Error refreshing users.\nPlease try again later.", isPresented: $alertBoxShowing) {
                         Button("Ok", role: .cancel) {}
                     }
-                    .toolbar {
-                        ToolbarItem(placement: .topBarTrailing) {
-                            Button {
-                                popoverShown = true
-                            } label: {
-                                Image(systemName: "person.crop.circle.badge.questionmark")
-                            }
-                        }
-                    }
+//                    .toolbar {
+//                        ToolbarItem(placement: .topBarTrailing) {
+//                            Button {
+//                                popoverShown = true
+//                            } label: {
+//                                Image(systemName: "person.crop.circle.badge.questionmark")
+//                            }
+//                        }
+//                    }
                     .popover(isPresented: $popoverShown) {
                         VerifyUsersView(presented: $popoverShown)
                     }

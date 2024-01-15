@@ -19,19 +19,15 @@ func getUTCDate(date: Int) {
 
 struct AttendanceView: View {
     //    let helpers = AttendanceHelpers()
-    @State var data: String = ""
-    @State var errorMsg: String = ""
-    
-    // AppStorage user updates automatically and stores User to the @State when it updates
-    @AppStorage("User") var storedUser: String!
+    @State private var data: String = ""
+    @State private var errorMsg: String = ""
     @State var user: shared.User
-    @State var meetingsPopoverDisplayed = false
+    @State private var meetingsPopoverDisplayed = false
     @State private var historyPopoverDisplayed = false
-    let defaults = UserDefaults.standard
-    let client = shared.EmotionClient()
+    @EnvironmentObject var vm: UserStateViewModel
 
     var body: some View {
-        let hours: Int32 = if user.attendance.isEmpty {0} else {user.attendance[0].totalHoursLogged}
+        let hours: Int32 = if user.attendance.isEmpty {0} else {user.attendance.last?.totalHoursLogged ?? 0}
         let progress = Double(hours) / 36
         
         NavigationView {
@@ -60,7 +56,7 @@ struct AttendanceView: View {
             .onChange(of: data) { newData in
                 if newData != "" {
                     Task {
-                        let response = try await client.attendMeeting(user: User.Companion().fromJSON(json: defaults.string(forKey: "User")), meetingId: newData, tapTime:  Int64((NSDate().timeIntervalSince1970) * 1000), failureCallback: { (errorMsgIn) -> () in
+                        let response = try await shared.EmotionClient().attendMeeting(user: user, meetingId: newData, tapTime: Int64((NSDate().timeIntervalSince1970) * 1000), failureCallback: { (errorMsgIn) -> () in
                             
                             if let errorMsgIn = errorMsgIn.data(using: .utf8, allowLossyConversion: false) {
                                 Task {
@@ -70,27 +66,24 @@ struct AttendanceView: View {
                             }
                         })
                         if let response {
-                            defaults.set(response.toJSON(), forKey: "User")
+                            Task { await vm.setUser(userIn: response) }
                             errorMsg = ""
                         }
                         data = ""
                     }
                 }
             }
-            .onChange(of: storedUser) { newUser in
-                user = shared.User.Companion().fromJSON(json: newUser)!
-            }
             .navigationBarTitleDisplayMode(.inline)
             .navigationTitle("Attendance")
             .toolbar {
                 // view previous attendance
-                ToolbarItem(placement: .topBarLeading) {
-                    Button {
-                        historyPopoverDisplayed = true
-                    } label: {
-                        Image(systemName: "clock.arrow.circlepath")
-                    }
-                }
+//                ToolbarItem(placement: .topBarLeading) {
+//                    Button {
+//                        historyPopoverDisplayed = true
+//                    } label: {
+//                        Image(systemName: "clock.arrow.circlepath")
+//                    }
+//                }
                 ToolbarItem(placement: .topBarTrailing) {
                     Button {
                         // refresh

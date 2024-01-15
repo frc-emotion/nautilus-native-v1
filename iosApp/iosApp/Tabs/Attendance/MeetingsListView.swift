@@ -15,14 +15,16 @@ struct MeetingsListView: View {
     @State private var showingAlert = false
     @State var alertMessage = ""
     @Binding var isPresented: Bool
+    @State private var promptReload = false
+    
     var body: some View {
-        NavigationView {
+        NavigationStack {
             List {
                 NavigationLink {
-                    MeetingCreationView()
+                    MeetingCreationView(user: user, reloader: $promptReload)
                 } label: {
                     HStack {
-                        Image(systemName: "pswlus")
+                        Image(systemName: "plus")
                         Text("Create a New Meeting")
                     }
                     .foregroundStyle(.blue)
@@ -31,19 +33,37 @@ struct MeetingsListView: View {
                 
                 Section(header: Text("Meetings")) {
                     if (meetings != nil) {
-                        ForEach(meetings!, id: \.self) { meeting in
+                        // list is reversed so most recent meetings are on top
+                        ForEach(meetings!.reversed(), id: \.self) { meeting in
                             NavigationLink {
-                                MeetingView(meeting: meeting)
+                                MeetingView(user: user, meeting: meeting)
                             } label: {
                                 MeetingBar(meeting: meeting)
+                                    .swipeActions(edge: .trailing) {
+                                        //                                        Button {
+                                        //                                            // archive meeting
+                                        //                                        } label: {
+                                        //                                            Label("Archive", systemImage: "archivebox.fill")
+                                        //                                                .tint(.purple)
+                                        //                                        }
+                                        Button(role: .destructive) {
+//                                            let response = try await
+                                            Task {
+                                                let _ = try await shared.EmotionClient().deleteMeeting(id: meeting._id, user: user)
+                                                promptReload = true
+                                            }
+                                        } label: {
+                                            Label("Delete", systemImage: "trash.fill")
+                                        }
+                                    }
                             }
                         }
-                        NavigationLink {
-                            // ArchivedMeetingsListView()
-                        } label: {
-                            Text("Archived")
-                                .font(.body.weight(.bold))
-                        }
+//                        NavigationLink {
+//                            // ArchivedMeetingsListView()
+//                        } label: {
+//                            Text("Archived")
+//                                .font(.body.weight(.bold))
+//                        }
                     }
                 }
             }
@@ -52,7 +72,14 @@ struct MeetingsListView: View {
             .toolbar {
                 ToolbarItem(placement: .topBarLeading) {
                     Button {
-                        
+                        Task {
+                            guard let response = try await shared.EmotionClient().getMeetings(user: user) else {alertMessage = "Unable to get list of meetings. Please try again later."
+                                showingAlert = true
+                                return
+                            }
+                            
+                            meetings = response
+                        }
                     } label: {
                         Image(systemName: "arrow.clockwise")
                             .rotationEffect(.degrees(30.00))
@@ -79,6 +106,19 @@ struct MeetingsListView: View {
         }
         .alert(alertMessage, isPresented: $showingAlert) {
             Button("Ok", role: .cancel) {}
+        }
+        .onChange(of: promptReload) { _ in
+            if (promptReload == true) {
+                Task {
+                    guard let response = try await shared.EmotionClient().getMeetings(user: user) else {alertMessage = "Unable to get list of meetings. Please try again later."
+                        showingAlert = true
+                        return
+                    }
+                    
+                    meetings = response
+                }
+                promptReload = false
+            }
         }
     }
 }

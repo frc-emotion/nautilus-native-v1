@@ -9,17 +9,6 @@
 import SwiftUI
 import shared
 
-func formatUnixDateString(timestamp: Int64) -> String {
-    let dateFormatter = DateFormatter()
-    dateFormatter.dateStyle = .short
-    dateFormatter.timeStyle = .short
-    dateFormatter.locale = Locale.current
-//    dateFormatter.dateFormat = "M/dd H:mm"
-    
-    let date = Date(timeIntervalSince1970: TimeInterval(timestamp / 1000))
-    return dateFormatter.string(from: date)
-}
-
 struct MeetingBar: View {
     @State var meeting: shared.Meeting
     var body: some View {
@@ -30,7 +19,7 @@ struct MeetingBar: View {
                 Spacer()
             }
             HStack {
-                Text("\(formatUnixDateString(timestamp: meeting.startTime)) to \(formatUnixDateString(timestamp: meeting.endTime))")
+                Text("\(DateHelpers().formatUnixDateString(timestamp: meeting.startTime)) to \(DateHelpers().formatUnixDateString(timestamp: meeting.endTime))")
                 Spacer()
             }
         }

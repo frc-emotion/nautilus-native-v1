@@ -1,13 +1,10 @@
 import SwiftUI
 import shared
+import Network
 
 @main
 struct iOSApp: App {
     @StateObject var userStateViewModel = UserStateViewModel()
-    
-    init() {
-        
-    }
     
     var body: some Scene {
         WindowGroup {
@@ -24,7 +21,7 @@ struct ApplicationSwitcher: View {
     @EnvironmentObject var vm: UserStateViewModel
     
     var body: some View {
-        if (vm.user != nil) {
+        if (vm.user != nil && vm.isBusy == false) {
             //        if (true) {
             TabView {
                 //                Unnecessary tabs are hidden right now

@@ -73,6 +73,7 @@ struct LoginView: View {
                             switch error {
                             case .signInError(let message):
                                 loginErrorMsg = message
+                                break
                             default:
                                 print("Unknown error type")
                             }
@@ -83,11 +84,12 @@ struct LoginView: View {
                         Text("Login")
                             .frame(height: 30.0)
                             .frame(maxWidth: .infinity)
-                        #if !DEBUG
-                        if (vm.isBusy) {
-                            ProgressView()
-                        }
-                        #endif
+                        // TODO: Only let button be pressed once while waiting for response, progres view
+//                        #if !DEBUG
+//                        if (vm.isBusy) {
+//                            ProgressView()
+//                        }
+//                        #endif
                     }
                 }
                 .padding(.horizontal)
@@ -97,18 +99,6 @@ struct LoginView: View {
                 Spacer()
             }
         }
-//        .onAppear(perform: {
-//            if (vm.user != nil) {
-//                Task {
-//                    let response = try await client.getMe(user: vm.user)
-//                    if (response != nil) {
-//                        vm.user = response
-//                    } else {
-//                        vm.user = nil
-//                    }
-//                }
-//            }
-//        })
     }
 }
 

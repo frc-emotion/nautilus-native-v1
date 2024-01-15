@@ -35,6 +35,12 @@ data class User(
     val permissions = getPermissions(this)
     val isAdminOrLead = this.accountType.value >= AccountType.LEAD.value
     val isAdmin = this.accountType.value >= AccountType.ADMIN.value
+
+    fun toMutable(): MutableUser {
+        val user = this
+        return MutableUser(user._id, user.firstName, user.lastName, user.username, user.email, user.phoneNumber, user.token, user.subteam, user.grade ,user.roles, user.accountType, user.accountUpdateVersion, user.socials, user.parents, user.attendance, user.children, user.spouse, user.donationAmounts, user.employer)
+    }
+
     companion object {
         fun fromSerializable(usr: UserModel): User {
             return User(

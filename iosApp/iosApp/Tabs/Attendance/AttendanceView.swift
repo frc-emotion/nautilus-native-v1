@@ -25,7 +25,7 @@ struct AttendanceView: View {
     // AppStorage user updates automatically and stores User to the @State when it updates
     @AppStorage("User") var storedUser: String!
     @State var user: shared.User
-    @State private var meetingsPopoverDisplayed = false
+    @State var meetingsPopoverDisplayed = false
     @State private var historyPopoverDisplayed = false
     let defaults = UserDefaults.standard
     let client = shared.EmotionClient()
@@ -82,7 +82,6 @@ struct AttendanceView: View {
             }
             .navigationBarTitleDisplayMode(.inline)
             .navigationTitle("Attendance")
-
             .toolbar {
                 // view previous attendance
                 ToolbarItem(placement: .topBarLeading) {
@@ -90,6 +89,14 @@ struct AttendanceView: View {
                         historyPopoverDisplayed = true
                     } label: {
                         Image(systemName: "clock.arrow.circlepath")
+                    }
+                }
+                ToolbarItem(placement: .topBarTrailing) {
+                    Button {
+                        // refresh
+                    } label: {
+                        Image(systemName: "arrow.clockwise")
+                            .rotationEffect(.degrees(30.00))
                     }
                 }
                 // leads: view meetings
@@ -104,12 +111,14 @@ struct AttendanceView: View {
                 }
             }
             
-            .popover(isPresented: $meetingsPopoverDisplayed) {
-                MeetingsListView(user: user)
-            }
+            .popover(isPresented: $meetingsPopoverDisplayed, content: {
+                NavigationView {
+                    MeetingsListView(user: user, isPresented: $meetingsPopoverDisplayed)
+                }
+            })
             
             .popover(isPresented: $historyPopoverDisplayed) {
-                // do nothing
+                AttendedMeetingsView(user: user, isPresented: $historyPopoverDisplayed)
             }
         }
     }

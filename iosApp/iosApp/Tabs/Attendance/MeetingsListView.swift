@@ -14,6 +14,7 @@ struct MeetingsListView: View {
     @State var user: shared.User
     @State private var showingAlert = false
     @State var alertMessage = ""
+    @Binding var isPresented: Bool
     var body: some View {
         NavigationView {
             List {
@@ -21,35 +22,59 @@ struct MeetingsListView: View {
                     MeetingCreationView()
                 } label: {
                     HStack {
-                        Image(systemName: "plus")
+                        Image(systemName: "pswlus")
                         Text("Create a New Meeting")
                     }
                     .foregroundStyle(.blue)
                     .font(.body.weight(.bold))
-                    
                 }
                 
                 Section(header: Text("Meetings")) {
                     if (meetings != nil) {
                         ForEach(meetings!, id: \.self) { meeting in
-                            MeetingBar(meeting: meeting)
+                            NavigationLink {
+                                MeetingView(meeting: meeting)
+                            } label: {
+                                MeetingBar(meeting: meeting)
+                            }
+                        }
+                        NavigationLink {
+                            // ArchivedMeetingsListView()
+                        } label: {
+                            Text("Archived")
+                                .font(.body.weight(.bold))
                         }
                     }
                 }
             }
             .navigationTitle("Meetings")
             .navigationBarTitleDisplayMode(.inline)
+            .toolbar {
+                ToolbarItem(placement: .topBarLeading) {
+                    Button {
+                        
+                    } label: {
+                        Image(systemName: "arrow.clockwise")
+                            .rotationEffect(.degrees(30.00))
+                    }
+                }
+                ToolbarItem(placement: .topBarTrailing) {
+                    Button {
+                        isPresented = false
+                    } label: {
+                        Text("Done")
+                    }
+                }
+            }
         }
         .onAppear() {
             Task {
-                let response = try await shared.EmotionClient().getMeetings(user: user)
-                if (response != nil) {
-                    meetings = response
-                    print(meetings)
-                } else {
-                    alertMessage = "Unable to get list of meetings. Please try again later."
+                guard let response = try await shared.EmotionClient().getMeetings(user: user) else {alertMessage = "Unable to get list of meetings. Please try again later."
                     showingAlert = true
+                    return
                 }
+                
+                meetings = response
             }
         }
         .alert(alertMessage, isPresented: $showingAlert) {
@@ -59,5 +84,5 @@ struct MeetingsListView: View {
 }
 
 #Preview {
-    MeetingsListView(user: HelpfulVars().testuser)
+    MeetingsListView(user: HelpfulVars().testuser, isPresented: .constant(true))
 }

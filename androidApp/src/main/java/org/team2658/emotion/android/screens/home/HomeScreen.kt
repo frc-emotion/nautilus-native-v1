@@ -42,10 +42,10 @@ fun HomeScreen(ktorClient: EmotionClient, nfcViewmodel: NFCViewmodel, primaryVie
             style = MaterialTheme.typography.headlineLarge)
         Spacer(modifier = Modifier.size(32.dp))
         if ((primaryViewModel.user?.attendance?.size ?: 0) > 0) {
-            LinearProgressIndicator(progress = ((primaryViewModel.user?.attendance?.get(0)?.totalHoursLogged?.toFloat()?: 0f) / 36.0f).coerceAtMost(1.0f), modifier = Modifier
+            LinearProgressIndicator(progress = ((primaryViewModel.user?.attendance?.last()?.totalHoursLogged?.toFloat()?: 0f) / 36.0f).coerceAtMost(1.0f), modifier = Modifier
                 .height(32.dp)
                 .fillMaxWidth())
-            Text("${primaryViewModel.user?.attendance?.get(0)?.totalHoursLogged} / 36 hours", modifier = Modifier.padding(8.dp), style = MaterialTheme.typography.titleLarge)
+            Text("${primaryViewModel.user?.attendance?.last()?.totalHoursLogged} / 36 hours", modifier = Modifier.padding(8.dp), style = MaterialTheme.typography.titleLarge)
         Spacer(modifier = Modifier.size(16.dp))
         } else {
             Text("No attendance data found")

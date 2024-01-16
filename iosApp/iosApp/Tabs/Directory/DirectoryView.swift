@@ -10,75 +10,45 @@ import SwiftUI
 import shared
 
 struct DirectoryView: View {
+    // MARK: - State Properties
     @State var user: shared.User
     @State var users: [shared.User]?
     @State private var popoverShown = false
     @State private var errorLoadingUsers = false
     @State private var alertBoxShowing = false
-//    @State private var alertMsg = ""
+    @State private var selectedUser: shared.User?
+    //    @State private var alertMsg = ""
+    // MARK: - Sort Users by Subteam
+    //    var subteamSortedUsers: [shared.User]? {
+    //        if (users != nil) {
+    //            return users!.sorted { $0.subteam.description() < $1.subteam.description()}
+    //        } else {
+    //            return nil
+    //        }
+    //    }
+    
+    var subteamSortedUsers: [String: [shared.User]]? {
+        if let users = users {
+            let sortedUsers = users.sorted { $0.subteam.description() < $1.subteam.description() }
+            let groupedBySubteam = Dictionary(grouping: sortedUsers, by: { $0.subteam.description() })
+            return groupedBySubteam
+        } else {
+            return nil
+        }
+    }
+    // MARK: - Body
     var body: some View {
-        NavigationView {
-            let subteams = [shared.Subteam.executive, shared.Subteam.build, shared.Subteam.design, shared.Subteam.electrical, shared.Subteam.software, shared.Subteam.marketing]
-//            TODO: do it the proper way:
-//            var subs = shared.Subteam.entries
-            if (!errorLoadingUsers) {
-                if (users != nil) {
-                    List(subteams, id: \.self) { subteam in
-                        Section(header: Text(subteam.name)) {
-                            ForEach (users! , id: \.self) { user in
-                                if (user.subteam == subteam && user.accountType != shared.AccountType.unverified) {
-                                    NavigationLink {
-                                        UserView(user: user)
-                                    } label: {
-                                        DirectoryBar(user: user)
-                                    }
-                                }
-                            }
-                        }
-                    }
-                    .navigationTitle("People")
-                    .navigationBarTitleDisplayMode(.inline)
-                    .refreshable {
-                        Task {
-                            guard let response = try await shared.EmotionClient().getUsers(user: user) else {
-                                alertBoxShowing = true
-                                return
-                            }
-                            users = response
-                        }
-                    }
-                    .alert("Error refreshing users.\nPlease try again later.", isPresented: $alertBoxShowing) {
-                        Button("Ok", role: .cancel) {}
-                    }
-//                    .toolbar {
-//                        ToolbarItem(placement: .topBarTrailing) {
-//                            Button {
-//                                popoverShown = true
-//                            } label: {
-//                                Image(systemName: "person.crop.circle.badge.questionmark")
-//                            }
-//                        }
-//                    }
-                    .popover(isPresented: $popoverShown) {
-                        VerifyUsersView(presented: $popoverShown)
-                    }
-                } else {
-                    ProgressView()
-                }
-            }
-            else {
-                VStack {
-                    Text("Error Loading Directory")
-                        .padding(.bottom, 10)
-                    Button {
-                        
-                    } label: {
-                        Text("Retry")
-                    }
-                }
-                
+        NavigationSplitView {
+            mainListView
+                .navigationTitle("People")
+        } detail: {
+            if (selectedUser != nil) {
+                UserView(user: selectedUser!)
+            } else {
+                Text("Please select a User")
             }
         }
+        .navigationSplitViewStyle(.balanced)
         .onAppear() {
             Task {
                 guard let response = try await shared.EmotionClient().getUsers(user: user) else {
@@ -90,10 +60,42 @@ struct DirectoryView: View {
             }
         }
     }
-}
-
-struct DirectoryView_Previews: PreviewProvider {
-    static var previews: some View {
-        DirectoryView(user: HelpfulVars().testuser)
+    
+    private var mainListView: some View {
+        //        if (!errorLoadingUsers && users != nil) {
+        //            return List(subteamSortedUsers!, id: \.self, selection: $selectedUser) { (user: shared.User) in
+        //                ForEach(shared.Subteam.entries, id: \.self) { (subteam: shared.Subteam) in
+        //                    Section(header: Text(subteam.description())) {
+        //                        let nextSort = subteamSortedUsers[subteam.description()]
+        //                        ForEach(nextSort) { user in
+        //                            DirectoryBar(user: user)
+        //                        }
+        //                    }
+        //                }
+        //            }
+        //        }
+        if !errorLoadingUsers, let users = users, let subteamSortedUsers = subteamSortedUsers {
+            return AnyView (
+                List (selection: $selectedUser) {
+                    ForEach(shared.Subteam.entries, id: \.self) { (subteam: shared.Subteam) in
+                        if let nextSort = subteamSortedUsers[subteam.description()] {
+                            Section(header: Text(subteam.description())) {
+                                ForEach(nextSort, id: \.self) { user in
+                                    DirectoryBar(user: user)
+                                }
+                            }
+                        }
+                    }
+                }
+            )
+        } else {
+            return AnyView(ProgressView())
+        }
+    }
+    // MARK: - Previews
+    struct DirectoryView_Previews: PreviewProvider {
+        static var previews: some View {
+            DirectoryView(user: HelpfulVars().testuser)
+        }
     }
 }

@@ -30,7 +30,7 @@ struct AttendanceView: View {
         let hours: Int32 = if user.attendance.isEmpty {0} else {user.attendance.last?.totalHoursLogged ?? 0}
         let progress = Double(hours) / 36
         
-        NavigationView {
+        NavigationStack {
             VStack {
                 CircularProgressView(progress: progress, defaultColor: Color.green, progressColor: Color.green, innerText: "\(Int(hours))")
                     .frame(width: 150, height: 150)
@@ -39,18 +39,25 @@ struct AttendanceView: View {
                     .fontWeight(.bold)
                     .padding(.vertical, 25)
                 
+                
                 Divider()
                     .padding(.bottom, 15)
-                
-                if (errorMsg != "") {
-                    Text(errorMsg)
+                if (UIDevice.current.systemName == "iOS") {
+                    if (errorMsg != "") {
+                        Text(errorMsg)
+                            .fontWeight(.bold)
+                            .foregroundColor(Color.red)
+                            .padding(.bottom)
+                    }
+                    
+                    NFCButtonView(data: $data)
+                        .frame(width: 160, height: 50, alignment: .center)
+                } else {
+                    Text("Please use an iPhone to log attendance.")
                         .fontWeight(.bold)
                         .foregroundColor(Color.red)
                         .padding(.bottom)
                 }
-                
-                NFCButtonView(data: $data)
-                    .frame(width: 160, height: 50, alignment: .center)
             }
             
             .onChange(of: data) { newData in
@@ -77,13 +84,13 @@ struct AttendanceView: View {
             .navigationTitle("Attendance")
             .toolbar {
                 // view previous attendance
-//                ToolbarItem(placement: .topBarLeading) {
-//                    Button {
-//                        historyPopoverDisplayed = true
-//                    } label: {
-//                        Image(systemName: "clock.arrow.circlepath")
-//                    }
-//                }
+                //                ToolbarItem(placement: .topBarLeading) {
+                //                    Button {
+                //                        historyPopoverDisplayed = true
+                //                    } label: {
+                //                        Image(systemName: "clock.arrow.circlepath")
+                //                    }
+                //                }
                 ToolbarItem(placement: .topBarTrailing) {
                     Button {
                         // refresh
@@ -95,21 +102,19 @@ struct AttendanceView: View {
                 // leads: view meetings
                 ToolbarItem(placement: .topBarTrailing) {
                     if (user.accountType == shared.AccountType.lead || user.accountType == shared.AccountType.admin || user.accountType == shared.AccountType.superuser) {
-                        Button {
-                            meetingsPopoverDisplayed = true
-                        } label: {
+                        Button(action: {
+                            meetingsPopoverDisplayed.toggle()
+                        }) {
                             Image(systemName: "calendar")
+                        }
+                        .popover(isPresented: $meetingsPopoverDisplayed, arrowEdge: .bottom) {
+                            NavigationView {
+                                MeetingsListView(user: user, isPresented: $meetingsPopoverDisplayed)
+                            }
                         }
                     }
                 }
             }
-            
-            .popover(isPresented: $meetingsPopoverDisplayed, content: {
-                NavigationView {
-                    MeetingsListView(user: user, isPresented: $meetingsPopoverDisplayed)
-                }
-            })
-            
             .popover(isPresented: $historyPopoverDisplayed) {
                 AttendedMeetingsView(user: user, isPresented: $historyPopoverDisplayed)
             }

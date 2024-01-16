@@ -38,24 +38,28 @@ struct MeetingView: View {
                     
                 }
             }
-            
-            Button {
-                writer.scan(dataIn: meeting._id)
-            } label: {
-                Text("Create Meeting Tag")
-                    .frame(height: 30.0)
-                    .frame(maxWidth: .infinity)
+            if (UIDevice.current.systemName == "iOS") {
+                Button {
+                    writer.scan(dataIn: meeting._id)
+                } label: {
+                    Text("Create Meeting Tag")
+                        .frame(height: 30.0)
+                        .frame(maxWidth: .infinity)
+                }
+                .buttonStyle(.borderedProminent)
+                .padding(.vertical, 7)
+            } else {
+                Text("Please use an iPhone to create a meeting tag.")
+                    .fontWeight(.bold)
+                    .foregroundColor(Color.red)
+                    .padding(.vertical, 7)
             }
-            .buttonStyle(.borderedProminent)
-            .padding(.vertical, 7)
-            
             
             Divider()
             
             ScrollView {
                 // list users & attended status
             }
-            
         }
         .padding(.horizontal)
         .padding(.top)

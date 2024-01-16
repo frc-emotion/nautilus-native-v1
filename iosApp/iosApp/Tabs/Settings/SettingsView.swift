@@ -6,7 +6,7 @@ struct SettingsView: View {
     @EnvironmentObject var vm: UserStateViewModel
     
     var body: some View {
-        NavigationView {
+        NavigationStack {
             List {
                 Section {
                     NavigationLink {

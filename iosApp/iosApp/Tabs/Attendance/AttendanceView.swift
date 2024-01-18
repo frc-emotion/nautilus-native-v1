@@ -21,13 +21,12 @@ struct AttendanceView: View {
     //    let helpers = AttendanceHelpers()
     @State private var data: String = ""
     @State private var errorMsg: String = ""
-    @State var user: shared.User
     @State private var meetingsPopoverDisplayed = false
     @State private var historyPopoverDisplayed = false
     @EnvironmentObject var vm: UserStateViewModel
 
     var body: some View {
-        let hours: Int32 = if user.attendance.isEmpty {0} else {user.attendance.last?.totalHoursLogged ?? 0}
+        let hours: Int32 = if vm.user!.attendance.isEmpty {0} else {vm.user!.attendance[vm.user!.attendance.count - 1].totalHoursLogged}
         let progress = Double(hours) / 36
         
         NavigationStack {
@@ -63,7 +62,7 @@ struct AttendanceView: View {
             .onChange(of: data) { newData in
                 if newData != "" {
                     Task {
-                        let response = try await shared.EmotionClient().attendMeeting(user: user, meetingId: newData, tapTime: Int64((NSDate().timeIntervalSince1970) * 1000), failureCallback: { (errorMsgIn) -> () in
+                        let response = try await shared.EmotionClient().attendMeeting(user: vm.user, meetingId: newData, tapTime: Int64((NSDate().timeIntervalSince1970) * 1000), failureCallback: { (errorMsgIn) -> () in
                             
                             if let errorMsgIn = errorMsgIn.data(using: .utf8, allowLossyConversion: false) {
                                 Task {
@@ -101,7 +100,7 @@ struct AttendanceView: View {
                 }
                 // leads: view meetings
                 ToolbarItem(placement: .topBarTrailing) {
-                    if (user.accountType == shared.AccountType.lead || user.accountType == shared.AccountType.admin || user.accountType == shared.AccountType.superuser) {
+                    if (vm.user!.accountType == shared.AccountType.lead || vm.user!.accountType == shared.AccountType.admin || vm.user!.accountType == shared.AccountType.superuser) {
                         Button(action: {
                             meetingsPopoverDisplayed.toggle()
                         }) {
@@ -109,14 +108,14 @@ struct AttendanceView: View {
                         }
                         .popover(isPresented: $meetingsPopoverDisplayed, arrowEdge: .bottom) {
                             NavigationView {
-                                MeetingsListView(user: user, isPresented: $meetingsPopoverDisplayed)
+                                MeetingsListView(user: vm.user!, isPresented: $meetingsPopoverDisplayed)
                             }
                         }
                     }
                 }
             }
             .popover(isPresented: $historyPopoverDisplayed) {
-                AttendedMeetingsView(user: user, isPresented: $historyPopoverDisplayed)
+                AttendedMeetingsView(user: vm.user!, isPresented: $historyPopoverDisplayed)
             }
         }
     }
@@ -124,6 +123,10 @@ struct AttendanceView: View {
 
 struct AttendanceView_Previews: PreviewProvider {
     static var previews: some View {
-        AttendanceView(user: HelpfulVars().testuser)
+        AttendanceView().environmentObject({ () -> UserStateViewModel in
+            let vm = UserStateViewModel()
+            vm.user = HelpfulVars().testuser
+            return vm
+        }() )
     }
 }

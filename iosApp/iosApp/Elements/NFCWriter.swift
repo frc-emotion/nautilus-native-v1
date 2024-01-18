@@ -41,36 +41,31 @@ class NFCWriter: NSObject, ObservableObject, NFCNDEFReaderSessionDelegate {
         let tag = tags.first!
         session.connect(to: tag, completionHandler: {(error: Error?) in
             if error != nil {
-                session.alertMessage = "Unable to connect to tag"
-                session.invalidate()
+                session.invalidate(errorMessage: "Unable to connect to tag")
                 return
             }
             tag.queryNDEFStatus(completionHandler: {(ndefstatus: NFCNDEFStatus, capacity: Int, error: Error?) in
                 guard error == nil else {
-                    session.alertMessage = "Unable to connect to tag"
-                    session.invalidate()
+                    session.invalidate(errorMessage: "Unable to connect to tag")
                     return
                 }
                 
                 switch ndefstatus {
                 case .notSupported:
-                    session.alertMessage = "Tag is not supported"
-                    session.invalidate()
+                    session.invalidate(errorMessage: "Tag is not supported")
                 case .readOnly:
-                    session.alertMessage = "Tag is read only"
-                    session.invalidate()
+                    session.invalidate(errorMessage: "Tag is read only")
                 case .readWrite:
                     tag.writeNDEF(.init(records: [NFCNDEFPayload(format: .media, type: "application/emotion".data(using: .utf8)!, identifier: Data(), payload: "\(str)".data(using: .utf8)!)]), completionHandler: {(error: Error?) in
                         if error != nil {
-                            session.alertMessage = "Failed to write message to tag"
+                            session.invalidate(errorMessage: "Failed to write message to tag")
                         } else {
                             session.alertMessage = "Success!"
                         }
                         session.invalidate()
                     })
                 @unknown default:
-                    session.alertMessage = "Unknown tag type"
-                    session.invalidate()
+                    session.invalidate(errorMessage: "Unknown tag type")
                 }
             })
         })

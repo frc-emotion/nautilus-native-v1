@@ -37,10 +37,11 @@ struct ApplicationSwitcher: View {
                 //                        Label("Scouting", systemImage: "chart.bar.doc.horizontal.fill")
                 //                    }
                 if (vm.user!.accountType != shared.AccountType.unverified) {
-                    AttendanceView(user: vm.user!)
+                    AttendanceView()
                         .tabItem {
                             Label("Attendance", systemImage: "calendar")
                         }
+                        .environmentObject(vm)
                     
                     DirectoryView(user: vm.user!)
                         .tabItem {

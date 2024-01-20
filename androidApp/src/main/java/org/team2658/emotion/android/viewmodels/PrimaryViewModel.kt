@@ -194,8 +194,11 @@ class PrimaryViewModel(private val ktorClient: EmotionClient,
             val new = ktorClient.getMeetings(user)
             println("new: $new")
             new?.let { ls ->
+                val users = ktorClient.getUsers(user)?.let{
+                    it.associate { u -> u._id to u.username }
+                }
                 clearMeetingsCache()
-                meetingDao.insertMeetings(ls.map {mtg -> MeetingEntity.fromShared(mtg, ktorClient.getUserById(mtg.createdBy, user)?.username?: mtg.createdBy) })
+                meetingDao.insertMeetings(ls.map {mtg -> MeetingEntity.fromShared(mtg, users?.get(mtg.createdBy)?: mtg.createdBy )})
             }
 
 //            val outdated = meetingDao.getOutdated(LocalDateTime.now(ZoneOffset.UTC).toInstant(ZoneOffset.UTC).toEpochMilli())

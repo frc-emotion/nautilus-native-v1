@@ -169,9 +169,10 @@ fun AttendanceVerificationPage(viewModel: PrimaryViewModel, nfc: NFCViewmodel) {
                 ) {
                     showMeetingSuccessDialog = true
                     creationSuccessId = it._id
+                    scope.launch {
+                        loadMeetings()
+                    }
                 }
-                viewModel.syncMeetings()
-                meetings = viewModel.getMeetings()
             }
         }) {
             Text("Create Meeting")
@@ -215,7 +216,6 @@ fun AttendanceVerificationPage(viewModel: PrimaryViewModel, nfc: NFCViewmodel) {
                         .setPositiveButton("Confirm") { _: DialogInterface, _: Int ->
                             scope.launch {
                                 viewModel.deleteMeeting(meeting._id) { deletionSuccess = it }
-                                viewModel.syncMeetings()
                                 meetings = viewModel.getMeetings()
                             }
                         }
@@ -272,7 +272,7 @@ fun AttendanceVerificationPage(viewModel: PrimaryViewModel, nfc: NFCViewmodel) {
         else {
             Text(text = "No meetings available", style = MaterialTheme.typography.titleMedium)
         }
-        if(((viewModel.user?.accountType?.value ?: 0) >= AccountType.ADMIN.value) && showPast) {
+        if(viewModel.user?.isAdmin == true && showPast) {
             Spacer(modifier = Modifier.size(16.dp))
             Text(text = "Past Meetings", style = MaterialTheme.typography.headlineLarge)
             Spacer(modifier = Modifier.size(8.dp))

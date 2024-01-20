@@ -49,13 +49,6 @@ struct ApplicationSwitcher: View {
                         }
                         .environmentObject(vm)
                 }
-                //
-                //
-                //                AdminView()
-                //                    .tabItem {
-                //                        Label("Admin", systemImage: "person.badge.key.fill")
-                //                    }
-                //
                 SettingsView()
                     .navigationTitle("Settings")
                     .tabItem {

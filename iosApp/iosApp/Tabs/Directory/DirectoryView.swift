@@ -11,13 +11,13 @@ import shared
 
 struct DirectoryView: View {
     // MARK: - State Properties
-    @State var user: shared.User
     @State var users: [shared.User]?
     @State private var popoverShown = false
     @State private var errorLoadingUsers = false
     @State private var alertBoxShowing = false
     @State private var selectedUser: shared.User?
     //    @State private var alertMsg = ""
+    @EnvironmentObject var vm: UserStateViewModel
     // MARK: - Sort Users by Subteam
     //    var subteamSortedUsers: [shared.User]? {
     //        if (users != nil) {
@@ -51,7 +51,7 @@ struct DirectoryView: View {
         .navigationSplitViewStyle(.balanced)
         .onAppear() {
             Task {
-                guard let response = try await shared.EmotionClient().getUsers(user: user) else {
+                guard let response = try await shared.EmotionClient().getUsers(user: vm.user!) else {
                     errorLoadingUsers = true
                     return
                 }
@@ -74,7 +74,7 @@ struct DirectoryView: View {
         //                }
         //            }
         //        }
-        if !errorLoadingUsers, let users = users, let subteamSortedUsers = subteamSortedUsers {
+        if !errorLoadingUsers, users != nil, let subteamSortedUsers = subteamSortedUsers {
             return AnyView (
                 List (selection: $selectedUser) {
                     ForEach(shared.Subteam.entries, id: \.self) { (subteam: shared.Subteam) in
@@ -95,7 +95,11 @@ struct DirectoryView: View {
     // MARK: - Previews
     struct DirectoryView_Previews: PreviewProvider {
         static var previews: some View {
-            DirectoryView(user: HelpfulVars().testuser)
+            DirectoryView().environmentObject({ () -> UserStateViewModel in
+                let vm = UserStateViewModel()
+                vm.user = HelpfulVars().testuser
+                return vm
+            }() )
         }
     }
 }

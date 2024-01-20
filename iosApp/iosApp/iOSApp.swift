@@ -43,10 +43,11 @@ struct ApplicationSwitcher: View {
                         }
                         .environmentObject(vm)
                     
-                    DirectoryView(user: vm.user!)
+                    DirectoryView()
                         .tabItem {
                             Label("People", systemImage: "person.2.fill")
                         }
+                        .environmentObject(vm)
                 }
                 //
                 //
@@ -55,11 +56,12 @@ struct ApplicationSwitcher: View {
                 //                        Label("Admin", systemImage: "person.badge.key.fill")
                 //                    }
                 //
-                SettingsView(user: vm.user!)
+                SettingsView()
                     .navigationTitle("Settings")
                     .tabItem {
                         Label("Settings", systemImage: "gear")
                     }
+                    .environmentObject(vm)
             }
         } else {
             AuthenticationView()

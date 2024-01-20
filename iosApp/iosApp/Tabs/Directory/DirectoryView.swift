@@ -29,10 +29,10 @@ struct DirectoryView: View {
     
     var subteamSortedUsers: [String: [shared.User]]? {
         if let users = users {
-            let lastnameSortedUsers = users.sorted { $0.lastName.lowercased() < $1.lastName.lowercased() }
-            let subteamSortedUsers = lastnameSortedUsers.sorted { $0.subteam.description() < $1.subteam.description() }
-            let groupedBySubteam = Dictionary(grouping: subteamSortedUsers, by: { $0.subteam.description() })
-            return groupedBySubteam
+            var sortedUsers = users.sorted { $0.lastName.lowercased() < $1.lastName.lowercased() }
+            sortedUsers.sort { $0.accountType.value > $1.accountType.value }
+            sortedUsers.sort { $0.subteam.description() < $1.subteam.description() }
+            return Dictionary(grouping: sortedUsers, by: { $0.subteam.description() })
         } else {
             return nil
         }

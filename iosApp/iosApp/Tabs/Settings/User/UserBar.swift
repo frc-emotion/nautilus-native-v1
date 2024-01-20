@@ -21,7 +21,8 @@ struct UserBar: View {
             VStack(alignment: .leading, spacing: 2.0) {
                 Text("\(user.firstName) \(user.lastName)")
                     .font(.title)
-                Text(user.email)
+                
+                Text(user.customRoleMessage ?? (user.accountType.value >= 2 ? "\(user.subteam.description().capitalized) Team Lead" : "\(user.subteam.description().capitalized) Team Member"))
                     .font(.subheadline)
                     .foregroundColor(Color.gray)
             }

@@ -31,6 +31,8 @@ data class User(
     val spouse: User? = null,
     val donationAmounts: List<Double>? = null,
     val employer: Employer? = null,
+
+    val customRoleMessage: String? = null
 ) {
     val permissions = getPermissions(this)
     val isAdminOrLead = this.accountType.value >= AccountType.LEAD.value
@@ -38,7 +40,7 @@ data class User(
 
     fun toMutable(): MutableUser {
         val user = this
-        return MutableUser(user._id, user.firstName, user.lastName, user.username, user.email, user.phoneNumber, user.token, user.subteam, user.grade ,user.roles, user.accountType, user.accountUpdateVersion, user.socials, user.parents, user.attendance, user.children, user.spouse, user.donationAmounts, user.employer)
+        return MutableUser(user._id, user.firstName, user.lastName, user.username, user.email, user.phoneNumber, user.token, user.subteam, user.grade ,user.roles, user.accountType, user.accountUpdateVersion, user.socials, user.parents, user.attendance, user.children, user.spouse, user.donationAmounts, user.employer, user.customRoleMessage)
     }
 
     companion object {
@@ -71,7 +73,8 @@ data class User(
                 )) } ?: listOf(),
                 accountType = AccountType.of(usr.accountType),
                 attendance = usr.attendance,
-                _id = usr._id
+                _id = usr._id,
+                customRoleMessage = usr.customRoleMessage
             )
         }
 
@@ -106,7 +109,8 @@ data class User(
                 )
             )},
             accountType = this.accountType.value,
-            attendance = this.attendance
+            attendance = this.attendance,
+            customRoleMessage = this.customRoleMessage
         )
     }
 

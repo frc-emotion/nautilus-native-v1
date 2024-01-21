@@ -2,15 +2,16 @@ package org.team2658.localstorage
 
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
-import org.team2658.emotion.userauth.Subteam
-import org.team2658.emotion.userauth.User
+import org.team2658.nautilus.attendance.UserAttendance
+import org.team2658.nautilus.userauth.Subteam
+import org.team2658.nautilus.userauth.User
 
 typealias UserIDInfo = GetInfoById
 
 class UsersDB(db: AppDatabase) {
     private val users = db.usersQueries
 
-    fun insertUser(user: User) {
+    private fun insertUser(user: User) {
         users.insert(
             id = user._id,
             firstname = user.firstName,
@@ -18,18 +19,20 @@ class UsersDB(db: AppDatabase) {
             username = user.username,
             email = user.email,
             phone = user.phoneNumber,
-            token = user.token,
             subteam = user.subteam.name,
             grade = user.grade,
             accountType = user.accountType.value,
             rolesJSON = Json.encodeToString(user.roles),
             attendanceJSON = Json.encodeToString(user.attendance),
-            isLoggedInUser = false
+            isLoggedInUser = false,
         )
     }
 
-    fun insertUsers(users: List<User>) {
-        users.forEach { insertUser(it) }
+    fun insertUsers(ls: List<User>) {
+        users.transaction {
+            users.deleteNotLoggedIn()
+            ls.forEach { insertUser(it) }
+        }
     }
 
     fun identifyUser(oid: String): UserIDInfo? {
@@ -50,7 +53,7 @@ class UsersDB(db: AppDatabase) {
                     username = it.username,
                     email = it.email,
                     phoneNumber = it.phone,
-                    token = it.token,
+                    token = null,
                     subteam = try {
                         Subteam.valueOf(it.subteam.trim().uppercase())
                     } catch (_: Exception) {
@@ -58,9 +61,9 @@ class UsersDB(db: AppDatabase) {
                     },
                     grade = it.grade,
                     roles = Json.decodeFromString(it.rolesJSON),
-                    accountType = org.team2658.emotion.userauth.AccountType.of(it.accountType),
+                    accountType = org.team2658.nautilus.userauth.AccountType.of(it.accountType),
                     attendance = Json.decodeFromString(it.attendanceJSON),
-                    _id = it.id
+                    _id = it.id,
                 )
             }
         } catch (e: Exception) {
@@ -78,7 +81,7 @@ class UsersDB(db: AppDatabase) {
                     username = it.username,
                     email = it.email,
                     phoneNumber = it.phone,
-                    token = it.token,
+                    token = null,
                     subteam = try {
                         Subteam.valueOf(it.subteam.trim().uppercase())
                     } catch (_: Exception) {
@@ -86,9 +89,9 @@ class UsersDB(db: AppDatabase) {
                     },
                     grade = it.grade,
                     roles = Json.decodeFromString(it.rolesJSON),
-                    accountType = org.team2658.emotion.userauth.AccountType.of(it.accountType),
+                    accountType = org.team2658.nautilus.userauth.AccountType.of(it.accountType),
                     attendance = Json.decodeFromString(it.attendanceJSON),
-                    _id = it.id
+                    _id = it.id,
                 )
             }
         } catch (e: Exception) {
@@ -106,7 +109,7 @@ class UsersDB(db: AppDatabase) {
                     username = it.username,
                     email = it.email,
                     phoneNumber = it.phone,
-                    token = it.token,
+                    token = null,
                     subteam = try {
                         Subteam.valueOf(it.subteam.trim().uppercase())
                     } catch (_: Exception) {
@@ -114,9 +117,9 @@ class UsersDB(db: AppDatabase) {
                     },
                     grade = it.grade,
                     roles = Json.decodeFromString(it.rolesJSON),
-                    accountType = org.team2658.emotion.userauth.AccountType.of(it.accountType),
+                    accountType = org.team2658.nautilus.userauth.AccountType.of(it.accountType),
                     attendance = Json.decodeFromString(it.attendanceJSON),
-                    _id = it.id
+                    _id = it.id,
                 )
             }
         } catch (e: Exception) {
@@ -134,7 +137,7 @@ class UsersDB(db: AppDatabase) {
                     username = it.username,
                     email = it.email,
                     phoneNumber = it.phone,
-                    token = it.token,
+                    token = null,
                     subteam = try {
                         Subteam.valueOf(it.subteam.trim().uppercase())
                     } catch (_: Exception) {
@@ -142,9 +145,9 @@ class UsersDB(db: AppDatabase) {
                     },
                     grade = it.grade,
                     roles = Json.decodeFromString(it.rolesJSON),
-                    accountType = org.team2658.emotion.userauth.AccountType.of(it.accountType),
+                    accountType = org.team2658.nautilus.userauth.AccountType.of(it.accountType),
                     attendance = Json.decodeFromString(it.attendanceJSON),
-                    _id = it.id
+                    _id = it.id,
                 )
             }
         } catch (e: Exception) {
@@ -153,7 +156,7 @@ class UsersDB(db: AppDatabase) {
         }
     }
 
-    fun getLoggedInUser(): User? {
+    fun getLoggedInUser(token: String?): User? {
         return try {
             users.getLoggedInUser().executeAsOneOrNull()?.let {
                 User(
@@ -162,7 +165,7 @@ class UsersDB(db: AppDatabase) {
                     username = it.username,
                     email = it.email,
                     phoneNumber = it.phone,
-                    token = it.token,
+                    token = token,
                     subteam = try {
                         Subteam.valueOf(it.subteam.trim().uppercase())
                     } catch (_: Exception) {
@@ -170,9 +173,9 @@ class UsersDB(db: AppDatabase) {
                     },
                     grade = it.grade,
                     roles = Json.decodeFromString(it.rolesJSON),
-                    accountType = org.team2658.emotion.userauth.AccountType.of(it.accountType),
+                    accountType = org.team2658.nautilus.userauth.AccountType.of(it.accountType),
                     attendance = Json.decodeFromString(it.attendanceJSON),
-                    _id = it.id
+                    _id = it.id,
                 )
             }
         } catch (e: Exception) {
@@ -181,7 +184,7 @@ class UsersDB(db: AppDatabase) {
         }
     }
 
-    fun updateLoggedInUser(user: User): User? {
+    fun updateLoggedInUser(user: User, setToken: (String?) -> Unit): User? {
         return try {
         users.transaction {
             users.deleteLoggedIn()
@@ -192,16 +195,16 @@ class UsersDB(db: AppDatabase) {
                 username = user.username,
                 email = user.email,
                 phone = user.phoneNumber,
-                token = user.token,
                 subteam = user.subteam.name,
                 grade = user.grade,
                 accountType = user.accountType.value,
                 rolesJSON = Json.encodeToString(user.roles),
                 attendanceJSON = Json.encodeToString(user.attendance),
-                isLoggedInUser = true
+                isLoggedInUser = true,
             )
         }
-        getLoggedInUser()
+        setToken(user.token)
+        getLoggedInUser(user.token)
         } catch (e: Exception) {
             e.printStackTrace()
             null
@@ -212,11 +215,18 @@ class UsersDB(db: AppDatabase) {
         users.deleteOne(user._id)
     }
 
+    fun getMyAttendance(): List<UserAttendance>? {
+        return users.getMyAttendance().executeAsOneOrNull()?.let {
+            Json.decodeFromString(it)
+        }
+    }
+
     fun clearUsers() {
         users.deleteNotLoggedIn()
     }
 
-    fun logoutUser() {
+    fun logoutUser(setToken: (String?) -> Unit) {
         users.deleteLoggedIn()
+        setToken(null)
     }
 }

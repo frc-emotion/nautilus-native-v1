@@ -6,7 +6,7 @@ plugins {
 }
 
 android {
-    namespace = "org.team2658.emotion.android"
+    namespace = "org.team2658.nautilus.android"
     compileSdk = 34
     defaultConfig {
         applicationId = "org.team2658.scouting"

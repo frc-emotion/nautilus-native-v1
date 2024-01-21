@@ -5,12 +5,13 @@ CREATE TABLE meeting (
     type TEXT NOT NULL,
     description TEXT NOT NULL,
     value INTEGER NOT NULL,
-    createdBy TEXT NOT NULL
+    createdBy TEXT NOT NULL,
+    attendance_period TEXT
 );
 
 insertOne:
-INSERT INTO meeting (id, startTime, endTime, type, description, value, createdBy)
-VALUES (?, ?, ?, ?, ?, ?, ?);
+INSERT INTO meeting (id, startTime, endTime, type, description, value, createdBy, attendance_period)
+VALUES (?, ?, ?, ?, ?, ?, ?, ?);
 
 removeAll:
 DELETE FROM meeting;
@@ -18,26 +19,14 @@ DELETE FROM meeting;
 removeOne:
 DELETE FROM meeting WHERE id = ?;
 
-getAll:
-SELECT * FROM meeting;
-
 getAllWithUsername:
 SELECT meeting.*, username FROM meeting LEFT OUTER JOIN user ON meeting.createdBy = user.id;
 
-getOne:
-SELECT * FROM meeting WHERE id = ?;
-
 getOneWithUsername:
-SELECT meeting.*, username FROM meeting LEFT OUTER JOIN user ON meeting.createdBy = user.id WHERE meeting.id = ?;
-
-getCurrent:
-SELECT * FROM meeting WHERE endTime >= :currentTime ORDER BY startTime DESC;
+SELECT meeting.*, username FROM meeting LEFT OUTER JOIN user ON meeting.createdBy = user.id WHERE meeting.id = ? LIMIT 1;
 
 getCurrentWithUsername:
 SELECT meeting.*, username FROM meeting LEFT OUTER JOIN user ON meeting.createdBy = user.id WHERE endTime >= :currentTime ORDER BY startTime DESC;
-
-getOutdated:
-SELECT * FROM meeting WHERE endTime < :currentTime ORDER BY startTime DESC;
 
 getOutdatedWithUsername:
 SELECT meeting.*, username FROM meeting LEFT OUTER JOIN user ON meeting.createdBy = user.id WHERE endTime < :currentTime ORDER BY startTime DESC;

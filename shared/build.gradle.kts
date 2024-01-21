@@ -39,6 +39,7 @@ kotlin {
                 implementation("io.ktor:ktor-client-content-negotiation:$ktorVersion")
                 implementation("io.ktor:ktor-serialization-kotlinx-json:$ktorVersion")
                 implementation("app.cash.sqldelight:runtime:$sqlDelightVersion")
+                implementation("app.cash.sqldelight:primitive-adapters:$sqlDelightVersion")
             }
         }
         val commonTest by getting {
@@ -64,7 +65,7 @@ kotlin {
 }
 
 android {
-    namespace = "org.team2658.emotion"
+    namespace = "org.team2658.nautilus"
     compileSdk = 34
     defaultConfig {
         minSdk = 26

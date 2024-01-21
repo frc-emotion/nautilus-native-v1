@@ -35,7 +35,7 @@ getAll:
 SELECT * FROM crescendo;
 
 getOne:
-SELECT * FROM crescendo WHERE id = ?;
+SELECT * FROM crescendo WHERE id = ? LIMIT 1;
 
 deleteOne:
 DELETE FROM crescendo WHERE id = ?;

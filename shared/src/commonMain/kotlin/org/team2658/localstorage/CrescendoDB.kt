@@ -1,11 +1,11 @@
 package org.team2658.localstorage
 
-import org.team2658.emotion.scouting.scoutingdata.Crescendo
-import org.team2658.emotion.scouting.scoutingdata.CrescendoAuto
-import org.team2658.emotion.scouting.scoutingdata.CrescendoRankingPoints
-import org.team2658.emotion.scouting.scoutingdata.CrescendoStage
-import org.team2658.emotion.scouting.scoutingdata.CrescendoStageState
-import org.team2658.emotion.scouting.scoutingdata.CrescendoTeleop
+import org.team2658.nautilus.scouting.scoutingdata.Crescendo
+import org.team2658.nautilus.scouting.scoutingdata.CrescendoAuto
+import org.team2658.nautilus.scouting.scoutingdata.CrescendoRankingPoints
+import org.team2658.nautilus.scouting.scoutingdata.CrescendoStage
+import org.team2658.nautilus.scouting.scoutingdata.CrescendoStageState
+import org.team2658.nautilus.scouting.scoutingdata.CrescendoTeleop
 
 class CrescendoDB(db: AppDatabase) {
     private val dbQuery = db.crescendosQueries

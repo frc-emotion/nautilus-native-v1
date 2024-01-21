@@ -8,7 +8,6 @@ CREATE TABLE user (
     username TEXT UNIQUE NOT NULL,
     email TEXT UNIQUE NOT NULL,
     phone TEXT UNIQUE NOT NULL,
-    token TEXT,
     subteam TEXT NOT NULL,
     grade INTEGER AS Int NOT NULL,
     rolesJSON TEXT NOT NULL,
@@ -18,8 +17,8 @@ CREATE TABLE user (
 );
 
 insert:
-INSERT INTO user (id, firstname, lastname, username, email, phone, token, subteam, grade, rolesJSON, accountType, attendanceJSON, isLoggedInUser)
-VALUES (?,  ?,  ?,  ?,  ?,  ?,  ?,  ?,  ?,  ?,  ?,  ?,  ?);
+INSERT INTO user (id, firstname, lastname, username, email, phone, subteam, grade, rolesJSON, accountType, attendanceJSON, isLoggedInUser)
+VALUES (?,  ?,  ?,  ?,  ?,  ?,  ?,  ?,  ?,  ?,?,  ?);
 
 deleteLoggedIn:
 DELETE FROM user WHERE isLoggedInUser = 1;
@@ -29,6 +28,9 @@ DELETE FROM user WHERE isLoggedInUser = 0;
 
 getLoggedInUser:
 SELECT * FROM user WHERE isLoggedInUser = 1 LIMIT 1;
+
+getMyAttendance:
+SELECT attendanceJSON FROM user WHERE isLoggedInUser = 1 LIMIT 1;
 
 getNotLoggedIn:
 SELECT * FROM user WHERE isLoggedInUser = 0;

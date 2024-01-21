@@ -1,12 +1,12 @@
 package org.team2658.localstorage
 
-import org.team2658.emotion.attendance.Meeting
+import org.team2658.nautilus.attendance.Meeting
 
 internal class MeetingDB(db: AppDatabase) {
     private val dbQuery = db.meetingsQueries
 
     fun getAll(): List<Meeting> {
-        return this.dbQuery.getAll().executeAsList().map {
+        return this.dbQuery.getAllWithUsername().executeAsList().map {
             Meeting(
                 _id = it.id,
                 startTime = it.startTime,
@@ -14,24 +14,9 @@ internal class MeetingDB(db: AppDatabase) {
                 type = it.type,
                 description = it.description,
                 value = it.value_.toInt(),
-                createdBy = it.createdBy
-            )
-        }
-    }
-
-    fun getAllWithUsernames(): List<Pair<Meeting, String?>> {
-        return this.dbQuery.getAllWithUsername().executeAsList().map {
-            Pair(
-                Meeting(
-                    _id = it.id,
-                    startTime = it.startTime,
-                    endTime = it.endTime,
-                    type = it.type,
-                    description = it.description,
-                    value = it.value_.toInt(),
-                    createdBy = it.createdBy
-                ),
-                it.username
+                createdBy = it.createdBy,
+                attendancePeriod = it.attendance_period,
+                username = it.username
             )
         }
     }
@@ -44,12 +29,20 @@ internal class MeetingDB(db: AppDatabase) {
             type = meeting.type,
             description = meeting.description,
             value_ = meeting.value.toLong(),
-            createdBy = meeting.createdBy
+            createdBy = meeting.createdBy,
+            attendance_period = meeting.attendancePeriod
         )
     }
 
     fun insert(meetings: List<Meeting>) {
         meetings.forEach { this.insert(it) }
+    }
+
+    fun refresh(new: List<Meeting>) {
+        this.dbQuery.transaction {
+            deleteAll()
+            insert(new)
+        }
     }
 
     fun delete(id: String) {
@@ -65,7 +58,7 @@ internal class MeetingDB(db: AppDatabase) {
     }
 
     fun getCurrent(currentTime: Long): List<Meeting> {
-        return this.dbQuery.getCurrent(currentTime).executeAsList().map {
+        return this.dbQuery.getCurrentWithUsername(currentTime).executeAsList().map {
             Meeting(
                 _id = it.id,
                 startTime = it.startTime,
@@ -73,30 +66,15 @@ internal class MeetingDB(db: AppDatabase) {
                 type = it.type,
                 description = it.description,
                 value = it.value_.toInt(),
-                createdBy = it.createdBy
-            )
-        }
-    }
-
-    fun getCurrentWithUsernames(currentTime: Long): List<Pair<Meeting, String?>> {
-        return this.dbQuery.getCurrentWithUsername(currentTime).executeAsList().map {
-            Pair(
-                Meeting(
-                    _id = it.id,
-                    startTime = it.startTime,
-                    endTime = it.endTime,
-                    type = it.type,
-                    description = it.description,
-                    value = it.value_.toInt(),
-                    createdBy = it.createdBy
-                ),
-                it.username
+                createdBy = it.createdBy,
+                attendancePeriod = it.attendance_period,
+                username = it.username
             )
         }
     }
 
     fun getOutdated(currentTime: Long): List<Meeting> {
-        return this.dbQuery.getOutdated(currentTime).executeAsList().map {
+        return this.dbQuery.getOutdatedWithUsername(currentTime).executeAsList().map {
             Meeting(
                 _id = it.id,
                 startTime = it.startTime,
@@ -104,30 +82,15 @@ internal class MeetingDB(db: AppDatabase) {
                 type = it.type,
                 description = it.description,
                 value = it.value_.toInt(),
-                createdBy = it.createdBy
-            )
-        }
-    }
-
-    fun getOutdatedWithUsernames(currentTime: Long): List<Pair<Meeting, String?>> {
-        return this.dbQuery.getOutdatedWithUsername(currentTime).executeAsList().map {
-            Pair(
-                Meeting(
-                    _id = it.id,
-                    startTime = it.startTime,
-                    endTime = it.endTime,
-                    type = it.type,
-                    description = it.description,
-                    value = it.value_.toInt(),
-                    createdBy = it.createdBy
-                ),
-                it.username
+                createdBy = it.createdBy,
+                attendancePeriod = it.attendance_period,
+                username = it.username
             )
         }
     }
 
     fun getOne(id: String): Meeting? {
-        return this.dbQuery.getOne(id).executeAsOneOrNull()?.let {
+        return this.dbQuery.getOneWithUsername(id).executeAsOneOrNull()?.let {
             Meeting(
                 _id = it.id,
                 startTime = it.startTime,
@@ -135,24 +98,9 @@ internal class MeetingDB(db: AppDatabase) {
                 type = it.type,
                 description = it.description,
                 value = it.value_.toInt(),
-                createdBy = it.createdBy
-            )
-        }
-    }
-
-    fun getOneWithUsername(id: String): Pair<Meeting, String?>? {
-        return this.dbQuery.getOneWithUsername(id).executeAsOneOrNull()?.let {
-            Pair(
-                Meeting(
-                    _id = it.id,
-                    startTime = it.startTime,
-                    endTime = it.endTime,
-                    type = it.type,
-                    description = it.description,
-                    value = it.value_.toInt(),
-                    createdBy = it.createdBy
-                ),
-                it.username
+                createdBy = it.createdBy,
+                attendancePeriod = it.attendance_period,
+                username = it.username
             )
         }
     }

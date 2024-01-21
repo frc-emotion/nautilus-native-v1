@@ -1,13 +1,11 @@
 CREATE TABLE AttendanceLogsUploadCache (
     meeting_id TEXT UNIQUE NOT NULL PRIMARY KEY,
-    tap_time INTEGER NOT NULL
+    tap_time INTEGER NOT NULL,
+    verifiedBy TEXT NOT NULL
 );
 
 insert:
-INSERT INTO AttendanceLogsUploadCache (meeting_id, tap_time) VALUES (?, ?);
-
-select:
-SELECT * FROM AttendanceLogsUploadCache WHERE meeting_id = ?;
+INSERT INTO AttendanceLogsUploadCache (meeting_id, tap_time, verifiedBy) VALUES (?, ?, ?);
 
 delete:
 DELETE FROM AttendanceLogsUploadCache WHERE meeting_id = ?;

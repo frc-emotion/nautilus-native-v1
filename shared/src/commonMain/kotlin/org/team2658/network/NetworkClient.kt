@@ -258,12 +258,13 @@ class NetworkClient {
             else return Result.Error(KtorError.AUTH)
         }
 
-        override suspend fun attendMeeting(user: User?, meetingId: String, tapTime: Long, failureCallback: (String) -> Unit, ): Result<User, KtorError> {
+        override suspend fun attendMeeting(user: User?, meetingId: String, tapTime: Long, verifiedBy: String, failureCallback: (String) -> Unit, ): Result<User, KtorError> {
             return if(user != null && user.token?.isNotBlank() == true ) {
                 return try {
                     val response = client.submitForm(url = ROUTES.ATTEND_MEETING, formParameters = parameters {
                         append("meetingId", meetingId)
                         append("tapTime", tapTime.toString())
+                        append("verifiedBy", verifiedBy)
                     }) {
                         header(HttpHeaders.Authorization, "Bearer ${user.token}")
                     }.body<UserModel>()
@@ -370,7 +371,7 @@ class NetworkClient {
     interface AttendanceNamespace {
         suspend fun createMeeting(user: User?, startTime: Long, endTime: Long, type: String, description: String, value: Int, attendancePeriod: String, errorCallback: (String)-> Unit = {}): Result<Meeting, KtorError>
         suspend fun getMeetings(user: User?): Result<List<Meeting>, KtorError>
-        suspend fun attendMeeting( user: User?, meetingId: String, tapTime: Long, failureCallback: (String) -> Unit = {}, ): Result<User, KtorError>
+        suspend fun attendMeeting( user: User?, meetingId: String, tapTime: Long, verifiedBy: String, failureCallback: (String) -> Unit = {}, ): Result<User, KtorError>
         suspend fun deleteMeeting(id: String, user: User?): Result<Unit, KtorError>
     }
 

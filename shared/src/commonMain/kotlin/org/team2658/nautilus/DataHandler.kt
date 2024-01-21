@@ -139,6 +139,7 @@ class DataHandler(databaseDriverFactory: DatabaseDriverFactory, getToken: () -> 
                         user = users.loadLoggedIn(),
                         meetingId = mtg.meeting_id,
                         tapTime = mtg.tap_time,
+                        verifiedBy = mtg.verifiedBy,
                         failureCallback = {}
                     ).let {
                         when (it) {
@@ -265,6 +266,7 @@ class DataHandler(databaseDriverFactory: DatabaseDriverFactory, getToken: () -> 
         override fun attend(
             meetingId: String,
             time: Long,
+            verifiedBy: String,
             onError: (String) -> Unit,
             onSuccess: () -> Unit
         ) {
@@ -275,6 +277,7 @@ class DataHandler(databaseDriverFactory: DatabaseDriverFactory, getToken: () -> 
                         meetingId = meetingId,
                         tapTime = time,
                         failureCallback = onError,
+                        verifiedBy = verifiedBy
                     ).let {
 //                        usersDB.updateLoggedInUser(it, setToken)
 //                        onSuccess()
@@ -288,7 +291,7 @@ class DataHandler(databaseDriverFactory: DatabaseDriverFactory, getToken: () -> 
                                 KtorError.AUTH -> {}
                                 is KtorError.CLIENT -> {}
                                 KtorError.IO -> {
-                                    attendanceUploadCache.insert(meetingId, time)
+                                    attendanceUploadCache.insert(meetingId, time, verifiedBy)
                                 }
                                 is KtorError.SERVER -> {}
                             }
@@ -422,6 +425,7 @@ class DataHandler(databaseDriverFactory: DatabaseDriverFactory, getToken: () -> 
         fun attend(
             meetingId: String,
             time: Long,
+            verifiedBy: String,
             onError: (String) -> Unit,
             onSuccess: () -> Unit,
         )

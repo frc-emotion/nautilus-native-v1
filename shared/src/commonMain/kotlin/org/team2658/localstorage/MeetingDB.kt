@@ -16,7 +16,8 @@ internal class MeetingDB(db: AppDatabase) {
                 value = it.value_.toInt(),
                 createdBy = it.createdBy,
                 attendancePeriod = it.attendance_period,
-                username = it.username
+                username = it.username,
+                isArchived = it.archived
             )
         }
     }
@@ -28,9 +29,10 @@ internal class MeetingDB(db: AppDatabase) {
             endTime = meeting.endTime,
             type = meeting.type,
             description = meeting.description,
-            value_ = meeting.value.toLong(),
+            value = meeting.value.toLong(),
             createdBy = meeting.createdBy,
-            attendance_period = meeting.attendancePeriod
+            attendance_period = meeting.attendancePeriod,
+            archived = meeting.isArchived,
         )
     }
 
@@ -68,7 +70,8 @@ internal class MeetingDB(db: AppDatabase) {
                 value = it.value_.toInt(),
                 createdBy = it.createdBy,
                 attendancePeriod = it.attendance_period,
-                username = it.username
+                username = it.username,
+                isArchived = it.archived
             )
         }
     }
@@ -84,7 +87,8 @@ internal class MeetingDB(db: AppDatabase) {
                 value = it.value_.toInt(),
                 createdBy = it.createdBy,
                 attendancePeriod = it.attendance_period,
-                username = it.username
+                username = it.username,
+                isArchived = it.archived
             )
         }
     }
@@ -100,7 +104,25 @@ internal class MeetingDB(db: AppDatabase) {
                 value = it.value_.toInt(),
                 createdBy = it.createdBy,
                 attendancePeriod = it.attendance_period,
-                username = it.username
+                username = it.username,
+                isArchived = it.archived
+            )
+        }
+    }
+
+    fun getArchived(): List<Meeting> {
+        return this.dbQuery.getArchivedWithUsername().executeAsList().map {
+            Meeting(
+                _id = it.id,
+                startTime = it.startTime,
+                endTime = it.endTime,
+                type = it.type,
+                description = it.description,
+                value = it.value_.toInt(),
+                createdBy = it.createdBy,
+                attendancePeriod = it.attendance_period,
+                username = it.username,
+                isArchived = it.archived
             )
         }
     }

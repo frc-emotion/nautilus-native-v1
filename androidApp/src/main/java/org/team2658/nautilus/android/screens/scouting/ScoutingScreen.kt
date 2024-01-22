@@ -4,11 +4,11 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import org.team2658.nautilus.android.ui.composables.Screen
-import org.team2658.nautilus.android.viewmodels.PrimaryViewModel
+import org.team2658.nautilus.android.viewmodels.MainViewModel
 
 @Composable
 fun ScoutingScreen(
-    primaryViewModel: PrimaryViewModel
+    primaryViewModel: MainViewModel
 ) {
     Screen {
 //        ChargedUpForm(primaryViewModel = primaryViewModel)

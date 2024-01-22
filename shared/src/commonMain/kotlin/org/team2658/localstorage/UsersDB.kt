@@ -3,8 +3,10 @@ package org.team2658.localstorage
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
 import org.team2658.nautilus.attendance.UserAttendance
+import org.team2658.nautilus.userauth.Role
 import org.team2658.nautilus.userauth.Subteam
 import org.team2658.nautilus.userauth.User
+import org.team2658.network.models.RoleModel
 
 typealias UserIDInfo = GetInfoById
 
@@ -22,7 +24,7 @@ class UsersDB(db: AppDatabase) {
             subteam = user.subteam.name,
             grade = user.grade,
             accountType = user.accountType.value,
-            rolesJSON = Json.encodeToString(user.roles),
+            rolesJSON = Json.encodeToString(user.roles.map{ it.toSerializeable() }),
             attendanceJSON = Json.encodeToString(user.attendance),
             isLoggedInUser = false,
         )
@@ -46,24 +48,24 @@ class UsersDB(db: AppDatabase) {
 
     fun getUser(oid: String): User? {
         return try {
-            users.getById(oid).executeAsOneOrNull()?.let {
+            users.getById(oid).executeAsOneOrNull()?.let { usr ->
                 User(
-                    firstName = it.firstname,
-                    lastName = it.lastname,
-                    username = it.username,
-                    email = it.email,
-                    phoneNumber = it.phone,
+                    firstName = usr.firstname,
+                    lastName = usr.lastname,
+                    username = usr.username,
+                    email = usr.email,
+                    phoneNumber = usr.phone,
                     token = null,
                     subteam = try {
-                        Subteam.valueOf(it.subteam.trim().uppercase())
+                        Subteam.valueOf(usr.subteam.trim().uppercase())
                     } catch (_: Exception) {
                         Subteam.NONE
                     },
-                    grade = it.grade,
-                    roles = Json.decodeFromString(it.rolesJSON),
-                    accountType = org.team2658.nautilus.userauth.AccountType.of(it.accountType),
-                    attendance = Json.decodeFromString(it.attendanceJSON),
-                    _id = it.id,
+                    grade = usr.grade,
+                    roles = Json.decodeFromString<List<RoleModel>>(usr.rolesJSON).map { Role.fromSerializeable(it) },
+                    accountType = org.team2658.nautilus.userauth.AccountType.of(usr.accountType),
+                    attendance = Json.decodeFromString(usr.attendanceJSON),
+                    _id = usr.id,
                 )
             }
         } catch (e: Exception) {
@@ -74,24 +76,24 @@ class UsersDB(db: AppDatabase) {
 
     fun getUserByUsername(username: String): User? {
         return try {
-            users.getByUsername(username).executeAsOneOrNull()?.let {
+            users.getByUsername(username).executeAsOneOrNull()?.let { usr ->
                 User(
-                    firstName = it.firstname,
-                    lastName = it.lastname,
-                    username = it.username,
-                    email = it.email,
-                    phoneNumber = it.phone,
+                    firstName = usr.firstname,
+                    lastName = usr.lastname,
+                    username = usr.username,
+                    email = usr.email,
+                    phoneNumber = usr.phone,
                     token = null,
                     subteam = try {
-                        Subteam.valueOf(it.subteam.trim().uppercase())
+                        Subteam.valueOf(usr.subteam.trim().uppercase())
                     } catch (_: Exception) {
                         Subteam.NONE
                     },
-                    grade = it.grade,
-                    roles = Json.decodeFromString(it.rolesJSON),
-                    accountType = org.team2658.nautilus.userauth.AccountType.of(it.accountType),
-                    attendance = Json.decodeFromString(it.attendanceJSON),
-                    _id = it.id,
+                    grade = usr.grade,
+                    roles = Json.decodeFromString<List<RoleModel>>(usr.rolesJSON).map { Role.fromSerializeable(it) },
+                    accountType = org.team2658.nautilus.userauth.AccountType.of(usr.accountType),
+                    attendance = Json.decodeFromString(usr.attendanceJSON),
+                    _id = usr.id,
                 )
             }
         } catch (e: Exception) {
@@ -102,24 +104,24 @@ class UsersDB(db: AppDatabase) {
 
     fun getUserByEmail(email: String): User? {
         return try {
-            users.getByEmail(email).executeAsOneOrNull()?.let {
+            users.getByEmail(email).executeAsOneOrNull()?.let { usr ->
                 User(
-                    firstName = it.firstname,
-                    lastName = it.lastname,
-                    username = it.username,
-                    email = it.email,
-                    phoneNumber = it.phone,
+                    firstName = usr.firstname,
+                    lastName = usr.lastname,
+                    username = usr.username,
+                    email = usr.email,
+                    phoneNumber = usr.phone,
                     token = null,
                     subteam = try {
-                        Subteam.valueOf(it.subteam.trim().uppercase())
+                        Subteam.valueOf(usr.subteam.trim().uppercase())
                     } catch (_: Exception) {
                         Subteam.NONE
                     },
-                    grade = it.grade,
-                    roles = Json.decodeFromString(it.rolesJSON),
-                    accountType = org.team2658.nautilus.userauth.AccountType.of(it.accountType),
-                    attendance = Json.decodeFromString(it.attendanceJSON),
-                    _id = it.id,
+                    grade = usr.grade,
+                    roles = Json.decodeFromString<List<RoleModel>>(usr.rolesJSON).map { Role.fromSerializeable(it) },
+                    accountType = org.team2658.nautilus.userauth.AccountType.of(usr.accountType),
+                    attendance = Json.decodeFromString(usr.attendanceJSON),
+                    _id = usr.id,
                 )
             }
         } catch (e: Exception) {
@@ -130,24 +132,24 @@ class UsersDB(db: AppDatabase) {
 
     fun getUsers(): List<User>? {
         return try {
-            users.getNotLoggedIn().executeAsList().map {
+            users.getNotLoggedIn().executeAsList().map { usr ->
                 User(
-                    firstName = it.firstname,
-                    lastName = it.lastname,
-                    username = it.username,
-                    email = it.email,
-                    phoneNumber = it.phone,
+                    firstName = usr.firstname,
+                    lastName = usr.lastname,
+                    username = usr.username,
+                    email = usr.email,
+                    phoneNumber = usr.phone,
                     token = null,
                     subteam = try {
-                        Subteam.valueOf(it.subteam.trim().uppercase())
+                        Subteam.valueOf(usr.subteam.trim().uppercase())
                     } catch (_: Exception) {
                         Subteam.NONE
                     },
-                    grade = it.grade,
-                    roles = Json.decodeFromString(it.rolesJSON),
-                    accountType = org.team2658.nautilus.userauth.AccountType.of(it.accountType),
-                    attendance = Json.decodeFromString(it.attendanceJSON),
-                    _id = it.id,
+                    grade = usr.grade,
+                    roles = Json.decodeFromString<List<RoleModel>>(usr.rolesJSON).map { Role.fromSerializeable(it) },
+                    accountType = org.team2658.nautilus.userauth.AccountType.of(usr.accountType),
+                    attendance = Json.decodeFromString(usr.attendanceJSON),
+                    _id = usr.id,
                 )
             }
         } catch (e: Exception) {
@@ -158,24 +160,24 @@ class UsersDB(db: AppDatabase) {
 
     fun getLoggedInUser(token: String?): User? {
         return try {
-            users.getLoggedInUser().executeAsOneOrNull()?.let {
+            users.getLoggedInUser().executeAsOneOrNull()?.let { usr ->
                 User(
-                    firstName = it.firstname,
-                    lastName = it.lastname,
-                    username = it.username,
-                    email = it.email,
-                    phoneNumber = it.phone,
+                    firstName = usr.firstname,
+                    lastName = usr.lastname,
+                    username = usr.username,
+                    email = usr.email,
+                    phoneNumber = usr.phone,
                     token = token,
                     subteam = try {
-                        Subteam.valueOf(it.subteam.trim().uppercase())
+                        Subteam.valueOf(usr.subteam.trim().uppercase())
                     } catch (_: Exception) {
                         Subteam.NONE
                     },
-                    grade = it.grade,
-                    roles = Json.decodeFromString(it.rolesJSON),
-                    accountType = org.team2658.nautilus.userauth.AccountType.of(it.accountType),
-                    attendance = Json.decodeFromString(it.attendanceJSON),
-                    _id = it.id,
+                    grade = usr.grade,
+                    roles = Json.decodeFromString<List<RoleModel>>(usr.rolesJSON).map { Role.fromSerializeable(it) },
+                    accountType = org.team2658.nautilus.userauth.AccountType.of(usr.accountType),
+                    attendance = Json.decodeFromString(usr.attendanceJSON),
+                    _id = usr.id,
                 )
             }
         } catch (e: Exception) {
@@ -198,7 +200,7 @@ class UsersDB(db: AppDatabase) {
                 subteam = user.subteam.name,
                 grade = user.grade,
                 accountType = user.accountType.value,
-                rolesJSON = Json.encodeToString(user.roles),
+                rolesJSON = Json.encodeToString(user.roles.map { it.toSerializeable() }),
                 attendanceJSON = Json.encodeToString(user.attendance),
                 isLoggedInUser = true,
             )

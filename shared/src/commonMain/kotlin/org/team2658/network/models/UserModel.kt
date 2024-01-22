@@ -16,7 +16,7 @@ data class UserModel(
     val grade: Int? = null,
     val roles: List<RoleModel>? = null,
     val accountType: Int? = null, // isAdmin && isVerified are NOT supported. This client was developed for API v2.0.0 and later
-    val attendance: Map<String,UserAttendance>,
+    val attendance: Map<String,UserAttendance> = mapOf(),
 //    val accountUpdateVersion: Int? = null,
 //    val socials: Array<String>? = null,
 //    val parents: Array<User>? = null,

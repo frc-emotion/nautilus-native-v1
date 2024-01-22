@@ -3,7 +3,6 @@ package org.team2658.nautilus.android
 import android.app.PendingIntent
 import android.content.Intent
 import android.content.IntentFilter
-import android.content.SharedPreferences
 import android.net.ConnectivityManager
 import android.nfc.NdefMessage
 import android.nfc.NfcAdapter
@@ -25,7 +24,6 @@ import androidx.compose.ui.Modifier
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewmodel.compose.viewModel
-import androidx.room.Room
 import androidx.work.ExistingPeriodicWorkPolicy
 import androidx.work.PeriodicWorkRequestBuilder
 import androidx.work.WorkManager
@@ -33,30 +31,14 @@ import org.team2658.nautilus.DataHandler
 import org.team2658.nautilus.android.screens.settings.SettingsScreen
 import org.team2658.nautilus.android.ui.navigation.LoggedInNavigator
 import org.team2658.nautilus.android.viewmodels.NFCViewmodel
-import org.team2658.nautilus.android.viewmodels.PrimaryViewModel
+import org.team2658.nautilus.android.viewmodels.MainViewModel
 import org.team2658.nautilus.userauth.AuthState
-import org.team2658.network.NetworkClient
+import org.team2658.nautilus.userauth.User
 import java.util.concurrent.TimeUnit
 
 
 class MainActivity : ComponentActivity() {
-    private val ktorClient = NetworkClient()
-
     private val nfcViewmodel by viewModels<NFCViewmodel>()
-    private val scoutingDB by lazy {
-        Room.databaseBuilder(
-            applicationContext,
-            org.team2658.nautilus.android.room.dbs.ScoutingDB::class.java,
-            "scouting.db"
-        ).fallbackToDestructiveMigration().build()
-    }
-    private val attendanceDB by lazy {
-        Room.databaseBuilder(
-            applicationContext,
-            org.team2658.nautilus.android.room.dbs.AttendanceDB::class.java,
-            "attendance.db"
-        ).fallbackToDestructiveMigration().build()
-    }
     private lateinit var workManager: WorkManager
     private lateinit var pendingIntent: PendingIntent
     private val intentFilters = arrayOf(
@@ -79,22 +61,17 @@ class MainActivity : ComponentActivity() {
 
         val sharedPref = this.getSharedPreferences("org.team2658.nautilus.android", MODE_PRIVATE)
 
-
         dataHandler = DataHandler(databaseDriverFactory =
             org.team2658.localstorage.AndroidDatabaseDriver(this),
-        getToken = {
-            sharedPref.getString("token", null)
-        }
+            getToken = {
+                return@DataHandler sharedPref.getString("token", null)
+            }
         ) {
             with(sharedPref.edit()) {
-                putString("user", it)
+                putString("token", it)
                 apply()
             }
         }
-
-        val test = dataHandler.seasons.getAttendancePeriods()
-
-        println("MEOW MEOW MEOW MEOW MEOW: $test")
 
 
         val workRequest = PeriodicWorkRequestBuilder<SyncTrigger>(15, TimeUnit.MINUTES)
@@ -120,18 +97,17 @@ class MainActivity : ComponentActivity() {
             )
         }
 
-        val connectivityManager = this.applicationContext?.getSystemService(CONNECTIVITY_SERVICE) as ConnectivityManager?
+        val connectivityManager = getSystemService(ConnectivityManager::class.java)
         workManager = WorkManager.getInstance(this.applicationContext)
 
         setContent {
-            val sharedPrefs: SharedPreferences = sharedPref
-            val primaryViewModel = viewModel<PrimaryViewModel>(
+            val primaryViewModel = viewModel<MainViewModel>(
                 factory = object: ViewModelProvider.Factory {
                     @Suppress("UNCHECKED_CAST")
                     override fun <T : ViewModel> create(
                         modelClass: Class<T>,
                     ):T {
-                        return PrimaryViewModel(ktorClient, sharedPrefs, scoutingDB, connectivityManager, attendanceDB, nfcViewmodel::clearNFC) as T
+                        return MainViewModel(dataHandler, connectivityManager) as T
                     }
                 }
             )
@@ -149,8 +125,8 @@ class MainActivity : ComponentActivity() {
             }
 
             MainTheme {
-                if (primaryViewModel.authState == AuthState.LOGGED_IN) {
-                    LoggedInNavigator(primaryViewModel, ktorClient, nfcViewmodel)
+                if (User.authState(primaryViewModel.user) == AuthState.LOGGED_IN) {
+                    LoggedInNavigator(primaryViewModel, dataHandler, nfcViewmodel)
                 } else {
                     Scaffold { padding ->
                         Box(modifier = Modifier.padding(padding)) {
@@ -163,9 +139,6 @@ class MainActivity : ComponentActivity() {
     }
     override fun onDestroy() {
         super.onDestroy()
-        ktorClient.close()
-        scoutingDB.close()
-        attendanceDB.close()
     }
 
     override fun onNewIntent(intent: Intent?) {

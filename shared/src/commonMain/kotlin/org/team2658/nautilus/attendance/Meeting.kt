@@ -13,7 +13,8 @@ data class Meeting(
     val description: String,
     val value: Int,
     val createdBy: String,
-    val attendancePeriod: String?,
+    val attendancePeriod: String? = null,
+    val isArchived: Boolean? = false,
     val username: String? = null //filled in by the client
 ) {
     companion object {

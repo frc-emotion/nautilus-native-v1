@@ -27,6 +27,7 @@ data class User(
     val permissions = getPermissions(this)
     val isAdminOrLead = this.accountType.value >= AccountType.LEAD.value
     val isAdmin = this.accountType.value >= AccountType.ADMIN.value
+
     companion object {
         fun fromSerializable(usr: UserModel): User {
             return User(
@@ -69,6 +70,14 @@ data class User(
                 val usr = Json.decodeFromString<UserModel>(json)
                 fromSerializable(usr)
             }catch(e: Exception) { null } }
+        }
+
+        fun authState(usr: User?): AuthState {
+            return when(usr?.accountType) {
+                null -> AuthState.NOT_LOGGED_IN
+                AccountType.SUPERUSER, AccountType.ADMIN, AccountType.LEAD, AccountType.BASE -> AuthState.LOGGED_IN
+                AccountType.UNVERIFIED -> AuthState.AWAITING_VERIFICATION
+            }
         }
     }
     private fun toSerializable(): UserModel {

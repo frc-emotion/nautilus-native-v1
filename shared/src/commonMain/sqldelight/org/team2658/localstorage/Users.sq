@@ -16,9 +16,13 @@ CREATE TABLE user (
     isLoggedInUser INTEGER AS Boolean NOT NULL
 );
 
-insert:
-INSERT INTO user (id, firstname, lastname, username, email, phone, subteam, grade, rolesJSON, accountType, attendanceJSON, isLoggedInUser)
-VALUES (?,  ?,  ?,  ?,  ?,  ?,  ?,  ?,  ?,  ?,?,  ?);
+insert {
+BEGIN TRANSACTION;
+DELETE FROM user WHERE id = :id OR username = :username OR email = :email OR phone = :phone;
+INSERT OR ROLLBACK INTO user (id, firstname, lastname, username, email, phone, subteam, grade, rolesJSON, accountType, attendanceJSON, isLoggedInUser)
+VALUES (:id,  :firstname,  :lastname,  :username,  :email,  :phone,  :subteam,  :grade,  :rolesJSON, :accountType, :attendanceJSON, :isLoggedInUser);
+COMMIT;
+}
 
 deleteLoggedIn:
 DELETE FROM user WHERE isLoggedInUser = 1;

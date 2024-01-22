@@ -32,9 +32,13 @@ class UserStateViewModel: ObservableObject {
             return
         }
         
-        let meow = shared.User.Companion().fromJSON(json: jsonUser as? String)!.toMutable()
-        meow.token = token
+        guard let meow = shared.User.Companion().fromJSON(json: jsonUser as? String)?.toMutable() else {
+            defaults.setValue(nil, forKey: "User")
+            keychain.delete("userToken")
+            return
+        }
         
+        meow.token = token
         user = meow.toImmutable()
     }
     

@@ -18,7 +18,7 @@ struct LoginView: View {
     let client = shared.EmotionClient()
     
     var body: some View {
-        NavigationView {
+        NavigationStack {
             VStack {
                 Spacer()
                 

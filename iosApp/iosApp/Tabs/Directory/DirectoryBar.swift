@@ -13,9 +13,17 @@ struct DirectoryBar: View {
     var user: shared.User
     
     var body: some View {
-        HStack {
-            Text("\(user.firstName) \(user.lastName)")
+        if (user.accountType.value >= 2) {
+            HStack {
+                Text("\(user.firstName) \(user.lastName)")
+                    .fontWeight(.bold)
+            }
+        } else {
+            HStack {
+                Text("\(user.firstName) \(user.lastName)")
+            }
         }
+        
     }
 }
 

@@ -11,13 +11,13 @@ import shared
 
 struct DirectoryView: View {
     // MARK: - State Properties
-    @State var user: shared.User
     @State var users: [shared.User]?
     @State private var popoverShown = false
     @State private var errorLoadingUsers = false
     @State private var alertBoxShowing = false
     @State private var selectedUser: shared.User?
     //    @State private var alertMsg = ""
+    @EnvironmentObject var vm: UserStateViewModel
     // MARK: - Sort Users by Subteam
     //    var subteamSortedUsers: [shared.User]? {
     //        if (users != nil) {
@@ -29,9 +29,10 @@ struct DirectoryView: View {
     
     var subteamSortedUsers: [String: [shared.User]]? {
         if let users = users {
-            let sortedUsers = users.sorted { $0.subteam.description() < $1.subteam.description() }
-            let groupedBySubteam = Dictionary(grouping: sortedUsers, by: { $0.subteam.description() })
-            return groupedBySubteam
+            var sortedUsers = users.sorted { $0.lastName.lowercased() < $1.lastName.lowercased() }
+            sortedUsers.sort { $0.accountType.value > $1.accountType.value }
+            sortedUsers.sort { $0.subteam.description() < $1.subteam.description() }
+            return Dictionary(grouping: sortedUsers, by: { $0.subteam.description() })
         } else {
             return nil
         }
@@ -44,6 +45,8 @@ struct DirectoryView: View {
         } detail: {
             if (selectedUser != nil) {
                 UserView(user: selectedUser!)
+                    .navigationTitle("Profile")
+                    .navigationBarTitleDisplayMode(.inline)
             } else {
                 Text("Please select a User")
             }
@@ -51,7 +54,7 @@ struct DirectoryView: View {
         .navigationSplitViewStyle(.balanced)
         .onAppear() {
             Task {
-                guard let response = try await shared.EmotionClient().getUsers(user: user) else {
+                guard let response = try await shared.EmotionClient().getUsers(user: vm.user!) else {
                     errorLoadingUsers = true
                     return
                 }
@@ -74,7 +77,7 @@ struct DirectoryView: View {
         //                }
         //            }
         //        }
-        if !errorLoadingUsers, let users = users, let subteamSortedUsers = subteamSortedUsers {
+        if !errorLoadingUsers, users != nil, let subteamSortedUsers = subteamSortedUsers {
             return AnyView (
                 List (selection: $selectedUser) {
                     ForEach(shared.Subteam.entries, id: \.self) { (subteam: shared.Subteam) in
@@ -95,7 +98,11 @@ struct DirectoryView: View {
     // MARK: - Previews
     struct DirectoryView_Previews: PreviewProvider {
         static var previews: some View {
-            DirectoryView(user: HelpfulVars().testuser)
+            DirectoryView().environmentObject({ () -> UserStateViewModel in
+                let vm = UserStateViewModel()
+                vm.user = HelpfulVars().testuser
+                return vm
+            }() )
         }
     }
 }

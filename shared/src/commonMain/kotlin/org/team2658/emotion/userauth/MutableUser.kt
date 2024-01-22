@@ -26,6 +26,8 @@ data class MutableUser(
     var spouse: User? = null,
     var donationAmounts: List<Double>? = null,
     var employer: Employer? = null,
+
+    var customRoleMessage: String? = null
 ) {
     var permissions = getPermissions(this.toImmutable())
     var isAdminOrLead = this.accountType.value >= AccountType.LEAD.value
@@ -33,6 +35,6 @@ data class MutableUser(
 
     fun toImmutable(): User {
         val user = this
-        return User(user._id, user.firstName, user.lastName, user.username, user.email, user.phoneNumber, user.token, user.subteam, user.grade, user.roles, user.accountType, user.accountUpdateVersion, user.socials, user.parents, user.attendance, user.children, user.spouse, user.donationAmounts, user.employer)
+        return User(user._id, user.firstName, user.lastName, user.username, user.email, user.phoneNumber, user.token, user.subteam, user.grade, user.roles, user.accountType, user.accountUpdateVersion, user.socials, user.parents, user.attendance, user.children, user.spouse, user.donationAmounts, user.employer, user.customRoleMessage)
     }
 }

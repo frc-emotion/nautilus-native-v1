@@ -31,9 +31,15 @@ struct UserView: View {
                         .font(.title)
                     
                     HStack {
-                        Text(user.email)
+                        Text(user.customRoleMessage ?? (user.accountType.value >= 2 ? "\(user.subteam.description().capitalized) Team Lead" : "\(user.subteam.description().capitalized) Team Member"))
                         Spacer()
-//                        Text("Senior")
+                        switch (user.grade) {
+                        case 9: Text("Freshman")
+                        case 10: Text("Sophomore")
+                        case 11: Text("Junior")
+                        case 12: Text("Senior")
+                        default: Text("")
+                        }
                     }
                     .font(.subheadline).foregroundColor(.secondary)
                 }

@@ -13,7 +13,7 @@ struct ForgotPasswordView: View {
     @State var email = ""
     
     var body: some View {
-        NavigationView {
+        NavigationStack {
             VStack {
                 Text("Forgot Password")
                     .font(.largeTitle)

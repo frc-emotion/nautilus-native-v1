@@ -45,6 +45,8 @@ struct DirectoryView: View {
         } detail: {
             if (selectedUser != nil) {
                 UserView(user: selectedUser!)
+                    .navigationTitle("Profile")
+                    .navigationBarTitleDisplayMode(.inline)
             } else {
                 Text("Please select a User")
             }

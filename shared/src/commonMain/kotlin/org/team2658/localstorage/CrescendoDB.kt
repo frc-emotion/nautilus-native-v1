@@ -22,6 +22,10 @@ class CrescendoDB(db: AppDatabase) {
         }
     }
 
+    fun deleteAll() {
+        this.dbQuery.deleteAll()
+    }
+
     fun delete(id: String) {
         this.dbQuery.deleteOne(id)
     }

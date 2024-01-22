@@ -16,10 +16,10 @@ CREATE TABLE season (
 );
 
 insertCompetition:
-INSERT INTO competition (name, year, season) VALUES (?, ?, ?);
+INSERT OR IGNORE INTO competition (name, year, season) VALUES (?, ?, ?);
 
 insertSeason:
-INSERT INTO season (id, year, name, attendance_periods_JSON) VALUES (?, ?, ?, ?);
+INSERT OR IGNORE INTO season (id, year, name, attendance_periods_JSON) VALUES (?, ?, ?, ?);
 
 getAllCompetitions:
 SELECT name, year FROM competition;

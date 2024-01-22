@@ -1,14 +1,6 @@
 package org.team2658.nautilus.android.screens.home
 
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.material3.AlertDialog
-import androidx.compose.material3.Button
-import androidx.compose.material3.LinearProgressIndicator
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
@@ -17,63 +9,39 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
-import androidx.compose.ui.Modifier
-import androidx.compose.ui.unit.dp
 import kotlinx.coroutines.launch
-import org.team2658.nautilus.Result
+import org.team2658.nautilus.android.ui.composables.AttendanceNfcUI
 import org.team2658.nautilus.android.ui.composables.Screen
+import org.team2658.nautilus.android.ui.composables.UserAttendanceView
+import org.team2658.nautilus.android.viewmodels.MainViewModel
 import org.team2658.nautilus.android.viewmodels.NFCViewmodel
-import org.team2658.nautilus.android.viewmodels.PrimaryViewModel
-import org.team2658.network.NetworkClient
-import java.nio.charset.Charset
-import java.time.LocalDateTime
-import java.time.ZoneOffset
 
 @Composable
-fun HomeScreen(ktorClient: NetworkClient, nfcViewmodel: NFCViewmodel, primaryViewModel: PrimaryViewModel) {
-    val tagData = nfcViewmodel.ndefMessages?.get(0)?.records?.get(0)?.payload?.let {
-        String(it, Charset.forName("UTF-8"))
-    }
+fun HomeScreen(nfcViewmodel: NFCViewmodel, primaryViewModel: MainViewModel) {
+//    val tagData = nfcViewmodel.ndefMessages?.get(0)?.records?.get(0)?.payload?.let {
+//        String(it, Charset.forName("UTF-8"))
+//    }
+
+    val tagData = nfcViewmodel.getNdefData()
+
     var showSuccessDialog by remember {mutableStateOf(false)}
     var showFailureDialog by remember { mutableStateOf(false)}
     var failureDialogText by remember {mutableStateOf("")}
     val coroutineScope = rememberCoroutineScope()
-    Screen {
-        Text(text = "Attendance",
-            style = MaterialTheme.typography.headlineLarge)
-        Spacer(modifier = Modifier.size(32.dp))
-        if ((primaryViewModel.user?.attendance?.size ?: 0) > 0) {
-            LinearProgressIndicator(progress = ((primaryViewModel.user?.attendance?.get("2024spring")?.totalHoursLogged?.toFloat()?: 0f) / 36.0f).coerceAtMost(1.0f), modifier = Modifier
-                .height(32.dp)
-                .fillMaxWidth())
-            Text("${primaryViewModel.user?.attendance?.get("2024spring")?.totalHoursLogged} / 36 hours", modifier = Modifier.padding(8.dp), style = MaterialTheme.typography.titleLarge)
-        Spacer(modifier = Modifier.size(16.dp))
-        } else {
-            Text("No attendance data found")
-        }
-        Text(text= if(tagData?.isNotBlank() == true) "Tag Scanned" else "Scan a Tag to Log Attendance", style = MaterialTheme.typography.titleLarge)
-        tagData?.let {
-            Spacer(modifier = Modifier.size(16.dp))
-            Button(onClick = {
+    Screen(onRefresh = primaryViewModel::coroutineSync) {
+        UserAttendanceView(userAttendance = primaryViewModel.user?.attendance ?: mapOf())
+        AttendanceNfcUI(tagData = tagData, onLogAttendance = {
+            tagData?.let { data ->
                 coroutineScope.launch {
-                    val user = ktorClient.attendance.attendMeeting(primaryViewModel.user,
-                        tagData, LocalDateTime.now(ZoneOffset.UTC).toInstant(ZoneOffset.UTC).toEpochMilli(), failureCallback = { showFailureDialog = true; failureDialogText = it }).let{
-                            when(it) {
-                                is Result.Success -> it.data
-                                is Result.Error -> null
-                            }
-                    }
-                    if (user != null) {
-                        primaryViewModel.updateUser(user)
-                        nfcViewmodel.setNdef(null)
-                        showSuccessDialog = true
-                    }else {
-                        showFailureDialog = true
-                    }
-                }}) {
-                Text("Log Attendance")
+                    primaryViewModel.attendMeeting(
+                        data,
+                        { showFailureDialog = true; failureDialogText = it; nfcViewmodel.setNdef(null) },
+                        { showSuccessDialog = true; nfcViewmodel.setNdef(null) }
+                    )
+                }
             }
-        }
+        })
+
         if(showSuccessDialog) {
             AlertDialog(onDismissRequest = {  }, confirmButton = { TextButton(onClick = { showSuccessDialog = false })  {
                 Text("Ok")

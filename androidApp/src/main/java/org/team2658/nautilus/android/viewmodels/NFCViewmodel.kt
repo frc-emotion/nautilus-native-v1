@@ -12,6 +12,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.withContext
+import org.team2658.nautilus.attendance.MeetingLog
 import java.nio.charset.Charset
 
 class NFCViewmodel: ViewModel() {
@@ -21,24 +22,14 @@ class NFCViewmodel: ViewModel() {
         return withContext(Dispatchers.IO) {
             var out = false
             nfcTag?.let {
-                try {
+                out = try {
                     Ndef.get(it)?.use { tag ->
-                        out = try {
-                            tag.connect()
-                            try {
-                                tag.isConnected
-                            } catch (e: Exception) {
-                                setTag(null)
-                                false
-                            }
-                        } catch (e: Exception) {
-                            setTag(null)
-                            false
-                        }
-                    }
+                        tag.connect()
+                        tag.isConnected
+                    } == true
                 } catch (e: Exception) {
                     setTag(null)
-                    out = false
+                    false
                 }
                 if (!out) setTag(null)
             }
@@ -55,6 +46,25 @@ class NFCViewmodel: ViewModel() {
 
     var ndefMessages: List<NdefMessage>? by mutableStateOf(null)
         private set
+
+    fun getNdefData(): MeetingLog? {
+//        val tagData = nfcViewmodel.ndefMessages?.get(0)?.records?.get(0)?.payload?.let {
+//            String(it, Charset.forName("UTF-8"))
+//        }
+        val meetingId = try { ndefMessages?.get(0)?.records?.get(0)?.payload?.let {
+            String(it, Charset.forName("UTF-8")) } } catch (e: Exception) { null }
+
+        val verifiedBy = try { ndefMessages?.get(0)?.records?.get(1)?.payload?.let {
+            String(it, Charset.forName("UTF-8"))
+        }} catch (e: Exception) { null }
+
+        return meetingId?.let {
+            MeetingLog(
+                meetingId = it,
+                verifiedBy = verifiedBy
+            )
+        }
+    }
 
 
     fun setNdef(messages: List<NdefMessage>?) {
@@ -77,24 +87,26 @@ class NFCViewmodel: ViewModel() {
                 this.nfcTag = null
             }
         }
-        println("payload: ${ndefMessages?.get(0)?.records?.get(0)?.payload?.toString(Charset.forName("US-ASCII"))}")
-        println("ndefMessages: $ndefMessages")
     }
 
-    fun writeToTag(text: String):Boolean {
+    fun writeToTag(text: String, verifiedBy: String): Boolean {
         if (this.nfcTag == null) return false
 
         val ndef = NdefMessage(
             NdefRecord.createMime(
                 "application/nautilus",
                 text.toByteArray(Charset.forName("US-ASCII"))
+            ),
+            NdefRecord.createMime(
+                "application/nautilus",
+                verifiedBy.toByteArray(Charset.forName("US-ASCII"))
             )
         )
         Ndef.get(this.nfcTag)?.use {
                 it.connect()
                 it.writeNdefMessage(ndef)
                 println("Trying to write $text")
-                setTag(null)
+                clearNFC()
                 return true
         }
         return false

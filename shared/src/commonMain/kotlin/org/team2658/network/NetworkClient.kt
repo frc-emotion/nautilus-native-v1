@@ -11,6 +11,7 @@ import io.ktor.client.request.forms.submitForm
 import io.ktor.client.request.get
 import io.ktor.client.request.header
 import io.ktor.client.request.post
+import io.ktor.client.request.put
 import io.ktor.client.request.setBody
 import io.ktor.client.statement.bodyAsText
 import io.ktor.http.ContentType
@@ -60,11 +61,11 @@ class NetworkClient {
                 Result.Success(User.fromSerializable(response))
             }
             catch(e: ClientRequestException) {
-                errorCallback(e.message)
+                errorCallback(e.response.bodyAsText())
                 Result.Error(KtorError.CLIENT(e.message))
             }
             catch(e: ServerResponseException) {
-                errorCallback(e.message)
+                errorCallback(e.response.bodyAsText())
                 Result.Error(KtorError.SERVER(e.message))
             }
             catch(e: Exception) {
@@ -98,11 +99,11 @@ class NetworkClient {
                 Result.Success(User.fromSerializable(response))
             }
             catch(e: ClientRequestException) {
-                errorCallback(e.message)
+                errorCallback(e.response.bodyAsText())
                 Result.Error(KtorError.CLIENT(e.message))
             }
             catch(e: ServerResponseException) {
-                errorCallback(e.message)
+                errorCallback(e.response.bodyAsText())
                 Result.Error(KtorError.SERVER(e.message))
             }
             catch(e: Exception) {
@@ -213,12 +214,12 @@ class NetworkClient {
                 }
                 catch(e: ClientRequestException) {
                     println(e.message)
-                    errorCallback(e.message)
+                    errorCallback(e.response.bodyAsText())
                     Result.Error(KtorError.CLIENT(e.message))
                 }
                 catch(e: ServerResponseException) {
                     println(e.message)
-                    errorCallback(e.message)
+                    errorCallback(e.response.bodyAsText())
                     Result.Error(KtorError.SERVER(e.message))
                 }
                 catch (e: Exception) {
@@ -272,12 +273,12 @@ class NetworkClient {
                 }
                 catch(e: ClientRequestException){
                     println(e.message)
-                    failureCallback(e.message)
+                    failureCallback(e.response.bodyAsText())
                     Result.Error(KtorError.CLIENT(e.message))
                 }
                 catch(e: ServerResponseException) {
                     println(e.message)
-                    failureCallback(e.message)
+                    failureCallback(e.response.bodyAsText())
                     Result.Error(KtorError.SERVER(e.message))
                 }
                 catch(e: Exception) {
@@ -309,6 +310,25 @@ class NetworkClient {
                     Result.Error(KtorError.IO)
                 }
             } else Result.Error(KtorError.AUTH)
+        }
+
+        override suspend fun archiveMeeting(id: String, user: User?): Result<Unit, KtorError> {
+            if(user?.token == null || !user.isAdminOrLead ) return Result.Error(KtorError.AUTH)
+            return try {
+                client.put("${ROUTES.BASE}/attendance/archiveMeeting/$id") {
+                    header(HttpHeaders.Authorization, "Bearer ${user.token}")
+                }
+                Result.Success(Unit)
+            } catch(e: ClientRequestException) {
+                println(e.message)
+                Result.Error(KtorError.CLIENT(e.message))
+            } catch(e: ServerResponseException) {
+                println(e.message)
+                Result.Error(KtorError.SERVER(e.message))
+            } catch(e: Exception) {
+                println(e)
+                Result.Error(KtorError.IO)
+            }
         }
 
     }
@@ -373,6 +393,7 @@ class NetworkClient {
         suspend fun getMeetings(user: User?): Result<List<Meeting>, KtorError>
         suspend fun attendMeeting( user: User?, meetingId: String, tapTime: Long, verifiedBy: String, failureCallback: (String) -> Unit = {}, ): Result<User, KtorError>
         suspend fun deleteMeeting(id: String, user: User?): Result<Unit, KtorError>
+        suspend fun archiveMeeting(id: String, user: User?): Result<Unit, KtorError>
     }
 
 }

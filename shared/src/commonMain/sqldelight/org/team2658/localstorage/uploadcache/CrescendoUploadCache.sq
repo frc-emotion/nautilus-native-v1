@@ -26,9 +26,12 @@ CREATE TABLE crescendoUpload (
     _id INTEGER PRIMARY KEY
 );
 
-insert:
-INSERT INTO crescendoUpload (competition, teamNumber, matchNumber, score, penalty, won, tie, comments, defensive, brokeDown, rankingPoints, autoLeave, autoAmp, autoSpeaker, teleopAmp, teleopSpeakerUnamp, teleopSpeakerAmp, stageState, harmony, trapNotes, melody, ensemble)
+insert {
+BEGIN TRANSACTION;
+INSERT OR IGNORE INTO crescendoUpload (competition, teamNumber, matchNumber, score, penalty, won, tie, comments, defensive, brokeDown, rankingPoints, autoLeave, autoAmp, autoSpeaker, teleopAmp, teleopSpeakerUnamp, teleopSpeakerAmp, stageState, harmony, trapNotes, melody, ensemble)
 VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?);
+COMMIT;
+}
 
 getAll:
 SELECT * FROM crescendoUpload;

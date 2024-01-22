@@ -8,7 +8,9 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Refresh
+import androidx.compose.material.icons.filled.CloudDone
+import androidx.compose.material.icons.filled.Info
+import androidx.compose.material.icons.filled.SyncProblem
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
@@ -18,55 +20,54 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import kotlinx.coroutines.launch
 import org.team2658.nautilus.android.ui.composables.LoginInput
 import org.team2658.nautilus.android.ui.composables.LoginType
+import org.team2658.nautilus.android.ui.composables.Screen
 import org.team2658.nautilus.android.ui.composables.UserInfoCard
-import org.team2658.nautilus.android.viewmodels.PrimaryViewModel
+import org.team2658.nautilus.android.viewmodels.MainViewModel
 import org.team2658.nautilus.userauth.AuthState
 import org.team2658.nautilus.userauth.User
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun SettingsLoggedIn(user: User?, vm: PrimaryViewModel) {
+fun SettingsLoggedIn(vm: MainViewModel) {
+    val user = vm.user
     var syncSuccess: Boolean? by remember { mutableStateOf(null) }
     var statusText: String by remember { mutableStateOf("") }
-    var chargedUpQueueLen by remember { mutableIntStateOf(0) }
+    var syncBusy: Boolean by remember { mutableStateOf(false) }
 
     var showDeleteDialog by remember { mutableStateOf(false) }
     var password by remember { mutableStateOf("") }
 
-    val context = LocalContext.current
     val scope = rememberCoroutineScope()
 
-    LaunchedEffect(key1 = Unit) {
-        chargedUpQueueLen = vm.getChargedUpQueueLength()
-    }
 
-    if(vm.authState == AuthState.AWAITING_VERIFICATION){
+    if(User.authState(user) == AuthState.AWAITING_VERIFICATION){
         Text(
             text = "Awaiting Verification",
             style = MaterialTheme.typography.displayMedium,
         )
         Spacer(modifier = Modifier.size(32.dp))
         Text(
-            text = "Please contact a team lead to verify your account, then log in again.",
+            text = "Please contact a team lead to verify your account, then refresh",
             style = MaterialTheme.typography.bodyLarge,
         )
         Spacer(modifier = Modifier.size(32.dp))
-        UserInfoCard(User = user)
+        UserInfoCard(user = user)
         Spacer(modifier = Modifier.size(32.dp))
     }
     else {
@@ -75,41 +76,42 @@ fun SettingsLoggedIn(user: User?, vm: PrimaryViewModel) {
             style = MaterialTheme.typography.displayMedium,
         )
         Spacer(modifier = Modifier.size(32.dp))
-        UserInfoCard(User = user)
+        UserInfoCard(user = user)
 
         Spacer(modifier = Modifier.size(32.dp))
     }
-    Row {
-        Button(onClick = { vm.logout() }) {
-            Text(text = "Log Out")
-        }
-        Spacer(modifier = Modifier.size(16.dp))
-        IconButton(onClick = {
-            syncSuccess = vm.sync()
-            statusText = if(syncSuccess== true) "Sync successful" else "Sync failed"
-        }) {
-            Icon(Icons.Filled.Refresh, contentDescription = "Refresh")
+    Row(verticalAlignment = Alignment.CenterVertically) {
+        ShouldSyncIndicator(count = vm.getQueueLength())
+        Spacer(modifier = Modifier.size(8.dp))
+        if(syncBusy) {
+            Text(text = "Syncing...")
+            TODO("replace with proper indicator")
+        } else {
+            TextButton(onClick = {
+                vm.sync { busy, success ->
+                    syncSuccess = success; syncBusy = busy
+                    statusText = when (success) {
+                        true -> "Successfully synced with server"
+                        false -> "Failed to connect to server, make sure you are connected to the internet and try again"
+                        null -> ""
+                    }
+                }
+            }) {
+                Text(text = "Sync")
+            }
         }
     }
+    Spacer(modifier = Modifier.size(32.dp))
+    Button(onClick = { vm.logout() }) {
+        Text(text = "Log Out")
+    }
     Spacer(modifier = Modifier.size(16.dp))
-    OutlinedButton(onClick = {
-//        android.app.AlertDialog.Builder(context)
-//            .setTitle("Delete Account")
-//            .setMessage("Are you sure you want to delete your account? This action cannot be undone.")
-//            .setPositiveButton("Yes") { _, _ ->
-//                scope.launch {
-//                    vm.getClient().deleteMe(vm.user) {success, message ->
-//                        syncSuccess = success
-//                        statusText = message
-//                        if(success) vm.logout()
-//                    }
-//                }
-//            }
-//            .setNegativeButton("No") { _, _ -> }
-//            .show()
+
+    Spacer(modifier = Modifier.size(16.dp))
+    TextButton(onClick = {
         showDeleteDialog = true
     }) {
-        Text(text = "DELETE ACCOUNT")
+        Text(text = "Delete Account", color = MaterialTheme.colorScheme.error)
     }
 
     if(showDeleteDialog){
@@ -133,7 +135,7 @@ fun SettingsLoggedIn(user: User?, vm: PrimaryViewModel) {
                             scope.launch {
                                 vm.deleteMe(password) {success, message ->
                                     syncSuccess = success
-                                    statusText = message
+                                    statusText = message ?: "An unknown error occurred."
                                     if(success) vm.logout()
                                 }
                             }
@@ -153,7 +155,7 @@ fun SettingsLoggedIn(user: User?, vm: PrimaryViewModel) {
 
     syncSuccess?.let {
         AlertDialog(onDismissRequest = { }, confirmButton = {
-            Button(onClick = { syncSuccess = null; statusText = "" }) {
+            Button(onClick = { syncSuccess = null }) {
                 Text(text = "OK")
             }
         }, title = {
@@ -162,5 +164,54 @@ fun SettingsLoggedIn(user: User?, vm: PrimaryViewModel) {
         }, text = {
             Text(statusText)
         })
+    }
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun ShouldSyncIndicator(count: Long) {
+    var showInfo by remember { mutableStateOf(false) }
+
+    Card(
+        shape = RoundedCornerShape(4.dp)
+    ) {
+        Row(modifier = Modifier.padding(16.dp), verticalAlignment = Alignment.CenterVertically) {
+            if(count > 0)
+                Icon(Icons.Filled.SyncProblem, contentDescription = "Refresh", tint = Color(0xFFfa6e02))
+            else 
+                Icon(Icons.Filled.CloudDone, contentDescription = "Synced", tint = Color(0xFF388E3C))
+            Spacer(modifier = Modifier.size(8.dp))
+            Text(text = if(count > 0) "$count items to sync" else "Up to date")
+            if(count > 0) {
+                IconButton(onClick = {showInfo = true}) {
+                    Icon(Icons.Filled.Info, contentDescription = "Info", tint = Color(0xEE717171))
+                }
+            }
+        }
+    }
+    if(showInfo) {
+        AlertDialog(onDismissRequest = { showInfo = false },
+            title = {
+                Text(text = "Sync Needed")
+            }, text = {
+                Text(text = "You have $count items that need to be synced. Please connect to the internet and sync so your attendance and scouting data can be recorded")
+            }, confirmButton = {
+                Button(onClick = { showInfo = false }) {
+                    Text(text = "OK")
+                }
+            }
+        )
+    }
+}
+
+@Composable
+@Preview
+fun ShouldSyncIndicatorPreview() {
+    Screen {
+        ShouldSyncIndicator(3)
+
+        Spacer(modifier = Modifier.size(32.dp))
+
+        ShouldSyncIndicator(0)
     }
 }

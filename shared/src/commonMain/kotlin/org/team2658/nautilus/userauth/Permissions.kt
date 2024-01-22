@@ -2,6 +2,7 @@ package org.team2658.nautilus.userauth
 
 import org.team2658.nautilus.KeyValue
 import org.team2658.nautilus.setKeyValueListItem
+import org.team2658.network.models.RolePermissionsModel
 
 data class UserPermissions(
     val standScouting: Boolean = false,
@@ -21,6 +22,18 @@ data class UserPermissions(
             KeyValue("Verify Subteam Attendance", verifySubteamAttendance),
             KeyValue("Verify All Attendance", verifyAllAttendance),
             KeyValue("Make Announcements", makeAnnouncements),
+        )
+    }
+
+    fun toSerializeable(): RolePermissionsModel {
+        return RolePermissionsModel(
+            standScouting = standScouting,
+            viewScoutingData = viewScoutingData,
+            inPitScouting = inPitScouting,
+            makeBlogPosts = makeBlogPosts,
+            verifySubteamAttendance = verifySubteamAttendance,
+            verifyAllAttendance = verifyAllAttendance,
+            makeAnnouncements = makeAnnouncements,
         )
     }
 
@@ -46,6 +59,18 @@ data class UserPermissions(
                 verifySubteamAttendance = true,
                 verifyAllAttendance = true,
                 makeAnnouncements = true,
+            )
+        }
+
+        fun fromSerializeable(permissions: RolePermissionsModel): UserPermissions {
+            return UserPermissions(
+                standScouting = permissions.standScouting,
+                viewScoutingData = permissions.viewScoutingData,
+                inPitScouting = permissions.inPitScouting,
+                makeBlogPosts = permissions.makeBlogPosts,
+                verifySubteamAttendance = permissions.verifySubteamAttendance,
+                verifyAllAttendance = permissions.verifyAllAttendance,
+                makeAnnouncements = permissions.makeAnnouncements,
             )
         }
     }

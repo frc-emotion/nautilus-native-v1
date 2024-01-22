@@ -16,6 +16,7 @@ import org.team2658.localstorage.SeasonsDB
 import org.team2658.localstorage.UsersDB
 import org.team2658.nautilus.attendance.Meeting
 import org.team2658.nautilus.attendance.UserAttendance
+import org.team2658.nautilus.userauth.Subteam
 import org.team2658.nautilus.userauth.User
 import org.team2658.network.KtorError
 import org.team2658.network.NetworkClient
@@ -55,7 +56,45 @@ class DataHandler(databaseDriverFactory: DatabaseDriverFactory, getToken: () -> 
             }
         }
 
-        override fun logout() = usersDB.logoutUser(setToken)
+        override suspend fun register(
+            username: String,
+            password: String,
+            email: String,
+            firstName: String,
+            lastName: String,
+            subteam: Subteam,
+            phone: String,
+            grade: Int,
+            errorCallback: (String) -> Unit
+        ): User? {
+            return withContext(Dispatchers.IO) {
+                network.users.register(
+                    username = username,
+                    password = password,
+                    email = email,
+                    firstName = firstName,
+                    lastName = lastName,
+                    subteam = subteam,
+                    phone = phone,
+                    grade = grade,
+                    errorCallback = errorCallback
+                ).let {
+                    when(it) {
+                        is Result.Success -> usersDB.updateLoggedInUser(it.data, setToken)
+                        is Result.Error -> null
+                    }
+                }
+            }
+        }
+
+        override fun logout() {
+            usersDB.logoutUser(setToken)
+            clearAll()
+            meetingsDB.deleteAll()
+            attendanceUploadCache.clear()
+            crescendoDB.deleteAll()
+            crescendoUploadDB.deleteAll()
+        }
 
         override suspend fun refreshLoggedIn(): User? {
             return withContext(Dispatchers.IO) {
@@ -68,7 +107,10 @@ class DataHandler(databaseDriverFactory: DatabaseDriverFactory, getToken: () -> 
             }
         }
 
-        override fun loadLoggedIn(): User? = usersDB.getLoggedInUser(getToken())
+        override fun loadLoggedIn(): User? = usersDB.getLoggedInUser(getToken()).also {
+            println("token: ${it?.token}")
+            println(getToken())
+        }
 
         private suspend fun syncUsers(): List<User>? {
             return withContext(Dispatchers.IO) {
@@ -76,7 +118,7 @@ class DataHandler(databaseDriverFactory: DatabaseDriverFactory, getToken: () -> 
                     when(it) {
                         is Result.Success -> {
                             usersDB.insertUsers(it.data)
-                            it.data
+                            usersDB.getUsers()
                         }
                         is Result.Error -> null
                     }
@@ -85,11 +127,7 @@ class DataHandler(databaseDriverFactory: DatabaseDriverFactory, getToken: () -> 
         }
 
         override fun loadAll(): List<User>? {
-            return usersDB.getUsers().also {
-                scope.launch {
-                    syncUsers()
-                }
-            }
+            return loadAll { _ -> }
         }
 
         override fun loadAll(onCompleteSync: (List<User>) -> Unit): List<User>? {
@@ -146,7 +184,10 @@ class DataHandler(databaseDriverFactory: DatabaseDriverFactory, getToken: () -> 
                             is Result.Success -> {
                                 attendanceUploadCache.delete(it.data._id)
                             }
-                            is Result.Error -> {}
+                            is Result.Error -> when(it.message) {
+                                KtorError.AUTH, is KtorError.CLIENT-> attendanceUploadCache.delete(mtg.meeting_id)
+                                KtorError.IO, is KtorError.SERVER -> Unit
+                            }
                         }
                     }
                 }
@@ -177,37 +218,27 @@ class DataHandler(databaseDriverFactory: DatabaseDriverFactory, getToken: () -> 
         override fun getAll(onCompleteSync: (List<Meeting>) -> Unit): List<Meeting> {
             return meetingsDB.getAll().also {
                 scope.launch {
-                    _sync()?.let {
-                        onCompleteSync(it)
-                    }
+                    sync()
+                    onCompleteSync(meetingsDB.getAll())
                 }
             }
         }
 
         override fun getCurrent(time: Long): List<Meeting> {
-            return meetingsDB.getCurrent(time).also {
-                scope.launch {
-                    sync()
-                }
-            }
+            return getCurrent(time) { _ -> }
         }
 
         override fun getCurrent(time: Long, onCompleteSync: (List<Meeting>) -> Unit): List<Meeting> {
             return meetingsDB.getCurrent(time).also {
                 scope.launch {
-                    _sync()?.let {
-                        onCompleteSync(it)
-                    }
+                    sync()
+                    onCompleteSync(meetingsDB.getCurrent(time))
                 }
             }
         }
 
         override fun getOutdated(time: Long): List<Meeting> {
-            return meetingsDB.getOutdated(time).also {
-                scope.launch {
-                    sync()
-                }
-            }
+            return getOutdated(time) { _ -> }
         }
 
         override fun getOutdated(
@@ -216,8 +247,34 @@ class DataHandler(databaseDriverFactory: DatabaseDriverFactory, getToken: () -> 
         ): List<Meeting> {
             return meetingsDB.getOutdated(time).also {
                 scope.launch {
-                    _sync()?.let {
-                        onCompleteSync(it)
+                    sync()
+                    onCompleteSync(meetingsDB.getOutdated(time))
+                }
+            }
+        }
+
+        override fun getArchived(): List<Meeting> {
+            return getArchived { _ -> }
+        }
+
+        override fun getArchived(onCompleteSync: (List<Meeting>) -> Unit): List<Meeting> {
+            return meetingsDB.getArchived().also {
+                scope.launch {
+                    sync()
+                    onCompleteSync(meetingsDB.getArchived())
+                }
+            }
+        }
+
+        override fun archiveMeeting(id: String, onComplete: (Boolean) -> Unit) {
+            scope.launch {
+                network.attendance.archiveMeeting(id, users.loadLoggedIn()).let {
+                    when(it) {
+                        is Result.Success -> {
+                            sync()
+                            onComplete(true)
+                        }
+                        is Result.Error -> onComplete(false)
                     }
                 }
             }
@@ -371,6 +428,9 @@ class DataHandler(databaseDriverFactory: DatabaseDriverFactory, getToken: () -> 
 
     }
 
+    fun getQueueLength(): Long {
+        return attendanceUploadCache.getCacheLength().executeAsOneOrNull() ?: 0
+    }
     fun sync() {
         scope.launch {
             users.sync()
@@ -379,9 +439,27 @@ class DataHandler(databaseDriverFactory: DatabaseDriverFactory, getToken: () -> 
         }
     }
 
+    suspend fun syncCoroutine() {
+        users.sync()
+        attendance.sync()
+        seasons.sync()
+    }
+
+    fun getNetworkClient() = network
     //interfaces are required for methods of namespace objects to be accessible
     interface UserNamspace {
         suspend fun login(username: String, password: String, onError: (String) -> Unit): User?
+        suspend fun register(
+            username: String,
+            password: String,
+            email: String,
+            firstName: String,
+            lastName: String,
+            subteam: Subteam,
+            phone: String,
+            grade: Int,
+            errorCallback: (String) -> Unit = {}
+        ): User?
         fun logout()
         suspend fun refreshLoggedIn(): User?
         fun loadLoggedIn(): User?
@@ -406,6 +484,12 @@ class DataHandler(databaseDriverFactory: DatabaseDriverFactory, getToken: () -> 
         fun getOutdated(time: Long): List<Meeting>
 
         fun getOutdated(time: Long, onCompleteSync: (List<Meeting>) -> Unit): List<Meeting>
+
+        fun getArchived(): List<Meeting>
+
+        fun getArchived(onCompleteSync: (List<Meeting>) -> Unit): List<Meeting>
+
+        fun archiveMeeting(id: String, onComplete: (Boolean) -> Unit)
 
         fun clear()
 

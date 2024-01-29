@@ -105,7 +105,6 @@ fun Screen(onRefresh: suspend () -> Unit, content: @Composable () -> Unit) {
         }, label = "scrollOffset"
     )
 
-
     Surface(color = MaterialTheme.colorScheme.background, modifier = Modifier
         .fillMaxSize()
         .clickable(
@@ -116,10 +115,14 @@ fun Screen(onRefresh: suspend () -> Unit, content: @Composable () -> Unit) {
     ) {
 
         if(refreshState.progress > 0 || refreshing) {
-            Box (Modifier.height(IntrinsicSize.Min).fillMaxWidth().offset(y=(scrollOffset/4).coerceAtLeast(10).dp), contentAlignment = Alignment.TopCenter){
+            Box (
+                Modifier
+                    .height(IntrinsicSize.Min)
+                    .fillMaxWidth()
+                    .offset(y = (scrollOffset / 4).coerceAtLeast(10).dp), contentAlignment = Alignment.TopCenter){
                 when {
-                    willRefresh || refreshing -> CircularProgressIndicator(Modifier.size(64.dp), strokeCap = StrokeCap.Round)
-                    refreshState.progress in 0f..1f -> CircularProgressIndicator(modifier = Modifier.size(64.dp), progress = refreshState.progress, strokeCap = StrokeCap.Round)
+                    willRefresh || refreshing -> CircularProgressIndicator(Modifier.size(64.dp))
+                    refreshState.progress in 0f..1f -> CircularProgressIndicator(modifier = Modifier.size(64.dp), progress = { refreshState.progress }, strokeCap = StrokeCap.Round)
                 }
 
             }

@@ -21,6 +21,7 @@ class MainViewModel(
     var user by mutableStateOf(dataHandler.users.loadLoggedIn())
         private set
 
+
     fun login(username: String, password: String, onError: (String) -> Unit) {
         viewModelScope.launch {
             user = dataHandler.users.login(username, password, onError)

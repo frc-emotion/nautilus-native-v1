@@ -26,7 +26,7 @@ import org.team2658.localstorage.Season as LocalSeason
 class DataHandler(databaseDriverFactory: DatabaseDriverFactory, getToken: () -> String?, setToken: (String?) -> Unit) {
     private val db = AppDatabase(
         databaseDriverFactory.createDriver(),
-        userAdapter = org.team2658.localstorage.User.Adapter(accountTypeAdapter = IntColumnAdapter, gradeAdapter = IntColumnAdapter),
+        sqluserAdapter = org.team2658.localstorage.Sqluser.Adapter(accountTypeAdapter = IntColumnAdapter, gradeAdapter = IntColumnAdapter),
         competitionAdapter = Competition.Adapter(yearAdapter = IntColumnAdapter),
         seasonAdapter = LocalSeason.Adapter(yearAdapter = IntColumnAdapter)
     )
@@ -280,6 +280,19 @@ class DataHandler(databaseDriverFactory: DatabaseDriverFactory, getToken: () -> 
             }
         }
 
+        override suspend fun archiveMeeting(id: String) {
+            withContext(Dispatchers.IO) {
+                network.attendance.archiveMeeting(id, users.loadLoggedIn()).let {
+                    when(it) {
+                        is Result.Success -> {
+                            sync()
+                        }
+                        is Result.Error -> {}
+                    }
+                }
+            }
+        }
+
         override fun clear() {
             meetingsDB.deleteAll()
         }
@@ -371,6 +384,7 @@ class DataHandler(databaseDriverFactory: DatabaseDriverFactory, getToken: () -> 
                 }
             }
         }
+
     }
 
     val seasons = object: SeasonsNamespace {
@@ -490,6 +504,8 @@ class DataHandler(databaseDriverFactory: DatabaseDriverFactory, getToken: () -> 
         fun getArchived(onCompleteSync: (List<Meeting>) -> Unit): List<Meeting>
 
         fun archiveMeeting(id: String, onComplete: (Boolean) -> Unit)
+
+        suspend fun archiveMeeting(id: String)
 
         fun clear()
 

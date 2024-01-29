@@ -139,6 +139,7 @@ class MainActivity : ComponentActivity() {
     }
     override fun onDestroy() {
         super.onDestroy()
+        dataHandler.getNetworkClient().close()
     }
 
     override fun onNewIntent(intent: Intent?) {

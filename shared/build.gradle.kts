@@ -73,7 +73,7 @@ android {
     buildToolsVersion = "34.0.0"
 }
 dependencies {
-    implementation("androidx.core:core-ktx:+")
+    implementation("androidx.core:core-ktx:1.12.0")
 }
 
 sqldelight {

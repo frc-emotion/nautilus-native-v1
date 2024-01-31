@@ -26,7 +26,7 @@ import org.team2658.localstorage.Season as LocalSeason
 class DataHandler(databaseDriverFactory: DatabaseDriverFactory, getToken: () -> String?, setToken: (String?) -> Unit) {
     private val db = AppDatabase(
         databaseDriverFactory.createDriver(),
-        userAdapter = org.team2658.localstorage.User.Adapter(accountTypeAdapter = IntColumnAdapter, gradeAdapter = IntColumnAdapter),
+        user_tableAdapter = org.team2658.localstorage.User_table.Adapter(accountTypeAdapter = IntColumnAdapter, gradeAdapter = IntColumnAdapter),
         competitionAdapter = Competition.Adapter(yearAdapter = IntColumnAdapter),
         seasonAdapter = LocalSeason.Adapter(yearAdapter = IntColumnAdapter)
     )

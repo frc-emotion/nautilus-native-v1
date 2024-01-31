@@ -11,6 +11,7 @@ import shared
 
 struct UserView: View {
     var user: shared.User
+
     
     var body: some View {
         ScrollView {

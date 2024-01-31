@@ -1,0 +1,48 @@
+import kotlin.Boolean;
+
+CREATE TABLE crescendo (
+    id TEXT PRIMARY KEY NOT NULL,
+    competition TEXT NOT NULL,
+    teamNumber INTEGER NOT NULL,
+    teamName TEXT NOT NULL,
+    matchNumber INTEGER NOT NULL,
+    score INTEGER NOT NULL,
+    penalty INTEGER NOT NULL,
+    won INTEGER AS Boolean NOT NULL,
+    tie INTEGER AS Boolean NOT NULL,
+    comments TEXT NOT NULL,
+    defensive INTEGER AS Boolean NOT NULL,
+    brokeDown INTEGER AS Boolean NOT NULL,
+    rankingPoints INTEGER NOT NULL,
+    autoLeave INTEGER AS Boolean NOT NULL,
+    autoAmp INTEGER NOT NULL,
+    autoSpeaker INTEGER NOT NULL,
+    teleopAmp INTEGER NOT NULL,
+    teleopSpeakerUnamp INTEGER NOT NULL,
+    teleopSpeakerAmp INTEGER NOT NULL,
+    stageState TEXT NOT NULL,
+    harmony INTEGER NOT NULL,
+    trapNotes INTEGER NOT NULL,
+    melody INTEGER AS Boolean NOT NULL,
+    ensemble INTEGER AS Boolean NOT NULL
+);
+
+insert{
+BEGIN TRANSACTION;
+DELETE FROM crescendo WHERE id = :id;
+INSERT OR ROLLBACK INTO crescendo(id, competition, teamNumber, teamName, matchNumber, score, penalty, won, tie, comments, defensive, brokeDown, rankingPoints, autoLeave, autoAmp, autoSpeaker, teleopAmp, teleopSpeakerUnamp, teleopSpeakerAmp, stageState, harmony, trapNotes, melody, ensemble)
+VALUES (:id, :competition, :teamNumber, :teamName, :matchNumber, :score, :penalty, :won, :tie, :comments, :defensive, :brokeDown, :rankingPoints, :autoLeave, :autoAmp, :autoSpeaker, :teleopAmp, :teleopSpeakerUnamp, :teleopSpeakerAmp, :stageState, :harmony, :trapNotes, :melody, :ensemble);
+COMMIT;
+}
+
+getAll:
+SELECT * FROM crescendo;
+
+getOne:
+SELECT * FROM crescendo WHERE id = ? LIMIT 1;
+
+deleteOne:
+DELETE FROM crescendo WHERE id = ?;
+
+deleteAll:
+DELETE FROM crescendo;

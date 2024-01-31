@@ -23,6 +23,12 @@
             <intent-filter>
                 <action android:name="android.nfc.action.NDEF_DISCOVERED"/>
                 <category android:name="android.intent.category.DEFAULT"/>
+                <data android:mimeType="application/nautilus" />
+            </intent-filter>
+<!-- legacy compat           -->
+            <intent-filter>
+                <action android:name="android.nfc.action.NDEF_DISCOVERED"/>
+                <category android:name="android.intent.category.DEFAULT"/>
                 <data android:mimeType="application/emotion" />
             </intent-filter>
 <!--            <intent-filter>-->

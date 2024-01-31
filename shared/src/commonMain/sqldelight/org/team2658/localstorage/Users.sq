@@ -1,7 +1,7 @@
 import kotlin.Int;
 import kotlin.Boolean;
 
-CREATE TABLE user (
+CREATE TABLE user_table (
     id TEXT PRIMARY KEY NOT NULL,
     firstname TEXT NOT NULL,
     lastname TEXT NOT NULL,
@@ -18,39 +18,39 @@ CREATE TABLE user (
 
 insert {
 BEGIN TRANSACTION;
-DELETE FROM user WHERE id = :id OR username = :username OR email = :email OR phone = :phone;
-INSERT OR ROLLBACK INTO user (id, firstname, lastname, username, email, phone, subteam, grade, rolesJSON, accountType, attendanceJSON, isLoggedInUser)
+DELETE FROM user_table WHERE id = :id OR username = :username OR email = :email OR phone = :phone;
+INSERT OR ROLLBACK INTO user_table (id, firstname, lastname, username, email, phone, subteam, grade, rolesJSON, accountType, attendanceJSON, isLoggedInUser)
 VALUES (:id,  :firstname,  :lastname,  :username,  :email,  :phone,  :subteam,  :grade,  :rolesJSON, :accountType, :attendanceJSON, :isLoggedInUser);
 COMMIT;
 }
 
 deleteLoggedIn:
-DELETE FROM user WHERE isLoggedInUser = 1;
+DELETE FROM user_table WHERE isLoggedInUser = 1;
 
 deleteNotLoggedIn:
-DELETE FROM user WHERE isLoggedInUser = 0;
+DELETE FROM user_table WHERE isLoggedInUser = 0;
 
 getLoggedInUser:
-SELECT * FROM user WHERE isLoggedInUser = 1 LIMIT 1;
+SELECT * FROM user_table WHERE isLoggedInUser = 1 LIMIT 1;
 
 getMyAttendance:
-SELECT attendanceJSON FROM user WHERE isLoggedInUser = 1 LIMIT 1;
+SELECT attendanceJSON FROM user_table WHERE isLoggedInUser = 1 LIMIT 1;
 
 getNotLoggedIn:
-SELECT * FROM user WHERE isLoggedInUser = 0;
+SELECT * FROM user_table WHERE isLoggedInUser = 0;
 
 getById:
-SELECT * FROM user WHERE id = ? LIMIT 1;
+SELECT * FROM user_table WHERE id = ? LIMIT 1;
 
 getByUsername:
-SELECT * FROM user WHERE username = ? LIMIT 1;
+SELECT * FROM user_table WHERE username = ? LIMIT 1;
 
 getByEmail:
-SELECT * FROM user WHERE email = ? LIMIT 1;
+SELECT * FROM user_table WHERE email = ? LIMIT 1;
 
 getInfoById:
-SELECT username, firstname, lastname FROM user WHERE id = ? LIMIT 1;
+SELECT username, firstname, lastname FROM user_table WHERE id = ? LIMIT 1;
 
 
 deleteOne:
-DELETE FROM user WHERE id = ?;
+DELETE FROM user_table WHERE id = ?;

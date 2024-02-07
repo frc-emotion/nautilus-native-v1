@@ -1,27 +1,28 @@
 import SwiftUI
 import shared
+import KeychainSwift
 import Network
 
 @main
 struct iOSApp: App {
-    @StateObject var userStateViewModel = UserStateViewModel()
-    
+    @StateObject var envModel = EnvironmentModel()
+
     var body: some Scene {
         WindowGroup {
             NavigationView {
                 ApplicationSwitcher()
             }
             .navigationViewStyle(.stack)
-            .environmentObject(userStateViewModel)
+            .environmentObject(envModel)
         }
     }
 }
 
 struct ApplicationSwitcher: View {
-    @EnvironmentObject var vm: UserStateViewModel
-    
+    @EnvironmentObject var env: EnvironmentModel
     var body: some View {
-        if (vm.user != nil && vm.isBusy == false) {
+        
+        if (env.user != nil) {
             //        if (true) {
             TabView {
                 //                Unnecessary tabs are hidden right now
@@ -36,25 +37,23 @@ struct ApplicationSwitcher: View {
                 //                    .tabItem {
                 //                        Label("Scouting", systemImage: "chart.bar.doc.horizontal.fill")
                 //                    }
-                if (vm.user!.accountType != shared.AccountType.unverified) {
+                if (env.user!.accountType != shared.AccountType.unverified) {
                     AttendanceView()
                         .tabItem {
                             Label("Attendance", systemImage: "calendar")
                         }
-                        .environmentObject(vm)
+                        .environmentObject(env)
                     
-                    DirectoryView()
-                        .tabItem {
-                            Label("People", systemImage: "person.2.fill")
-                        }
-                        .environmentObject(vm)
+//                    DirectoryView(dh: $dh)
+//                        .tabItem {
+//                            Label("People", systemImage: "person.2.fill")
+//                        }
                 }
-                SettingsView()
-                    .navigationTitle("Settings")
-                    .tabItem {
-                        Label("Settings", systemImage: "gear")
-                    }
-                    .environmentObject(vm)
+//                SettingsView(dh: $dh)
+//                    .navigationTitle("Settings")
+//                    .tabItem {
+//                        Label("Settings", systemImage: "gear")
+//                    }
             }
         } else {
             AuthenticationView()

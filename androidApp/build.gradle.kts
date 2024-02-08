@@ -12,8 +12,8 @@ android {
         applicationId = "org.team2658.scouting"
         minSdk = 26
         targetSdk = 34
-        versionCode = 12
-        versionName = "2.0.7"
+        versionCode = 14
+        versionName = "2.0.8"
     }
     signingConfigs {
         create("release") {

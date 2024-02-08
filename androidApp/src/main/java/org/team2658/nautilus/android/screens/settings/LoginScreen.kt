@@ -1,11 +1,15 @@
 package org.team2658.nautilus.android.screens.settings
 
+import android.content.Intent
+import android.net.Uri
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.size
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
@@ -16,6 +20,7 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import kotlinx.coroutines.launch
 import org.team2658.nautilus.android.ui.composables.LoginInput
@@ -33,6 +38,8 @@ fun LoginScreen(
     var username by rememberSaveable { mutableStateOf("") }
     var password by rememberSaveable { mutableStateOf("") }
 
+    val context = LocalContext.current
+
     val scope = rememberCoroutineScope()
 
     var showError by remember {mutableStateOf(false)}
@@ -44,7 +51,7 @@ fun LoginScreen(
     }
     Column {
         Text(
-            text = "Log In to Use App",
+            text = "Log In",
             style = MaterialTheme.typography.displayMedium,
         )
         Spacer(modifier = Modifier.size(32.dp))
@@ -76,13 +83,26 @@ fun LoginScreen(
 //            })
 //        )
         LoginInput(type = LoginType.PASSWORD, text = password, onValueChange = { password = it })
-        Spacer(modifier = Modifier.size(32.dp))
-        Button(onClick = { scope.launch { onLogin(username, password) {showError = true; errorText = it} } }) {
-            Text(text = "Log In")
+        Spacer(modifier = Modifier.size(16.dp))
+        Row {
+            Button(onClick = { scope.launch { onLogin(username, password) {showError = true; errorText = it} } }) {
+                Text(text = "Log In")
+            }
+            Spacer(modifier = Modifier.size(16.dp))
+            OutlinedButton(onClick = { onCreateAccount() }) {
+                Text(text = "Register")
+            }
         }
-        Spacer(modifier = Modifier.size(8.dp))
-        TextButton(onClick = { onCreateAccount() }) {
-            Text(text = "Create New Account")
+        Spacer(modifier = Modifier.size(16.dp))
+        TextButton(onClick = {
+            val webIntent = Intent(Intent.ACTION_VIEW, Uri.parse("https://team2658.org/forgot"))
+            try {
+                context.startActivity(webIntent)
+            } catch (e: Exception) {
+                e.printStackTrace()
+            }
+        }) {
+            Text(text = "Forgot your password?")
         }
     }
 }

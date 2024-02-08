@@ -13,7 +13,7 @@ struct AuthenticationView: View {
     @Environment(\.colorScheme) var colorScheme
     
     var body: some View {
-        NavigationView {
+        NavigationStack {
             VStack {
                 VStack {
                     if (colorScheme == .dark) {

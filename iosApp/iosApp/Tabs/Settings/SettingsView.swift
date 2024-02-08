@@ -2,17 +2,16 @@ import SwiftUI
 import shared
 
 struct SettingsView: View {
-    @State var user: shared.User
     @EnvironmentObject var vm: UserStateViewModel
     
     var body: some View {
-        NavigationView {
+        NavigationStack {
             List {
                 Section {
                     NavigationLink {
-                        UserView(user: user)
+                        UserView(user: vm.user!)
                     } label: {
-                        UserBar(user: user)
+                        UserBar(user: vm.user!)
                     }
 //                    Not yet implemented
 //                    NavigationLink {
@@ -40,8 +39,6 @@ struct SettingsView: View {
                             .foregroundColor(Color.red)
                     }
                 }
-                Text("THE SOFTWARE IS PROVIDED \"AS IS\", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.")
-                    .font(.footnote)
             }
             .navigationTitle("Settings")
         }
@@ -50,6 +47,10 @@ struct SettingsView: View {
 
 struct SettingsView_Previews: PreviewProvider {
     static var previews: some View {
-        SettingsView(user: HelpfulVars().testuser)
+        SettingsView().environmentObject({ () -> UserStateViewModel in
+            let vm = UserStateViewModel()
+            vm.user = HelpfulVars().testuser
+            return vm
+        }() )
     }
 }

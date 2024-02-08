@@ -1,26 +1,28 @@
 import SwiftUI
 import shared
+import KeychainSwift
+import Network
 
 @main
 struct iOSApp: App {
-    @StateObject var userStateViewModel = UserStateViewModel()
-    
+    @StateObject var envModel = EnvironmentModel()
+
     var body: some Scene {
         WindowGroup {
             NavigationView {
                 ApplicationSwitcher()
             }
             .navigationViewStyle(.stack)
-            .environmentObject(userStateViewModel)
+            .environmentObject(envModel)
         }
     }
 }
 
 struct ApplicationSwitcher: View {
-    @EnvironmentObject var vm: UserStateViewModel
-    
+    @EnvironmentObject var env: EnvironmentModel
     var body: some View {
-        if (vm.user != nil) {
+        
+        if (env.user != nil) {
             //        if (true) {
             TabView {
                 //                Unnecessary tabs are hidden right now
@@ -35,27 +37,23 @@ struct ApplicationSwitcher: View {
                 //                    .tabItem {
                 //                        Label("Scouting", systemImage: "chart.bar.doc.horizontal.fill")
                 //                    }
-                if (vm.user!.accountType != shared.AccountType.unverified) {
-                    AttendanceView(user: vm.user!)
+                if (env.user!.accountType != shared.AccountType.unverified) {
+                    AttendanceView()
                         .tabItem {
                             Label("Attendance", systemImage: "calendar")
                         }
+                        .environmentObject(env)
+                    
+//                    DirectoryView(dh: $dh)
+//                        .tabItem {
+//                            Label("People", systemImage: "person.2.fill")
+//                        }
                 }
-                //                DirectoryView()
-                //                    .tabItem {
-                //                        Label("People", systemImage: "person.2.fill")
-                //                    }
-                //
-                //                AdminView()
-                //                    .tabItem {
-                //                        Label("Admin", systemImage: "person.badge.key.fill")
-                //                    }
-                //
-                SettingsView(user: vm.user!)
-                    .navigationTitle("Settings")
-                    .tabItem {
-                        Label("Settings", systemImage: "gear")
-                    }
+//                SettingsView(dh: $dh)
+//                    .navigationTitle("Settings")
+//                    .tabItem {
+//                        Label("Settings", systemImage: "gear")
+//                    }
             }
         } else {
             AuthenticationView()

@@ -11,11 +11,12 @@ import CoreNFC
 
 struct NFCButton: UIViewRepresentable {
     @Binding var data : String
+    @State var title: String
     
     func makeUIView(context: UIViewRepresentableContext<NFCButton>) -> UIButton {
         let button = UIButton()
         button.configuration?.buttonSize = .small
-        button.setTitle("Log Attendance", for: .normal)
+        button.setTitle(title, for: .normal)
         button.backgroundColor = UIColor.blue
         button.addTarget(context.coordinator, action: #selector(context.coordinator.beginScan(_:)), for: .touchUpInside)
         return button
@@ -78,6 +79,6 @@ struct NFCButton: UIViewRepresentable {
 struct NFCButtonView: View {
     @Binding var data: String
     var body: some View {
-        NFCButton(data: self.$data)
+        NFCButton(data: self.$data, title: "Log Attendance")
     }
 }

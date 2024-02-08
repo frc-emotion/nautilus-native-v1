@@ -12,8 +12,8 @@ android {
         applicationId = "org.team2658.scouting"
         minSdk = 26
         targetSdk = 34
-        versionCode = 12
-        versionName = "2.0.7"
+        versionCode = 14
+        versionName = "2.0.8"
     }
     signingConfigs {
         create("release") {
@@ -64,7 +64,6 @@ dependencies {
     implementation("androidx.compose.material:material-icons-extended")
     implementation("androidx.navigation:navigation-compose:2.7.6")
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.7.3")
-
     val workVersion = "2.9.0"
     implementation("androidx.work:work-runtime-ktx:$workVersion")
 }

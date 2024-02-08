@@ -18,7 +18,7 @@ struct LoginView: View {
     let client = shared.EmotionClient()
     
     var body: some View {
-        NavigationView {
+        NavigationStack {
             VStack {
                 Spacer()
                 
@@ -73,15 +73,24 @@ struct LoginView: View {
                             switch error {
                             case .signInError(let message):
                                 loginErrorMsg = message
+                                break
                             default:
                                 print("Unknown error type")
                             }
                         }
                     }
                 }) {
-                    Text("Login")
-                        .frame(height: 30.0)
-                        .frame(maxWidth: .infinity)
+                    HStack {
+                        Text("Login")
+                            .frame(height: 30.0)
+                            .frame(maxWidth: .infinity)
+                        // TODO: Only let button be pressed once while waiting for response, progres view
+//                        #if !DEBUG
+//                        if (vm.isBusy) {
+//                            ProgressView()
+//                        }
+//                        #endif
+                    }
                 }
                 .padding(.horizontal)
                 .buttonStyle(.borderedProminent)
@@ -90,18 +99,6 @@ struct LoginView: View {
                 Spacer()
             }
         }
-//        .onAppear(perform: {
-//            if (vm.user != nil) {
-//                Task {
-//                    let response = try await client.getMe(user: vm.user)
-//                    if (response != nil) {
-//                        vm.user = response
-//                    } else {
-//                        vm.user = nil
-//                    }
-//                }
-//            }
-//        })
     }
 }
 

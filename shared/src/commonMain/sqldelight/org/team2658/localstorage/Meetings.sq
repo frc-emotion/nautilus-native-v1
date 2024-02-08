@@ -27,16 +27,16 @@ removeOne:
 DELETE FROM meeting WHERE id = ?;
 
 getAllWithUsername:
-SELECT meeting.*, username FROM meeting LEFT OUTER JOIN sqluser ON meeting.createdBy = sqluser.id;
+SELECT meeting.*, username FROM meeting LEFT OUTER JOIN user_table AS user ON meeting.createdBy = user.id;
 
 getOneWithUsername:
-SELECT meeting.*, username FROM meeting LEFT OUTER JOIN sqluser ON meeting.createdBy = sqluser.id WHERE meeting.id = ? LIMIT 1;
+SELECT meeting.*, username FROM meeting LEFT OUTER JOIN user_table AS user ON meeting.createdBy = user.id WHERE meeting.id = ? LIMIT 1;
 
 getCurrentWithUsername:
-SELECT meeting.*, username FROM meeting LEFT OUTER JOIN sqluser ON meeting.createdBy = sqluser.id WHERE endTime >= :currentTime AND archived = 0 ORDER BY startTime DESC;
+SELECT meeting.*, username FROM meeting LEFT OUTER JOIN user_table AS user ON meeting.createdBy = user.id WHERE endTime >= :currentTime AND archived = 0 ORDER BY startTime DESC;
 
 getOutdatedWithUsername:
-SELECT meeting.*, username FROM meeting LEFT OUTER JOIN sqluser ON meeting.createdBy = sqluser.id WHERE endTime < :currentTime AND archived = 0 ORDER BY startTime DESC;
+SELECT meeting.*, username FROM meeting LEFT OUTER JOIN user_table AS user ON meeting.createdBy = user.id WHERE endTime < :currentTime AND archived = 0 ORDER BY startTime DESC;
 
 getArchivedWithUsername:
-SELECT meeting.*, username FROM meeting LEFT OUTER JOIN sqluser ON meeting.createdBy = sqluser.id WHERE archived = 1 ORDER BY startTime DESC;
+SELECT meeting.*, username FROM meeting LEFT OUTER JOIN user_table AS user ON meeting.createdBy = user.id WHERE archived = 1 ORDER BY startTime DESC;

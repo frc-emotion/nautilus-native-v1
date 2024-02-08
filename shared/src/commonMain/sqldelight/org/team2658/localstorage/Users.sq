@@ -17,9 +17,9 @@ CREATE TABLE user_table (
 );
 
 insert {
-BEGIN TRANSACTION;
+BEGIN TRANSACTION
 DELETE FROM user_table WHERE id = :id OR username = :username OR email = :email OR phone = :phone;
-INSERT OR ROLLBACK INTO user_table (id, firstname, lastname, username, email, phone, subteam, grade, rolesJSON, accountType, attendanceJSON, isLoggedInUser)
+INSERT OR ROLLBACK INTO user_table (id, firstname, lastname, username, email, phone, subteam, grade, rolesJSON, accountType, attendanceJSON, isLoggedInUser
 VALUES (:id,  :firstname,  :lastname,  :username,  :email,  :phone,  :subteam,  :grade,  :rolesJSON, :accountType, :attendanceJSON, :isLoggedInUser);
 COMMIT;
 }

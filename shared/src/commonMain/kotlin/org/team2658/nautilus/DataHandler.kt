@@ -280,6 +280,19 @@ class DataHandler(databaseDriverFactory: DatabaseDriverFactory, getToken: () -> 
             }
         }
 
+        override suspend fun archiveMeeting(id: String) {
+            withContext(Dispatchers.IO) {
+                network.attendance.archiveMeeting(id, users.loadLoggedIn()).let {
+                    when(it) {
+                        is Result.Success -> {
+                            sync()
+                        }
+                        is Result.Error -> {}
+                    }
+                }
+            }
+        }
+
         override fun clear() {
             meetingsDB.deleteAll()
         }
@@ -371,6 +384,7 @@ class DataHandler(databaseDriverFactory: DatabaseDriverFactory, getToken: () -> 
                 }
             }
         }
+
     }
 
     val seasons = object: SeasonsNamespace {
@@ -490,6 +504,8 @@ class DataHandler(databaseDriverFactory: DatabaseDriverFactory, getToken: () -> 
         fun getArchived(onCompleteSync: (List<Meeting>) -> Unit): List<Meeting>
 
         fun archiveMeeting(id: String, onComplete: (Boolean) -> Unit)
+
+        suspend fun archiveMeeting(id: String)
 
         fun clear()
 

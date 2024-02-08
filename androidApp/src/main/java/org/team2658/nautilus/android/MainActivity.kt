@@ -30,8 +30,8 @@ import androidx.work.WorkManager
 import org.team2658.nautilus.DataHandler
 import org.team2658.nautilus.android.screens.settings.SettingsScreen
 import org.team2658.nautilus.android.ui.navigation.LoggedInNavigator
-import org.team2658.nautilus.android.viewmodels.NFCViewmodel
 import org.team2658.nautilus.android.viewmodels.MainViewModel
+import org.team2658.nautilus.android.viewmodels.NFCViewmodel
 import org.team2658.nautilus.userauth.AuthState
 import org.team2658.nautilus.userauth.User
 import java.util.concurrent.TimeUnit
@@ -139,6 +139,7 @@ class MainActivity : ComponentActivity() {
     }
     override fun onDestroy() {
         super.onDestroy()
+        dataHandler.getNetworkClient().close()
     }
 
     override fun onNewIntent(intent: Intent?) {

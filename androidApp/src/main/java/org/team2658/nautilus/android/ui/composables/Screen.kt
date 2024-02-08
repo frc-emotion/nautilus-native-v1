@@ -6,6 +6,7 @@ import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.IntrinsicSize
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -17,7 +18,7 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.pullrefresh.pullRefresh
 import androidx.compose.material.pullrefresh.rememberPullRefreshState
-import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
@@ -66,7 +67,7 @@ fun Screen(content: @Composable () -> Unit) {
     }
 }
 
-const val PULL_REFRESH_HEIGHT = 116
+const val PULL_REFRESH_HEIGHT = 128
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
 fun Screen(onRefresh: suspend () -> Unit, content: @Composable () -> Unit) {
@@ -105,7 +106,6 @@ fun Screen(onRefresh: suspend () -> Unit, content: @Composable () -> Unit) {
         }, label = "scrollOffset"
     )
 
-
     Surface(color = MaterialTheme.colorScheme.background, modifier = Modifier
         .fillMaxSize()
         .clickable(
@@ -114,25 +114,30 @@ fun Screen(onRefresh: suspend () -> Unit, content: @Composable () -> Unit) {
         )
         { focusManager.clearFocus() }
     ) {
-
         if(refreshState.progress > 0 || refreshing) {
-            Box (Modifier.height(IntrinsicSize.Min).fillMaxWidth().offset(y=(scrollOffset/4).coerceAtLeast(10).dp), contentAlignment = Alignment.TopCenter){
+            Box (
+                Modifier
+                    .height(IntrinsicSize.Min)
+                    .fillMaxWidth()
+                    .offset(y = (scrollOffset / 4).coerceAtLeast(8).dp), contentAlignment = Alignment.TopCenter){
                 when {
-                    willRefresh || refreshing -> CircularProgressIndicator(Modifier.size(64.dp), strokeCap = StrokeCap.Round)
-                    refreshState.progress in 0f..1f -> CircularProgressIndicator(modifier = Modifier.size(64.dp), progress = refreshState.progress, strokeCap = StrokeCap.Round)
+                    willRefresh || refreshing -> CircularProgressIndicator(Modifier.size(64.dp), strokeCap = StrokeCap.Round, color = MaterialTheme.colorScheme.primary)
+                    refreshState.progress in 0f..1f -> CircularProgressIndicator(modifier = Modifier.size(64.dp), progress =  refreshState.progress , strokeCap = StrokeCap.Round, color = MaterialTheme.colorScheme.primary)
                 }
 
             }
         }
-
         Column(
             modifier = Modifier
-                .padding(32.dp)
                 .pullRefresh(refreshState)
                 .verticalScroll(scrollState, enabled = true)
                 .offset(y = (scrollOffset).dp)
+                .fillMaxSize()
+                .padding(horizontal = 16.dp)
         ) {
+            Spacer(modifier = Modifier.height(16.dp))
             content()
+            Spacer(modifier = Modifier.height(16.dp))
         }
     }
 }

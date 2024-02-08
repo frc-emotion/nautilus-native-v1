@@ -1,7 +1,7 @@
 package org.team2658.nautilus.attendance
 
 enum class MeetingType(val value: String) {
-    MEETING("general"),
+    GENERAL("general"),
     LEADS("leads"),
     KICKOFF("kickoff"),
     WORKSHOP("workshop"),

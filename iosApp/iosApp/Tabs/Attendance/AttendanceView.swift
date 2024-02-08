@@ -23,10 +23,10 @@ struct AttendanceView: View {
     @State private var errorMsg: String = ""
     @State private var meetingsPopoverDisplayed = false
     @State private var historyPopoverDisplayed = false
-    @EnvironmentObject var vm: UserStateViewModel
+    @EnvironmentObject var env: EnvironmentModel
 
     var body: some View {
-        let hours: Int32 = if vm.user!.attendance.isEmpty {0} else {vm.user!.attendance[vm.user!.attendance.count - 1].totalHoursLogged}
+        let hours: Int32 = if env.user!.attendance.isEmpty {0} else {env.user!.attendance[env.user!.attendance.count - 1].totalHoursLogged}
         let progress = Double(hours) / 36
         
         NavigationStack {
@@ -62,20 +62,14 @@ struct AttendanceView: View {
             .onChange(of: data) { newData in
                 if newData != "" {
                     Task {
-                        let response = try await shared.EmotionClient().attendMeeting(user: vm.user, meetingId: newData, tapTime: Int64((NSDate().timeIntervalSince1970) * 1000), failureCallback: { (errorMsgIn) -> () in
-                            
-                            if let errorMsgIn = errorMsgIn.data(using: .utf8, allowLossyConversion: false) {
-                                Task {
-                                    let json = try JSON(data: errorMsgIn)
-                                    errorMsg = "Error: " + json["message"].stringValue
-                                }
+                        let response = try await env.dh.attendance.attend(meetingId: newData, time: Int64((NSDate().timeIntervalSince1970) * 1000), verifiedBy: nil) { errorMsgIn in
+                            Task {
+                                let json = try JSON(data: errorMsgIn)
+                                errorMsg = "Error: " + json["message"].stringValue
                             }
-                        })
-                        if let response {
-                            Task { await vm.setUser(userIn: response) }
-                            errorMsg = ""
+                        } onSuccess: {
+                            <#code#>
                         }
-                        data = ""
                     }
                 }
             }
@@ -100,7 +94,7 @@ struct AttendanceView: View {
                 }
                 // leads: view meetings
                 ToolbarItem(placement: .topBarTrailing) {
-                    if (vm.user!.accountType == shared.AccountType.lead || vm.user!.accountType == shared.AccountType.admin || vm.user!.accountType == shared.AccountType.superuser) {
+                    if (env.user!.accountType == shared.AccountType.lead || env.user!.accountType == shared.AccountType.admin || env.user!.accountType == shared.AccountType.superuser) {
                         Button(action: {
                             meetingsPopoverDisplayed.toggle()
                         }) {
@@ -108,14 +102,14 @@ struct AttendanceView: View {
                         }
                         .popover(isPresented: $meetingsPopoverDisplayed, arrowEdge: .bottom) {
                             NavigationView {
-                                MeetingsListView(user: vm.user!, isPresented: $meetingsPopoverDisplayed)
+                                MeetingsListView(user: env.user!, isPresented: $meetingsPopoverDisplayed)
                             }
                         }
                     }
                 }
             }
             .popover(isPresented: $historyPopoverDisplayed) {
-                AttendedMeetingsView(user: vm.user!, isPresented: $historyPopoverDisplayed)
+                AttendedMeetingsView(user: env.user!, isPresented: $historyPopoverDisplayed)
             }
         }
     }
@@ -123,10 +117,6 @@ struct AttendanceView: View {
 
 struct AttendanceView_Previews: PreviewProvider {
     static var previews: some View {
-        AttendanceView().environmentObject({ () -> UserStateViewModel in
-            let vm = UserStateViewModel()
-            vm.user = HelpfulVars().testuser
-            return vm
-        }() )
+        AttendanceView()
     }
 }

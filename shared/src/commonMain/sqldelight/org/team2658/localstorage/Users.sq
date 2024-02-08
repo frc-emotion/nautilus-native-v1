@@ -1,0 +1,56 @@
+import kotlin.Int;
+import kotlin.Boolean;
+
+CREATE TABLE user_table (
+    id TEXT PRIMARY KEY NOT NULL,
+    firstname TEXT NOT NULL,
+    lastname TEXT NOT NULL,
+    username TEXT UNIQUE NOT NULL,
+    email TEXT UNIQUE NOT NULL,
+    phone TEXT UNIQUE NOT NULL,
+    subteam TEXT NOT NULL,
+    grade INTEGER AS Int NOT NULL,
+    rolesJSON TEXT NOT NULL,
+    accountType INTEGER AS Int NOT NULL,
+    attendanceJSON TEXT NOT NULL,
+    isLoggedInUser INTEGER AS Boolean NOT NULL
+);
+
+insert {
+BEGIN TRANSACTION;
+DELETE FROM user_table WHERE id = :id OR username = :username OR email = :email OR phone = :phone;
+INSERT OR ROLLBACK INTO user_table (id, firstname, lastname, username, email, phone, subteam, grade, rolesJSON, accountType, attendanceJSON, isLoggedInUser)
+VALUES (:id,  :firstname,  :lastname,  :username,  :email,  :phone,  :subteam,  :grade,  :rolesJSON, :accountType, :attendanceJSON, :isLoggedInUser);
+COMMIT;
+}
+
+deleteLoggedIn:
+DELETE FROM user_table WHERE isLoggedInUser = 1;
+
+deleteNotLoggedIn:
+DELETE FROM user_table WHERE isLoggedInUser = 0;
+
+getLoggedInUser:
+SELECT * FROM user_table WHERE isLoggedInUser = 1 LIMIT 1;
+
+getMyAttendance:
+SELECT attendanceJSON FROM user_table WHERE isLoggedInUser = 1 LIMIT 1;
+
+getNotLoggedIn:
+SELECT * FROM user_table WHERE isLoggedInUser = 0;
+
+getById:
+SELECT * FROM user_table WHERE id = ? LIMIT 1;
+
+getByUsername:
+SELECT * FROM user_table WHERE username = ? LIMIT 1;
+
+getByEmail:
+SELECT * FROM user_table WHERE email = ? LIMIT 1;
+
+getInfoById:
+SELECT username, firstname, lastname FROM user_table WHERE id = ? LIMIT 1;
+
+
+deleteOne:
+DELETE FROM user_table WHERE id = ?;

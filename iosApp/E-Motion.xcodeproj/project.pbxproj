@@ -23,6 +23,8 @@
 		93418DE62A5E362D00336A62 /* UserBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = 93418DE52A5E362D00336A62 /* UserBar.swift */; };
 		934A04D62B54DA0D00B2D145 /* DateHelpers.swift in Sources */ = {isa = PBXBuildFile; fileRef = 934A04D52B54DA0D00B2D145 /* DateHelpers.swift */; };
 		934A04D72B54DA0D00B2D145 /* DateHelpers.swift in Sources */ = {isa = PBXBuildFile; fileRef = 934A04D52B54DA0D00B2D145 /* DateHelpers.swift */; };
+		934E0AFC2B69D5B100515C44 /* EnvironmentModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 934E0AFB2B69D5B100515C44 /* EnvironmentModel.swift */; };
+		934E0AFD2B69D5B100515C44 /* EnvironmentModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 934E0AFB2B69D5B100515C44 /* EnvironmentModel.swift */; };
 		934F47272B413AF0009DA4FA /* AuthenticationView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 934F47262B413AF0009DA4FA /* AuthenticationView.swift */; };
 		9351D1C22B4E4DDC00148E8D /* KeychainSwift in Frameworks */ = {isa = PBXBuildFile; productRef = 9351D1C12B4E4DDC00148E8D /* KeychainSwift */; };
 		9351D1F42B4F4D9500148E8D /* VerifyUsersView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9351D1F32B4F4D9500148E8D /* VerifyUsersView.swift */; };
@@ -55,7 +57,6 @@
 		9351D21D2B53A12200148E8D /* AttendedMeetingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9339CC5C2B4C7368000DA3FC /* AttendedMeetingsView.swift */; };
 		9351D21E2B53A12200148E8D /* MeetingsListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9339CC532B4B5DAB000DA3FC /* MeetingsListView.swift */; };
 		9351D21F2B53A12200148E8D /* NFCWriter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9339CC4F2B4B526D000DA3FC /* NFCWriter.swift */; };
-		9351D2202B53A12200148E8D /* UserStateViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 93B9EAE52A65E0FA00D5B8A8 /* UserStateViewModel.swift */; };
 		9351D2212B53A12200148E8D /* AuthenticationView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 934F47262B413AF0009DA4FA /* AuthenticationView.swift */; };
 		9351D2232B53A12200148E8D /* KeychainSwift in Frameworks */ = {isa = PBXBuildFile; productRef = 9351D2002B53A12200148E8D /* KeychainSwift */; };
 		9351D2242B53A12200148E8D /* SwiftyJSON in Frameworks */ = {isa = PBXBuildFile; productRef = 9351D1FF2B53A12200148E8D /* SwiftyJSON */; };
@@ -76,7 +77,6 @@
 		93B9EACF2A5E803100D5B8A8 /* ScoutingFormView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 93B9EACE2A5E803100D5B8A8 /* ScoutingFormView.swift */; };
 		93B9EAD12A5F387A00D5B8A8 /* LoginView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 93B9EAD02A5F387A00D5B8A8 /* LoginView.swift */; };
 		93B9EAD52A5F4FB800D5B8A8 /* AccountCreationView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 93B9EAD42A5F4FB800D5B8A8 /* AccountCreationView.swift */; };
-		93B9EAE62A65E0FA00D5B8A8 /* UserStateViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 93B9EAE52A65E0FA00D5B8A8 /* UserStateViewModel.swift */; };
 		93B9EAED2A67211600D5B8A8 /* ForgotPasswordView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 93B9EAEC2A67211600D5B8A8 /* ForgotPasswordView.swift */; };
 		93DB394D2AF9701000F257BE /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 93DB394C2AF9701000F257BE /* LaunchScreen.storyboard */; };
 /* End PBXBuildFile section */
@@ -97,6 +97,7 @@
 		93418DE32A5E362600336A62 /* UserView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserView.swift; sourceTree = "<group>"; };
 		93418DE52A5E362D00336A62 /* UserBar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserBar.swift; sourceTree = "<group>"; };
 		934A04D52B54DA0D00B2D145 /* DateHelpers.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DateHelpers.swift; sourceTree = "<group>"; };
+		934E0AFB2B69D5B100515C44 /* EnvironmentModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EnvironmentModel.swift; sourceTree = "<group>"; };
 		934F47262B413AF0009DA4FA /* AuthenticationView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthenticationView.swift; sourceTree = "<group>"; };
 		9351D1F32B4F4D9500148E8D /* VerifyUsersView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VerifyUsersView.swift; sourceTree = "<group>"; };
 		9351D1F62B4F500300148E8D /* MeetingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MeetingView.swift; sourceTree = "<group>"; };
@@ -117,7 +118,6 @@
 		93B9EACE2A5E803100D5B8A8 /* ScoutingFormView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScoutingFormView.swift; sourceTree = "<group>"; };
 		93B9EAD02A5F387A00D5B8A8 /* LoginView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoginView.swift; sourceTree = "<group>"; };
 		93B9EAD42A5F4FB800D5B8A8 /* AccountCreationView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AccountCreationView.swift; sourceTree = "<group>"; };
-		93B9EAE52A65E0FA00D5B8A8 /* UserStateViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserStateViewModel.swift; sourceTree = "<group>"; };
 		93B9EAEC2A67211600D5B8A8 /* ForgotPasswordView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ForgotPasswordView.swift; sourceTree = "<group>"; };
 		93DB394C2AF9701000F257BE /* LaunchScreen.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = LaunchScreen.storyboard; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -184,7 +184,7 @@
 				058557BA273AAA24004C7B11 /* Assets.xcassets */,
 				7555FF8C242A565B00829871 /* Info.plist */,
 				2152FB032600AC8F00CF470E /* iOSApp.swift */,
-				93B9EAE52A65E0FA00D5B8A8 /* UserStateViewModel.swift */,
+				934E0AFB2B69D5B100515C44 /* EnvironmentModel.swift */,
 				058557D7273AAEEB004C7B11 /* Preview Content */,
 				93DB394C2AF9701000F257BE /* LaunchScreen.storyboard */,
 			);
@@ -476,6 +476,7 @@
 				93719C882AC0B35300E29446 /* CircularProgressView.swift in Sources */,
 				93418D9D2A5BC4D100336A62 /* ScoutingView.swift in Sources */,
 				93B9EAED2A67211600D5B8A8 /* ForgotPasswordView.swift in Sources */,
+				934E0AFC2B69D5B100515C44 /* EnvironmentModel.swift in Sources */,
 				93B615502AEA163200732A3F /* NFCButton.swift in Sources */,
 				9351D1F72B4F500300148E8D /* MeetingView.swift in Sources */,
 				93B9EAD12A5F387A00D5B8A8 /* LoginView.swift in Sources */,
@@ -486,7 +487,6 @@
 				9339CC5D2B4C7368000DA3FC /* AttendedMeetingsView.swift in Sources */,
 				9339CC542B4B5DAB000DA3FC /* MeetingsListView.swift in Sources */,
 				9339CC502B4B526D000DA3FC /* NFCWriter.swift in Sources */,
-				93B9EAE62A65E0FA00D5B8A8 /* UserStateViewModel.swift in Sources */,
 				934F47272B413AF0009DA4FA /* AuthenticationView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -513,6 +513,7 @@
 				9351D2122B53A12200148E8D /* CircularProgressView.swift in Sources */,
 				9351D2132B53A12200148E8D /* ScoutingView.swift in Sources */,
 				9351D2142B53A12200148E8D /* ForgotPasswordView.swift in Sources */,
+				934E0AFD2B69D5B100515C44 /* EnvironmentModel.swift in Sources */,
 				9351D2152B53A12200148E8D /* NFCButton.swift in Sources */,
 				9351D2162B53A12200148E8D /* MeetingView.swift in Sources */,
 				9351D2172B53A12200148E8D /* LoginView.swift in Sources */,
@@ -523,7 +524,6 @@
 				9351D21D2B53A12200148E8D /* AttendedMeetingsView.swift in Sources */,
 				9351D21E2B53A12200148E8D /* MeetingsListView.swift in Sources */,
 				9351D21F2B53A12200148E8D /* NFCWriter.swift in Sources */,
-				9351D2202B53A12200148E8D /* UserStateViewModel.swift in Sources */,
 				9351D2212B53A12200148E8D /* AuthenticationView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

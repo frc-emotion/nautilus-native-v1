@@ -1,0 +1,51 @@
+import kotlin.Int;
+
+CREATE TABLE competition (
+    name TEXT NOT NULL,
+    year INTEGER AS Int NOT NULL,
+    season TEXT NOT NULL,
+    PRIMARY KEY (name, year),
+    FOREIGN KEY (season) REFERENCES season (id)
+);
+
+CREATE TABLE season (
+    id TEXT NOT NULL PRIMARY KEY,
+    year INTEGER AS Int NOT NULL,
+    name TEXT NOT NULL,
+    attendance_periods_JSON TEXT
+);
+
+insertCompetition:
+INSERT OR IGNORE INTO competition (name, year, season) VALUES (?, ?, ?);
+
+insertSeason:
+INSERT OR IGNORE INTO season (id, year, name, attendance_periods_JSON) VALUES (?, ?, ?, ?);
+
+getAllCompetitions:
+SELECT name, year FROM competition;
+
+getAllSeasons:
+SELECT season.*, group_concat(competition.name) AS competitions FROM season LEFT OUTER JOIN competition ON season.id = competition.season GROUP BY season.id ORDER BY season.year DESC;
+
+getCompetitionsByYear:
+SELECT name, year FROM competition WHERE year = ?;
+
+getCompetitionsFromLatestSeason:
+SELECT name, year FROM competition WHERE season = (SELECT id FROM season ORDER BY year DESC LIMIT 1) ORDER BY year DESC;
+
+deleteAllSeasons {
+    BEGIN TRANSACTION;
+    DELETE FROM season;
+    DELETE FROM competition;
+    COMMIT;
+}
+
+deleteSeason {
+    BEGIN TRANSACTION;
+    DELETE FROM competition WHERE season = ?;
+    DELETE FROM season WHERE id = ?;
+    COMMIT;
+}
+
+getAttendancePeriods:
+SELECT attendance_periods_JSON, year FROM season WHERE attendance_periods_JSON IS NOT NULL ORDER BY year DESC;

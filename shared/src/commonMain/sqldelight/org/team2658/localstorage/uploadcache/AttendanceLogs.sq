@@ -1,0 +1,21 @@
+CREATE TABLE AttendanceLogsUploadCache (
+    meeting_id TEXT UNIQUE NOT NULL PRIMARY KEY,
+    tap_time INTEGER NOT NULL,
+    verifiedBy TEXT NOT NULL
+);
+
+insert:
+INSERT OR IGNORE INTO AttendanceLogsUploadCache (meeting_id, tap_time, verifiedBy) VALUES (?, ?, ?);
+
+
+delete:
+DELETE FROM AttendanceLogsUploadCache WHERE meeting_id = ?;
+
+clear:
+DELETE FROM AttendanceLogsUploadCache;
+
+get:
+SELECT * FROM AttendanceLogsUploadCache;
+
+getCacheLength:
+SELECT (SELECT COUNT(*) FROM AttendanceLogsUploadCache) + (SELECT COUNT(*) FROM crescendoUpload) AS total;

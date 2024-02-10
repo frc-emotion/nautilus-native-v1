@@ -61,7 +61,7 @@ class NFCViewmodel: ViewModel() {
         return meetingId?.let {
             MeetingLog(
                 meetingId = it,
-                verifiedBy = verifiedBy
+                verifiedBy = verifiedBy ?: return null
             )
         }
     }

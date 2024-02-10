@@ -1,48 +1,50 @@
 import kotlin.Boolean;
+import kotlin.Int;
 
-CREATE TABLE crescendo (
+CREATE TABLE crescendo_table (
     id TEXT PRIMARY KEY NOT NULL,
     competition TEXT NOT NULL,
-    teamNumber INTEGER NOT NULL,
+    teamNumber INTEGER AS Int NOT NULL,
     teamName TEXT NOT NULL,
-    matchNumber INTEGER NOT NULL,
-    score INTEGER NOT NULL,
-    penalty INTEGER NOT NULL,
+    matchNumber INTEGER AS Int NOT NULL,
+    score INTEGER AS Int NOT NULL,
+    penalty INTEGER AS Int NOT NULL,
     won INTEGER AS Boolean NOT NULL,
     tie INTEGER AS Boolean NOT NULL,
     comments TEXT NOT NULL,
     defensive INTEGER AS Boolean NOT NULL,
     brokeDown INTEGER AS Boolean NOT NULL,
-    rankingPoints INTEGER NOT NULL,
-    autoLeave INTEGER AS Boolean NOT NULL,
-    autoAmp INTEGER NOT NULL,
-    autoSpeaker INTEGER NOT NULL,
-    teleopAmp INTEGER NOT NULL,
-    teleopSpeakerUnamp INTEGER NOT NULL,
-    teleopSpeakerAmp INTEGER NOT NULL,
+    rankingPoints INTEGER AS Int NOT NULL,
+    auto_leave INTEGER AS Boolean NOT NULL,
+    auto_ampNotes INTEGER AS Int NOT NULL,
+    auto_speakerNotes INTEGER AS Int NOT NULL,
+    teleop_ampNotes INTEGER AS Int NOT NULL,
+    teleop_speakerUnamped INTEGER AS Int NOT NULL,
+    teleop_speakerAmped INTEGER AS Int NOT NULL,
     stageState TEXT NOT NULL,
-    harmony INTEGER NOT NULL,
-    trapNotes INTEGER NOT NULL,
+    harmony INTEGER AS Int NOT NULL,
+    trapNotes INTEGER AS Int NOT NULL,
     melody INTEGER AS Boolean NOT NULL,
-    ensemble INTEGER AS Boolean NOT NULL
+    ensemble INTEGER AS Boolean NOT NULL,
+    created_by TEXT NOT NULL
 );
 
-insert{
+insert {
 BEGIN TRANSACTION;
-DELETE FROM crescendo WHERE id = :id;
-INSERT OR ROLLBACK INTO crescendo(id, competition, teamNumber, teamName, matchNumber, score, penalty, won, tie, comments, defensive, brokeDown, rankingPoints, autoLeave, autoAmp, autoSpeaker, teleopAmp, teleopSpeakerUnamp, teleopSpeakerAmp, stageState, harmony, trapNotes, melody, ensemble)
-VALUES (:id, :competition, :teamNumber, :teamName, :matchNumber, :score, :penalty, :won, :tie, :comments, :defensive, :brokeDown, :rankingPoints, :autoLeave, :autoAmp, :autoSpeaker, :teleopAmp, :teleopSpeakerUnamp, :teleopSpeakerAmp, :stageState, :harmony, :trapNotes, :melody, :ensemble);
+DELETE FROM crescendo_table WHERE id = :id;
+INSERT OR ROLLBACK INTO crescendo_table(id, competition, teamNumber, teamName, matchNumber, score, penalty, won, tie, comments, defensive, brokeDown, rankingPoints, auto_leave, auto_ampNotes, auto_speakerNotes, teleop_ampNotes, teleop_speakerUnamped, teleop_speakerAmped, stageState, harmony, trapNotes, melody, ensemble, created_by)
+VALUES (:id, :competition, :teamNumber, :teamName, :matchNumber, :score, :penalty, :won, :tie, :comments, :defensive, :brokeDown, :rankingPoints, :autoLeave, :autoAmp, :autoSpeaker, :teleopAmp, :teleopSpeakerUnamp, :teleopSpeakerAmp, :stageState, :harmony, :trapNotes, :melody, :ensemble, :created_by);
 COMMIT;
 }
 
 getAll:
-SELECT * FROM crescendo;
+SELECT * FROM crescendo_table;
 
 getOne:
-SELECT * FROM crescendo WHERE id = ? LIMIT 1;
+SELECT * FROM crescendo_table WHERE id = ? LIMIT 1;
 
 deleteOne:
-DELETE FROM crescendo WHERE id = ?;
+DELETE FROM crescendo_table WHERE id = ?;
 
 deleteAll:
-DELETE FROM crescendo;
+DELETE FROM crescendo_table;

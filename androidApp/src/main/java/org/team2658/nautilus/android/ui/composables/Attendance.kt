@@ -74,9 +74,9 @@ fun UserAttendanceViewPreview() {
     Screen {
         UserAttendanceView(
             mapOf("2024spring" to
-                    UserAttendance(10, false, emptyList()),
+                    UserAttendance(10, emptyList()),
                 "2024fall" to
-                        UserAttendance(20, false, emptyList())
+                        UserAttendance(20, emptyList())
             ))
         Spacer(modifier = Modifier.size(256.dp))
         UserAttendanceView(userAttendance = emptyMap())
@@ -110,7 +110,7 @@ fun AttendanceNfcUIPreview() {
         Spacer(modifier = Modifier.size(64.dp))
 
         UserAttendanceView(userAttendance = mapOf("2024spring" to
-                UserAttendance(10, false, emptyList())))
+                UserAttendance(10, emptyList())))
         Spacer(space)
         AttendanceNfcUI(if(mock == null) MeetingLog("2024spring", "unknown") else null) {
             mock = if(mock != null) null else MeetingLog("2024spring", "unknown")

@@ -57,6 +57,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import kotlinx.coroutines.launch
 import org.team2658.nautilus.DataHandler
+import org.team2658.nautilus.Result
 import org.team2658.nautilus.android.ui.composables.DropDown
 import org.team2658.nautilus.android.ui.composables.LabelledTextBoxSingleLine
 import org.team2658.nautilus.android.ui.composables.LoadingSpinner
@@ -67,6 +68,7 @@ import org.team2658.nautilus.android.viewmodels.NFCViewmodel
 import org.team2658.nautilus.attendance.Meeting
 import org.team2658.nautilus.attendance.MeetingType
 import org.team2658.nautilus.userauth.AccountType
+import org.team2658.nautilus.userauth.isAdmin
 import java.time.Instant
 import java.time.LocalDateTime
 import java.time.ZoneOffset
@@ -101,7 +103,7 @@ fun formatFromEpoch(epoch: EpochMS): String {
 @OptIn(ExperimentalMaterial3Api::class)
 fun AttendanceVerificationPage(viewModel: MainViewModel, nfc: NFCViewmodel, dataHandler: DataHandler) {
 
-    val attendancePeriods = dataHandler.seasons.getAttendancePeriods().values.flatten()
+    val attendancePeriods = dataHandler.seasons.getAttendancePeriods()
 
     val scope = rememberCoroutineScope()
     var showCreateMenu by remember { mutableStateOf(false) }
@@ -186,7 +188,7 @@ fun AttendanceVerificationPage(viewModel: MainViewModel, nfc: NFCViewmodel, data
             onValueChange = { meetingValue = it ?: 0 })
         val startTimeMs = dateTimeStateToEpochMs(dateState, startTimeState)
         val endTimeMs = dateTimeStateToEpochMs(dateState, endTimeState)
-        DropDown(label = "Meeting Type", value = meetingType, items = MeetingType.values().map { it.value } , onValueChange = {meetingType = it} )
+        DropDown(label = "Meeting Type", value = meetingType, items = MeetingType.entries.map { it.value } , onValueChange = {meetingType = it} )
         Spacer(modifier = Modifier.size(8.dp))
         DropDown(label = "Attendance Period", value = attendancePeriod, items = attendancePeriods, onValueChange = {
             attendancePeriod = it
@@ -199,22 +201,26 @@ fun AttendanceVerificationPage(viewModel: MainViewModel, nfc: NFCViewmodel, data
         Button(onClick = {
             isBusy = true
             scope.launch {
-                dataHandler.attendance.create(
+                val res = dataHandler.attendance.create(
                     type = meetingType,
                     description = meetingDescription,
                     startTime = startTimeMs,
                     endTime = endTimeMs,
                     value = meetingValue,
                     attendancePeriod = attendancePeriod,
-                    onError = {
-                        meetingCreationStatus = "Error creating meeting: $it"
+                )
+                when(res) {
+                    is Result.Success -> {
+                        meetingCreationStatus = "Successfully created meeting"
                         showMeetingSuccessDialog = true
+                        loadMeetings()
+                        isBusy = false
                     }
-                ) {
-                    meetingCreationStatus = "Successfully created meeting"
-                    showMeetingSuccessDialog = true
-                    loadMeetings()
-                    isBusy = false
+                    is Result.Error -> {
+                        meetingCreationStatus = "Error creating meeting: ${res.error}"
+                        showMeetingSuccessDialog = true
+                        isBusy = false
+                    }
                 }
             }
             showCreateMenu = false
@@ -281,7 +287,7 @@ fun AttendanceVerificationPage(viewModel: MainViewModel, nfc: NFCViewmodel, data
             else {
                 Text(text = "No meetings available", style = MaterialTheme.typography.titleMedium)
             }
-            if((viewModel.user?.isAdmin == true) && showPast) {
+            if(isAdmin(viewModel.user) && showPast) {
                 Spacer(modifier = Modifier.size(16.dp))
                 Text(text = "Past Meetings", style = MaterialTheme.typography.headlineLarge)
                 Spacer(modifier = Modifier.size(8.dp))
@@ -304,7 +310,7 @@ fun AttendanceVerificationPage(viewModel: MainViewModel, nfc: NFCViewmodel, data
                     Text(text = "None Found", style = MaterialTheme.typography.titleMedium)
                 }
             }
-            if((viewModel.user?.isAdmin == true) && showArchived) {
+            if(isAdmin(viewModel.user) && showArchived) {
                 Spacer(modifier = Modifier.size(16.dp))
                 Text(text = "Archived Meetings", style = MaterialTheme.typography.headlineLarge)
                 Spacer(modifier = Modifier.size(8.dp))
@@ -337,7 +343,7 @@ fun AttendanceVerificationPage(viewModel: MainViewModel, nfc: NFCViewmodel, data
                 colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.secondaryContainer)
             ) {
                 Row(Modifier.padding(2.dp)) {
-                    if(viewModel.user?.isAdmin == true) {
+                    if(isAdmin(viewModel.user)) {
                         IconButton(onClick = {
                             isBusy = true
                             scope.launch {

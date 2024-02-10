@@ -1,118 +1,88 @@
 package org.team2658.nautilus.userauth
 
-import kotlinx.serialization.encodeToString
-import kotlinx.serialization.json.Json
+import kotlinx.serialization.Serializable
 import org.team2658.nautilus.attendance.UserAttendance
-import org.team2658.network.models.RoleModel
-import org.team2658.network.models.RolePermissionsModel
-import org.team2658.network.models.UserModel
 
-data class User(
-    val _id: String,
-    val firstName: String,
-    val lastName: String,
-    val username: String,
-    val email: String,
-    val phoneNumber: String,
-    val token: String? = null,
-    val subteam: Subteam,
-    val grade: Int,
-    val roles: List<Role>,
-    val accountType: AccountType = AccountType.UNVERIFIED,
-    val accountUpdateVersion: Int = 1,
-    val socials: List<Social> = listOf(),
+sealed interface User {
+    val _id: String
+    val firstname: String
+    val lastname: String
+    val username: String
+    val email: String
+    val subteam: Subteam?
+    val roles: List<String>
+    val accountType: AccountType
 
-    val attendance: Map<String,UserAttendance>,
-) {
-    val permissions = getPermissions(this)
-    val isAdminOrLead = this.accountType.value >= AccountType.LEAD.value
-    val isAdmin = this.accountType.value >= AccountType.ADMIN.value
-
-    companion object {
-        fun fromSerializable(usr: UserModel): User {
-            return User(
-                firstName = usr.firstname,
-                lastName = usr.lastname,
-                username = usr.username,
-                email = usr.email,
-                phoneNumber = usr.phone?: "",
-                token = usr.token,
-//                subteam = when(usr.subteam?.lowercase()) {
-//                    "software" -> Subteam.SOFTWARE
-//                    "build" -> Subteam.BUILD
-//                    "marketing" -> Subteam.MARKETING
-//                    "electrical" -> Subteam.ELECTRICAL
-//                    "design" -> Subteam.DESIGN
-//                    "executive" -> Subteam.EXECUTIVE
-//                    else -> Subteam.NONE
-//                },
-                subteam = try {
-                    Subteam.valueOf(usr.subteam?.trim()?.uppercase() ?: "NONE")
-                }catch (_: Exception) { Subteam.NONE },
-                grade = usr.grade?: -1,
-                roles = usr.roles?.map { Role(it.name, UserPermissions(
-                    verifyAllAttendance = it.permissions.verifyAllAttendance,
-                    verifySubteamAttendance = it.permissions.verifySubteamAttendance,
-                    makeAnnouncements = it.permissions.makeAnnouncements,
-                    makeBlogPosts = it.permissions.makeBlogPosts,
-                    inPitScouting = it.permissions.inPitScouting,
-                    standScouting = it.permissions.standScouting,
-                    viewScoutingData = it.permissions.viewScoutingData
-                )) } ?: listOf(),
-                accountType = AccountType.of(usr.accountType),
-                attendance = usr.attendance,
-                _id = usr._id,
-            )
-        }
-
-        fun fromJSON(json: String?): User? {
-            return json?.let { try {
-                val usr = Json.decodeFromString<UserModel>(json)
-                fromSerializable(usr)
-            }catch(e: Exception) { null } }
-        }
-
-        fun authState(usr: User?): AuthState {
-            return when(usr?.accountType) {
-                null -> AuthState.NOT_LOGGED_IN
-                AccountType.SUPERUSER, AccountType.ADMIN, AccountType.LEAD, AccountType.BASE -> AuthState.LOGGED_IN
-                AccountType.UNVERIFIED -> AuthState.AWAITING_VERIFICATION
-            }
-        }
-    }
-    private fun toSerializable(): UserModel {
-        return UserModel(
-            firstname = this.firstName,
-            _id = this._id,
-            lastname = this.lastName,
-            username = this.username,
-            email = this.email,
-            phone = this.phoneNumber,
-            token = this.token,
-            subteam = this.subteam.name.lowercase(),
-            grade = this.grade,
-            roles = this.roles.map{ RoleModel(
-                name = it.name,
-                permissions = RolePermissionsModel(
-                    verifyAllAttendance = it.permissions.verifyAllAttendance,
-                    verifySubteamAttendance = it.permissions.verifySubteamAttendance,
-                    makeAnnouncements = it.permissions.makeAnnouncements,
-                    makeBlogPosts = it.permissions.makeBlogPosts,
-                    inPitScouting = it.permissions.inPitScouting,
-                    standScouting = it.permissions.standScouting,
-                    viewScoutingData = it.permissions.viewScoutingData
-                )
-            )},
-            accountType = this.accountType.value,
-            attendance = this.attendance,
-        )
+    /**
+     * Full user data, only available to admins via getUsers. Does not include the JWT
+     */
+    sealed interface Full: User {
+        val accountUpdateVersion: Int
+        val attendance: Map<String, UserAttendance>
+        val grade: Int?
+        val permissions: UserPermissions
+        val phone: String?
     }
 
-    fun toJSON(): String {
-        return Json.encodeToString(this.toSerializable())
-    }
+    sealed interface WithoutToken: User
 }
 
+/**
+ * The user logged into the app. Includes a JWT for authentication and all user data.
+ */
+@Serializable
+data class TokenUser(
+    override val _id: String,
+    override val firstname: String,
+    override val lastname: String,
+    override val username: String,
+    override val email: String,
+    override val subteam: Subteam? = null,
+    override val roles: List<String>,
+    override val accountType: AccountType,
+    override val accountUpdateVersion: Int,
+    override val attendance: Map<String, UserAttendance>,
+    override val grade: Int? = null,
+    override val permissions: UserPermissions,
+    override val phone: String? = null,
+    val token: String,
+): User.Full
 
+/**
+ * A user with all of their data. Available to admins via getUsers or getUserById. No JWT.
+ */
+@Serializable
+data class FullUser(
+    override val _id: String,
+    override val firstname: String,
+    override val lastname: String,
+    override val username: String,
+    override val email: String,
+    override val subteam: Subteam?,
+    override val roles: List<String>,
+    override val accountType: AccountType,
+    override val accountUpdateVersion: Int,
+    override val attendance: Map<String, UserAttendance>,
+    override val grade: Int?,
+    override val permissions: UserPermissions,
+    override val phone: String?
+): User.Full, User.WithoutToken
 
+/**
+ * A user with only the data that is available to all users. No JWT. Available to all users with base verification.
+ */
+@Serializable
+data class PartialUser(
+    override val _id: String,
+    override val firstname: String,
+    override val lastname: String,
+    override val username: String,
+    override val email: String,
+    override val subteam: Subteam?,
+    override val roles: List<String>,
+    override val accountType: AccountType,
+): User, User.WithoutToken
 
+fun isAdmin(user: User?) = user != null && user.accountType.value >= AccountType.ADMIN.value
+
+fun isLead(user: User?) = user != null && user.accountType.value >= AccountType.LEAD.value

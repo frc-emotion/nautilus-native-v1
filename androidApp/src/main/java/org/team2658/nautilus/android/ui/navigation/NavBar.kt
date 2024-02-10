@@ -25,8 +25,8 @@ fun NavBar(navController: NavController, viewModel: MainViewModel) {
             AppScreens.SETTINGS
         )
 
-        (viewModel.user?.permissions?.standScouting == true)
-                || (viewModel.user?.permissions?.inPitScouting == true)
+        (viewModel.user?.permissions?.generalScouting == true)
+                || (viewModel.user?.permissions?.pitScouting == true)
                 || (viewModel.user?.permissions?.viewScoutingData == true)
         -> listOf(
             AppScreens.HOME,

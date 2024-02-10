@@ -8,7 +8,7 @@ import org.team2658.nautilus.android.viewmodels.NFCViewmodel
 
 @Composable
 fun LeadsScreen(viewModel: MainViewModel, nfc: NFCViewmodel, dataHandler: DataHandler) {
-   if(viewModel.user?.permissions?.verifyAllAttendance == true || viewModel.user?.permissions?.verifySubteamAttendance == true) {
+   if(viewModel.user?.permissions?.viewMeetings == true) {
        AttendanceVerificationPage(viewModel, nfc, dataHandler = dataHandler)
    }else {
        Text("No permissions to view attendance")

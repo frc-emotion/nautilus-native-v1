@@ -18,13 +18,16 @@ class MainViewModel(
     private val connectivityManager: ConnectivityManager?
 ) : ViewModel() {
 
-    var user by mutableStateOf(dataHandler.users.loadLoggedIn())
+    var user by mutableStateOf(Result.unwrapOrNull(dataHandler.users.loadLoggedIn()))
         private set
 
 
     fun login(username: String, password: String, onError: (String) -> Unit) {
         viewModelScope.launch {
-            user = dataHandler.users.login(username, password, onError)
+            when(val result = dataHandler.users.login(username, password)) {
+                is Result.Success -> user = result.data
+                is Result.Error -> onError(result.error)
+            }
         }
     }
 
@@ -47,7 +50,7 @@ class MainViewModel(
         errorCallback: (String) -> Unit
     ) {
         viewModelScope.launch {
-            user = dataHandler.users.register(
+            val res = dataHandler.users.register(
                 username,
                 password,
                 email,
@@ -55,36 +58,42 @@ class MainViewModel(
                 lastName,
                 subteam,
                 phone,
-                grade,
-                errorCallback
+                grade
             )
+            when(res) {
+                is Result.Success -> user = res.data
+                is Result.Error -> errorCallback(res.error)
+            }
         }
     }
 
     fun attendMeeting(meetingInfo: MeetingLog, onError: (String) -> Unit, onSuccess: () -> Unit) {
         viewModelScope.launch {
-            dataHandler.attendance.attend(
+            val res = dataHandler.attendance.attend(
                 meetingId = meetingInfo.meetingId,
-                verifiedBy = meetingInfo.verifiedBy ?: "unknown",
+                verifiedBy = meetingInfo.verifiedBy,
                 time = System.currentTimeMillis(),
-                onError = onError,
-                onSuccess = {
-                    onSuccess()
-                    user = dataHandler.users.loadLoggedIn()
-                }
             )
+            when(res) {
+                is Result.Success -> onSuccess().also { user = res.data }
+                is Result.Error -> onError(res.error)
+            }
         }
     }
 
     fun deleteMe(password: String, onComplete: (Boolean, String?) -> Unit) {
         viewModelScope.launch {
-            dataHandler.getNetworkClient().users.login(user?.username ?: "",
-                password,
-                errorCallback = { str -> onComplete(false, str) }).let {
+            dataHandler.getNetworkClient().users.login(
+                user?.username ?: "",
+                password
+            ).let {
                     when(it) {
                         is Result.Success -> {
-                            dataHandler.users.deleteMe(onComplete)
-                            user = dataHandler.users.loadLoggedIn()
+                            val res = dataHandler.users.deleteMe()
+                            when(res) {
+                                is Result.Success -> onComplete(true, null).also { user = null }
+                                is Result.Error -> onComplete(false, res.error)
+                            }
                         }
                         is Result.Error -> {}
                     }
@@ -94,14 +103,22 @@ class MainViewModel(
 
     fun sync() {
         viewModelScope.launch {
-            dataHandler.sync()
-            user = dataHandler.users.loadLoggedIn()
+            dataHandler.syncCoroutine().let {
+                when(val me = it.user.myUser) {
+                    is Result.Success -> user = me.data
+                    is Result.Error -> println(me.error)
+                }
+            }
         }
     }
 
     suspend fun coroutineSync() {
-        dataHandler.syncCoroutine()
-        user = dataHandler.users.loadLoggedIn()
+        dataHandler.syncCoroutine().let {
+            when(val me = it.user.myUser) {
+                is Result.Success -> user = me.data
+                is Result.Error -> println(me.error)
+            }
+        }
     }
 
     fun sync(onProgressChanged: (busy: Boolean, success: Boolean?) -> Unit) {
@@ -109,11 +126,17 @@ class MainViewModel(
         viewModelScope.launch {
             println(connectivityManager?.getNetworkCapabilities(connectivityManager.activeNetwork)?.hasCapability(NetworkCapabilities.NET_CAPABILITY_INTERNET))
             if(connectivityManager?.getNetworkCapabilities(connectivityManager.activeNetwork)?.hasCapability(NetworkCapabilities.NET_CAPABILITY_INTERNET) != true) {
-                println("meow meow meow")
                 return@launch onProgressChanged(false, false)
             }
-            dataHandler.sync()
-            user = dataHandler.users.loadLoggedIn()
+            dataHandler.syncCoroutine().let {
+                when(val me = it.user.myUser) {
+                    is Result.Success -> user = me.data
+                    is Result.Error -> {
+                        println(me.error)
+                        return@launch onProgressChanged(false, false)
+                    }
+                }
+            }
             onProgressChanged(false, true)
         }
     }

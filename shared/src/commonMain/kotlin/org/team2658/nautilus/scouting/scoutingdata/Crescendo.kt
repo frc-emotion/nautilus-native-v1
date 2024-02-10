@@ -10,8 +10,7 @@ data class Crescendo(
     override val teamNumber: Int,
     override val teamName: String,
     override val matchNumber: Int,
-    @SerialName("score")
-    override val finalScore: Int,
+    @SerialName("score") override val finalScore: Int,
     override val penaltyPointsEarned: Int,
     override val won: Boolean,
     override val tied: Boolean,
@@ -22,8 +21,28 @@ data class Crescendo(
     val auto: CrescendoAuto,
     val teleop: CrescendoTeleop,
     val stage: CrescendoStage,
-    val ranking: CrescendoRankingPoints
+    val ranking: CrescendoRankingPoints,
+    val createdBy: String,
 ): ScoutingData
+
+@Serializable
+data class CrescendoRequestBody(
+    val auto: CrescendoAuto,
+    val comments: String?,
+    val competition: String,
+    val defensive: Boolean,
+    val matchNumber: Int,
+    val penaltyPointsEarned: Int,
+    val ranking: CrescendoRankingPoints,
+    val rankingPoints: Int,
+    val score: Int,
+    val stage: CrescendoStage,
+    val teamNumber: Int,
+    val teleop: CrescendoTeleop,
+    val tied: Boolean,
+    val won: Boolean,
+    val brokeDown: Boolean,
+)
 
 @Serializable
 data class CrescendoAuto(

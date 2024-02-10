@@ -19,20 +19,23 @@ import io.ktor.http.HttpHeaders
 import io.ktor.http.contentType
 import io.ktor.http.parameters
 import io.ktor.serialization.kotlinx.json.json
-import kotlinx.serialization.Serializable
+import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
 import org.team2658.nautilus.Result
 import org.team2658.nautilus.attendance.Meeting
+import org.team2658.nautilus.scouting.scoutingdata.Crescendo
+import org.team2658.nautilus.scouting.scoutingdata.CrescendoRequestBody
 import org.team2658.nautilus.userauth.AccountType
+import org.team2658.nautilus.userauth.FullUser
+import org.team2658.nautilus.userauth.PartialUser
 import org.team2658.nautilus.userauth.Subteam
+import org.team2658.nautilus.userauth.TokenUser
 import org.team2658.nautilus.userauth.User
-import org.team2658.network.models.ChargedUpScores
+import org.team2658.nautilus.userauth.isAdmin
 import org.team2658.network.models.Season
-import org.team2658.network.models.UserModel
-import org.team2658.network.models.safeDivide
 
-class NetworkClient {
-    private val client = HttpClient() {
+class NetworkClient(base: String) {
+    private val client = HttpClient {
         install(ContentNegotiation) {
             json(
                 Json {
@@ -47,26 +50,30 @@ class NetworkClient {
             contentType(ContentType.Application.Json)
         }
     }
+    
     fun close () {
         this.client.close()
     }
+    
+    private val routes = Routes(base)
 
     val users = object: UsersNamespace {
-        override suspend fun login(username: String, password: String, errorCallback: (String) -> Unit): Result<User, KtorError> {
+        override suspend fun login(username: String, password: String): Result<TokenUser, KtorError.NoAuthRequired> {
             return try {
-                val response = client.submitForm(url = ROUTES.LOGIN, formParameters = parameters {
+                val response = client.submitForm(url = routes.login, formParameters = parameters {
                     append("username", username)
                     append("password", password)
-                }).body<UserModel>()
-                Result.Success(User.fromSerializable(response))
+                }).body<TokenUser>()
+                Result.Success(response)
             }
             catch(e: ClientRequestException) {
-                errorCallback(e.response.bodyAsText())
-                Result.Error(KtorError.CLIENT(e.message))
+                //TODO make different responses depending on if developer mode enabled
+                val serverResponse = ServerMessage.readMessage(e.response.bodyAsText()) ?: e.message
+                Result.Error(KtorError.CLIENT(serverResponse, e.response.status.value))
             }
             catch(e: ServerResponseException) {
-                errorCallback(e.response.bodyAsText())
-                Result.Error(KtorError.SERVER(e.message))
+                val serverResponse = ServerMessage.readMessage(e.response.bodyAsText()) ?: e.message
+                Result.Error(KtorError.SERVER(serverResponse, e.response.status.value))
             }
             catch(e: Exception) {
                 println(e)
@@ -82,11 +89,10 @@ class NetworkClient {
             lastName: String,
             subteam: Subteam,
             phone: String,
-            grade: Int,
-            errorCallback: (String) -> Unit
-        ): Result<User, KtorError> {
+            grade: Int
+        ): Result<TokenUser, KtorError.NoAuthRequired> {
             return try {
-                val response = client.submitForm(url = ROUTES.REGISTER, formParameters = parameters {
+                val response = client.submitForm(url = routes.register, formParameters = parameters {
                     append("username", username)
                     append("password", password)
                     append("email", email)
@@ -95,16 +101,16 @@ class NetworkClient {
                     append("subteam", subteam.name.lowercase())
                     append("phone", phone)
                     append("grade", grade.toString())
-                }).body<UserModel>()
-                Result.Success(User.fromSerializable(response))
+                }).body<TokenUser>()
+                Result.Success(response)
             }
             catch(e: ClientRequestException) {
-                errorCallback(e.response.bodyAsText())
-                Result.Error(KtorError.CLIENT(e.message))
+                val serverResponse = ServerMessage.readMessage(e.response.bodyAsText()) ?: e.message
+                Result.Error(KtorError.CLIENT(serverResponse, e.response.status.value))
             }
             catch(e: ServerResponseException) {
-                errorCallback(e.response.bodyAsText())
-                Result.Error(KtorError.SERVER(e.message))
+                val serverResponse = ServerMessage.readMessage(e.response.bodyAsText()) ?: e.message
+                Result.Error(KtorError.SERVER(serverResponse, e.response.status.value))
             }
             catch(e: Exception) {
                 e.printStackTrace()
@@ -112,81 +118,110 @@ class NetworkClient {
             }
         }
 
-        override suspend fun getUserById(id: String, user: User?): Result<User, KtorError> {
-            return if(user != null && user.token?.isNotBlank() == true && user.isAdminOrLead) {
-                try {
-                    val response: List<UserModel> = client.get("${ROUTES.BASE}/users?_id=$id")
-                    { header(HttpHeaders.Authorization, "Bearer ${user.token}") }
-                        .body()
-                    println(response)
-                    Result.Success(User.fromSerializable(response.first()))
-                } catch (e: ClientRequestException) {
-                    println(e.message)
-                    Result.Error(KtorError.CLIENT(e.message))
-                } catch (e: ServerResponseException) {
-                    println(e.message)
-                    Result.Error(KtorError.SERVER(e.message))
-                } catch (e: Exception) {
-                    println(e)
-                    Result.Error(KtorError.IO)
-                }
-            } else Result.Error(KtorError.AUTH)
+        /**
+         * Get a user by their username, email, or UUID
+         *
+         * @return If the authenticating user is an admin, [FullUser], else if they are base [PartialUser].
+         * If the authenticating user is null or unverified, or has an invalid token, returns a [KtorError.AUTH].
+         * @param id the username, email, or UUID of the user to get
+         * @param user the user to authenticate the request with
+         * @see [getUsers]
+         */
+        override suspend fun getUserById(id: String, user: TokenUser): Result<User.WithoutToken, KtorError> {
+            if(user.isInvalid()) return Result.Error(KtorError.AUTH)
+            return try {
+                val responseText = client.get("${routes.users}/$id")
+                { header(HttpHeaders.Authorization, "Bearer ${user.token}") }
+                    .bodyAsText()
+                val response = if(isAdmin(user)) Json.decodeFromString<FullUser>(responseText)
+                else Json.decodeFromString<PartialUser>(responseText)
+                Result.Success(response)
+            } catch (e: ClientRequestException) {
+                e.printStackTrace()
+                val serverResponse = ServerMessage.readMessage(e.response.bodyAsText()) ?: e.message
+            Result.Error(KtorError.CLIENT(serverResponse, e.response.status.value))
+            } catch (e: ServerResponseException) {
+                e.printStackTrace()
+                val serverResponse = ServerMessage.readMessage(e.response.bodyAsText()) ?: e.message
+            Result.Error(KtorError.SERVER(serverResponse, e.response.status.value))
+            } catch (e: Exception) {
+                println(e)
+                Result.Error(KtorError.IO)
+            }
         }
 
-        override suspend fun getUsers(user: User?): Result<List<User>, KtorError> {
-            return if(user != null && user.token?.isNotBlank() == true && user.isAdminOrLead) {
-                try {
-                    val response: List<UserModel> = client.get("${ROUTES.BASE}/users")
-                    { header(HttpHeaders.Authorization, "Bearer ${user.token}") }
-                        .body()
-                    println(response)
-                    Result.Success(response.map { User.fromSerializable(it) })
-                } catch (e: ClientRequestException) {
-                    println(e.message)
-                    Result.Error(KtorError.CLIENT(e.message))
-                } catch (e: ServerResponseException) {
-                    println(e.message)
-                    Result.Error(KtorError.SERVER(e.message))
-                } catch (e: Exception) {
-                    println(e)
-                    Result.Error(KtorError.IO)
-                }
-            } else Result.Error(KtorError.AUTH)
+        /**
+         * Get the list of users on the team
+         * @param user the user to authenticate the request with
+         * @return If the authenticating user is an admin, List<[FullUser]>, else if they are base List<[PartialUser]>.
+         * If the authenticating user is null or unverified, or has an invalid token, returns a [KtorError.AUTH].
+         * @see [getUserById]
+         */
+        override suspend fun getUsers(user: TokenUser): Result<List<User.WithoutToken>, KtorError> {
+            if(user.isInvalid()) return Result.Error(KtorError.AUTH)
+            return try {
+                val responseText  = client.get(routes.users)
+                { header(HttpHeaders.Authorization, "Bearer ${user.token}") }
+                    .bodyAsText()
+
+                val response = if(isAdmin(user)) Json.decodeFromString<List<FullUser>>(responseText)
+                    else Json.decodeFromString<List<PartialUser>>(responseText)
+
+                Result.Success(response)
+            } catch (e: ClientRequestException) {
+                e.printStackTrace()
+                val serverResponse = ServerMessage.readMessage(e.response.bodyAsText()) ?: e.message
+            Result.Error(KtorError.CLIENT(serverResponse, e.response.status.value))
+            } catch (e: ServerResponseException) {
+                e.printStackTrace()
+                val serverResponse = ServerMessage.readMessage(e.response.bodyAsText()) ?: e.message
+            Result.Error(KtorError.SERVER(serverResponse, e.response.status.value))
+            } catch (e: Exception) {
+                println(e)
+                Result.Error(KtorError.IO)
+            }
         }
 
-        override suspend fun getMe(token: String?): Result<User, KtorError> {
+        /**
+         * Get an updated version of the current user's data.
+         * @param token the user's JWT
+         * @return [TokenUser] if the token is valid, [KtorError.AUTH] if the token is invalid.
+         */
+        override suspend fun getMe(token: String?): Result<TokenUser, KtorError> {
             if(token == null) return Result.Error(KtorError.AUTH)
             return try {
-                val response = client.get(ROUTES.ME) {
+                val response = client.get(routes.me) {
                     header(HttpHeaders.Authorization, "Bearer $token")
-                }.body<UserModel>()
-                Result.Success(User.fromSerializable(response))
+                }.body<TokenUser>()
+                Result.Success(response)
             } catch(e: ClientRequestException) {
-                println(e.message)
-                Result.Error(KtorError.CLIENT(e.message))
+                e.printStackTrace()
+                val serverResponse = ServerMessage.readMessage(e.response.bodyAsText()) ?: e.message
+                Result.Error(KtorError.CLIENT(serverResponse, e.response.status.value))
             } catch(e: ServerResponseException) {
-                println(e.message)
-                Result.Error(KtorError.SERVER(e.message))
+                e.printStackTrace()
+                val serverResponse = ServerMessage.readMessage(e.response.bodyAsText()) ?: e.message
+                Result.Error(KtorError.SERVER(serverResponse, e.response.status.value))
             } catch(e: Exception) {
                 println(e)
                 Result.Error(KtorError.IO)
             }
         }
 
-        override suspend fun deleteMe(user: User?, callback: (Boolean, String) -> Unit): Result<Unit, KtorError> {
-            if(user == null) return Result.Error(KtorError.AUTH)
+        override suspend fun deleteMe(user: TokenUser): Result<Unit, KtorError> {
+            if(user.isInvalid()) return Result.Error(KtorError.AUTH)
             return try {
-                client.delete(ROUTES.ME) {
+                client.delete(routes.me) {
                     header(HttpHeaders.Authorization, "Bearer ${user.token}")
+                    setBody(Json.encodeToString(Unit))
                 }
-                callback(true, "Successfully deleted account")
                 Result.Success(Unit)
             } catch(e: ClientRequestException) {
-                callback(false, e.message)
-                Result.Error(KtorError.CLIENT(e.message))
+                val serverResponse = ServerMessage.readMessage(e.response.bodyAsText()) ?: e.message
+                Result.Error(KtorError.CLIENT(serverResponse, e.response.status.value))
             } catch(e: ServerResponseException) {
-                callback(false, e.message)
-                Result.Error(KtorError.SERVER(e.message))
+                val serverResponse = ServerMessage.readMessage(e.response.bodyAsText()) ?: e.message
+                Result.Error(KtorError.SERVER(serverResponse, e.response.status.value))
             } catch(e: Exception) {
                 println(e)
                 Result.Error(KtorError.IO)
@@ -195,136 +230,138 @@ class NetworkClient {
     }
 
     val attendance = object: AttendanceNamespace {
-        override suspend fun createMeeting(user: User?, startTime: Long, endTime: Long, type: String, description: String, value: Int, attendancePeriod: String, errorCallback: (String)-> Unit): Result<Meeting, KtorError> {
-            if(user != null && user.token?.isNotBlank() == true && user.permissions.verifyAllAttendance){
-                println(user.token)
-                return try {
-                    val res = client.submitForm(url = ROUTES.CREATE_MEETING, formParameters = parameters {
-                        append("createdBy", user._id)
-                        append("startTime", startTime.toString())
-                        append("endTime", endTime.toString())
-                        append("type", type)
-                        append("description", description)
-                        append("value", value.toString())
-                        append("attendancePeriod", attendancePeriod)
-                    }){
-                        header(HttpHeaders.Authorization, "Bearer ${user.token}")
-                    }.body<Meeting>()
-                    Result.Success(res)
-                }
-                catch(e: ClientRequestException) {
-                    println(e.message)
-                    errorCallback(e.response.bodyAsText())
-                    Result.Error(KtorError.CLIENT(e.message))
-                }
-                catch(e: ServerResponseException) {
-                    println(e.message)
-                    errorCallback(e.response.bodyAsText())
-                    Result.Error(KtorError.SERVER(e.message))
-                }
-                catch (e: Exception) {
-                    println(e.message)
-                    Result.Error(KtorError.IO)
-                }
+        override suspend fun createMeeting(
+            user: TokenUser,
+            startTime: Long,
+            endTime: Long,
+            type: String,
+            description: String,
+            value: Int,
+            attendancePeriod: String
+        ): Result<Meeting, KtorError> {
+            if(user.isInvalid()) return Result.Error(KtorError.AUTH)
+            return try {
+                val res = client.submitForm(url = routes.meetings, formParameters = parameters {
+                    append("startTime", startTime.toString())
+                    append("endTime", endTime.toString())
+                    append("type", type)
+                    append("description", description)
+                    append("value", value.toString())
+                    append("attendancePeriod", attendancePeriod)
+                }){
+                    header(HttpHeaders.Authorization, "Bearer ${user.token}")
+                }.body<Meeting>()
+                Result.Success(res)
             }
-            return Result.Error(KtorError.AUTH)
+            catch(e: ClientRequestException) {
+                e.printStackTrace()
+                val serverResponse = ServerMessage.readMessage(e.response.bodyAsText()) ?: e.message
+                Result.Error(KtorError.CLIENT(serverResponse, e.response.status.value))
+            }
+            catch(e: ServerResponseException) {
+                e.printStackTrace()
+                val serverResponse = ServerMessage.readMessage(e.response.bodyAsText()) ?: e.message
+                Result.Error(KtorError.SERVER(serverResponse, e.response.status.value))
+            }
+            catch (e: Exception) {
+                e.printStackTrace()
+                Result.Error(KtorError.IO)
+            }
         }
 
-        override suspend fun getMeetings(user: User?): Result<List<Meeting>, KtorError> {
-            val route = when(user?.accountType?.value) {
-                in AccountType.ADMIN.value..Int.MAX_VALUE -> "${ROUTES.BASE}/attendance/getAll"
-                else -> "${ROUTES.BASE}/attendance/getMeetings"
+        override suspend fun getMeetings(user: TokenUser): Result<List<Meeting>, KtorError> {
+            if(user.isInvalid()) return Result.Error(KtorError.AUTH)
+            val route = "${routes.meetings}/${if(isAdmin(user)) "all" else "current"}" //routes.meetings/all for admin, routes.meetings/current for lead
+            return try {
+                val res = client.get(route) {
+                    header(HttpHeaders.Authorization, "Bearer ${user.token}")
+                }.body<List<Meeting>>()
+                Result.Success(res)
             }
-            if(user != null && user.token?.isNotBlank() == true && user.permissions.verifyAllAttendance && user.accountType.value >= AccountType.LEAD.value) {
-                return try {
-                    val res = client.get(route) {
-                        header(HttpHeaders.Authorization, "Bearer ${user.token}")
-                    }.body<List<Meeting>>()
-                    Result.Success(res)
-                }
-                catch(e: ClientRequestException) {
-                    println(e.message)
-                    Result.Error(KtorError.CLIENT(e.message))
-                }
-                catch(e: ServerResponseException) {
-                    println(e.message)
-                    Result.Error(KtorError.SERVER(e.message))
-                }
-                catch(e: Exception) {
-                    println("Issue with request")
-                    println(e.message)
-                    Result.Error(KtorError.IO)
-                }
+            catch(e: ClientRequestException) {
+                e.printStackTrace()
+                val serverResponse = ServerMessage.readMessage(e.response.bodyAsText()) ?: e.message
+                Result.Error(KtorError.CLIENT(serverResponse, e.response.status.value))
             }
-            else return Result.Error(KtorError.AUTH)
+            catch(e: ServerResponseException) {
+                e.printStackTrace()
+                val serverResponse = ServerMessage.readMessage(e.response.bodyAsText()) ?: e.message
+                Result.Error(KtorError.SERVER(serverResponse, e.response.status.value))
+            }
+            catch(e: Exception) {
+                e.printStackTrace()
+                Result.Error(KtorError.IO)
+            }
         }
 
-        override suspend fun attendMeeting(user: User?, meetingId: String, tapTime: Long, verifiedBy: String, failureCallback: (String) -> Unit, ): Result<User, KtorError> {
-            return if(user != null && user.token?.isNotBlank() == true ) {
-                return try {
-                    val response = client.submitForm(url = ROUTES.ATTEND_MEETING, formParameters = parameters {
-                        append("meetingId", meetingId)
+        override suspend fun attendMeeting(
+            user: TokenUser,
+            meetingId: String,
+            tapTime: Long,
+            verifiedBy: String, ): Result<TokenUser, KtorError> {
+            if (user.isInvalid()) return Result.Error(KtorError.AUTH)
+            return try {
+                val response = client.submitForm(
+                    url = "${routes.meetings}/attend/$meetingId",
+                    formParameters = parameters {
                         append("tapTime", tapTime.toString())
                         append("verifiedBy", verifiedBy)
                     }) {
-                        header(HttpHeaders.Authorization, "Bearer ${user.token}")
-                    }.body<UserModel>()
-                    Result.Success(User.fromSerializable(response))
-                }
-                catch(e: ClientRequestException){
-                    println(e.message)
-                    failureCallback(e.response.bodyAsText())
-                    Result.Error(KtorError.CLIENT(e.message))
-                }
-                catch(e: ServerResponseException) {
-                    println(e.message)
-                    failureCallback(e.response.bodyAsText())
-                    Result.Error(KtorError.SERVER(e.message))
-                }
-                catch(e: Exception) {
-                    println(e.message)
-                    failureCallback("An error occurred trying to reach the server: ${e.message}\n Your attendance will be updated when you connect to the internet")
-                    Result.Error(KtorError.IO)
-                }
-            } else {
-                failureCallback("Error: User not logged in")
-                Result.Error(KtorError.AUTH)
+                    header(HttpHeaders.Authorization, "Bearer ${user.token}")
+                }.body<TokenUser>()
+                Result.Success(response)
+            } catch (e: ClientRequestException) {
+                e.printStackTrace()
+                val serverResponse = ServerMessage.readMessage(e.response.bodyAsText()) ?: e.message
+                Result.Error(KtorError.CLIENT(serverResponse, e.response.status.value))
+            } catch (e: ServerResponseException) {
+                e.printStackTrace()
+                val serverResponse = ServerMessage.readMessage(e.response.bodyAsText()) ?: e.message
+                Result.Error(KtorError.SERVER(serverResponse, e.response.status.value))
+            } catch (e: Exception) {
+                e.printStackTrace()
+                Result.Error(KtorError.IO)
             }
         }
 
-        override suspend fun deleteMeeting(id: String, user: User?): Result<Unit, KtorError> { // true for success
-            return if(user != null && user.token?.isNotBlank() == true && user.isAdminOrLead) {
-                try {
-                    client.delete("${ROUTES.BASE}/attendance/deleteMeeting/$id") {
-                        header(HttpHeaders.Authorization, "Bearer ${user.token}")
-                    }
-                    Result.Success(Unit)
-                } catch(e: ClientRequestException) {
-                    println(e.message)
-                    Result.Error(KtorError.CLIENT(e.message))
-                } catch(e: ServerResponseException) {
-                    println(e.message)
-                    Result.Error(KtorError.SERVER(e.message))
-                } catch(e: Exception) {
-                    println(e)
-                    Result.Error(KtorError.IO)
-                }
-            } else Result.Error(KtorError.AUTH)
-        }
-
-        override suspend fun archiveMeeting(id: String, user: User?): Result<Unit, KtorError> {
-            if(user?.token == null || !user.isAdminOrLead ) return Result.Error(KtorError.AUTH)
+        override suspend fun deleteMeeting(id: String, user: TokenUser): Result<Unit, KtorError> {
+            if(user.isInvalid()) return Result.Error(KtorError.AUTH)
             return try {
-                client.put("${ROUTES.BASE}/attendance/archiveMeeting/$id") {
+                client.delete("${routes.meetings}/$id") {
                     header(HttpHeaders.Authorization, "Bearer ${user.token}")
+                    setBody(Json.encodeToString(Unit))
                 }
                 Result.Success(Unit)
             } catch(e: ClientRequestException) {
-                println(e.message)
-                Result.Error(KtorError.CLIENT(e.message))
+                e.printStackTrace()
+                val serverResponse = ServerMessage.readMessage(e.response.bodyAsText()) ?: e.message
+                Result.Error(KtorError.CLIENT(serverResponse, e.response.status.value))
             } catch(e: ServerResponseException) {
-                println(e.message)
-                Result.Error(KtorError.SERVER(e.message))
+                e.printStackTrace()
+                val serverResponse = ServerMessage.readMessage(e.response.bodyAsText()) ?: e.message
+                Result.Error(KtorError.SERVER(serverResponse, e.response.status.value))
+            } catch(e: Exception) {
+                println(e)
+                Result.Error(KtorError.IO)
+            }
+        }
+
+        override suspend fun archiveMeeting(id: String, user: TokenUser): Result<Unit, KtorError> {
+            if(user.isInvalid() ) return Result.Error(KtorError.AUTH)
+            return try {
+                client.put("${routes.meetings}/archive/$id") {
+                    header(HttpHeaders.Authorization, "Bearer ${user.token}")
+                    setBody(Json.encodeToString(Unit))
+                }
+                Result.Success(Unit)
+            } catch(e: ClientRequestException) {
+                e.printStackTrace()
+                val serverResponse = ServerMessage.readMessage(e.response.bodyAsText()) ?: e.message
+                Result.Error(KtorError.CLIENT(serverResponse, e.response.status.value))
+            } catch(e: ServerResponseException) {
+                e.printStackTrace()
+                val serverResponse = ServerMessage.readMessage(e.response.bodyAsText()) ?: e.message
+                Result.Error(KtorError.SERVER(serverResponse, e.response.status.value))
             } catch(e: Exception) {
                 println(e)
                 Result.Error(KtorError.IO)
@@ -333,45 +370,105 @@ class NetworkClient {
 
     }
 
-    suspend fun getSeasons(): Result<List<Season>, KtorError> {
+    val crescendo = object: CrescendoNamespace {
+        override suspend fun getCrescendos(user: TokenUser): Result<List<Crescendo>, KtorError> {
+            if(user.isInvalid()) return Result.Error(KtorError.AUTH)
+            return try {
+                val res = client.get("${routes.base}/crescendo") {
+                    header(HttpHeaders.Authorization, "Bearer ${user.token}")
+                }.body<List<Crescendo>>()
+                Result.Success(res)
+            }
+            catch(e: ClientRequestException) {
+                e.printStackTrace()
+                val serverResponse = ServerMessage.readMessage(e.response.bodyAsText()) ?: e.message
+                Result.Error(KtorError.CLIENT(serverResponse, e.response.status.value))
+            }
+            catch(e: ServerResponseException) {
+                e.printStackTrace()
+                val serverResponse = ServerMessage.readMessage(e.response.bodyAsText()) ?: e.message
+                Result.Error(KtorError.SERVER(serverResponse, e.response.status.value))
+            }
+            catch(e: Exception) {
+                e.printStackTrace()
+                Result.Error(KtorError.IO)
+            }
+        }
+
+        override suspend fun uploadCrescendo(
+            user: TokenUser,
+            data: CrescendoRequestBody
+        ): Result<Crescendo, KtorError> {
+            if(user.isInvalid()) return Result.Error(KtorError.AUTH)
+            return try {
+                val res = client.post("${routes.base}/crescendo") {
+                    header(HttpHeaders.Authorization, "Bearer ${user.token}")
+                    contentType(ContentType.Application.Json)
+                    setBody(Json.encodeToString(data))
+                }.body<Crescendo>()
+                Result.Success(res)
+            }
+            catch(e: ClientRequestException) {
+                e.printStackTrace()
+                val serverResponse = ServerMessage.readMessage(e.response.bodyAsText()) ?: e.message
+                Result.Error(KtorError.CLIENT(serverResponse, e.response.status.value))
+            }
+            catch(e: ServerResponseException) {
+                e.printStackTrace()
+                val serverResponse = ServerMessage.readMessage(e.response.bodyAsText()) ?: e.message
+                Result.Error(KtorError.SERVER(serverResponse, e.response.status.value))
+            }
+            catch(e: Exception) {
+                e.printStackTrace()
+                Result.Error(KtorError.IO)
+            }
+        }
+
+        override suspend fun getMyCrescendos(user: TokenUser): Result<List<Crescendo>, KtorError> {
+            if(user.isInvalid()) return Result.Error(KtorError.AUTH)
+            return try {
+                val res = client.get("${routes.base}/crescendo/mine") {
+                    header(HttpHeaders.Authorization, "Bearer ${user.token}")
+                }.body<List<Crescendo>>()
+                Result.Success(res)
+            }
+            catch(e: ClientRequestException) {
+                e.printStackTrace()
+                val serverResponse = ServerMessage.readMessage(e.response.bodyAsText()) ?: e.message
+                Result.Error(KtorError.CLIENT(serverResponse, e.response.status.value))
+            }
+            catch(e: ServerResponseException) {
+                e.printStackTrace()
+                val serverResponse = ServerMessage.readMessage(e.response.bodyAsText()) ?: e.message
+                Result.Error(KtorError.SERVER(serverResponse, e.response.status.value))
+            }
+            catch(e: Exception) {
+                e.printStackTrace()
+                Result.Error(KtorError.IO)
+            }
+        }
+
+    }
+
+    suspend fun getSeasons(): Result<List<Season>, KtorError.NoAuthRequired> {
         return try {
-            Result.Success(this.client.get("${ROUTES.BASE}/seasons").body())
+            Result.Success(this.client.get("${routes.base}/seasons").body())
         } catch(e: ClientRequestException) {
-            println(e.message)
-            Result.Error(KtorError.CLIENT(e.message))
+            e.printStackTrace()
+            val serverResponse = ServerMessage.readMessage(e.response.bodyAsText()) ?: e.message
+            Result.Error(KtorError.CLIENT(serverResponse, e.response.status.value))
         } catch(e: ServerResponseException) {
-            println(e.message)
-            Result.Error(KtorError.SERVER(e.message))
+            e.printStackTrace()
+            val serverResponse = ServerMessage.readMessage(e.response.bodyAsText()) ?: e.message
+            Result.Error(KtorError.SERVER(serverResponse, e.response.status.value))
         } catch(e: Exception) {
             println(e)
             Result.Error(KtorError.IO)
         }
     }
 
-    suspend fun submitChargedUp(data: ChargedUpRequestParams, user: User?): Result<String, KtorError> {
-        return if(user?.permissions?.standScouting == true && user.token?.isNotBlank() == true) {
-            try {
-                println(data)
-                val response = this.client.post(ROUTES.CHARGEDUP) {
-                    header(HttpHeaders.Authorization, "Bearer ${user.token}")
-                    setBody(data)
-                }.bodyAsText()
-                Result.Success(response)
-            } catch(e: ClientRequestException) {
-                println(e.message)
-                Result.Error(KtorError.CLIENT(e.message))
-            } catch(e: ServerResponseException) {
-                println(e.message)
-                Result.Error(KtorError.SERVER(e.message))
-            } catch(e: Exception) {
-                println(e.message)
-                Result.Error(KtorError.IO)
-            }
-        } else Result.Error(KtorError.AUTH)
-    }
-
     interface UsersNamespace {
-        suspend fun login(username: String, password: String, errorCallback: (String) -> Unit = {}): Result<User, KtorError>
+        suspend fun login(username: String, password: String): Result<TokenUser, KtorError.NoAuthRequired>
         suspend fun register(
             username: String,
             password: String,
@@ -381,57 +478,35 @@ class NetworkClient {
             subteam: Subteam,
             phone: String,
             grade: Int,
-            errorCallback: (String) -> Unit = {}
-        ): Result<User, KtorError>
-        suspend fun getUserById(id: String, user: User?): Result<User, KtorError>
-        suspend fun getUsers(user: User?): Result<List<User>, KtorError>
-        suspend fun getMe(token: String?): Result<User, KtorError>
-        suspend fun deleteMe(user: User?, callback: (Boolean, String) -> Unit): Result<Unit, KtorError>
+        ): Result<TokenUser, KtorError.NoAuthRequired>
+
+        suspend fun getUserById(id: String, user: TokenUser): Result<User.WithoutToken, KtorError>
+        suspend fun getUsers(user: TokenUser): Result<List<User.WithoutToken>, KtorError>
+        suspend fun getMe(token: String?): Result<TokenUser, KtorError>
+        suspend fun deleteMe(user: TokenUser): Result<Unit, KtorError>
     }
     interface AttendanceNamespace {
-        suspend fun createMeeting(user: User?, startTime: Long, endTime: Long, type: String, description: String, value: Int, attendancePeriod: String, errorCallback: (String)-> Unit = {}): Result<Meeting, KtorError>
-        suspend fun getMeetings(user: User?): Result<List<Meeting>, KtorError>
-        suspend fun attendMeeting( user: User?, meetingId: String, tapTime: Long, verifiedBy: String, failureCallback: (String) -> Unit = {}, ): Result<User, KtorError>
-        suspend fun deleteMeeting(id: String, user: User?): Result<Unit, KtorError>
-        suspend fun archiveMeeting(id: String, user: User?): Result<Unit, KtorError>
+        suspend fun createMeeting(user: TokenUser, startTime: Long, endTime: Long, type: String, description: String, value: Int, attendancePeriod: String): Result<Meeting, KtorError>
+        suspend fun getMeetings(user: TokenUser): Result<List<Meeting>, KtorError>
+        suspend fun attendMeeting(user: TokenUser, meetingId: String, tapTime: Long, verifiedBy: String ): Result<TokenUser, KtorError>
+        suspend fun deleteMeeting(id: String, user: TokenUser): Result<Unit, KtorError>
+        suspend fun archiveMeeting(id: String, user: TokenUser): Result<Unit, KtorError>
+    }
+
+    interface CrescendoNamespace {
+        suspend fun getCrescendos(user: TokenUser): Result<List<Crescendo>, KtorError>
+        suspend fun uploadCrescendo(user: TokenUser, data: CrescendoRequestBody): Result<Crescendo, KtorError>
+        suspend fun getMyCrescendos(user: TokenUser): Result<List<Crescendo>, KtorError>
     }
 
 }
 
 sealed interface KtorError {
-    data class CLIENT(val message: String): KtorError
-    data class SERVER(val message: String): KtorError
-    data object IO: KtorError
+    sealed interface NoAuthRequired: KtorError
+    data class CLIENT(val message: String, val code: Int): KtorError, NoAuthRequired
+    data class SERVER(val message: String, val code: Int): KtorError, NoAuthRequired
+    data object IO: KtorError, NoAuthRequired
     data object AUTH: KtorError
 }
 
-@Serializable
-data class ChargedUpRequestParams(
-    val competition: String,
-    val matchNumber: Int,
-    val teamNumber: Int,
-//    val teamName: String,
-    val RPEarned: List<Boolean>,
-    val totalRP: Int,
-    val autoPeriod: ChargedUpScores,
-    val teleopPeriod: ChargedUpScores,
-    val coneRate: Double?= safeDivide((teleopPeriod.totalCones + autoPeriod.totalCones), (teleopPeriod.totalScore + autoPeriod.totalScore)),
-    val cubeRate: Double?= safeDivide((teleopPeriod.totalCubes + autoPeriod.totalCubes), (teleopPeriod.totalScore + autoPeriod.totalScore)),
-    val linkScore: Int,
-    val autoDock: Boolean,
-    val autoEngage: Boolean,
-    val teleopDock: Boolean,
-    val teleopEngage: Boolean,
-    val parked: Boolean,
-    val isDefensive: Boolean,
-    val didBreak: Boolean,
-    val penaltyCount: Int,
-    val score: Int,
-    val won: Boolean,
-    val tied: Boolean,
-    val comments: String,
-    val teamName: String = "",
-){
-//    val coneRate = safeDivide((this.teleopPeriod.totalCones + this.autoPeriod.totalCones), (this.teleopPeriod.totalScore + this.autoPeriod.totalScore))
-//    val cubeRate = safeDivide((this.teleopPeriod.totalCubes + this.autoPeriod.totalCubes), (this.teleopPeriod.totalScore + this.autoPeriod.totalScore))
-}
+fun TokenUser.isInvalid() = token.isBlank() || accountType == AccountType.UNVERIFIED

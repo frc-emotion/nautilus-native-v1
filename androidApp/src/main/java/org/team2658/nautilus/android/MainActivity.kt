@@ -4,6 +4,7 @@ import android.app.PendingIntent
 import android.content.Intent
 import android.content.IntentFilter
 import android.net.ConnectivityManager
+import android.net.Uri
 import android.nfc.NdefMessage
 import android.nfc.NfcAdapter
 import android.nfc.NfcAdapter.ACTION_NDEF_DISCOVERED
@@ -17,18 +18,41 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.viewModels
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.padding
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.SystemUpdate
+import androidx.compose.material3.Card
+import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Text
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.unit.dp
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.work.ExistingPeriodicWorkPolicy
 import androidx.work.PeriodicWorkRequestBuilder
 import androidx.work.WorkManager
+import kotlinx.coroutines.flow.MutableStateFlow
 import org.team2658.nautilus.DataHandler
 import org.team2658.nautilus.android.screens.settings.SettingsScreen
+import org.team2658.nautilus.android.ui.composables.LoadingSpinner
+import org.team2658.nautilus.android.ui.composables.Screen
 import org.team2658.nautilus.android.ui.navigation.LoggedInNavigator
 import org.team2658.nautilus.android.viewmodels.MainViewModel
 import org.team2658.nautilus.android.viewmodels.NFCViewmodel
@@ -38,6 +62,7 @@ import java.util.concurrent.TimeUnit
 
 
 class MainActivity : ComponentActivity() {
+    private val _busy = MutableStateFlow(true)
     private val nfcViewmodel by viewModels<NFCViewmodel>()
     private lateinit var workManager: WorkManager
     private lateinit var pendingIntent: PendingIntent
@@ -54,6 +79,12 @@ class MainActivity : ComponentActivity() {
     private var adapter: NfcAdapter? = null
 
     private lateinit var dataHandler: DataHandler
+
+    val updateIntent = Intent(Intent.ACTION_VIEW).apply {
+        data = Uri.parse(
+            "https://play.google.com/store/apps/details?id=org.team2658.scouting")
+        setPackage("com.android.vending")
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -101,41 +132,93 @@ class MainActivity : ComponentActivity() {
         val connectivityManager = getSystemService(ConnectivityManager::class.java)
         workManager = WorkManager.getInstance(this.applicationContext)
 
+
         setContent {
-            val primaryViewModel = viewModel<MainViewModel>(
-                factory = object: ViewModelProvider.Factory {
-                    @Suppress("UNCHECKED_CAST")
-                    override fun <T : ViewModel> create(
-                        modelClass: Class<T>,
-                    ):T {
-                        return MainViewModel(dataHandler, connectivityManager) as T
-                    }
-                }
-            )
+            val isBusy by _busy.collectAsState()
+            var manifestOk: Boolean? by remember { mutableStateOf(null) }
 
-            primaryViewModel.sync()
-
-            workManager.enqueueUniquePeriodicWork(
-                "sync",
-                ExistingPeriodicWorkPolicy.KEEP,
-                workRequest
-            )
-            workManager.getWorkInfosForUniqueWorkLiveData("sync").observeForever {
-                println("BACKGROUND SYNC TRIGGERED")
-                primaryViewModel.sync()
+            LaunchedEffect(Unit) {
+                manifestOk = dataHandler.manifestOk()
             }
 
-            MainTheme {
-                if (authState(primaryViewModel.user) == AuthState.LOGGED_IN) {
-                    LoggedInNavigator(primaryViewModel, dataHandler, nfcViewmodel)
-                } else {
+            LaunchedEffect(manifestOk) {
+                manifestOk?.let {
+                    _busy.value = false
+                }
+            }
+
+            LoadingSpinner(isBusy)
+
+            if(manifestOk == true) {
+                val primaryViewModel = viewModel<MainViewModel>(
+                    factory = object: ViewModelProvider.Factory {
+                        @Suppress("UNCHECKED_CAST")
+                        override fun <T : ViewModel> create(
+                            modelClass: Class<T>,
+                        ):T {
+                            return MainViewModel(dataHandler, connectivityManager) as T
+                        }
+                    }
+                )
+
+                primaryViewModel.sync()
+
+                workManager.enqueueUniquePeriodicWork(
+                    "sync",
+                    ExistingPeriodicWorkPolicy.KEEP,
+                    workRequest
+                )
+                workManager.getWorkInfosForUniqueWorkLiveData("sync").observeForever {
+                    println("BACKGROUND SYNC TRIGGERED")
+                    primaryViewModel.sync()
+                }
+
+                MainTheme {
+                    if (authState(primaryViewModel.user) == AuthState.LOGGED_IN) {
+                        LoggedInNavigator(primaryViewModel, dataHandler, nfcViewmodel)
+                    } else {
+                        Scaffold { padding ->
+                            Box(modifier = Modifier.padding(padding)) {
+                                SettingsScreen(primaryViewModel)
+                            }
+                        }
+                    }
+                }
+            } else {
+                MainTheme {
                     Scaffold { padding ->
                         Box(modifier = Modifier.padding(padding)) {
-                            SettingsScreen(primaryViewModel)
+                            Screen {
+                                if(manifestOk == false) {
+                                    Column(horizontalAlignment = Alignment.CenterHorizontally, modifier = Modifier.padding(16.dp)) {
+                                        Text("App Out of Date", style = MaterialTheme.typography.displayLarge)
+                                        Spacer(modifier = Modifier.padding(16.dp))
+                                        Text("Please update the app to the latest version", style = MaterialTheme.typography.headlineLarge, modifier = Modifier.clickable {
+                                            startActivity(updateIntent)
+                                        })
+                                        Spacer(modifier = Modifier.padding(16.dp))
+                                        Card(modifier = Modifier.clickable {
+                                            startActivity(updateIntent)
+                                        }) {
+                                            Row(modifier = Modifier.padding(32.dp), verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.SpaceBetween) {
+                                                Icon(Icons.Default.SystemUpdate, contentDescription = "Update in Play Store")
+                                                Text(text = "Update in Play Store",
+                                                    style = MaterialTheme.typography.titleLarge,
+                                                    textAlign = TextAlign.End,
+                                                    modifier = Modifier.weight(1f),
+                                                    color = MaterialTheme.colorScheme.secondary
+                                                )
+                                            }
+                                        }
+                                    }
+                                }
+                            }
                         }
                     }
                 }
             }
+
+
         }
     }
     override fun onDestroy() {

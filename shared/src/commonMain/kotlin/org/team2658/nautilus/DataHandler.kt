@@ -29,6 +29,7 @@ import org.team2658.nautilus.userauth.User
 import org.team2658.network.KtorError
 import org.team2658.network.NetworkClient
 import org.team2658.network.models.Season
+import org.team2658.res.MANIFEST
 
 class DataHandler(routeBase: String, databaseDriverFactory: DatabaseDriverFactory, getToken: () -> String?, setToken: (String?) -> Unit) {
     private val db = AppDatabase(
@@ -82,6 +83,14 @@ class DataHandler(routeBase: String, databaseDriverFactory: DatabaseDriverFactor
     private val user: TokenUser?
         get() = Result.unwrapOrNull(users.loadLoggedIn())
 
+    /**
+     * Get OpenAPI manifest from server and compare it to the local manifest
+     * @return **true** if the server manifest matches the local manifest or if there is an error, **false** if it does not
+     */
+    suspend fun manifestOk(): Boolean {
+        val manifest = Result.unwrapOrNull(network.getAppManifest()) ?: return true
+        return manifest.trim() == MANIFEST.trim()
+    }
 
     //object expressions for namespacing
     val users = object: UserNamspace {

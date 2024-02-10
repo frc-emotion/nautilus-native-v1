@@ -19,6 +19,9 @@ import io.ktor.http.HttpHeaders
 import io.ktor.http.contentType
 import io.ktor.http.parameters
 import io.ktor.serialization.kotlinx.json.json
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.IO
+import kotlinx.coroutines.withContext
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
 import org.team2658.nautilus.Result
@@ -56,6 +59,28 @@ class NetworkClient(base: String) {
     }
     
     private val routes = Routes(base)
+    suspend fun getAppManifest(): Result<String, KtorError> {
+        return withContext(Dispatchers.IO) {
+            try {
+                val res = client.get("${routes.base}/swagger/json").bodyAsText()
+                Result.Success(res)
+            }
+            catch(e: ClientRequestException) {
+                e.printStackTrace()
+                val serverResponse = ServerMessage.readMessage(e.response.bodyAsText()) ?: e.message
+                Result.Error(KtorError.CLIENT(serverResponse, e.response.status.value))
+            }
+            catch(e: ServerResponseException) {
+                e.printStackTrace()
+                val serverResponse = ServerMessage.readMessage(e.response.bodyAsText()) ?: e.message
+                Result.Error(KtorError.SERVER(serverResponse, e.response.status.value))
+            }
+            catch(e: Exception) {
+                e.printStackTrace()
+                Result.Error(KtorError.IO)
+            }
+        }
+    }
 
     val users = object: UsersNamespace {
         override suspend fun login(username: String, password: String): Result<TokenUser, KtorError.NoAuthRequired> {

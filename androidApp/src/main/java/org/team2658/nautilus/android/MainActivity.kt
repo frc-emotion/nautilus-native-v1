@@ -33,7 +33,7 @@ import org.team2658.nautilus.android.ui.navigation.LoggedInNavigator
 import org.team2658.nautilus.android.viewmodels.MainViewModel
 import org.team2658.nautilus.android.viewmodels.NFCViewmodel
 import org.team2658.nautilus.userauth.AuthState
-import org.team2658.nautilus.userauth.User
+import org.team2658.nautilus.userauth.authState
 import java.util.concurrent.TimeUnit
 
 
@@ -65,7 +65,8 @@ class MainActivity : ComponentActivity() {
             org.team2658.localstorage.AndroidDatabaseDriver(this),
             getToken = {
                 return@DataHandler sharedPref.getString("token", null)
-            }
+            },
+            routeBase = "https://staging.team2658.org"
         ) {
             with(sharedPref.edit()) {
                 putString("token", it)
@@ -125,7 +126,7 @@ class MainActivity : ComponentActivity() {
             }
 
             MainTheme {
-                if (User.authState(primaryViewModel.user) == AuthState.LOGGED_IN) {
+                if (authState(primaryViewModel.user) == AuthState.LOGGED_IN) {
                     LoggedInNavigator(primaryViewModel, dataHandler, nfcViewmodel)
                 } else {
                     Scaffold { padding ->

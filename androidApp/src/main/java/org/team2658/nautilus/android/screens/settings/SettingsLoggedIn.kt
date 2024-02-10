@@ -34,13 +34,14 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import kotlinx.coroutines.launch
+import org.team2658.nautilus.android.ui.composables.LoadingSpinner
 import org.team2658.nautilus.android.ui.composables.LoginInput
 import org.team2658.nautilus.android.ui.composables.LoginType
 import org.team2658.nautilus.android.ui.composables.Screen
 import org.team2658.nautilus.android.ui.composables.UserInfoCard
 import org.team2658.nautilus.android.viewmodels.MainViewModel
 import org.team2658.nautilus.userauth.AuthState
-import org.team2658.nautilus.userauth.User
+import org.team2658.nautilus.userauth.authState
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -56,7 +57,7 @@ fun SettingsLoggedIn(vm: MainViewModel) {
     val scope = rememberCoroutineScope()
 
 
-    if(User.authState(user) == AuthState.AWAITING_VERIFICATION){
+    if(authState(user) == AuthState.AWAITING_VERIFICATION){
         Text(
             text = "Awaiting Verification",
             style = MaterialTheme.typography.displayMedium,
@@ -81,11 +82,10 @@ fun SettingsLoggedIn(vm: MainViewModel) {
         Spacer(modifier = Modifier.size(32.dp))
     }
     Row(verticalAlignment = Alignment.CenterVertically) {
-        ShouldSyncIndicator(count = vm.getQueueLength())
+        ShouldSyncIndicator(count = vm.getQueueLength().attendance)
         Spacer(modifier = Modifier.size(8.dp))
         if(syncBusy) {
             Text(text = "Syncing...")
-            TODO("replace with proper indicator")
         } else {
             TextButton(onClick = {
                 vm.sync { busy, success ->
@@ -113,6 +113,8 @@ fun SettingsLoggedIn(vm: MainViewModel) {
     }) {
         Text(text = "Delete Account", color = MaterialTheme.colorScheme.error)
     }
+
+    LoadingSpinner(syncBusy)
 
     if(showDeleteDialog){
         Dialog(onDismissRequest = { showDeleteDialog = false }) {

@@ -1,51 +1,66 @@
 import kotlin.Int;
 
-CREATE TABLE competition (
+CREATE TABLE competition_table (
     name TEXT NOT NULL,
     year INTEGER AS Int NOT NULL,
-    season TEXT NOT NULL,
     PRIMARY KEY (name, year),
-    FOREIGN KEY (season) REFERENCES season (id)
+    FOREIGN KEY (year) REFERENCES season_table (year)
 );
 
-CREATE TABLE season (
-    id TEXT NOT NULL PRIMARY KEY,
-    year INTEGER AS Int NOT NULL,
+CREATE TABLE season_table (
+    year INTEGER AS Int NOT NULL PRIMARY KEY,
+    name TEXT NOT NULL
+);
+
+CREATE TABLE attendance_periods_table (
     name TEXT NOT NULL,
-    attendance_periods_JSON TEXT
+    year INTEGER AS Int NOT NULL,
+    FOREIGN KEY (year) REFERENCES season_table (year),
+    PRIMARY KEY (name, year)
 );
 
 insertCompetition:
-INSERT OR IGNORE INTO competition (name, year, season) VALUES (?, ?, ?);
+INSERT OR IGNORE INTO competition_table (name, year) VALUES (?, ?);
 
 insertSeason:
-INSERT OR IGNORE INTO season (id, year, name, attendance_periods_JSON) VALUES (?, ?, ?, ?);
+INSERT OR IGNORE INTO season_table (year, name) VALUES (?, ?);
+
+insertAttendancePeriod:
+INSERT OR IGNORE INTO attendance_periods_table (name, year) VALUES (?, ?);
 
 getAllCompetitions:
-SELECT name, year FROM competition;
+SELECT name, year FROM competition_table;
 
 getAllSeasons:
-SELECT season.*, group_concat(competition.name) AS competitions FROM season LEFT OUTER JOIN competition ON season.id = competition.season GROUP BY season.id ORDER BY season.year DESC;
+SELECT season_table.*,
+    group_concat(competition_table.name) AS competitions,
+    group_concat(attendance_periods_table.name) AS attendance_periods
+    FROM season_table
+    LEFT OUTER JOIN competition_table
+        ON season_table.year = competition_table.year
+    LEFT OUTER JOIN attendance_periods_table
+        ON season_table.year = attendance_periods_table.year
+    GROUP BY season_table.year
+    ORDER BY season_table.year DESC;
 
 getCompetitionsByYear:
-SELECT name, year FROM competition WHERE year = ?;
-
-getCompetitionsFromLatestSeason:
-SELECT name, year FROM competition WHERE season = (SELECT id FROM season ORDER BY year DESC LIMIT 1) ORDER BY year DESC;
+SELECT name, year FROM competition_table WHERE year = ?;
 
 deleteAllSeasons {
     BEGIN TRANSACTION;
-    DELETE FROM season;
-    DELETE FROM competition;
+    DELETE FROM attendance_periods_table;
+    DELETE FROM competition_table;
+    DELETE FROM season_table;
     COMMIT;
 }
 
 deleteSeason {
     BEGIN TRANSACTION;
-    DELETE FROM competition WHERE season = ?;
-    DELETE FROM season WHERE id = ?;
+    DELETE FROM attendance_periods_table WHERE year = :season;
+    DELETE FROM competition_table WHERE year = :season;
+    DELETE FROM season_table WHERE year = :season;
     COMMIT;
 }
 
 getAttendancePeriods:
-SELECT attendance_periods_JSON, year FROM season WHERE attendance_periods_JSON IS NOT NULL ORDER BY year DESC;
+SELECT name FROM attendance_periods_table;

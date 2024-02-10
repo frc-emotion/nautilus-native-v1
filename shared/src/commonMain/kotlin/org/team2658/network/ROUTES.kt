@@ -1,11 +1,9 @@
 package org.team2658.network
 
-object ROUTES {
-    const val BASE = "https://staging.team2658.org/v2"
-    const val LOGIN = "$BASE/users/login"
-    const val REGISTER = "$BASE/users/register"
-    const val CREATE_MEETING = "$BASE/attendance/createMeeting"
-    const val ATTEND_MEETING = "$BASE/attendance/attendMeeting"
-    const val ME = "$BASE/users/me"
-    const val CHARGEDUP = "$BASE/chargedUp"
+data class Routes(val base: String) {
+    val users = "$base/users"
+    val login = "$base/users/login"
+    val register = "$base/users/register"
+    val meetings = "$base/attendance/meetings"
+    val me = "$base/users/me"
 }

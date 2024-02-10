@@ -20,6 +20,8 @@ import androidx.compose.ui.unit.dp
 import org.team2658.nautilus.toCapitalized
 import org.team2658.nautilus.userauth.AccountType
 import org.team2658.nautilus.userauth.User
+import org.team2658.nautilus.userauth.UserPermissions
+import org.team2658.nautilus.userauth.isAdmin
 
 @Composable
 fun UserInfoCard(user: User?) {
@@ -27,10 +29,10 @@ fun UserInfoCard(user: User?) {
         if (user != null) {
             Column(modifier = Modifier.padding(32.dp)) {
                 Text(
-                    text = "Logged in as ${user.firstName} ${user.lastName}",
+                    text = "Logged in as ${user.firstname} ${user.lastname}",
                     style = MaterialTheme.typography.headlineMedium
                 )
-                if (user.isAdmin) {
+                if (isAdmin(user)) {
                     Spacer(modifier = Modifier.size(16.dp))
                     Row(verticalAlignment = Alignment.CenterVertically) {
                         Text(
@@ -62,26 +64,41 @@ fun UserInfoCard(user: User?) {
                 )
                 Spacer(modifier = Modifier.size(16.dp))
                 Text(
-                    text = "Subteam: ${user.subteam.name.toCapitalized()}",
+                    text = "Subteam: ${user.subteam?.name?.toCapitalized()?: "None"}",
                     style = MaterialTheme.typography.bodyLarge
                 )
-                Spacer(modifier = Modifier.size(16.dp))
-                Text(text = "Permissions: ", style = MaterialTheme.typography.bodyLarge)
-                user.permissions.asList().forEach {
-                    if (it.value) Text(
-                        text = "✓ ${it.key}",
-                        style = MaterialTheme.typography.bodyLarge,
-                        color = MaterialTheme.colorScheme.primary
-                    )
-                    else Text(
-                        text = "✗ ${it.key}",
-                        style = MaterialTheme.typography.bodyLarge,
-                        color = MaterialTheme.colorScheme.error
-                    )
+                if(user is User.Full) {
+                    Spacer(modifier = Modifier.size(16.dp))
+                    Text(text = "Permissions: ", style = MaterialTheme.typography.bodyLarge)
+                    user.permissions.asMap().forEach {
+                        if (it.value) Text(
+                            text = "✓ ${it.key}",
+                            style = MaterialTheme.typography.bodyLarge,
+                            color = MaterialTheme.colorScheme.primary
+                        )
+                        else Text(
+                            text = "✗ ${it.key}",
+                            style = MaterialTheme.typography.bodyLarge,
+                            color = MaterialTheme.colorScheme.error
+                        )
+                    }
                 }
             }
         } else {
             Text(text = "No user logged in", color = MaterialTheme.colorScheme.error)
         }
     }
+}
+
+fun UserPermissions.asMap(): Map<String, Boolean> {
+    return mapOf(
+        "Scouting" to generalScouting,
+        "Pit Scouting" to pitScouting,
+        "View Meetings List" to viewMeetings,
+        "View Scouting Data" to viewScoutingData,
+        "Make Blog Posts" to blogPosts,
+        "Delete Meetings" to deleteMeetings,
+        "Make Announcements" to makeAnnouncements,
+        "Make Meetings" to makeMeetings
+    )
 }

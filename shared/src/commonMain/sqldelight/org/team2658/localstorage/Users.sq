@@ -1,56 +1,167 @@
 import kotlin.Int;
 import kotlin.Boolean;
 
+-- CREATE TABLE user_table (
+--     id TEXT PRIMARY KEY NOT NULL,
+--     firstname TEXT NOT NULL,
+--     lastname TEXT NOT NULL,
+--     username TEXT UNIQUE NOT NULL,
+--     email TEXT UNIQUE NOT NULL,
+--     phone TEXT UNIQUE NOT NULL,
+--     subteam TEXT NOT NULL,
+--     grade INTEGER AS Int NOT NULL,
+--     rolesJSON TEXT NOT NULL,
+--     accountType INTEGER AS Int NOT NULL,
+--     attendanceJSON TEXT NOT NULL,
+--     isLoggedInUser INTEGER AS Boolean NOT NULL
+-- );
+
 CREATE TABLE user_table (
     id TEXT PRIMARY KEY NOT NULL,
     firstname TEXT NOT NULL,
     lastname TEXT NOT NULL,
     username TEXT UNIQUE NOT NULL,
     email TEXT UNIQUE NOT NULL,
-    phone TEXT UNIQUE NOT NULL,
     subteam TEXT NOT NULL,
-    grade INTEGER AS Int NOT NULL,
-    rolesJSON TEXT NOT NULL,
-    accountType INTEGER AS Int NOT NULL,
-    attendanceJSON TEXT NOT NULL,
-    isLoggedInUser INTEGER AS Boolean NOT NULL
+    accountType INTEGER AS Int NOT NULL
 );
 
-insert {
-BEGIN TRANSACTION
-DELETE FROM user_table WHERE id = :id OR username = :username OR email = :email OR phone = :phone;
-INSERT OR ROLLBACK INTO user_table (id, firstname, lastname, username, email, phone, subteam, grade, rolesJSON, accountType, attendanceJSON, isLoggedInUser
-VALUES (:id,  :firstname,  :lastname,  :username,  :email,  :phone,  :subteam,  :grade,  :rolesJSON, :accountType, :attendanceJSON, :isLoggedInUser);
-COMMIT;
+CREATE TABLE user_extras_table (
+    accountUpdateVersion INTEGER AS Int NOT NULL,
+    grade INTEGER AS Int,
+    phone TEXT,
+    permissions_generalScouting INTEGER AS Boolean NOT NULL,
+    permissions_pitScouting INTEGER AS Boolean NOT NULL,
+    permissions_viewMeetings INTEGER AS Boolean NOT NULL,
+    permissions_viewScoutingData INTEGER AS Boolean NOT NULL,
+    permissions_blogPosts INTEGER AS Boolean NOT NULL,
+    permissions_deleteMeetings INTEGER AS Boolean NOT NULL,
+    permissions_makeAnnouncements INTEGER AS Boolean NOT NULL,
+    permissions_makeMeetings INTEGER AS Boolean NOT NULL,
+    user_id TEXT PRIMARY KEY NOT NULL,
+    isLoggedInUser INTEGER AS Boolean NOT NULL,
+    FOREIGN KEY(user_id) REFERENCES user_table(id)
+);
+
+CREATE TABLE roles_table (
+    name TEXT NOT NULL,
+    user_id TEXT NOT NULL,
+    FOREIGN KEY(user_id) REFERENCES user_table(id),
+    PRIMARY KEY (name, user_id)
+);
+
+CREATE TABLE attendance_table (
+    attendance_period TEXT NOT NULL,
+    total_hours INTEGER AS Int NOT NULL,
+    user_id TEXT NOT NULL,
+    FOREIGN KEY(user_id) REFERENCES user_extras_table(user_id),
+    PRIMARY KEY (attendance_period, user_id)
+);
+
+CREATE TABLE attendance_logs_table (
+    meeting_id TEXT NOT NULL,
+    verified_by TEXT NOT NULL,
+    user_id TEXT NOT NULL,
+    attendance_period TEXT NOT NULL,
+    FOREIGN KEY(attendance_period, user_id) REFERENCES attendance_table(attendance_period, user_id),
+    PRIMARY KEY (meeting_id, user_id, attendance_period)
+);
+
+
+
+deleteOne {
+ BEGIN TRANSACTION;
+ DELETE FROM attendance_logs_table WHERE user_id = :id;
+ DELETE FROM attendance_table WHERE user_id = :id;
+ DELETE FROM user_extras_table WHERE user_id = :id;
+ DELETE FROM roles_table WHERE user_id = :id;
+ DELETE FROM user_table WHERE id = :id;
+ COMMIT;
 }
 
-deleteLoggedIn:
-DELETE FROM user_table WHERE isLoggedInUser = 1;
+insertBase {
+    BEGIN TRANSACTION;
+     DELETE FROM user_table WHERE username = :username OR email = :email OR id = :id;
+     INSERT INTO user_table (id, firstname, lastname, username, email, subteam, accountType)
+        VALUES (:id, :firstname, :lastname, :username, :email, :subteam, :accountType);
+    COMMIT;
+}
 
-deleteNotLoggedIn:
-DELETE FROM user_table WHERE isLoggedInUser = 0;
+insertExtras {
+    BEGIN TRANSACTION;
+    DELETE FROM user_extras_table WHERE user_id = :id;
+    INSERT INTO user_extras_table (accountUpdateVersion, grade, phone, permissions_generalScouting, permissions_pitScouting, permissions_viewMeetings, permissions_viewScoutingData, permissions_blogPosts, permissions_deleteMeetings, permissions_makeAnnouncements, permissions_makeMeetings, user_id, isLoggedInUser)
+        VALUES (:accountUpdateVersion, :grade, :phone, :permissions_generalScouting, :permissions_pitScouting, :permissions_viewMeetings, :permissions_viewScoutingData, :permissions_blogPosts, :permissions_deleteMeetings, :permissions_makeAnnouncements, :permissions_makeMeetings, :id, :isLogin);
+    COMMIT;
+}
+
+insertRole {
+    BEGIN TRANSACTION;
+    DELETE FROM roles_table WHERE user_id = :id AND name = :name;
+    INSERT INTO roles_table (name, user_id) VALUES (:name, :id);
+    COMMIT;
+}
+
+insertAttendance {
+    BEGIN TRANSACTION;
+    DELETE FROM attendance_table WHERE user_id = :id AND attendance_period = :attendance_period;
+    INSERT INTO attendance_table (attendance_period, total_hours, user_id) VALUES (:attendance_period, :total_hours, :id);
+    COMMIT;
+}
+
+insertAttendanceLog {
+    BEGIN TRANSACTION;
+    DELETE FROM attendance_logs_table WHERE user_id = :id AND meeting_id = :meeting_id AND attendance_period = :attendance_period;
+    INSERT INTO attendance_logs_table (meeting_id, verified_by, user_id, attendance_period) VALUES (:meeting_id, :verified_by, :id, :attendance_period);
+    COMMIT;
+}
+
+
+deleteLoggedIn {
+    BEGIN TRANSACTION;
+    DELETE FROM attendance_logs_table WHERE user_id = (SELECT user_id FROM user_extras_table AS id WHERE isLoggedInUser = 1 LIMIT 1);
+    DELETE FROM attendance_table WHERE user_id = (SELECT user_id FROM user_extras_table AS id WHERE isLoggedInUser = 1 LIMIT 1);
+    DELETE FROM user_extras_table WHERE isLoggedInUser = 1;
+    DELETE FROM roles_table WHERE user_id = (SELECT user_id FROM user_extras_table AS id WHERE isLoggedInUser = 1 LIMIT 1);
+    DELETE FROM user_table WHERE id = (SELECT user_id FROM user_extras_table AS id WHERE isLoggedInUser = 1 LIMIT 1);
+    COMMIT;
+}
+
+deleteNotLoggedIn {
+   BEGIN TRANSACTION;
+   DELETE FROM attendance_logs_table WHERE user_id = (SELECT user_id FROM user_extras_table AS id WHERE isLoggedInUser = 0 LIMIT 1);
+   DELETE FROM attendance_table WHERE user_id = (SELECT user_id FROM user_extras_table AS id WHERE isLoggedInUser = 0 LIMIT 1);
+   DELETE FROM user_extras_table WHERE isLoggedInUser = 0;
+   DELETE FROM roles_table WHERE user_id = (SELECT user_id FROM user_extras_table AS id WHERE isLoggedInUser = 0 LIMIT 1);
+   DELETE FROM user_table WHERE id = (SELECT user_id FROM user_extras_table AS id WHERE isLoggedInUser = 0 LIMIT 1);
+   COMMIT;
+}
 
 getLoggedInUser:
-SELECT * FROM user_table WHERE isLoggedInUser = 1 LIMIT 1;
+SELECT * FROM user_table JOIN user_extras_table ON user_extras_table.user_id = user_table.id WHERE isLoggedInUser = 1 LIMIT 1;
 
-getMyAttendance:
-SELECT attendanceJSON FROM user_table WHERE isLoggedInUser = 1 LIMIT 1;
+getUserRoles:
+SELECT name FROM roles_table WHERE user_id = ?;
 
-getNotLoggedIn:
-SELECT * FROM user_table WHERE isLoggedInUser = 0;
+getUserAttendance:
+SELECT attendance_period, total_hours FROM attendance_table WHERE user_id = ?;
 
-getById:
-SELECT * FROM user_table WHERE id = ? LIMIT 1;
+getUserAttendanceLogs:
+SELECT meeting_id, verified_by FROM attendance_logs_table WHERE user_id = ? AND attendance_period = ?;
 
-getByUsername:
-SELECT * FROM user_table WHERE username = ? LIMIT 1;
+getBaseUsers:
+SELECT * FROM user_table;
 
-getByEmail:
-SELECT * FROM user_table WHERE email = ? LIMIT 1;
+getExtras:
+SELECT * FROM user_extras_table WHERE user_id = ?;
+
+getOne:
+SELECT * FROM user_table WHERE user_table.id = :user
+    OR email = :user OR username = :user
+    OR id = (SELECT user_id FROM user_extras_table WHERE phone = :user LIMIT 1) LIMIT 1;
 
 getInfoById:
 SELECT username, firstname, lastname FROM user_table WHERE id = ? LIMIT 1;
 
 
-deleteOne:
-DELETE FROM user_table WHERE id = ?;
+

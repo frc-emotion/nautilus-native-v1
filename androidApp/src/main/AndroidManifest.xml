@@ -9,8 +9,8 @@
         android:supportsRtl="true"
         android:label="Σ-Motion"
         android:icon = "@mipmap/ic_launcher"
-        android:theme="@style/AppTheme">
-        <!--        android:usesCleartextTraffic="true"-->
+        android:theme="@style/AppTheme"
+        android:usesCleartextTraffic="true">
         <activity
             android:name=".MainActivity"
             android:exported="true"

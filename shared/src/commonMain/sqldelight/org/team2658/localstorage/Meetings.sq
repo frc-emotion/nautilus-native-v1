@@ -1,6 +1,6 @@
 import kotlin.Boolean;
 
-CREATE TABLE meeting (
+CREATE TABLE meeting_table (
     id TEXT PRIMARY KEY NOT NULL,
     startTime INTEGER NOT NULL,
     endTime INTEGER NOT NULL,
@@ -8,35 +8,35 @@ CREATE TABLE meeting (
     description TEXT NOT NULL,
     value INTEGER NOT NULL,
     createdBy TEXT NOT NULL,
-    attendance_period TEXT,
-    archived INTEGER AS Boolean DEFAULT 0
+    attendance_period TEXT NOT NULL,
+    archived INTEGER AS Boolean NOT NULL DEFAULT 0
 );
 
 insertOne {
 BEGIN TRANSACTION;
-DELETE FROM meeting WHERE id = :id;
-INSERT OR ROLLBACK INTO meeting (id, startTime, endTime, type, description, value, createdBy, attendance_period, archived)
+DELETE FROM meeting_table WHERE id = :id;
+INSERT OR ROLLBACK INTO meeting_table (id, startTime, endTime, type, description, value, createdBy, attendance_period, archived)
 VALUES (:id, :startTime, :endTime, :type, :description, :value, :createdBy, :attendance_period, :archived);
 COMMIT;
 }
 
 removeAll:
-DELETE FROM meeting;
+DELETE FROM meeting_table;
 
 removeOne:
-DELETE FROM meeting WHERE id = ?;
+DELETE FROM meeting_table WHERE id = ?;
 
 getAllWithUsername:
-SELECT meeting.*, username FROM meeting LEFT OUTER JOIN user_table AS user ON meeting.createdBy = user.id;
+SELECT meeting_table.*, username FROM meeting_table LEFT OUTER JOIN user_table AS user ON meeting_table.createdBy = user.id;
 
 getOneWithUsername:
-SELECT meeting.*, username FROM meeting LEFT OUTER JOIN user_table AS user ON meeting.createdBy = user.id WHERE meeting.id = ? LIMIT 1;
+SELECT meeting_table.*, username FROM meeting_table LEFT OUTER JOIN user_table AS user ON meeting_table.createdBy = user.id WHERE meeting_table.id = ? LIMIT 1;
 
 getCurrentWithUsername:
-SELECT meeting.*, username FROM meeting LEFT OUTER JOIN user_table AS user ON meeting.createdBy = user.id WHERE endTime >= :currentTime AND archived = 0 ORDER BY startTime DESC;
+SELECT meeting_table.*, username FROM meeting_table LEFT OUTER JOIN user_table AS user ON meeting_table.createdBy = user.id WHERE endTime >= :currentTime AND archived = 0 ORDER BY startTime DESC;
 
 getOutdatedWithUsername:
-SELECT meeting.*, username FROM meeting LEFT OUTER JOIN user_table AS user ON meeting.createdBy = user.id WHERE endTime < :currentTime AND archived = 0 ORDER BY startTime DESC;
+SELECT meeting_table.*, username FROM meeting_table LEFT OUTER JOIN user_table AS user ON meeting_table.createdBy = user.id WHERE endTime < :currentTime AND archived = 0 ORDER BY startTime DESC;
 
 getArchivedWithUsername:
-SELECT meeting.*, username FROM meeting LEFT OUTER JOIN user_table AS user ON meeting.createdBy = user.id WHERE archived = 1 ORDER BY startTime DESC;
+SELECT meeting_table.*, username FROM meeting_table LEFT OUTER JOIN user_table AS user ON meeting_table.createdBy = user.id WHERE archived = 1 ORDER BY startTime DESC;

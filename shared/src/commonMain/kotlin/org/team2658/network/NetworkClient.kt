@@ -7,7 +7,6 @@ import io.ktor.client.plugins.ServerResponseException
 import io.ktor.client.plugins.contentnegotiation.ContentNegotiation
 import io.ktor.client.plugins.defaultRequest
 import io.ktor.client.request.delete
-import io.ktor.client.request.forms.submitForm
 import io.ktor.client.request.get
 import io.ktor.client.request.header
 import io.ktor.client.request.post
@@ -17,18 +16,17 @@ import io.ktor.client.statement.bodyAsText
 import io.ktor.http.ContentType
 import io.ktor.http.HttpHeaders
 import io.ktor.http.contentType
-import io.ktor.http.parameters
 import io.ktor.serialization.kotlinx.json.json
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.IO
 import kotlinx.coroutines.withContext
+import kotlinx.serialization.Serializable
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
 import org.team2658.nautilus.Result
 import org.team2658.nautilus.attendance.Meeting
 import org.team2658.nautilus.scouting.scoutingdata.Crescendo
 import org.team2658.nautilus.scouting.scoutingdata.CrescendoRequestBody
-import org.team2658.nautilus.userauth.AccountType
 import org.team2658.nautilus.userauth.FullUser
 import org.team2658.nautilus.userauth.PartialUser
 import org.team2658.nautilus.userauth.Subteam
@@ -85,10 +83,9 @@ class NetworkClient(base: String) {
     val users = object: UsersNamespace {
         override suspend fun login(username: String, password: String): Result<TokenUser, KtorError.NoAuthRequired> {
             return try {
-                val response = client.submitForm(url = routes.login, formParameters = parameters {
-                    append("username", username)
-                    append("password", password)
-                }).body<TokenUser>()
+                val response = client.post(routes.login) {
+                    setBody(Login(username, password))
+                }.body<TokenUser>()
                 Result.Success(response)
             }
             catch(e: ClientRequestException) {
@@ -117,16 +114,19 @@ class NetworkClient(base: String) {
             grade: Int
         ): Result<TokenUser, KtorError.NoAuthRequired> {
             return try {
-                val response = client.submitForm(url = routes.register, formParameters = parameters {
-                    append("username", username)
-                    append("password", password)
-                    append("email", email)
-                    append("firstname", firstName)
-                    append("lastname", lastName)
-                    append("subteam", subteam.name.lowercase())
-                    append("phone", phone)
-                    append("grade", grade.toString())
-                }).body<TokenUser>()
+                val response = client.post(routes.register) {
+                    setBody(Register(
+                        username = username,
+                        password = password,
+                        email = email,
+                        firstname = firstName,
+                        lastname = lastName,
+                        subteam = subteam.name.lowercase(),
+                        phone = phone,
+                        grade = grade
+                    ))
+                }
+                    .body<TokenUser>()
                 Result.Success(response)
             }
             catch(e: ClientRequestException) {
@@ -266,15 +266,9 @@ class NetworkClient(base: String) {
         ): Result<Meeting, KtorError> {
             if(user.isInvalid()) return Result.Error(KtorError.AUTH)
             return try {
-                val res = client.submitForm(url = routes.meetings, formParameters = parameters {
-                    append("startTime", startTime.toString())
-                    append("endTime", endTime.toString())
-                    append("type", type)
-                    append("description", description)
-                    append("value", value.toString())
-                    append("attendancePeriod", attendancePeriod)
-                }){
+                val res = client.post(routes.meetings) {
                     header(HttpHeaders.Authorization, "Bearer ${user.token}")
+                    setBody(CreateMeeting(startTime, endTime, type, description, value, attendancePeriod))
                 }.body<Meeting>()
                 Result.Success(res)
             }
@@ -326,12 +320,10 @@ class NetworkClient(base: String) {
             verifiedBy: String, ): Result<TokenUser, KtorError> {
             if (user.isInvalid()) return Result.Error(KtorError.AUTH)
             return try {
-                val response = client.submitForm(
-                    url = "${routes.meetings}/attend/$meetingId",
-                    formParameters = parameters {
-                        append("tapTime", tapTime.toString())
-                        append("verifiedBy", verifiedBy)
-                    }) {
+                val response = client.post(
+                    "${routes.meetings}/attend/$meetingId",
+                ) {
+                    setBody(Attend(tapTime, verifiedBy))
                     header(HttpHeaders.Authorization, "Bearer ${user.token}")
                 }.body<TokenUser>()
                 Result.Success(response)
@@ -534,4 +526,38 @@ sealed interface KtorError {
     data object AUTH: KtorError
 }
 
-fun TokenUser.isInvalid() = token.isBlank() || accountType == AccountType.UNVERIFIED
+fun TokenUser.isInvalid() = token.isBlank()
+
+@Serializable
+data class Register(
+    val username: String,
+    val password: String,
+    val email: String,
+    val firstname: String,
+    val lastname: String,
+    val subteam: String,
+    val phone: String,
+    val grade: Int
+)
+
+@Serializable
+data class Login(
+    val username: String,
+    val password: String
+)
+
+@Serializable
+data class CreateMeeting(
+    val startTime: Long,
+    val endTime: Long,
+    val type: String,
+    val description: String,
+    val value: Int,
+    val attendancePeriod: String
+)
+
+@Serializable
+data class Attend(
+    val tapTime: Long,
+    val verifiedBy: String
+)

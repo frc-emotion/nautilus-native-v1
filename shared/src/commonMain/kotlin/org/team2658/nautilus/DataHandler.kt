@@ -4,6 +4,7 @@ import app.cash.sqldelight.adapter.primitive.IntColumnAdapter
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.IO
+import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import org.team2658.localstorage.AppDatabase
@@ -95,7 +96,7 @@ class DataHandler(routeBase: String, databaseDriverFactory: DatabaseDriverFactor
     //object expressions for namespacing
     val users = object: UserNamspace {
         override suspend fun login(username: String, password: String): DataResult<TokenUser> {
-            return withContext(Dispatchers.IO){
+            return withContext(Dispatchers.IO) {
                 when(val result = network.users.login(username, password)) {
                     is Result.Success -> {
                         usersDB.updateLoggedInUser(result.data, setToken)
@@ -202,7 +203,7 @@ class DataHandler(routeBase: String, databaseDriverFactory: DatabaseDriverFactor
         }
 
         override fun loadAll(): List<User.WithoutToken> {
-            return loadAll { _ -> }
+            return usersDB.getUsers()
         }
 
         override fun loadAll(onCompleteSync: (List<User.WithoutToken>) -> Unit): List<User.WithoutToken> {
@@ -217,9 +218,11 @@ class DataHandler(routeBase: String, databaseDriverFactory: DatabaseDriverFactor
         override fun clearAll() = usersDB.clearUsers()
 
         override suspend fun sync(): SyncUserResult {
-            val listRes = syncUsers()
-            val myRes = refreshLoggedIn()
-            return SyncUserResult(myUser = myRes, userList = listRes)
+            val listRes = scope.async {
+                syncUsers()
+            }
+            val myRes = scope.async { refreshLoggedIn() }
+            return SyncUserResult(myUser = myRes.await(), userList = listRes.await())
         }
 
         override suspend fun deleteMe(): DataResult<Unit> {
@@ -241,35 +244,35 @@ class DataHandler(routeBase: String, databaseDriverFactory: DatabaseDriverFactor
     }
 
     val attendance = object: AttendanceNamespace {
-        override suspend fun sync(): UploadDownloadResult<List<DataResult<TokenUser>>, DataResult<List<Meeting>>>{
+        override suspend fun sync(): UploadDownloadResult<List<DataResult<TokenUser>>, DataResult<List<Meeting>>> {
             return withContext(Dispatchers.IO) {
                 val usr = user
-                val downloadRes = if(usr == null) Result.Error("Authentication error. Please log out and log back in.") else network.attendance.getMeetings(usr).let {
-                    when(it) {
-                        is Result.Success -> it.also {
-                            meetingsDB.refresh(it.data)
-                        }
-                        is Result.Error -> when(val error = it.error) {
-                            KtorError.AUTH -> Result.Error("Authentication error: Your login session is invalid. Please log out and log back in.")
-                            is KtorError.CLIENT -> Result.Error("Error ${error.code}: ${error.message}")
-                            KtorError.IO -> Result.Error("IO error. Please make sure you are connected to the internet.")
-                            is KtorError.SERVER -> Result.Error("Server error ${error.code}: ${error.message}")
+                val downloadRes = scope.async {
+                    if(usr == null) Result.Error("Authentication error. Please log out and log back in.") else network.attendance.getMeetings(usr).let {
+                        when(it) {
+                            is Result.Success -> it.also {
+                                meetingsDB.refresh(it.data)
+                            }
+                            is Result.Error -> when(val error = it.error) {
+                                KtorError.AUTH -> Result.Error("Authentication error: Your login session is invalid. Please log out and log back in.")
+                                is KtorError.CLIENT -> Result.Error("Error ${error.code}: ${error.message}")
+                                KtorError.IO -> Result.Error("IO error. Please make sure you are connected to the internet.")
+                                is KtorError.SERVER -> Result.Error("Server error ${error.code}: ${error.message}")
+                            }
                         }
                     }
                 }
-                val uploadRes = uploadCachedAttendance()
-                UploadDownloadResult(upload = uploadRes, download = downloadRes)
+                val uploadRes = async {
+                    uploadCachedAttendance()
+                }
+                UploadDownloadResult(upload = uploadRes.await(), download = downloadRes.await())
             }
         }
 
         
 
         override fun getAll(): List<Meeting> {
-            return meetingsDB.getAll().also {
-                scope.launch {
-                    sync()
-                }
-            }
+            return meetingsDB.getAll()
         }
 
         override fun getAll(onCompleteSync: (List<Meeting>) -> Unit): List<Meeting> {
@@ -283,7 +286,7 @@ class DataHandler(routeBase: String, databaseDriverFactory: DatabaseDriverFactor
         }
 
         override fun getCurrent(time: Long): List<Meeting> {
-            return getCurrent(time) { _ -> }
+            return meetingsDB.getCurrent(time)
         }
 
         override fun getCurrent(time: Long, onCompleteSync: (List<Meeting>) -> Unit): List<Meeting> {
@@ -298,7 +301,7 @@ class DataHandler(routeBase: String, databaseDriverFactory: DatabaseDriverFactor
         }
 
         override fun getOutdated(time: Long): List<Meeting> {
-            return getOutdated(time) { _ -> }
+            return meetingsDB.getOutdated(time)
         }
 
         override fun getOutdated(
@@ -315,7 +318,7 @@ class DataHandler(routeBase: String, databaseDriverFactory: DatabaseDriverFactor
         }
 
         override fun getArchived(): List<Meeting> {
-            return getArchived { _ -> }
+            return meetingsDB.getArchived()
         }
 
         override fun getArchived(onCompleteSync: (List<Meeting>) -> Unit): List<Meeting> {
@@ -487,7 +490,7 @@ class DataHandler(routeBase: String, databaseDriverFactory: DatabaseDriverFactor
         }
 
         override fun getComps(year: Int): List<String> {
-            return getComps(year) { _ -> }
+            return seasonsDB.getCompsFromSeason(year)
         }
 
         override fun getComps(year: Int, onCompleteSync: (List<String>) -> Unit): List<String> {
@@ -501,7 +504,7 @@ class DataHandler(routeBase: String, databaseDriverFactory: DatabaseDriverFactor
         }
 
         override fun getAttendancePeriods(): List<String> {
-            return getAttendancePeriods { _ -> }
+            return seasonsDB.getAttendancePeriods()
         }
 
         override fun getAttendancePeriods(onCompleteSync: (List<String>) -> Unit): List<String> {
@@ -556,7 +559,7 @@ class DataHandler(routeBase: String, databaseDriverFactory: DatabaseDriverFactor
         }
 
         override fun getAll(): List<Crescendo> {
-            return getAll { _ -> }
+            return crescendoDB.getAll()
         }
 
         override fun getAll(onCompleteSync: (List<Crescendo>) -> Unit): List<Crescendo> {
@@ -614,22 +617,43 @@ class DataHandler(routeBase: String, databaseDriverFactory: DatabaseDriverFactor
         return UploadQueueLength(attendance = attendance, crescendo = crescendo)
     }
 
-    fun sync() {
+    fun bgSync() {
         scope.launch {
-            syncCoroutine()
+            users.sync()
+        }
+        scope.launch {
+            attendance.sync()
+        }
+        scope.launch {
+            seasons.sync()
+        }
+        scope.launch {
+            crescendo.sync()
         }
     }
 
-    suspend fun syncCoroutine(): SyncResult {
-        users.sync()
-        attendance.sync()
-        seasons.sync()
-        crescendo.sync()
+    suspend fun sync(): SyncResult {
+        val userres = scope.async {
+            users.sync()
+        }
+
+        val attres = scope.async {
+            attendance.sync()
+        }
+
+        val seasonres = scope.async {
+            seasons.sync()
+        }
+
+        val cresres = scope.async {
+            crescendo.sync()
+        }
+
         return SyncResult(
-            user = users.sync(),
-            attendance = attendance.sync(),
-            seasons = seasons.sync(),
-            crescendo = crescendo.sync()
+            user = userres.await(),
+            attendance = attres.await(),
+            seasons = seasonres.await(),
+            crescendo = cresres.await()
         )
     }
 

@@ -159,15 +159,17 @@ fun AttendanceVerificationPage(viewModel: MainViewModel, nfc: NFCViewmodel, data
         meetings = dataHandler.attendance.getCurrent(System.currentTimeMillis()) {
             meetings = it
         }
-        pastMeetings = dataHandler.attendance.getOutdated(System.currentTimeMillis()) {
-            pastMeetings = it
-        }
-        archived = dataHandler.attendance.getArchived {
-            archived = it
-        }
+        if(showPast)
+            pastMeetings = dataHandler.attendance.getOutdated(System.currentTimeMillis()) {
+                pastMeetings = it
+            }
+        if(showArchived)
+            archived = dataHandler.attendance.getArchived {
+                archived = it
+            }
     }
 
-    LaunchedEffect(Unit) {
+    LaunchedEffect(showPast, showArchived) {
         loadMeetings()
     }
 

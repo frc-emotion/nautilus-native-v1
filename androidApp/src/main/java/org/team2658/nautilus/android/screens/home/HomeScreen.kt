@@ -28,7 +28,7 @@ fun HomeScreen(nfcViewmodel: NFCViewmodel, primaryViewModel: MainViewModel) {
     var showFailureDialog by remember { mutableStateOf(false)}
     var failureDialogText by remember {mutableStateOf("")}
     val coroutineScope = rememberCoroutineScope()
-    Screen(onRefresh = primaryViewModel::coroutineSync) {
+    Screen(onRefresh = primaryViewModel::syncMe) {
         UserAttendanceView(userAttendance = primaryViewModel.user?.attendance ?: mapOf())
         AttendanceNfcUI(tagData = tagData, onLogAttendance = {
             tagData?.let { data ->

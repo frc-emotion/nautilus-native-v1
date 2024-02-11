@@ -32,7 +32,7 @@ import org.team2658.network.NetworkClient
 import org.team2658.network.models.Season
 import org.team2658.res.MANIFEST
 
-class DataHandler(routeBase: String, databaseDriverFactory: DatabaseDriverFactory, getToken: () -> String?, setToken: (String?) -> Unit) {
+class DataHandler(routeBase: String, databaseDriverFactory: DatabaseDriverFactory, val getToken: () -> String?, val setToken: (String?) -> Unit) {
     private val db = AppDatabase(
         databaseDriverFactory.createDriver(),
         user_tableAdapter = org.team2658.localstorage.User_table.Adapter(accountTypeAdapter = IntColumnAdapter),
@@ -81,8 +81,15 @@ class DataHandler(routeBase: String, databaseDriverFactory: DatabaseDriverFactor
     private val network = NetworkClient(routeBase)
 
     private val scope = CoroutineScope(Dispatchers.IO)
-    private val user: TokenUser?
-        get() = Result.unwrapOrNull(users.loadLoggedIn())
+
+    private fun user(): TokenUser? {
+        val token = getToken()
+        return usersDB.getLoggedInUser(token ?: return null)
+    }
+
+    private fun _setToken(token: String?) {
+        setToken(token)
+    }
 
     /**
      * Get OpenAPI manifest from server and compare it to the local manifest
@@ -99,7 +106,7 @@ class DataHandler(routeBase: String, databaseDriverFactory: DatabaseDriverFactor
             return withContext(Dispatchers.IO) {
                 when(val result = network.users.login(username, password)) {
                     is Result.Success -> {
-                        usersDB.updateLoggedInUser(result.data, setToken)
+                        usersDB.updateLoggedInUser(result.data, ::_setToken)
                         Result.Success(result.data)
                     }
                     is Result.Error -> when(val error = result.error) {
@@ -134,7 +141,7 @@ class DataHandler(routeBase: String, databaseDriverFactory: DatabaseDriverFactor
                 )
                 when(result) {
                     is Result.Success -> {
-                        usersDB.updateLoggedInUser(result.data, setToken)
+                        usersDB.updateLoggedInUser(result.data, ::_setToken)
                         Result.Success(result.data)
                     }
                     is Result.Error -> when(val error = result.error) {
@@ -147,7 +154,7 @@ class DataHandler(routeBase: String, databaseDriverFactory: DatabaseDriverFactor
         }
 
         override fun logout() {
-            usersDB.logoutUser(setToken)
+            usersDB.logoutUser(::_setToken)
             clearAll()
             meetingsDB.deleteAll()
             attendanceUploadCache.clear()
@@ -159,7 +166,7 @@ class DataHandler(routeBase: String, databaseDriverFactory: DatabaseDriverFactor
             return withContext(Dispatchers.IO) {
                 when(val result = network.users.getMe(getToken())) {
                     is Result.Success -> {
-                        usersDB.updateLoggedInUser(result.data, setToken)
+                        usersDB.updateLoggedInUser(result.data, ::_setToken)
                         Result.Success(result.data)
                     }
                     is Result.Error -> when(val error = result.error) {
@@ -185,7 +192,7 @@ class DataHandler(routeBase: String, databaseDriverFactory: DatabaseDriverFactor
 
         private suspend fun syncUsers(): DataResult<List<User.WithoutToken>> {
             return withContext(Dispatchers.IO) {
-                network.users.getUsers(user ?: return@withContext Result.Error("Authentication error. Please log out and log back in.")).let {
+                network.users.getUsers(user() ?: return@withContext Result.Error("Authentication error. Please log out and log back in.")).let {
                     when(it) {
                         is Result.Success -> {
                             usersDB.insertUsers(it.data)
@@ -227,7 +234,7 @@ class DataHandler(routeBase: String, databaseDriverFactory: DatabaseDriverFactor
 
         override suspend fun deleteMe(): DataResult<Unit> {
             return withContext(Dispatchers.IO) {
-                when(val res = network.users.deleteMe(user ?: return@withContext Result.Error("Authentication error. Please log out and log back in."))) {
+                when(val res = network.users.deleteMe(user() ?: return@withContext Result.Error("Authentication error. Please log out and log back in."))) {
                     is Result.Success -> {
                         logout()
                         Result.Success(Unit)
@@ -246,7 +253,7 @@ class DataHandler(routeBase: String, databaseDriverFactory: DatabaseDriverFactor
     val attendance = object: AttendanceNamespace {
         override suspend fun sync(): UploadDownloadResult<List<DataResult<TokenUser>>, DataResult<List<Meeting>>> {
             return withContext(Dispatchers.IO) {
-                val usr = user
+                val usr = user()
                 val downloadRes = scope.async {
                     if(usr == null) Result.Error("Authentication error. Please log out and log back in.") else network.attendance.getMeetings(usr).let {
                         when(it) {
@@ -333,7 +340,7 @@ class DataHandler(routeBase: String, databaseDriverFactory: DatabaseDriverFactor
 
         override suspend fun archiveMeeting(id: String): DataResult<Unit> {
             return withContext(Dispatchers.IO) {
-                network.attendance.archiveMeeting(id, user ?: return@withContext Result.Error("Authentication error. Please log out and log back in.")).let {
+                network.attendance.archiveMeeting(id, user() ?: return@withContext Result.Error("Authentication error. Please log out and log back in.")).let {
                     when(it) {
                         is Result.Success -> {
                             sync()
@@ -367,7 +374,7 @@ class DataHandler(routeBase: String, databaseDriverFactory: DatabaseDriverFactor
            }
             return withContext(Dispatchers.IO){
                 network.attendance.createMeeting(
-                    user = user ?: return@withContext Result.Error("Authentication error. Please log out and log back in."),
+                    user = user() ?: return@withContext Result.Error("Authentication error. Please log out and log back in."),
                     startTime = startTime,
                     endTime = endTime,
                     type = type,
@@ -398,14 +405,14 @@ class DataHandler(routeBase: String, databaseDriverFactory: DatabaseDriverFactor
         ): DataResult<TokenUser> {
             return withContext(Dispatchers.IO){
                 network.attendance.attendMeeting(
-                    user = user ?: return@withContext Result.Error("Authentication error. Please log out and log back in."),
+                    user = user() ?: return@withContext Result.Error("Authentication error. Please log out and log back in."),
                     meetingId = meetingId,
                     tapTime = time,
                     verifiedBy = verifiedBy
                 ).let {
                     when(it) {
                         is Result.Success -> {
-                            usersDB.updateLoggedInUser(it.data, setToken)
+                            usersDB.updateLoggedInUser(it.data, ::_setToken)
                             Result.Success(it.data)
                         }
                         is Result.Error -> when (val error = it.error) {
@@ -426,7 +433,7 @@ class DataHandler(routeBase: String, databaseDriverFactory: DatabaseDriverFactor
 
         override suspend fun delete(id: String): DataResult<Unit> {
             return withContext(Dispatchers.IO) {
-                network.attendance.deleteMeeting(user = user ?: return@withContext Result.Error("Authentication error. Please log out and log back in."), id = id).let {
+                network.attendance.deleteMeeting(user = user() ?: return@withContext Result.Error("Authentication error. Please log out and log back in."), id = id).let {
                     when(it) {
                         is Result.Success -> {
                             meetingsDB.delete(id)
@@ -447,7 +454,7 @@ class DataHandler(routeBase: String, databaseDriverFactory: DatabaseDriverFactor
             return withContext(Dispatchers.IO) {
                 attendanceUploadCache.get().executeAsList().map { mtg ->
                     network.attendance.attendMeeting(
-                        user = user ?: return@map Result.Error("Authentication error. Please log out and log back in."),
+                        user = user() ?: return@map Result.Error("Authentication error. Please log out and log back in."),
                         meetingId = mtg.meeting_id,
                         tapTime = mtg.tap_time,
                         verifiedBy = mtg.verifiedBy
@@ -522,7 +529,7 @@ class DataHandler(routeBase: String, databaseDriverFactory: DatabaseDriverFactor
 
         override suspend fun sync(): UploadDownloadResult<List<DataResult<Crescendo>>, DataResult<List<Crescendo>>> {
          return withContext(Dispatchers.IO) {
-             val usr = user   
+             val usr = user()
              val downloadRes = if(usr == null) Result.Error("Authentication error. Please log out and log back in.") else network.crescendo.getCrescendos(usr).let {
                     when(it) {
                         is Result.Success -> {
@@ -539,7 +546,7 @@ class DataHandler(routeBase: String, databaseDriverFactory: DatabaseDriverFactor
                     }
                 }
                 val uploadRes =  crescendoUploadDB.getAll().map { (id, data) ->
-                    network.crescendo.uploadCrescendo(user ?: return@map Result.Error("Authentication error. Please log out and log back in."), data).let {
+                    network.crescendo.uploadCrescendo(user() ?: return@map Result.Error("Authentication error. Please log out and log back in."), data).let {
                         when(it) {
                             is Result.Success -> {
                                 crescendoUploadDB.delete(id)
@@ -594,7 +601,7 @@ class DataHandler(routeBase: String, databaseDriverFactory: DatabaseDriverFactor
 
         override suspend fun upload(data: CrescendoRequestBody): DataResult<Crescendo> {
             return withContext(Dispatchers.IO) {
-                when(val res = network.crescendo.uploadCrescendo(user ?: return@withContext Result.Error("Authentication error. Please log out and log back in."), data)) {
+                when(val res = network.crescendo.uploadCrescendo(user() ?: return@withContext Result.Error("Authentication error. Please log out and log back in."), data)) {
                     is Result.Success -> res.also { crescendoDB.insert(it.data) }
                     is Result.Error -> when(val error = res.error) {
                         is KtorError.CLIENT -> Result.Error("Error ${error.code}: ${error.message}")

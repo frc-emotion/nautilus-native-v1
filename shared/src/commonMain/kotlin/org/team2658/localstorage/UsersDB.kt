@@ -16,6 +16,7 @@ class UsersDB(db: AppDatabase) {
     private val users = db.usersQueries
 
     private fun insertUser(user: User) {
+        if(user is User.WithoutToken && user._id == users.getLoggedInUser().executeAsOneOrNull()?.id) return
         if(user is TokenUser) users.deleteLoggedIn()
 
         users.insertBase(

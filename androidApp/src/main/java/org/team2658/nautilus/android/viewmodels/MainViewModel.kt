@@ -121,6 +121,15 @@ class MainViewModel(
         }
     }
 
+    suspend fun syncMe() {
+        dataHandler.users.refreshLoggedIn().let {
+            when(it) {
+                is Result.Success -> user = it.data
+                is Result.Error -> println(it.error)
+            }
+        }
+    }
+
     fun sync(onProgressChanged: (busy: Boolean, success: Boolean?) -> Unit) {
         onProgressChanged(true, null)
         viewModelScope.launch {

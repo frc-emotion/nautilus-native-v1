@@ -80,7 +80,7 @@ class MainActivity : ComponentActivity() {
 
     private lateinit var dataHandler: DataHandler
 
-    val updateIntent = Intent(Intent.ACTION_VIEW).apply {
+    private val updateIntent = Intent(Intent.ACTION_VIEW).apply {
         data = Uri.parse(
             "https://play.google.com/store/apps/details?id=org.team2658.scouting")
         setPackage("com.android.vending")
@@ -170,7 +170,7 @@ class MainActivity : ComponentActivity() {
                 )
                 workManager.getWorkInfosForUniqueWorkLiveData("sync").observeForever {
                     println("BACKGROUND SYNC TRIGGERED")
-                    primaryViewModel.sync()
+                    primaryViewModel.getDataHandler().bgSync()
                 }
 
                 MainTheme {

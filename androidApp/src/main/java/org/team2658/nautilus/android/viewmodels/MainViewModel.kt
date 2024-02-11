@@ -103,7 +103,7 @@ class MainViewModel(
 
     fun sync() {
         viewModelScope.launch {
-            dataHandler.syncCoroutine().let {
+            dataHandler.sync().let {
                 when(val me = it.user.myUser) {
                     is Result.Success -> user = me.data
                     is Result.Error -> println(me.error)
@@ -113,7 +113,7 @@ class MainViewModel(
     }
 
     suspend fun coroutineSync() {
-        dataHandler.syncCoroutine().let {
+        dataHandler.sync().let {
             when(val me = it.user.myUser) {
                 is Result.Success -> user = me.data
                 is Result.Error -> println(me.error)
@@ -128,7 +128,7 @@ class MainViewModel(
             if(connectivityManager?.getNetworkCapabilities(connectivityManager.activeNetwork)?.hasCapability(NetworkCapabilities.NET_CAPABILITY_INTERNET) != true) {
                 return@launch onProgressChanged(false, false)
             }
-            dataHandler.syncCoroutine().let {
+            dataHandler.sync().let {
                 when(val me = it.user.myUser) {
                     is Result.Success -> user = me.data
                     is Result.Error -> {

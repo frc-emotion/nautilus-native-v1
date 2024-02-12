@@ -1,4 +1,4 @@
-package org.nautilusapp.nautilus.android.screens.settings
+package org.nautilusapp.nautilus.android.screens.settings.loggedout
 
 import androidx.compose.runtime.Composable
 import androidx.navigation.compose.NavHost
@@ -23,12 +23,13 @@ fun NotLoggedInScreen(
         phone: String,
         grade: Int,
         errorCallback: (String) -> Unit
-    ) -> Unit
+    ) -> Unit,
+    baseRoute: String
 ) {
     val navController = rememberNavController()
     NavHost(navController, startDestination = SignedOutScreens.LOGIN.name) {
         composable(SignedOutScreens.LOGIN.name) {
-            LoginScreen(onLogin) {
+            LoginScreen(onLogin, baseRoute) {
                 navController.navigate(SignedOutScreens.REGISTER.name)
             }
         }

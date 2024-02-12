@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Verified
 import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -24,8 +25,8 @@ import org.nautilusapp.nautilus.userauth.UserPermissions
 import org.nautilusapp.nautilus.userauth.isAdmin
 
 @Composable
-fun UserInfoCard(user: User?) {
-    Card(modifier = Modifier.fillMaxWidth()) {
+fun UserDetailCard(user: User?) {
+    Card(modifier = Modifier.fillMaxWidth(), colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceContainer)) {
         if (user != null) {
             Column(modifier = Modifier.padding(32.dp)) {
                 Text(

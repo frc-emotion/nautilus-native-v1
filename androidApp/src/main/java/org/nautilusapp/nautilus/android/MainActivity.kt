@@ -18,30 +18,16 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.viewModels
-import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.SystemUpdate
-import androidx.compose.material3.Card
-import androidx.compose.material3.Icon
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Text
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.unit.dp
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -50,9 +36,9 @@ import androidx.work.PeriodicWorkRequestBuilder
 import androidx.work.WorkManager
 import kotlinx.coroutines.flow.MutableStateFlow
 import org.nautilusapp.nautilus.DataHandler
+import org.nautilusapp.nautilus.android.screens.UpdateNeededScreen.UpdateNeededScreen
 import org.nautilusapp.nautilus.android.screens.settings.SettingsScreen
 import org.nautilusapp.nautilus.android.ui.composables.LoadingSpinner
-import org.nautilusapp.nautilus.android.ui.composables.Screen
 import org.nautilusapp.nautilus.android.ui.navigation.LoggedInNavigator
 import org.nautilusapp.nautilus.android.viewmodels.MainViewModel
 import org.nautilusapp.nautilus.android.viewmodels.NFCViewmodel
@@ -82,7 +68,7 @@ class MainActivity : ComponentActivity() {
 
     private val updateIntent = Intent(Intent.ACTION_VIEW).apply {
         data = Uri.parse(
-            "https://play.google.com/store/apps/details?id=org.team2658.scouting")
+            "https://play.google.com/store/apps/details?id=org.nautilusapp.nautilus")
         setPackage("com.android.vending")
     }
 
@@ -147,33 +133,32 @@ class MainActivity : ComponentActivity() {
                 }
             }
 
-            LoadingSpinner(isBusy)
-
-            if(manifestOk == true) {
-                val primaryViewModel = viewModel<MainViewModel>(
-                    factory = object: ViewModelProvider.Factory {
-                        @Suppress("UNCHECKED_CAST")
-                        override fun <T : ViewModel> create(
-                            modelClass: Class<T>,
-                        ):T {
-                            return MainViewModel(dataHandler, connectivityManager) as T
-                        }
+            val primaryViewModel = viewModel<MainViewModel>(
+                factory = object: ViewModelProvider.Factory {
+                    @Suppress("UNCHECKED_CAST")
+                    override fun <T : ViewModel> create(
+                        modelClass: Class<T>,
+                    ):T {
+                        return MainViewModel(dataHandler, connectivityManager, sharedPref) as T
                     }
-                )
-
-                primaryViewModel.sync()
-
-                workManager.enqueueUniquePeriodicWork(
-                    "sync",
-                    ExistingPeriodicWorkPolicy.KEEP,
-                    workRequest
-                )
-                workManager.getWorkInfosForUniqueWorkLiveData("sync").observeForever {
-                    println("BACKGROUND SYNC TRIGGERED")
-                    primaryViewModel.getDataHandler().bgSync()
                 }
+            )
 
-                MainTheme {
+            workManager.enqueueUniquePeriodicWork(
+                "sync",
+                ExistingPeriodicWorkPolicy.KEEP,
+                workRequest
+            )
+            workManager.getWorkInfosForUniqueWorkLiveData("sync").observeForever {
+                println("BACKGROUND SYNC TRIGGERED")
+                primaryViewModel.getDataHandler().bgSync()
+            }
+
+            MainTheme(preference =
+                primaryViewModel.theme
+            ) {
+                LoadingSpinner(isBusy)
+                if(manifestOk == true) {
                     if (authState(primaryViewModel.user) == AuthState.LOGGED_IN) {
                         LoggedInNavigator(primaryViewModel, dataHandler, nfcViewmodel)
                     } else {
@@ -183,40 +168,18 @@ class MainActivity : ComponentActivity() {
                             }
                         }
                     }
-                }
-            } else {
-                MainTheme {
+                } else {
                     Scaffold { padding ->
                         Box(modifier = Modifier.padding(padding)) {
-                            Screen {
-                                if(manifestOk == false) {
-                                    Column(horizontalAlignment = Alignment.CenterHorizontally, modifier = Modifier.padding(16.dp)) {
-                                        Text("App Out of Date", style = MaterialTheme.typography.displayLarge)
-                                        Spacer(modifier = Modifier.padding(16.dp))
-                                        Text("Please update the app to the latest version", style = MaterialTheme.typography.headlineLarge, modifier = Modifier.clickable {
-                                            startActivity(updateIntent)
-                                        })
-                                        Spacer(modifier = Modifier.padding(16.dp))
-                                        Card(modifier = Modifier.clickable {
-                                            startActivity(updateIntent)
-                                        }) {
-                                            Row(modifier = Modifier.padding(32.dp), verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.SpaceBetween) {
-                                                Icon(Icons.Default.SystemUpdate, contentDescription = "Update in Play Store")
-                                                Text(text = "Update in Play Store",
-                                                    style = MaterialTheme.typography.titleLarge,
-                                                    textAlign = TextAlign.End,
-                                                    modifier = Modifier.weight(1f),
-                                                    color = MaterialTheme.colorScheme.secondary
-                                                )
-                                            }
-                                        }
-                                    }
-                                }
+                            UpdateNeededScreen(manifestOk) {
+                                startActivity(updateIntent)
                             }
                         }
                     }
                 }
             }
+
+
 
 
         }

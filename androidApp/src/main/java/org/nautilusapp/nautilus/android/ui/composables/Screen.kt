@@ -67,6 +67,20 @@ fun Screen(content: @Composable () -> Unit) {
     }
 }
 
+@Composable
+fun BlackScreen(content: @Composable () -> Unit) {
+    Surface(color = Color.Black, modifier = Modifier
+        .fillMaxSize()
+    ) {
+        Column(
+            modifier = Modifier
+                .padding(32.dp)
+        ) {
+            content()
+        }
+    }
+}
+
 const val PULL_REFRESH_HEIGHT = 128
 @OptIn(ExperimentalMaterialApi::class)
 @Composable

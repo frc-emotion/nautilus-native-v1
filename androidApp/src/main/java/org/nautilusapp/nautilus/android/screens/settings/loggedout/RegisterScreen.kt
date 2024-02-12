@@ -1,4 +1,4 @@
-package org.nautilusapp.nautilus.android.screens.settings
+package org.nautilusapp.nautilus.android.screens.settings.loggedout
 
 import android.app.AlertDialog
 import androidx.compose.foundation.layout.Column

@@ -1,5 +1,6 @@
 package org.nautilusapp.nautilus.android.viewmodels
 
+import android.content.SharedPreferences
 import android.net.ConnectivityManager
 import android.net.NetworkCapabilities
 import androidx.compose.runtime.getValue
@@ -7,20 +8,43 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import org.nautilusapp.nautilus.DataHandler
 import org.nautilusapp.nautilus.Result
+import org.nautilusapp.nautilus.android.ui.theme.ColorTheme
 import org.nautilusapp.nautilus.attendance.MeetingLog
 import org.nautilusapp.nautilus.userauth.Subteam
 
 class MainViewModel(
     private val dataHandler: DataHandler,
-    private val connectivityManager: ConnectivityManager?
+    private val connectivityManager: ConnectivityManager?,
+    private val sharedPref: SharedPreferences
 ) : ViewModel() {
 
     var user by mutableStateOf(Result.unwrapOrNull(dataHandler.users.loadLoggedIn()))
         private set
 
+    fun theme(): ColorTheme {
+        val themeStr = sharedPref.getString("theme", null)
+        return try {
+            ColorTheme.valueOf("$themeStr")
+        } catch (e: IllegalArgumentException) {
+            ColorTheme.MATERIAL3
+        }
+    }
+
+    var theme by mutableStateOf(theme())
+        private set
+
+    suspend fun setTheme(theme: ColorTheme) {
+        delay(600L) //debounce
+        with(sharedPref.edit()) {
+            putString("theme", theme.name)
+            apply()
+        }
+        this.theme = theme
+    }
 
     fun login(username: String, password: String, onError: (String) -> Unit) {
         viewModelScope.launch {

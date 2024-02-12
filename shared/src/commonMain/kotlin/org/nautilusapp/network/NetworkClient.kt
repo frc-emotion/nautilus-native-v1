@@ -53,6 +53,13 @@ class NetworkClient(base: String) {
         }
     }
 
+    var rootURL = base
+        private set
+
+    fun setRootURL(url: String) {
+        rootURL = url
+    }
+
     val json = Json {
         ignoreUnknownKeys = true
         prettyPrint = true
@@ -82,7 +89,7 @@ class NetworkClient(base: String) {
     )
 
     private val routes = relativepaths.entries.associate {
-        it.key to "$base${it.value}"
+        it.key to "$rootURL${it.value}"
     }
     
     suspend fun getAppManifest(): Result<SwaggerManifest, KtorError> {

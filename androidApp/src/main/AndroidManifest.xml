@@ -7,7 +7,7 @@
     <uses-feature android:name="android.hardware.nfc" android:required="true" />
     <application
         android:supportsRtl="true"
-        android:label="Σ-Motion"
+        android:label="Nautilus FRC"
         android:icon = "@mipmap/ic_launcher"
         android:theme="@style/AppTheme"
         android:usesCleartextTraffic="true">

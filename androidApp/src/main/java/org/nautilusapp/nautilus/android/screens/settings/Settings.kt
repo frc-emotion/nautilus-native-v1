@@ -12,7 +12,7 @@ import org.nautilusapp.nautilus.userauth.authState
 fun SettingsScreen(viewModel: MainViewModel) {
     Screen(onRefresh = viewModel::coroutineSync) {
         when(authState(viewModel.user)) {
-            AuthState.NOT_LOGGED_IN -> NotLoggedInScreen(viewModel::login, viewModel::register, viewModel.getDataHandler().routeBase)
+            AuthState.NOT_LOGGED_IN -> NotLoggedInScreen(viewModel::login, viewModel::register, viewModel.getDataHandler().getNetworkClient().rootURL)
             AuthState.LOGGED_IN, AuthState.AWAITING_VERIFICATION -> SettingsLoggedIn(viewModel)
         }
     }

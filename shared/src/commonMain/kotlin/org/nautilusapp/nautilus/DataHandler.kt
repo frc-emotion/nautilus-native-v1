@@ -33,7 +33,7 @@ import org.nautilusapp.network.models.Season
 import org.nautilusapp.openapi.MANIFEST
 import org.nautilusapp.openapi.manifestCompat
 
-class DataHandler(val routeBase: String, databaseDriverFactory: DatabaseDriverFactory, private val getToken: () -> String?, private val setToken: (String?) -> Unit) {
+class DataHandler(private val routeBase: String, databaseDriverFactory: DatabaseDriverFactory, private val getToken: () -> String?, private val setToken: (String?) -> Unit) {
     private val db = AppDatabase(
         databaseDriverFactory.createDriver(),
         user_tableAdapter = org.nautilusapp.localstorage.User_table.Adapter(accountTypeAdapter = IntColumnAdapter),

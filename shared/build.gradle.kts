@@ -65,7 +65,7 @@ kotlin {
 }
 
 android {
-    namespace = "org.team2658.nautilus"
+    namespace = "org.nautilusapp.nautilus"
     compileSdk = 34
     defaultConfig {
         minSdk = 26
@@ -79,7 +79,7 @@ dependencies {
 sqldelight {
     databases {
         create("AppDatabase") {
-            packageName.set("org.team2658.localstorage")
+            packageName.set("org.nautilusapp.localstorage")
         }
     }
 }

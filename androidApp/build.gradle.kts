@@ -6,22 +6,17 @@ plugins {
 }
 
 android {
-    namespace = "org.team2658.nautilus.android"
+    namespace = "org.nautilusapp.nautilus.android"
     compileSdk = 34
     defaultConfig {
-        applicationId = "org.team2658.scouting"
+        applicationId = "org.nautilusapp.nautilus"
         minSdk = 26
         targetSdk = 34
         versionCode = 14
         versionName = "2.0.8"
     }
     signingConfigs {
-        create("release") {
-            keyAlias = "key"
-            keyPassword = "Emotion2658"
-            storeFile = file("./keystore.jks")
-            storePassword = "Emotion2658"
-        }
+        create("release")
     }
     buildFeatures {
         compose = true
@@ -53,16 +48,16 @@ android {
 
 dependencies {
     implementation(project(":shared"))
-    val compose = "1.6.0"
+    val compose = "1.6.1"
     implementation("androidx.compose.ui:ui:$compose")
     implementation("androidx.compose.ui:ui-tooling:$compose")
     implementation("androidx.compose.ui:ui-tooling-preview:$compose")
     implementation("androidx.compose.foundation:foundation:$compose")
     implementation("androidx.compose.material:material:$compose")
     implementation("androidx.activity:activity-compose:1.8.2")
-    implementation("androidx.compose.material3:material3:1.1.2")
+    implementation("androidx.compose.material3:material3:1.2.0")
     implementation("androidx.compose.material:material-icons-extended")
-    implementation("androidx.navigation:navigation-compose:2.7.6")
+    implementation("androidx.navigation:navigation-compose:2.7.7")
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.7.3")
     val workVersion = "2.9.0"
     implementation("androidx.work:work-runtime-ktx:$workVersion")

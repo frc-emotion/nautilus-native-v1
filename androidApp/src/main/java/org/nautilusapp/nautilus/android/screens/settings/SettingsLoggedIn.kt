@@ -14,6 +14,7 @@ import androidx.compose.material.icons.filled.SyncProblem
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -34,11 +35,12 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import kotlinx.coroutines.launch
+import org.nautilusapp.nautilus.android.ui.composables.ColorThemeSelector
 import org.nautilusapp.nautilus.android.ui.composables.LoadingSpinner
 import org.nautilusapp.nautilus.android.ui.composables.LoginInput
 import org.nautilusapp.nautilus.android.ui.composables.LoginType
 import org.nautilusapp.nautilus.android.ui.composables.Screen
-import org.nautilusapp.nautilus.android.ui.composables.UserInfoCard
+import org.nautilusapp.nautilus.android.ui.composables.UserDetailCard
 import org.nautilusapp.nautilus.android.viewmodels.MainViewModel
 import org.nautilusapp.nautilus.userauth.AuthState
 import org.nautilusapp.nautilus.userauth.authState
@@ -68,8 +70,6 @@ fun SettingsLoggedIn(vm: MainViewModel) {
             style = MaterialTheme.typography.bodyLarge,
         )
         Spacer(modifier = Modifier.size(32.dp))
-        UserInfoCard(user = user)
-        Spacer(modifier = Modifier.size(32.dp))
     }
     else {
         Text(
@@ -77,10 +77,12 @@ fun SettingsLoggedIn(vm: MainViewModel) {
             style = MaterialTheme.typography.displayMedium,
         )
         Spacer(modifier = Modifier.size(32.dp))
-        UserInfoCard(user = user)
-
-        Spacer(modifier = Modifier.size(32.dp))
     }
+
+    UserDetailCard(user = user)
+    Spacer(modifier = Modifier.size(32.dp))
+    ColorThemeSelector(value = vm.theme, onValueChange = vm::setTheme)
+    Spacer(modifier = Modifier.size(32.dp))
     Row(verticalAlignment = Alignment.CenterVertically) {
         ShouldSyncIndicator(count = vm.getQueueLength().attendance)
         Spacer(modifier = Modifier.size(8.dp))
@@ -106,8 +108,6 @@ fun SettingsLoggedIn(vm: MainViewModel) {
         Text(text = "Log Out")
     }
     Spacer(modifier = Modifier.size(16.dp))
-
-    Spacer(modifier = Modifier.size(16.dp))
     TextButton(onClick = {
         showDeleteDialog = true
     }) {
@@ -121,15 +121,16 @@ fun SettingsLoggedIn(vm: MainViewModel) {
             Card(
                 modifier = Modifier
                     .fillMaxWidth(),
-                shape = RoundedCornerShape(4.dp)
+                shape = RoundedCornerShape(4.dp),
+                colors = CardDefaults.cardColors( containerColor = MaterialTheme.colorScheme.surfaceContainer )
             ) {
-                Column(modifier = Modifier.padding(16.dp)) {
+                Column(modifier = Modifier.padding(32.dp)) {
                     Text(text = "Delete Account", style = MaterialTheme.typography.displayMedium)
                     Spacer(modifier = Modifier.size(8.dp))
                     Text(text = "Are you sure you want to delete your account? This action cannot be undone.")
                     Spacer(modifier = Modifier.size(8.dp))
                     Text(text = "Enter your password to confirm.")
-                    Spacer(modifier = Modifier.size(4.dp))
+                    Spacer(modifier = Modifier.size(8.dp))
                     LoginInput(type = LoginType.CONFIRM_PASSWORD, text = password, onValueChange = {password = it })
                     Spacer(modifier = Modifier.size(8.dp))
                     Row {
@@ -175,7 +176,8 @@ fun ShouldSyncIndicator(count: Long) {
     var showInfo by remember { mutableStateOf(false) }
 
     Card(
-        shape = RoundedCornerShape(4.dp)
+        shape = RoundedCornerShape(4.dp),
+        colors = CardDefaults.cardColors( containerColor = MaterialTheme.colorScheme.surfaceContainer )
     ) {
         Row(modifier = Modifier.padding(16.dp), verticalAlignment = Alignment.CenterVertically) {
             if(count > 0)

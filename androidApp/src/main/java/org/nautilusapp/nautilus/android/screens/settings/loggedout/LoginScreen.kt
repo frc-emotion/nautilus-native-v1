@@ -1,4 +1,4 @@
-package org.nautilusapp.nautilus.android.screens.settings
+package org.nautilusapp.nautilus.android.screens.settings.loggedout
 
 import android.content.Intent
 import android.net.Uri
@@ -33,7 +33,8 @@ fun LoginScreen(
         password: String,
         errorCallback: (String) -> Unit
     ) -> Unit,
-    onCreateAccount: () -> Unit
+    baseRoute: String,
+    onCreateAccount: () -> Unit,
 ) {
     var username by rememberSaveable { mutableStateOf("") }
     var password by rememberSaveable { mutableStateOf("") }
@@ -95,7 +96,7 @@ fun LoginScreen(
         }
         Spacer(modifier = Modifier.size(16.dp))
         TextButton(onClick = {
-            val webIntent = Intent(Intent.ACTION_VIEW, Uri.parse("https://team2658.org/forgot"))
+            val webIntent = Intent(Intent.ACTION_VIEW, Uri.parse("$baseRoute/pages/forgot-password"))
             try {
                 context.startActivity(webIntent)
             } catch (e: Exception) {

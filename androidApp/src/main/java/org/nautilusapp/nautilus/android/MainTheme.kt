@@ -39,7 +39,8 @@ fun MainTheme(
         tertiary = Color(0xFFd6ff98),
         onBackground = Color(0xFFe0fef4),
         surface =  Color.Black,
-        surfaceContainer = Color(0xFF1a1a1a)
+        surfaceContainer = Color(0xFF1a1a1a),
+        surfaceTint = Color.LightGray
     )
 
     /**

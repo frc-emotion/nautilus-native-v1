@@ -129,12 +129,22 @@ deleteLoggedIn {
 
 deleteNotLoggedIn {
    BEGIN TRANSACTION;
-   DELETE FROM attendance_logs_table WHERE user_id = (SELECT user_id FROM user_extras_table AS id WHERE isLoggedInUser = 0 LIMIT 1);
-   DELETE FROM attendance_table WHERE user_id = (SELECT user_id FROM user_extras_table AS id WHERE isLoggedInUser = 0 LIMIT 1);
+   DELETE FROM attendance_logs_table WHERE user_id = (SELECT user_id FROM user_extras_table AS id WHERE isLoggedInUser = 0);
+   DELETE FROM attendance_table WHERE user_id = (SELECT user_id FROM user_extras_table AS id WHERE isLoggedInUser = 0);
    DELETE FROM user_extras_table WHERE isLoggedInUser = 0;
-   DELETE FROM roles_table WHERE user_id = (SELECT user_id FROM user_extras_table AS id WHERE isLoggedInUser = 0 LIMIT 1);
-   DELETE FROM user_table WHERE id = (SELECT user_id FROM user_extras_table AS id WHERE isLoggedInUser = 0 LIMIT 1);
+   DELETE FROM roles_table WHERE user_id = (SELECT user_id FROM user_extras_table AS id WHERE isLoggedInUser = 0);
+   DELETE FROM user_table WHERE id = (SELECT user_id FROM user_extras_table AS id WHERE isLoggedInUser = 0);
    COMMIT;
+}
+
+deleteAll {
+    BEGIN TRANSACTION;
+    DELETE FROM attendance_logs_table;
+    DELETE FROM attendance_table;
+    DELETE FROM user_extras_table;
+    DELETE FROM roles_table;
+    DELETE FROM user_table;
+    COMMIT;
 }
 
 getLoggedInUser:

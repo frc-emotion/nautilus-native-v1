@@ -78,15 +78,17 @@ class MainActivity : ComponentActivity() {
 
         val sharedPref = this.getSharedPreferences("org.org.nautilusapp.nautilus.android", MODE_PRIVATE)
 
+        val rootURL = sharedPref.getString(SharedPrefKeys.URL, null)
+
         dataHandler = DataHandler(databaseDriverFactory =
             org.nautilusapp.localstorage.AndroidDatabaseDriver(this),
             getToken = {
-                return@DataHandler sharedPref.getString("token", null)
+                return@DataHandler sharedPref.getString(SharedPrefKeys.TOKEN, null)
             },
-            routeBase = "https://staging.team2658.org"
+            routeBase = rootURL ?: ""
         ) {
             with(sharedPref.edit()) {
-                putString("token", it)
+                putString(SharedPrefKeys.TOKEN, it)
                 apply()
             }
         }
@@ -159,9 +161,12 @@ class MainActivity : ComponentActivity() {
             ) {
                 LoadingSpinner(isBusy)
                 if(manifestOk == true) {
-                    if (authState(primaryViewModel.user) == AuthState.LOGGED_IN) {
+                    if (authState(primaryViewModel.user) == AuthState.LOGGED_IN && rootURL?.isNotBlank() == true) {
                         LoggedInNavigator(primaryViewModel, dataHandler, nfcViewmodel)
                     } else {
+                        if(rootURL?.isBlank() == true) {
+                            dataHandler.users.logout()
+                        }
                         Scaffold { padding ->
                             Box(modifier = Modifier.padding(padding)) {
                                 SettingsScreen(primaryViewModel)

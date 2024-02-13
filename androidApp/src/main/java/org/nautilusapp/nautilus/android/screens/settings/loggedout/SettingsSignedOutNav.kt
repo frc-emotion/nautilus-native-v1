@@ -5,6 +5,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import org.nautilusapp.nautilus.userauth.Subteam
+import org.nautilusapp.network.Organization
 
 @Composable
 fun NotLoggedInScreen(
@@ -24,12 +25,14 @@ fun NotLoggedInScreen(
         grade: Int,
         errorCallback: (String) -> Unit
     ) -> Unit,
-    baseRoute: String
+    organization: Organization,
+    orgs: List<Organization>,
+    setOrganization: (Organization) -> Unit
 ) {
     val navController = rememberNavController()
     NavHost(navController, startDestination = SignedOutScreens.LOGIN.name) {
         composable(SignedOutScreens.LOGIN.name) {
-            LoginScreen(onLogin, baseRoute) {
+            LoginScreen(onLogin = onLogin, organization = organization, orgs = orgs, onSetOrganization = setOrganization) {
                 navController.navigate(SignedOutScreens.REGISTER.name)
             }
         }

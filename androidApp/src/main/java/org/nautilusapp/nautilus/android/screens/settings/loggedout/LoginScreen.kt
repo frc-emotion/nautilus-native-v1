@@ -21,10 +21,16 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import kotlinx.coroutines.launch
+import org.nautilusapp.nautilus.android.MainTheme
 import org.nautilusapp.nautilus.android.ui.composables.LoginInput
 import org.nautilusapp.nautilus.android.ui.composables.LoginType
+import org.nautilusapp.nautilus.android.ui.composables.Screen
+import org.nautilusapp.nautilus.android.ui.composables.TextDropDown
+import org.nautilusapp.nautilus.android.ui.theme.ColorTheme
+import org.nautilusapp.network.Organization
 
 @Composable
 fun LoginScreen(
@@ -33,8 +39,10 @@ fun LoginScreen(
         password: String,
         errorCallback: (String) -> Unit
     ) -> Unit,
-    baseRoute: String,
-    onCreateAccount: () -> Unit,
+    organization: Organization,
+    orgs: List<Organization>,
+    onSetOrganization: (Organization) -> Unit,
+    onCreateAccount: () -> Unit
 ) {
     var username by rememberSaveable { mutableStateOf("") }
     var password by rememberSaveable { mutableStateOf("") }
@@ -56,37 +64,14 @@ fun LoginScreen(
             style = MaterialTheme.typography.displayMedium,
         )
         Spacer(modifier = Modifier.size(32.dp))
-//        LabelledTextBoxSingleLine(label = "Username",
-//            text = username,
-//            required = true,
-//            imeAction = ImeAction.Next,
-//            onValueChange = { text -> username = text }
-//        )
+        TextDropDown(label = "Organization", value = organization, items = orgs, onValueChange = { onSetOrganization(it) }, getStr = { it.name })
+        Spacer(modifier = Modifier.size(8.dp))
         LoginInput(type = LoginType.USERNAME_OR_EMAIL, text = username, onValueChange = { username = it })
         Spacer(modifier = Modifier.size(16.dp))
-//        LabelledTextBoxSingleLine(
-//            label = "Password",
-//            text = password,
-//            required = true,
-//            onValueChange = { text -> password = text },
-//            keyboardType = KeyboardType.Password,
-//            imeAction = ImeAction.Go,
-//            keyboardActions = KeyboardActions(onGo = {
-//                runBlocking {
-//                    onLogin(
-//                        username,
-//                        password
-//                    ){
-//                        showError = true
-//                        errorText = it
-//                    }
-//                }
-//            })
-//        )
         LoginInput(type = LoginType.PASSWORD, text = password, onValueChange = { password = it })
         Spacer(modifier = Modifier.size(16.dp))
         Row {
-            Button(onClick = { scope.launch { onLogin(username, password) {showError = true; errorText = it} } }) {
+            Button(onClick = { scope.launch { onLogin(username, password) { showError = true; errorText = it } } }) {
                 Text(text = "Log In")
             }
             Spacer(modifier = Modifier.size(16.dp))
@@ -96,7 +81,7 @@ fun LoginScreen(
         }
         Spacer(modifier = Modifier.size(16.dp))
         TextButton(onClick = {
-            val webIntent = Intent(Intent.ACTION_VIEW, Uri.parse("$baseRoute/pages/forgot-password"))
+            val webIntent = Intent(Intent.ACTION_VIEW, Uri.parse("${organization.url}/pages/forgot-password"))
             try {
                 context.startActivity(webIntent)
             } catch (e: Exception) {
@@ -104,6 +89,16 @@ fun LoginScreen(
             }
         }) {
             Text(text = "Forgot your password?")
+        }
+    }
+}
+
+@Composable
+@Preview(apiLevel = 33)
+fun LoginScreenPreview() {
+    MainTheme(preference = ColorTheme.NAUTILUS_MIDNIGHT) {
+        Screen {
+            LoginScreen(onLogin = {_, _, _: (String) -> Unit ->  }, organization = Organization("Team 2658", ""), orgs = listOf(Organization("Team 2658", "")) , onSetOrganization = {_ -> } ) {}
         }
     }
 }

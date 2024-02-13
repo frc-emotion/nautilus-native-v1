@@ -12,9 +12,11 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import org.nautilusapp.nautilus.DataHandler
 import org.nautilusapp.nautilus.Result
+import org.nautilusapp.nautilus.android.SharedPrefKeys
 import org.nautilusapp.nautilus.android.ui.theme.ColorTheme
 import org.nautilusapp.nautilus.attendance.MeetingLog
 import org.nautilusapp.nautilus.userauth.Subteam
+import org.nautilusapp.network.Organization
 
 class MainViewModel(
     private val dataHandler: DataHandler,
@@ -26,12 +28,26 @@ class MainViewModel(
         private set
 
     fun theme(): ColorTheme {
-        val themeStr = sharedPref.getString("theme", null)
+        val themeStr = sharedPref.getString(SharedPrefKeys.THEME, null)
         return try {
             ColorTheme.valueOf("$themeStr")
         } catch (e: IllegalArgumentException) {
             ColorTheme.MATERIAL3
         }
+    }
+
+    val organizations = listOf(Organization("Team 2658", "https://staging.team2658.org")) //TODO: get from server
+
+    private val storedURL = sharedPref.getString(SharedPrefKeys.URL, null)
+
+    private val initialOrg = organizations.firstOrNull { it.url == storedURL } ?: organizations.first()
+    var organization by mutableStateOf(initialOrg)
+        private set
+
+    fun setOrg(org: Organization) {
+        sharedPref.edit().putString(SharedPrefKeys.URL, org.url).apply()
+        dataHandler.getNetworkClient().setRootURL(org.url)
+        organization = org
     }
 
     var theme by mutableStateOf(theme())
@@ -40,7 +56,7 @@ class MainViewModel(
     suspend fun setTheme(theme: ColorTheme) {
         delay(600L) //debounce
         with(sharedPref.edit()) {
-            putString("theme", theme.name)
+            putString(SharedPrefKeys.THEME, theme.name)
             apply()
         }
         this.theme = theme
@@ -49,7 +65,7 @@ class MainViewModel(
     fun login(username: String, password: String, onError: (String) -> Unit) {
         viewModelScope.launch {
             when(val result = dataHandler.users.login(username, password)) {
-                is Result.Success -> user = result.data
+                is Result.Success -> user = result.data.also { sync() }
                 is Result.Error -> onError(result.error)
             }
         }

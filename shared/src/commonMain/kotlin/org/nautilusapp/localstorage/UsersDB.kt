@@ -9,7 +9,6 @@ import org.nautilusapp.nautilus.userauth.Subteam
 import org.nautilusapp.nautilus.userauth.TokenUser
 import org.nautilusapp.nautilus.userauth.User
 import org.nautilusapp.nautilus.userauth.UserPermissions
-import org.nautilusapp.localstorage.GetInfoById
 
 typealias UserIDInfo = GetInfoById
 
@@ -221,6 +220,10 @@ class UsersDB(db: AppDatabase) {
 
     fun clearUsers() {
         users.deleteNotLoggedIn()
+    }
+
+    fun deleteAll() {
+        users.deleteAll()
     }
 
     fun logoutUser(setToken: (String?) -> Unit) {

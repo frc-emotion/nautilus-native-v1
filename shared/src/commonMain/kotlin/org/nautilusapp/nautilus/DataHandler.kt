@@ -156,11 +156,12 @@ class DataHandler(private val routeBase: String, databaseDriverFactory: Database
 
         override fun logout() {
             usersDB.logoutUser(::_setToken)
-            clearAll()
+            usersDB.deleteAll()
             meetingsDB.deleteAll()
             attendanceUploadCache.clear()
             crescendoDB.deleteAll()
             crescendoUploadDB.deleteAll()
+            seasonsDB.deleteAll()
         }
 
         override suspend fun refreshLoggedIn(): DataResult<TokenUser> {

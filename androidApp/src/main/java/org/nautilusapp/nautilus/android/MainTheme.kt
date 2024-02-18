@@ -44,13 +44,13 @@ fun MainTheme(
     )
 
     /**
-     * View at [realtime colors](https://www.realtimecolors.com/?colors=011e14-ffffff-06d09d-53eae3-ede865&fonts=Poppins-Poppins)
+     * View at [realtime colors](https://www.realtimecolors.com/?colors=011e14-ffffff-06d09d-0fd3ca-ede865&fonts=Poppins-Poppins)
      */
     val nautilusLight = lightColorScheme(
         background = Color.White,
         onBackground = Color(0xFF011e14),
         primary = Color(0xFF06d09d),
-        secondary = Color(0xFF53eae3),
+        secondary = Color(0xFF0fd3ca),
         tertiary = Color(0xFFede865),
     )
 
@@ -107,3 +107,9 @@ fun MainTheme(
         colorScheme = colors
     )
 }
+
+@Composable
+fun cardColor() = MaterialTheme.colorScheme.surfaceContainerLow
+
+@Composable
+fun smallCardColor() = MaterialTheme.colorScheme.surfaceVariant

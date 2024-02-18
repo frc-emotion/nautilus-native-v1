@@ -2,7 +2,7 @@ package org.nautilusapp.nautilus.android.screens.settings
 
 import androidx.compose.runtime.Composable
 import org.nautilusapp.nautilus.android.screens.settings.loggedout.NotLoggedInScreen
-import org.nautilusapp.nautilus.android.ui.composables.Screen
+import org.nautilusapp.nautilus.android.ui.composables.containers.Screen
 import org.nautilusapp.nautilus.android.viewmodels.MainViewModel
 import org.nautilusapp.nautilus.userauth.AuthState
 import org.nautilusapp.nautilus.userauth.authState

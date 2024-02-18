@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -24,25 +25,21 @@ import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.DatePicker
 import androidx.compose.material3.DatePickerState
-import androidx.compose.material3.DisplayMode
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.RadioButton
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
-import androidx.compose.material3.TimeInput
 import androidx.compose.material3.TimePickerState
-import androidx.compose.material3.rememberDatePickerState
-import androidx.compose.material3.rememberTimePickerState
+import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
@@ -51,24 +48,21 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.hapticfeedback.HapticFeedbackType
-import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import kotlinx.coroutines.launch
 import org.nautilusapp.nautilus.DataHandler
 import org.nautilusapp.nautilus.Result
-import org.nautilusapp.nautilus.android.ui.composables.DropDown
-import org.nautilusapp.nautilus.android.ui.composables.LabelledTextBoxSingleLine
-import org.nautilusapp.nautilus.android.ui.composables.LoadingSpinner
-import org.nautilusapp.nautilus.android.ui.composables.NumberInput
-import org.nautilusapp.nautilus.android.ui.composables.Screen
+import org.nautilusapp.nautilus.android.ui.composables.containers.LazyScreen
+import org.nautilusapp.nautilus.android.ui.composables.containers.Screen
+import org.nautilusapp.nautilus.android.ui.composables.indicators.LoadingSpinner
 import org.nautilusapp.nautilus.android.viewmodels.MainViewModel
 import org.nautilusapp.nautilus.android.viewmodels.NFCViewmodel
 import org.nautilusapp.nautilus.attendance.Meeting
-import org.nautilusapp.nautilus.attendance.MeetingType
-import org.nautilusapp.nautilus.userauth.AccountType
 import org.nautilusapp.nautilus.userauth.isAdmin
+import org.nautilusapp.nautilus.validation.CreateMeetingArgs
 import java.time.Instant
 import java.time.LocalDateTime
 import java.time.ZoneOffset
@@ -99,11 +93,14 @@ fun formatFromEpoch(epoch: EpochMS): String {
     return zdt.format(DateTimeFormatter.ofLocalizedDateTime(FormatStyle.MEDIUM))
 }
 
+fun fmtDate(epoch: EpochMS): String {
+    val zdt = ZonedDateTime.ofInstant(Instant.ofEpochMilli(epoch), ZoneOffset.systemDefault()).toLocalDate()
+    return zdt.format(DateTimeFormatter.ofLocalizedDate(FormatStyle.MEDIUM))
+}
+
 @Composable
 @OptIn(ExperimentalMaterial3Api::class)
 fun AttendanceVerificationPage(viewModel: MainViewModel, nfc: NFCViewmodel, dataHandler: DataHandler) {
-
-    val attendancePeriods = dataHandler.seasons.getAttendancePeriods()
 
     val scope = rememberCoroutineScope()
     var showCreateMenu by remember { mutableStateOf(false) }
@@ -113,27 +110,6 @@ fun AttendanceVerificationPage(viewModel: MainViewModel, nfc: NFCViewmodel, data
 
     var showMeetingSuccessDialog by remember {mutableStateOf(false)}
     var meetingCreationStatus by remember {mutableStateOf("")}
-
-    var meetingValue by remember { mutableIntStateOf(2) }
-    var meetingType by remember { mutableStateOf("general") }
-    var attendancePeriod by remember { mutableStateOf(attendancePeriods.firstOrNull()?:"") }
-    var meetingDescription by remember { mutableStateOf("") }
-
-    val context = LocalContext.current
-
-    val dateState = rememberDatePickerState(
-        initialSelectedDateMillis = LocalDateTime.now().toInstant(ZoneOffset.UTC).toEpochMilli(),
-//        initialSelectedDateMillis = System.currentTimeMillis(),
-        initialDisplayMode = DisplayMode.Input)
-
-    val initialHour = LocalDateTime.now().hour
-    val initialMinute = (LocalDateTime.now().minute - (LocalDateTime.now().minute % 15)).coerceAtLeast(0)
-    val endingHour = when(initialMinute) {
-        in 0..45 -> initialHour + meetingValue
-        else -> initialHour + 1 + meetingValue
-    }
-    val startTimeState = rememberTimePickerState(initialHour = initialHour, initialMinute = initialMinute)
-    val endTimeState = rememberTimePickerState(initialHour = (endingHour).coerceAtMost(23), initialMinute = initialMinute)
 
     var meetings: List<Meeting> by remember { mutableStateOf(dataHandler.attendance.getCurrent(System.currentTimeMillis())) }
 
@@ -173,108 +149,131 @@ fun AttendanceVerificationPage(viewModel: MainViewModel, nfc: NFCViewmodel, data
         loadMeetings()
     }
 
-    @Composable
-    fun MeetingCreationScreen() {
-        Text(text = "Create a Meeting", style = MaterialTheme.typography.titleLarge)
-        Spacer(modifier = Modifier.size(16.dp))
-        Text("Meeting Date")
-        DatePicker(state = dateState)
-        Text("Start Time")
-        TimeInput(state = startTimeState)
-        Text("End Time")
-        TimeInput(state = endTimeState)
-        Spacer(modifier = Modifier.size(16.dp))
-        NumberInput(
-            label = "Meeting Value",
-            value = meetingValue,
-            onValueChange = { meetingValue = it ?: 0 })
-        val startTimeMs = dateTimeStateToEpochMs(dateState, startTimeState)
-        val endTimeMs = dateTimeStateToEpochMs(dateState, endTimeState)
-        DropDown(label = "Meeting Type", value = meetingType, items = MeetingType.entries.map { it.value } , onValueChange = {meetingType = it} )
-        Spacer(modifier = Modifier.size(8.dp))
-        DropDown(label = "Attendance Period", value = attendancePeriod, items = attendancePeriods, onValueChange = {
-            attendancePeriod = it
-        })
-        Spacer(modifier = Modifier.size(8.dp))
-        LabelledTextBoxSingleLine(
-            label = "Meeting Description",
-            text = meetingDescription,
-            onValueChange = { meetingDescription = it })
-        Button(onClick = {
-            isBusy = true
-            scope.launch {
-                val res = dataHandler.attendance.create(
-                    type = meetingType,
-                    description = meetingDescription,
-                    startTime = startTimeMs,
-                    endTime = endTimeMs,
-                    value = meetingValue,
-                    attendancePeriod = attendancePeriod,
-                )
-                when(res) {
-                    is Result.Success -> {
-                        meetingCreationStatus = "Successfully created meeting"
-                        showMeetingSuccessDialog = true
-                        loadMeetings()
-                        isBusy = false
-                    }
-                    is Result.Error -> {
-                        meetingCreationStatus = "Error creating meeting: ${res.error}"
-                        showMeetingSuccessDialog = true
-                        isBusy = false
-                    }
+
+    val attendancePeriods = dataHandler.seasons.getAttendancePeriods()
+    val archiveDisplay = if(showArchived && isAdmin(viewModel.user)) archived else listOf()
+    val pastDisplay = if(showPast && isAdmin(viewModel.user)) pastMeetings else listOf()
+
+    val localConf = LocalConfiguration.current
+
+    fun createMeeting(args: CreateMeetingArgs) {
+        isBusy = true
+        scope.launch {
+            val res = dataHandler.attendance.create(
+                type = args.type,
+                description = args.description,
+                startTime = args.startTimeMs,
+                endTime = args.endTimeMs,
+                value = args.meetingValue,
+                attendancePeriod = args.attendancePeriod,
+            )
+            when(res) {
+                is Result.Success -> {
+                    meetingCreationStatus = "Successfully created meeting"
+                    showMeetingSuccessDialog = true
+                    loadMeetings()
+                    isBusy = false
+                }
+                is Result.Error -> {
+                    meetingCreationStatus = "Error creating meeting: ${res.error}"
+                    showMeetingSuccessDialog = true
+                    isBusy = false
                 }
             }
-            showCreateMenu = false
-        }) {
-            Text("Create Meeting")
         }
+        showCreateMenu = false
     }
 
+    val emptyList = meetings.isEmpty() && (pastMeetings.isEmpty() || !showPast) && (archived.isEmpty() || !showArchived)
 
+    val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
 
     Box {
-        Screen(onRefresh = { dataHandler.attendance.sync(); loadMeetings() }) {
-            Row {
-                Text(text = "Meetings", style = MaterialTheme.typography.headlineLarge)
-                Spacer(modifier = Modifier.size(4.dp))
-                IconButton(onClick = {
-                    expanded = if(expanded.isEmpty()) meetings.map { it._id } + pastMeetings.map {it._id} + archived.map { it._id } else listOf()
-                } ) {
-                    Icon(if(expanded.isEmpty()) Icons.Filled.UnfoldMore else Icons.Filled.UnfoldLess, contentDescription = "Expand/Collapse All")
-                }
-                if(viewModel.user?.permissions?.makeMeetings == true) {
-                    IconButton(
-                        onClick = { showCreateMenu = !showCreateMenu },
-                    ) {
-                        if (!showCreateMenu) {
+        if(showCreateMenu && viewModel.user?.permissions?.makeMeetings == true) {
+            ModalBottomSheet(onDismissRequest = { showCreateMenu = false }, containerColor = MaterialTheme.colorScheme.surfaceContainerLow, sheetState = sheetState) {
+                MeetingCreationScreen(
+                    onCreateMeetings = { createMeeting(it) },
+                    attendancePeriods = attendancePeriods
+                )
+            }
+        }
+        LazyScreen(
+            onRefresh = { dataHandler.attendance.sync(); loadMeetings() },
+            beforeLazyList = {
+                Row(Modifier.padding(horizontal = 8.dp)) {
+                    Text(text = "Meetings", style = MaterialTheme.typography.headlineLarge)
+                    Spacer(modifier = Modifier.size(4.dp))
+                    IconButton(onClick = {
+                        expanded = if(expanded.isEmpty()) meetings.map { it._id } + pastMeetings.map {it._id} + archived.map { it._id } else listOf()
+                    } ) {
+                        Icon(if(expanded.isEmpty()) Icons.Filled.UnfoldMore else Icons.Filled.UnfoldLess, contentDescription = "Expand/Collapse All")
+                    }
+                    if(viewModel.user?.permissions?.makeMeetings == true) {
+                        IconButton(
+                            onClick = { showCreateMenu = !showCreateMenu },
+                        ) {
                             Icon(Icons.Filled.PostAdd, contentDescription = "Add", tint = MaterialTheme.colorScheme.primary)
-                        } else {
-                            Icon(Icons.Filled.Cancel, contentDescription = "Cancel", tint = MaterialTheme.colorScheme.error)
+                        }
+                    }
+                    if(isAdmin(viewModel.user)) {
+                        IconButton(onClick = { showPast = !showPast }) {
+                            Icon(Icons.Filled.History,
+                                contentDescription = "Old",
+                                tint = if(showPast) MaterialTheme.colorScheme.tertiary else MaterialTheme.colorScheme.outline
+                            )
+                        }
+                        IconButton(onClick = { showArchived = !showArchived }) {
+                            Icon(Icons.Filled.Archive,
+                                contentDescription = "Archived",
+                                tint = if(showArchived) MaterialTheme.colorScheme.secondary else MaterialTheme.colorScheme.outline
+                            )
                         }
                     }
                 }
-                if((viewModel.user?.accountType?.value ?: 0) >= AccountType.ADMIN.value) {
-                    IconButton(onClick = { showPast = !showPast }) {
-                        Icon(Icons.Filled.History,
-                            contentDescription = "Old",
-                            tint = if(showPast) MaterialTheme.colorScheme.tertiary else MaterialTheme.colorScheme.outline
+                Spacer(modifier = Modifier.size(16.dp))
+            }
+        ) {
+            if(meetings.isEmpty()) {
+                item("No current available") {
+                    if(emptyList) Box {
+                        Text(
+                            text = "No meetings available",
+                            style = MaterialTheme.typography.titleMedium
                         )
+                        Spacer(Modifier.fillParentMaxHeight())
                     }
-                    IconButton(onClick = { showArchived = !showArchived }) {
-                        Icon(Icons.Filled.Archive,
-                            contentDescription = "Archived",
-                            tint = if(showArchived) MaterialTheme.colorScheme.secondary else MaterialTheme.colorScheme.outline
+                    else {
+                        Text(
+                            text = "No current meetings available",
+                            style = MaterialTheme.typography.titleMedium
                         )
                     }
                 }
             }
-            if (showCreateMenu) {
-                MeetingCreationScreen()
+            items(meetings.size, {meetings[it]._id}) { i ->
+                val mtg = meetings[i]
+                MeetingItem(meeting = mtg,
+                    onWrite = {meetingIdToWrite = it},
+                    selectedHandler = object: SelectedHandler {
+                        override fun onSelected() {
+                            selectedMeetings = if(selected) selectedMeetings - mtg._id else selectedMeetings + mtg._id
+                        }
+                        override val selected: Boolean = selectedMeetings.contains(mtg._id)
+                        override val isSelecting: Boolean = selectedMeetings.isNotEmpty()
+                        override val shouldExpand: Boolean = expanded.contains(mtg._id)
+                    }
+                )
             }
-            Spacer(modifier = Modifier.size(16.dp))
-            if(meetings.isNotEmpty()){
-                meetings.forEach{ mtg ->
+            item("Past meetings") {
+                if(showPast && isAdmin(viewModel.user)) {
+                    Spacer(modifier = Modifier.size(16.dp))
+                    Text(text = "Past Meetings", style = MaterialTheme.typography.headlineLarge)
+                    Spacer(modifier = Modifier.size(8.dp))
+                }
+            }
+            items(pastDisplay.size, key = { pastDisplay[it]._id } ) {
+                if(showPast && isAdmin(viewModel.user)) {
+                    val mtg = pastDisplay[it]
                     MeetingItem(meeting = mtg,
                         onWrite = {meetingIdToWrite = it},
                         selectedHandler = object: SelectedHandler {
@@ -288,54 +287,45 @@ fun AttendanceVerificationPage(viewModel: MainViewModel, nfc: NFCViewmodel, data
                     )
                 }
             }
-            else {
-                Text(text = "No meetings available", style = MaterialTheme.typography.titleMedium)
+            item("No past found") {
+                if(pastMeetings.isEmpty() && showPast && isAdmin(viewModel.user)) Text(text = "None Found", style = MaterialTheme.typography.titleMedium)
             }
-            if(isAdmin(viewModel.user) && showPast) {
-                Spacer(modifier = Modifier.size(16.dp))
-                Text(text = "Past Meetings", style = MaterialTheme.typography.headlineLarge)
-                Spacer(modifier = Modifier.size(8.dp))
-                if(pastMeetings.isNotEmpty()){
-                    pastMeetings.forEach{ mtg ->
-                        MeetingItem(meeting = mtg,
-                            onWrite = {meetingIdToWrite = it},
-                            selectedHandler = object: SelectedHandler {
-                                override fun onSelected() {
-                                    selectedMeetings = if(selected) selectedMeetings - mtg._id else selectedMeetings + mtg._id
-                                }
-                                override val selected: Boolean = selectedMeetings.contains(mtg._id)
-                                override val isSelecting: Boolean = selectedMeetings.isNotEmpty()
-                                override val shouldExpand: Boolean = expanded.contains(mtg._id)
-                            }
-                        )
-                    }
+            item("Archived") {
+                if(isAdmin(viewModel.user) && showArchived) {
+                    Spacer(modifier = Modifier.size(16.dp))
+                    Text(text = "Archived Meetings", style = MaterialTheme.typography.headlineLarge)
+                    Spacer(modifier = Modifier.size(8.dp))
                 }
-                else {
+            }
+            items((archiveDisplay.size), { archiveDisplay[it]._id } ) {
+                if(isAdmin(viewModel.user) && showArchived) {
+                    val mtg = archiveDisplay[it]
+                    MeetingItem(meeting = mtg,
+                        onWrite = { meetingIdToWrite = it },
+                        selectedHandler = object : SelectedHandler {
+                            override fun onSelected() {
+                                selectedMeetings =
+                                    if (selected) selectedMeetings - mtg._id else selectedMeetings + mtg._id
+                            }
+
+                            override val selected: Boolean = selectedMeetings.contains(mtg._id)
+                            override val isSelecting: Boolean = selectedMeetings.isNotEmpty()
+                            override val shouldExpand: Boolean = expanded.contains(mtg._id)
+                        }
+                    )
+                }
+            }
+            item("no archived") {
+                if(isAdmin(viewModel.user) && showArchived && archived.isEmpty()) {
                     Text(text = "None Found", style = MaterialTheme.typography.titleMedium)
                 }
             }
-            if(isAdmin(viewModel.user) && showArchived) {
-                Spacer(modifier = Modifier.size(16.dp))
-                Text(text = "Archived Meetings", style = MaterialTheme.typography.headlineLarge)
-                Spacer(modifier = Modifier.size(8.dp))
-                if(archived.isNotEmpty()){
-                    archived.forEach{ mtg ->
-                        MeetingItem(meeting = mtg,
-                            onWrite = {meetingIdToWrite = it},
-                            selectedHandler = object: SelectedHandler {
-                                override fun onSelected() {
-                                    selectedMeetings = if(selected) selectedMeetings - mtg._id else selectedMeetings + mtg._id
-                                }
-                                override val selected: Boolean = selectedMeetings.contains(mtg._id)
-                                override val isSelecting: Boolean = selectedMeetings.isNotEmpty()
-                                override val shouldExpand: Boolean = expanded.contains(mtg._id)
-                            }
-                        )
-                    }
-                }
-                else {
-                    Text(text = "None Found", style = MaterialTheme.typography.titleMedium)
-                }
+            item("space") {
+                if(!emptyList)
+                Spacer(
+                    Modifier
+                        .height((localConf.screenHeightDp * 0.4).dp)
+                        .fillParentMaxWidth())
             }
         }
         if(selectedMeetings.isNotEmpty()) {
@@ -523,7 +513,7 @@ fun MeetingItem(meeting: Meeting,
                     text = "Meeting id: ${meeting._id}",
                     style = MaterialTheme.typography.titleLarge,
                 )
-                Text(text = "Time Period: ${meeting.attendancePeriod ?: "unknown"}")
+                Text(text = "Time Period: ${meeting.attendancePeriod}")
                 if(meeting.description.isNotBlank()) Text(text = "Description: ${meeting.description}")
                 Text(text = "Type: ${meeting.type}")
                 if(!collapsed) {

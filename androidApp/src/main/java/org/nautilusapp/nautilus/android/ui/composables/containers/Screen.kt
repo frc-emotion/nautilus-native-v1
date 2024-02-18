@@ -1,14 +1,11 @@
-package org.nautilusapp.nautilus.android.ui.composables
+package org.nautilusapp.nautilus.android.ui.composables.containers
 
 import androidx.compose.animation.core.animateIntAsState
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
@@ -16,32 +13,26 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.ExperimentalMaterialApi
-import androidx.compose.material.pullrefresh.pullRefresh
-import androidx.compose.material.pullrefresh.rememberPullRefreshState
-import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
-import androidx.compose.material3.Text
+import androidx.compose.material3.pulltorefresh.PullToRefreshContainer
+import androidx.compose.material3.pulltorefresh.rememberPullToRefreshState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.runtime.setValue
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.hapticfeedback.HapticFeedbackType
+import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.platform.LocalHapticFeedback
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import kotlinx.coroutines.launch
+import org.nautilusapp.nautilus.android.ui.composables.indicators.PullRefreshIndicator
 import kotlin.math.roundToInt
-import kotlin.random.Random
 
 
 @Composable
@@ -81,21 +72,14 @@ fun BlackScreen(content: @Composable () -> Unit) {
     }
 }
 
-const val PULL_REFRESH_HEIGHT = 128
-@OptIn(ExperimentalMaterialApi::class)
+const val PULL_REFRESH_HEIGHT = 16
+@OptIn(ExperimentalMaterialApi::class, ExperimentalMaterial3Api::class)
 @Composable
 fun Screen(onRefresh: suspend () -> Unit, content: @Composable () -> Unit) {
     val focusManager = LocalFocusManager.current
     val interactionSource = remember { MutableInteractionSource() }
-    val scope = rememberCoroutineScope()
-    var refreshing by remember { mutableStateOf(false) }
-    val refreshState = rememberPullRefreshState(refreshing = refreshing, onRefresh = {
-        scope.launch {
-            refreshing = true
-            onRefresh()
-            refreshing = false
-        }
-    })
+
+    val refreshState = rememberPullToRefreshState()
 
     val scrollState = rememberScrollState()
 
@@ -111,9 +95,17 @@ fun Screen(onRefresh: suspend () -> Unit, content: @Composable () -> Unit) {
         }
     }
 
+    if(refreshState.isRefreshing) {
+        LaunchedEffect(true) {
+            onRefresh()
+            refreshState.endRefresh()
+        }
+    }
+
+
     val scrollOffset by animateIntAsState(
         targetValue = when {
-            refreshing -> PULL_REFRESH_HEIGHT
+            refreshState.isRefreshing -> PULL_REFRESH_HEIGHT
             refreshState.progress in 0f..1f -> (PULL_REFRESH_HEIGHT * refreshState.progress).roundToInt()
             refreshState.progress > 1f -> (PULL_REFRESH_HEIGHT + ((refreshState.progress - 1f) * .1f) * 100).roundToInt()
             else -> 0
@@ -122,33 +114,26 @@ fun Screen(onRefresh: suspend () -> Unit, content: @Composable () -> Unit) {
 
     Surface(color = MaterialTheme.colorScheme.background, modifier = Modifier
         .fillMaxSize()
+        .nestedScroll(refreshState.nestedScrollConnection)
+        .padding(top = (PULL_REFRESH_HEIGHT / 2).dp)
         .clickable(
             indication = null,
             interactionSource = interactionSource
         )
         { focusManager.clearFocus() }
     ) {
-        if(refreshState.progress > 0 || refreshing) {
-            Box (
-                Modifier
-                    .height(IntrinsicSize.Min)
-                    .fillMaxWidth()
-                    .offset(y = (scrollOffset / 4).coerceAtLeast(8).dp), contentAlignment = Alignment.TopCenter){
-                when {
-                    willRefresh || refreshing -> CircularProgressIndicator(Modifier.size(64.dp), strokeCap = StrokeCap.Round, color = MaterialTheme.colorScheme.primary)
-                    refreshState.progress in 0f..1f -> CircularProgressIndicator(
-                        progress = { refreshState.progress },
-                        modifier = Modifier.size(64.dp),
-                        color = MaterialTheme.colorScheme.primary,
-                        strokeCap = StrokeCap.Round,
-                    )
-                }
-
-            }
-        }
+        PullRefreshIndicator(refreshState = refreshState)
+        PullToRefreshContainer(
+            state = refreshState,
+            indicator = { },
+            containerColor = Color.Transparent,
+            contentColor = Color.Transparent,
+            modifier = Modifier
+                .size(0.dp)
+                .alpha(0f)
+        )
         Column(
             modifier = Modifier
-                .pullRefresh(refreshState)
                 .verticalScroll(scrollState, enabled = true)
                 .offset(y = (scrollOffset).dp)
                 .fillMaxSize()
@@ -157,20 +142,6 @@ fun Screen(onRefresh: suspend () -> Unit, content: @Composable () -> Unit) {
             Spacer(modifier = Modifier.height(16.dp))
             content()
             Spacer(modifier = Modifier.height(16.dp))
-        }
-    }
-}
-
-@Composable
-@Preview
-fun ScreenPreview() {
-    val strings = (1..300).map { "meow" }
-    var color by remember { mutableStateOf(Color(0xFF99FFEE)) }
-    Screen (onRefresh = { color = Color(Random.nextFloat(), Random.nextFloat(), Random.nextFloat(), 1f) }) {
-        strings.forEach {
-            Surface(color = color) {
-                Text(it, modifier = Modifier.padding(16.dp))
-            }
         }
     }
 }

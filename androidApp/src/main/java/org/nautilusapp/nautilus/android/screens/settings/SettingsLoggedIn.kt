@@ -36,11 +36,11 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import kotlinx.coroutines.launch
 import org.nautilusapp.nautilus.android.ui.composables.ColorThemeSelector
-import org.nautilusapp.nautilus.android.ui.composables.LoadingSpinner
 import org.nautilusapp.nautilus.android.ui.composables.LoginInput
 import org.nautilusapp.nautilus.android.ui.composables.LoginType
-import org.nautilusapp.nautilus.android.ui.composables.Screen
 import org.nautilusapp.nautilus.android.ui.composables.UserDetailCard
+import org.nautilusapp.nautilus.android.ui.composables.containers.Screen
+import org.nautilusapp.nautilus.android.ui.composables.indicators.LoadingSpinner
 import org.nautilusapp.nautilus.android.viewmodels.MainViewModel
 import org.nautilusapp.nautilus.userauth.AuthState
 import org.nautilusapp.nautilus.userauth.authState
@@ -78,8 +78,9 @@ fun SettingsLoggedIn(vm: MainViewModel) {
         )
         Spacer(modifier = Modifier.size(32.dp))
     }
-
-    UserDetailCard(user = user)
+    user?.let {
+        UserDetailCard(user = user, isInitiallyExpanded = true)
+    }
     Spacer(modifier = Modifier.size(32.dp))
     ColorThemeSelector(value = vm.theme, onValueChange = vm::setTheme)
     Spacer(modifier = Modifier.size(32.dp))

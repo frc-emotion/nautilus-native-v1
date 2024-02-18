@@ -30,6 +30,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import org.nautilusapp.nautilus.android.MainTheme
+import org.nautilusapp.nautilus.android.smallCardColor
+import org.nautilusapp.nautilus.android.ui.composables.containers.Screen
 import org.nautilusapp.nautilus.android.ui.theme.ColorTheme
 
 @Composable
@@ -38,7 +40,7 @@ fun DropDown(label: String, value: String, children: @Composable () -> Unit) {
     Text(text = label, style = MaterialTheme.typography.labelLarge)
     Spacer(modifier = Modifier.size(8.dp))
 
-    Card(colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceContainer),
+    Card(colors = CardDefaults.cardColors(containerColor = smallCardColor()),
         shape = RoundedCornerShape(4.dp),
         modifier = Modifier
             .fillMaxWidth()
@@ -142,7 +144,7 @@ fun <T> DropDown(label: String, value: T, items: List<T>, onValueChange: (T) -> 
     val str = getStr(value)
     Text(text = label, style = MaterialTheme.typography.labelLarge)
     Spacer(modifier = Modifier.size(8.dp))
-    Card(colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceContainer),
+    Card(colors = CardDefaults.cardColors(containerColor = smallCardColor()),
         shape = RoundedCornerShape(4.dp),
         modifier = Modifier
             .fillMaxWidth()

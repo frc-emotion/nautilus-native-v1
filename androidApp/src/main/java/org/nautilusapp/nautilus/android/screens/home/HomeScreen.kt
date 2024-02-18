@@ -11,7 +11,7 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import kotlinx.coroutines.launch
 import org.nautilusapp.nautilus.android.ui.composables.AttendanceNfcUI
-import org.nautilusapp.nautilus.android.ui.composables.Screen
+import org.nautilusapp.nautilus.android.ui.composables.containers.Screen
 import org.nautilusapp.nautilus.android.ui.composables.UserAttendanceView
 import org.nautilusapp.nautilus.android.viewmodels.MainViewModel
 import org.nautilusapp.nautilus.android.viewmodels.NFCViewmodel

@@ -27,6 +27,8 @@ import org.nautilusapp.nautilus.scouting.scoutingdata.CrescendoRequestBody
 import org.nautilusapp.nautilus.userauth.Subteam
 import org.nautilusapp.nautilus.userauth.TokenUser
 import org.nautilusapp.nautilus.userauth.User
+import org.nautilusapp.nautilus.validation.CreateMeetingArgs
+import org.nautilusapp.nautilus.validation.createMeetingValidArgs
 import org.nautilusapp.network.KtorError
 import org.nautilusapp.network.NetworkClient
 import org.nautilusapp.network.models.Season
@@ -371,8 +373,9 @@ class DataHandler(private val routeBase: String, databaseDriverFactory: Database
             value: Int,
             attendancePeriod: String,
         ): DataResult<Meeting> {
-           if(description.isBlank() || type.isBlank() || attendancePeriod.isBlank()) {
-               return Result.Error("Invalid input")
+            val validate = createMeetingValidArgs(CreateMeetingArgs(type = type, description = description, startTimeMs = startTime, endTimeMs = endTime, meetingValue = value, attendancePeriod = attendancePeriod))
+            if(!validate.ok) {
+               return Result.Error("Invalid input: ${validate.reasons.joinToString(", ")}")
            }
             return withContext(Dispatchers.IO){
                 network.attendance.createMeeting(

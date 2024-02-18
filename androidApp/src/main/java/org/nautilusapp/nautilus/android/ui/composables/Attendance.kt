@@ -22,6 +22,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import org.nautilusapp.nautilus.android.ui.composables.containers.Screen
 import org.nautilusapp.nautilus.attendance.MeetingLog
 import org.nautilusapp.nautilus.attendance.UserAttendance
 

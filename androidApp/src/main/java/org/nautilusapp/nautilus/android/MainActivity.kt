@@ -38,7 +38,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import org.nautilusapp.nautilus.DataHandler
 import org.nautilusapp.nautilus.android.screens.UpdateNeededScreen.UpdateNeededScreen
 import org.nautilusapp.nautilus.android.screens.settings.SettingsScreen
-import org.nautilusapp.nautilus.android.ui.composables.LoadingSpinner
+import org.nautilusapp.nautilus.android.ui.composables.indicators.LoadingSpinner
 import org.nautilusapp.nautilus.android.ui.navigation.LoggedInNavigator
 import org.nautilusapp.nautilus.android.viewmodels.MainViewModel
 import org.nautilusapp.nautilus.android.viewmodels.NFCViewmodel

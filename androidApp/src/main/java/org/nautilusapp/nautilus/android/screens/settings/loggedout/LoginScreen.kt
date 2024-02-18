@@ -27,7 +27,7 @@ import kotlinx.coroutines.launch
 import org.nautilusapp.nautilus.android.MainTheme
 import org.nautilusapp.nautilus.android.ui.composables.LoginInput
 import org.nautilusapp.nautilus.android.ui.composables.LoginType
-import org.nautilusapp.nautilus.android.ui.composables.Screen
+import org.nautilusapp.nautilus.android.ui.composables.containers.Screen
 import org.nautilusapp.nautilus.android.ui.composables.TextDropDown
 import org.nautilusapp.nautilus.android.ui.theme.ColorTheme
 import org.nautilusapp.network.Organization

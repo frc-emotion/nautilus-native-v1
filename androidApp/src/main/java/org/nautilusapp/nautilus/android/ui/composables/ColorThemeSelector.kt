@@ -25,6 +25,8 @@ import androidx.compose.ui.unit.dp
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import org.nautilusapp.nautilus.android.MainTheme
+import org.nautilusapp.nautilus.android.ui.composables.containers.Screen
+import org.nautilusapp.nautilus.android.ui.composables.indicators.LoadingSpinner
 import org.nautilusapp.nautilus.android.ui.theme.ColorTheme
 
 @Composable

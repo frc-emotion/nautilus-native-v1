@@ -31,8 +31,10 @@ import kotlinx.coroutines.launch
 import org.nautilusapp.nautilus.android.ui.composables.LabelledTextBoxSingleLine
 import org.nautilusapp.nautilus.android.ui.composables.LoginInput
 import org.nautilusapp.nautilus.android.ui.composables.LoginType
+import org.nautilusapp.nautilus.android.ui.composables.TextDropDown
 import org.nautilusapp.nautilus.toCapitalized
 import org.nautilusapp.nautilus.userauth.Subteam
+import org.nautilusapp.network.Organization
 
 
 @Composable
@@ -48,7 +50,10 @@ fun RegisterScreen(
         grade: Int,
         errorCallback: (String) -> Unit
     ) -> Unit,
-    onLogin: () -> Unit
+    onLogin: () -> Unit,
+    organization: Organization,
+    orgs: List<Organization>,
+    onSetOrganization: (Organization) -> Unit,
 ) {
     var username by rememberSaveable { mutableStateOf("") }
     var password by rememberSaveable { mutableStateOf("") }
@@ -62,12 +67,14 @@ fun RegisterScreen(
     val context = LocalContext.current
     val scope = rememberCoroutineScope()
 
-    var showError by remember {mutableStateOf(false)}
-    var errorText by remember {mutableStateOf("")}
-    if(showError) {
-        AlertDialog(onDismissRequest = {  }, confirmButton = { TextButton(onClick = { showError = false })  {
-            Text("Ok")
-        }}, title = { Text("Error") }, text = { Text("Something went wrong\n $errorText") })
+    var showError by remember { mutableStateOf(false) }
+    var errorText by remember { mutableStateOf("") }
+    if (showError) {
+        AlertDialog(onDismissRequest = { }, confirmButton = {
+            TextButton(onClick = { showError = false }) {
+                Text("Ok")
+            }
+        }, title = { Text("Error") }, text = { Text("Something went wrong\n $errorText") })
     }
 
     Column {
@@ -79,7 +86,14 @@ fun RegisterScreen(
             text = "After registering, please notify a team lead to verify your account",
             style = MaterialTheme.typography.bodyLarge,
         )
-        Spacer(modifier = Modifier.size(32.dp))
+        Spacer(modifier = Modifier.size(16.dp))
+        TextDropDown(
+            label = "Organization",
+            value = organization,
+            items = orgs,
+            onValueChange = { onSetOrganization(it) },
+            getStr = { it.name })
+        Spacer(modifier = Modifier.size(16.dp))
         LabelledTextBoxSingleLine(label = "First Name",
             text = firstName,
             required = true,
@@ -127,7 +141,7 @@ fun RegisterScreen(
 //            onValueChange = { text -> password = text },
 //            keyboardType = KeyboardType.Password
 //        )
-        LoginInput(type = LoginType.PASSWORD, text = password, onValueChange = { password = it } )
+        LoginInput(type = LoginType.PASSWORD, text = password, onValueChange = { password = it })
         Spacer(modifier = Modifier.size(16.dp))
 //        LabelledTextBoxSingleLine(
 //            label = "Confirm Password",
@@ -137,7 +151,10 @@ fun RegisterScreen(
 //            keyboardType = KeyboardType.Password,
 //            innerLabel = "Confirm Password"
 //        )
-        LoginInput(type = LoginType.CONFIRM_PASSWORD, text = passwordConfirm, onValueChange = { passwordConfirm = it } )
+        LoginInput(
+            type = LoginType.CONFIRM_PASSWORD,
+            text = passwordConfirm,
+            onValueChange = { passwordConfirm = it })
         if (password != passwordConfirm) {
             Text(
                 text = "Passwords do not match",
@@ -179,8 +196,9 @@ fun RegisterScreen(
                         lastName,
                         subteam,
                         phone,
-                        grade)
-                        { errorText = it; showError = true }
+                        grade
+                    )
+                    { errorText = it; showError = true }
                 }
             } else {
                 //TODO: ALERT

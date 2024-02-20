@@ -5,6 +5,7 @@ import android.net.Uri
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
@@ -27,8 +28,8 @@ import kotlinx.coroutines.launch
 import org.nautilusapp.nautilus.android.MainTheme
 import org.nautilusapp.nautilus.android.ui.composables.LoginInput
 import org.nautilusapp.nautilus.android.ui.composables.LoginType
-import org.nautilusapp.nautilus.android.ui.composables.Screen
 import org.nautilusapp.nautilus.android.ui.composables.TextDropDown
+import org.nautilusapp.nautilus.android.ui.composables.containers.Screen
 import org.nautilusapp.nautilus.android.ui.theme.ColorTheme
 import org.nautilusapp.network.Organization
 
@@ -51,27 +52,43 @@ fun LoginScreen(
 
     val scope = rememberCoroutineScope()
 
-    var showError by remember {mutableStateOf(false)}
-    var errorText by remember {mutableStateOf("")}
-    if(showError) {
-        AlertDialog(onDismissRequest = {  }, confirmButton = { TextButton(onClick = { showError = false })  {
-            Text("Ok")
-        }}, title = { Text("Error") }, text = { Text("Something went wrong\n $errorText") })
+    var showError by remember { mutableStateOf(false) }
+    var errorText by remember { mutableStateOf("") }
+    if (showError) {
+        AlertDialog(onDismissRequest = { }, confirmButton = {
+            TextButton(onClick = { showError = false }) {
+                Text("Ok")
+            }
+        }, title = { Text("Error") }, text = { Text("Something went wrong\n $errorText") })
     }
-    Column {
+    Column(Modifier.padding(top = 16.dp)) {
         Text(
             text = "Log In",
             style = MaterialTheme.typography.displayMedium,
         )
-        Spacer(modifier = Modifier.size(32.dp))
-        TextDropDown(label = "Organization", value = organization, items = orgs, onValueChange = { onSetOrganization(it) }, getStr = { it.name })
+        Spacer(modifier = Modifier.size(16.dp))
+        TextDropDown(
+            label = "Organization",
+            value = organization,
+            items = orgs,
+            onValueChange = { onSetOrganization(it) },
+            getStr = { it.name })
         Spacer(modifier = Modifier.size(8.dp))
-        LoginInput(type = LoginType.USERNAME_OR_EMAIL, text = username, onValueChange = { username = it })
+        LoginInput(
+            type = LoginType.USERNAME_OR_EMAIL,
+            text = username,
+            onValueChange = { username = it })
         Spacer(modifier = Modifier.size(16.dp))
         LoginInput(type = LoginType.PASSWORD, text = password, onValueChange = { password = it })
         Spacer(modifier = Modifier.size(16.dp))
         Row {
-            Button(onClick = { scope.launch { onLogin(username, password) { showError = true; errorText = it } } }) {
+            Button(onClick = {
+                scope.launch {
+                    onLogin(username, password) {
+                        showError = true; errorText = it
+                    }
+                }
+            }) {
                 Text(text = "Log In")
             }
             Spacer(modifier = Modifier.size(16.dp))
@@ -81,7 +98,8 @@ fun LoginScreen(
         }
         Spacer(modifier = Modifier.size(16.dp))
         TextButton(onClick = {
-            val webIntent = Intent(Intent.ACTION_VIEW, Uri.parse("${organization.url}/pages/forgot-password"))
+            val webIntent =
+                Intent(Intent.ACTION_VIEW, Uri.parse("${organization.url}/pages/forgot-password"))
             try {
                 context.startActivity(webIntent)
             } catch (e: Exception) {
@@ -98,7 +116,11 @@ fun LoginScreen(
 fun LoginScreenPreview() {
     MainTheme(preference = ColorTheme.NAUTILUS_MIDNIGHT) {
         Screen {
-            LoginScreen(onLogin = {_, _, _: (String) -> Unit ->  }, organization = Organization("Team 2658", ""), orgs = listOf(Organization("Team 2658", "")) , onSetOrganization = {_ -> } ) {}
+            LoginScreen(
+                onLogin = { _, _, _: (String) -> Unit -> },
+                organization = Organization("Team 2658", ""),
+                orgs = listOf(Organization("Team 2658", "")),
+                onSetOrganization = { _ -> }) {}
         }
     }
 }

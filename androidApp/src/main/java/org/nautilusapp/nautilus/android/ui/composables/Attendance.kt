@@ -22,22 +22,25 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import org.nautilusapp.nautilus.android.MainTheme
 import org.nautilusapp.nautilus.android.ui.composables.containers.Screen
+import org.nautilusapp.nautilus.android.ui.composables.indicators.InfoIndicator
+import org.nautilusapp.nautilus.android.ui.theme.ColorTheme
 import org.nautilusapp.nautilus.attendance.MeetingLog
 import org.nautilusapp.nautilus.attendance.UserAttendance
 
 @Composable
 fun UserAttendanceView(userAttendance: Map<String, UserAttendance>) {
     val attendanceKeys = userAttendance.keys.toList()
-    var selectedAttendancePeriod by remember { mutableStateOf(attendanceKeys.lastOrNull()?:"none") }
-
-    Text(text = "Attendance",
-        style = MaterialTheme.typography.headlineLarge)
-//    Spacer(modifier = Modifier.size(16.dp))
+    var selectedAttendancePeriod by remember {
+        mutableStateOf(
+            attendanceKeys.lastOrNull() ?: "none"
+        )
+    }
     TextDropDown(label = "Time Period:", value = selectedAttendancePeriod, items = attendanceKeys) {
         selectedAttendancePeriod = it
     }
-    if(userAttendance.isNotEmpty()) {
+    if (userAttendance.isNotEmpty()) {
         val hoursLogged = userAttendance[selectedAttendancePeriod]?.totalHoursLogged?.toFloat()
             ?: 0f
         val progress = (hoursLogged / 36.0f).coerceAtMost(1.0f)
@@ -47,20 +50,23 @@ fun UserAttendanceView(userAttendance: Map<String, UserAttendance>) {
         Row(
             Modifier
                 .fillMaxWidth()
-                .height(IntrinsicSize.Min)) {
+                .height(IntrinsicSize.Min)
+        ) {
             Column(Modifier.weight(1f)) {
-                Text("${hoursLogged.toInt()} / 36 \nhours", modifier = Modifier.padding(8.dp),
+                Text(
+                    "${hoursLogged.toInt()} / 36 \nhours", modifier = Modifier.padding(8.dp),
                     style = MaterialTheme.typography.displaySmall,
                     color = MaterialTheme.colorScheme.primary,
                     softWrap = false,
-                    )
+                )
             }
-            CircularProgressIndicator(progress = progress,
+            CircularProgressIndicator(
+                progress = progress,
                 modifier = Modifier.aspectRatio(1f),
                 trackColor = MaterialTheme.colorScheme.secondaryContainer,
                 strokeWidth = 12.dp,
                 strokeCap = StrokeCap.Round
-                )
+            )
         }
     } else {
         Text("No attendance data found", style = MaterialTheme.typography.titleLarge)
@@ -74,11 +80,13 @@ fun UserAttendanceView(userAttendance: Map<String, UserAttendance>) {
 fun UserAttendanceViewPreview() {
     Screen {
         UserAttendanceView(
-            mapOf("2024spring" to
-                    UserAttendance(10, emptyList()),
+            mapOf(
+                "2024spring" to
+                        UserAttendance(10, emptyList()),
                 "2024fall" to
                         UserAttendance(20, emptyList())
-            ))
+            )
+        )
         Spacer(modifier = Modifier.size(256.dp))
         UserAttendanceView(userAttendance = emptyMap())
     }
@@ -86,35 +94,50 @@ fun UserAttendanceViewPreview() {
 
 @Composable
 fun AttendanceNfcUI(tagData: MeetingLog?, onLogAttendance: (MeetingLog) -> Unit) {
-    val text = if(tagData?.meetingId?.isNotBlank() == true) "Tag Scanned" else "Scan a Tag to Log Attendance"
+    val tagScanned = tagData?.meetingId?.isNotBlank() == true
     Button(onClick = {
         tagData?.let { onLogAttendance(it) }
     }, enabled = tagData != null) {
         Text("Log Attendance")
     }
     Spacer(modifier = Modifier.size(16.dp))
-    Text(text = text, style = MaterialTheme.typography.bodyLarge, color = MaterialTheme.colorScheme.tertiary)
+    if (tagScanned) {
+        Text(
+            text = "Tag scanned!",
+            style = MaterialTheme.typography.bodyLarge,
+            color = MaterialTheme.colorScheme.secondary
+        )
+
+    } else {
+        InfoIndicator(text = "Scan a tag to log attendance")
+    }
 }
 
-@Preview
+@Preview(apiLevel = 33)
 @Composable
 fun AttendanceNfcUIPreview() {
     val space = Modifier.size(48.dp)
     var mock by remember { mutableStateOf<MeetingLog?>(null) }
-    Screen {
-        UserAttendanceView(userAttendance = emptyMap())
-        Spacer(space)
-        AttendanceNfcUI(mock) {
-            mock = if(mock == null) MeetingLog("2024spring", "unknown") else null
-        }
+    MainTheme(preference = ColorTheme.MATERIAL3) {
+        Screen {
+            UserAttendanceView(userAttendance = emptyMap())
+            Spacer(space)
+            AttendanceNfcUI(mock) {
+                mock = if (mock == null) MeetingLog("2024spring", "unknown") else null
+            }
 
-        Spacer(modifier = Modifier.size(64.dp))
+            Spacer(modifier = Modifier.size(64.dp))
 
-        UserAttendanceView(userAttendance = mapOf("2024spring" to
-                UserAttendance(10, emptyList())))
-        Spacer(space)
-        AttendanceNfcUI(if(mock == null) MeetingLog("2024spring", "unknown") else null) {
-            mock = if(mock != null) null else MeetingLog("2024spring", "unknown")
+            UserAttendanceView(
+                userAttendance = mapOf(
+                    "2024spring" to
+                            UserAttendance(10, emptyList())
+                )
+            )
+            Spacer(space)
+            AttendanceNfcUI(if (mock == null) MeetingLog("2024spring", "unknown") else null) {
+                mock = if (mock != null) null else MeetingLog("2024spring", "unknown")
+            }
         }
     }
 }

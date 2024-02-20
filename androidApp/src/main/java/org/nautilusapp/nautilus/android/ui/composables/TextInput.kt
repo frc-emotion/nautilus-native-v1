@@ -1,8 +1,9 @@
 package org.nautilusapp.nautilus.android.ui.composables
 
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.IntrinsicSize
-
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -34,6 +35,7 @@ import androidx.compose.ui.layout.boundsInWindow
 import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.platform.LocalAutofill
 import androidx.compose.ui.platform.LocalAutofillTree
+import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
@@ -54,8 +56,11 @@ fun LabelledTextBoxSingleLine(
     imeAction: ImeAction = ImeAction.Default
 ) {
     var showError by remember { mutableStateOf(false) }
-
-    Column(modifier = modifier) {
+    val foc = LocalFocusManager.current
+    val intSource = remember { MutableInteractionSource() }
+    Column(modifier = modifier.clickable(indication = null, interactionSource = intSource) {
+        foc.clearFocus()
+    }) {
         Text(text = label, style = MaterialTheme.typography.labelLarge)
         Spacer(modifier = Modifier.height(4.dp))
         OutlinedTextField(
@@ -139,8 +144,15 @@ fun LoginInput(
 ) {
     //AutoFill Handling and text field configuration based on input type
     val (keyboardType, autoFillTypes) = when (type) {
-        LoginType.PASSWORD, LoginType.CONFIRM_PASSWORD -> Pair(KeyboardType.Password, listOf(AutofillType.Password))
-        LoginType.USERNAME_OR_EMAIL -> Pair(KeyboardType.Email, listOf(AutofillType.EmailAddress, AutofillType.Username))
+        LoginType.PASSWORD, LoginType.CONFIRM_PASSWORD -> Pair(
+            KeyboardType.Password,
+            listOf(AutofillType.Password)
+        )
+
+        LoginType.USERNAME_OR_EMAIL -> Pair(
+            KeyboardType.Email,
+            listOf(AutofillType.EmailAddress, AutofillType.Username)
+        )
     }
     val label = when (type) {
         LoginType.PASSWORD -> "Password"
@@ -148,7 +160,7 @@ fun LoginInput(
         LoginType.USERNAME_OR_EMAIL -> "Username or Email"
     }
 
-    val autoFillNode = AutofillNode(autofillTypes = autoFillTypes, onFill= { onValueChange(it)} )
+    val autoFillNode = AutofillNode(autofillTypes = autoFillTypes, onFill = { onValueChange(it) })
     val autofill = LocalAutofill.current
     LocalAutofillTree.current += autoFillNode
 
@@ -157,7 +169,11 @@ fun LoginInput(
     var passwordHidden by remember { mutableStateOf(true) }
     val textHidden = passwordHidden && type != LoginType.USERNAME_OR_EMAIL
 
-    Column {
+    val foc = LocalFocusManager.current
+    val intSource = remember { MutableInteractionSource() }
+    Column(modifier = Modifier.clickable(indication = null, interactionSource = intSource) {
+        foc.clearFocus()
+    }) {
         Text(text = label, style = MaterialTheme.typography.labelLarge)
         Spacer(modifier = Modifier.height(4.dp))
         OutlinedTextField(
@@ -169,19 +185,21 @@ fun LoginInput(
                     autofill?.run {
                         if (state.isFocused) {
                             requestAutofillForNode(autoFillNode)
-                        }
-                        else {
+                        } else {
                             cancelAutofillForNode(autoFillNode)
                         }
                     }
                 },
             visualTransformation = if (textHidden) PasswordVisualTransformation() else VisualTransformation.None,
-            keyboardOptions = KeyboardOptions(keyboardType = keyboardType, imeAction = ImeAction.Next),
+            keyboardOptions = KeyboardOptions(
+                keyboardType = keyboardType,
+                imeAction = ImeAction.Next
+            ),
             label = { Text(label) },
             singleLine = true,
 //            keyboardActions = keyboardActions,
             trailingIcon = {
-                if(type != LoginType.USERNAME_OR_EMAIL) {
+                if (type != LoginType.USERNAME_OR_EMAIL) {
                     IconButton(onClick = { passwordHidden = !passwordHidden }) {
                         Icon(
                             if (passwordHidden) Icons.Filled.VisibilityOff
@@ -205,8 +223,11 @@ fun TextArea(
     keyboardType: KeyboardType = KeyboardType.Text,
     innerLabel: String = "Enter $label"
 ) {
-    Column(modifier = modifier) {
-
+    val foc = LocalFocusManager.current
+    val intSource = remember { MutableInteractionSource() }
+    Column(modifier = modifier.clickable(indication = null, interactionSource = intSource) {
+        foc.clearFocus()
+    }) {
         Text(text = label, style = MaterialTheme.typography.labelLarge)
         Spacer(modifier = Modifier.height(4.dp))
         OutlinedTextField(
@@ -236,8 +257,11 @@ fun NumberInput(
     maxValue: Int = 255,
 ) {
     var showError by remember { mutableStateOf(false) }
-
-    Column(modifier = modifier) {
+    val foc = LocalFocusManager.current
+    val intSource = remember { MutableInteractionSource() }
+    Column(modifier = modifier.clickable(indication = null, interactionSource = intSource) {
+        foc.clearFocus()
+    }) {
         Text(text = label, style = MaterialTheme.typography.labelLarge)
         Spacer(modifier = Modifier.height(4.dp))
         OutlinedTextField(
@@ -291,7 +315,7 @@ fun NumberInput(
             trailingIcon = {
                 IconButton(onClick = {
                     if (value == null || (value in (minValue) until maxValue)) onValueChange(
-                        if(value == null) incrementBy else (value + incrementBy)
+                        if (value == null) incrementBy else (value + incrementBy)
                     )
                 }) {
                     Icon(
@@ -302,27 +326,6 @@ fun NumberInput(
                 }
             },
             textStyle = LocalTextStyle.current.copy(textAlign = TextAlign.Center),
-//            suffix = {
-//                Button(onClick = {
-//                    if (value == null || (value in (minValue + 1) until maxValue)) onValueChange(
-//                        (value ?: 0) + incrementBy
-//                    )
-//                }) {
-//                    Text("+")
-//                }
-//            },
-//            prefix = {
-//                Button(
-//                    onClick = {
-//                        if (value != null && (value in (minValue + 1) until maxValue)) onValueChange(
-//                            value - incrementBy
-//                        )
-//                    },
-//                    colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.error)
-//                ) {
-//                    Text("-")
-//                }
-//            }
         )
 
     }
@@ -343,8 +346,11 @@ fun NumberInput(
     maxValue: Double = 255.0,
 ) {
     var showError by remember { mutableStateOf(false) }
-
-    Column(modifier = modifier) {
+    val foc = LocalFocusManager.current
+    val intSource = remember { MutableInteractionSource() }
+    Column(modifier = modifier.clickable(indication = null, interactionSource = intSource) {
+        foc.clearFocus()
+    }) {
         Text(text = label, style = MaterialTheme.typography.labelLarge)
         Spacer(modifier = Modifier.height(4.dp))
         OutlinedTextField(
@@ -407,29 +413,7 @@ fun NumberInput(
                 }
             },
             textStyle = LocalTextStyle.current.copy(textAlign = TextAlign.Center),
-//            suffix = {
-//                Button(onClick = {
-//                    if (value == null || (value in (minValue + 1) until maxValue)) onValueChange(
-//                        (value ?: 0) + incrementBy
-//                    )
-//                }) {
-//                    Text("+")
-//                }
-//            },
-//            prefix = {
-//                Button(
-//                    onClick = {
-//                        if (value != null && (value in (minValue + 1) until maxValue)) onValueChange(
-//                            value - incrementBy
-//                        )
-//                    },
-//                    colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.error)
-//                ) {
-//                    Text("-")
-//                }
-//            }
         )
-
     }
 }
 

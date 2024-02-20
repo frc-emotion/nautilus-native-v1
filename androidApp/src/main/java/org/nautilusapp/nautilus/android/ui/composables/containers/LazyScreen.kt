@@ -15,6 +15,8 @@ import androidx.compose.foundation.lazy.LazyListScope
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.SnackbarDuration
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Surface
 import androidx.compose.material3.pulltorefresh.PullToRefreshContainer
 import androidx.compose.material3.pulltorefresh.rememberPullToRefreshState
@@ -24,6 +26,7 @@ import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
@@ -35,16 +38,20 @@ import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
+import kotlinx.coroutines.launch
+import org.nautilusapp.nautilus.DataResult
+import org.nautilusapp.nautilus.Result
 import org.nautilusapp.nautilus.android.ui.composables.extras.DraggableScrollBar
 import org.nautilusapp.nautilus.android.ui.composables.indicators.PullRefreshIndicator
 import kotlin.math.roundToInt
 
-@OptIn( ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun LazyScreen(
-    onRefresh: suspend () -> Unit,
+    onRefresh: suspend () -> DataResult<*>,
     beforeLazyList: @Composable () -> Unit = {},
-    content:  LazyListScope.() -> Unit
+    snack: SnackbarHostState? = null,
+    content: LazyListScope.(SnackbarHostState?) -> Unit
 ) {
     val state = rememberLazyListState()
 
@@ -61,7 +68,7 @@ fun LazyScreen(
     var size by remember { mutableStateOf(IntSize.Zero) }
     val firstVis by remember { derivedStateOf { state.layoutInfo.visibleItemsInfo.firstOrNull() } }
 
-    fun range(): Float = ((size.height) * 0.9f ).coerceAtLeast(0f)
+    fun range(): Float = ((size.height) * 0.9f).coerceAtLeast(0f)
     val dpCorrection = with(LocalDensity.current) { 24.dp.toPx() }
 
     val haptics = LocalHapticFeedback.current
@@ -98,9 +105,27 @@ fun LazyScreen(
         }, label = "pullRefreshOffset"
     )
 
-    if(refreshState.isRefreshing) {
+    val scope = rememberCoroutineScope()
+    if (refreshState.isRefreshing) {
         LaunchedEffect(true) {
-            onRefresh()
+            launch {
+                snack?.showSnackbar("Refreshing...", duration = SnackbarDuration.Short)
+            }
+            when (val res = onRefresh()) {
+                is Result.Success -> scope.launch {
+                    snack?.showSnackbar(
+                        "Refreshed successfully",
+                        duration = SnackbarDuration.Short
+                    )
+                }
+
+                is Result.Error -> scope.launch {
+                    snack?.showSnackbar(
+                        "Failed to refresh: ${res.error.message}",
+                        duration = SnackbarDuration.Short
+                    )
+                }
+            }
             refreshState.endRefresh()
         }
     }
@@ -138,7 +163,9 @@ fun LazyScreen(
                     contentPadding = PaddingValues(horizontal = 32.dp),
                     modifier = Modifier
                         .fillMaxWidth(),
-                    content = content
+                    content = {
+                        content(snack)
+                    }
                 )
             }
             DraggableScrollBar(
@@ -153,8 +180,8 @@ fun LazyScreen(
                 onScrollJump = {
                     state.animateScrollToItem(
                         (it * state.layoutInfo.totalItemsCount)
-                        .roundToInt()
-                        .coerceIn(0, state.layoutInfo.totalItemsCount),
+                            .roundToInt()
+                            .coerceIn(0, state.layoutInfo.totalItemsCount),
                     )
                 }
             )

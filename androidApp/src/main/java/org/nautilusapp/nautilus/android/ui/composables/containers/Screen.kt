@@ -4,17 +4,16 @@ import androidx.compose.animation.core.animateIntAsState
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.SnackbarDuration
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Surface
 import androidx.compose.material3.pulltorefresh.PullToRefreshContainer
 import androidx.compose.material3.pulltorefresh.rememberPullToRefreshState
@@ -23,6 +22,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.graphics.Color
@@ -31,6 +31,9 @@ import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.unit.dp
+import kotlinx.coroutines.launch
+import org.nautilusapp.nautilus.DataResult
+import org.nautilusapp.nautilus.Result
 import org.nautilusapp.nautilus.android.ui.composables.indicators.PullRefreshIndicator
 import kotlin.math.roundToInt
 
@@ -40,12 +43,14 @@ fun Screen(content: @Composable () -> Unit) {
     val focusManager = LocalFocusManager.current
     val interactionSource = remember { MutableInteractionSource() }
 
-    Surface(color = MaterialTheme.colorScheme.background, modifier = Modifier
-        .fillMaxSize()
-        .clickable(
-            indication = null,
-            interactionSource = interactionSource
-        ) { focusManager.clearFocus() },
+    Surface(
+        color = MaterialTheme.colorScheme.background,
+        modifier = Modifier
+            .fillMaxSize()
+            .clickable(
+                indication = null,
+                interactionSource = interactionSource
+            ) { focusManager.clearFocus() },
     ) {
 
         Column(
@@ -60,8 +65,9 @@ fun Screen(content: @Composable () -> Unit) {
 
 @Composable
 fun BlackScreen(content: @Composable () -> Unit) {
-    Surface(color = Color.Black, modifier = Modifier
-        .fillMaxSize()
+    Surface(
+        color = Color.Black, modifier = Modifier
+            .fillMaxSize()
     ) {
         Column(
             modifier = Modifier
@@ -73,9 +79,14 @@ fun BlackScreen(content: @Composable () -> Unit) {
 }
 
 const val PULL_REFRESH_HEIGHT = 16
-@OptIn(ExperimentalMaterialApi::class, ExperimentalMaterial3Api::class)
+
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun Screen(onRefresh: suspend () -> Unit, content: @Composable () -> Unit) {
+fun Screen(
+    onRefresh: suspend () -> DataResult<*>,
+    snack: SnackbarHostState? = null,
+    content: @Composable (SnackbarHostState?) -> Unit
+) {
     val focusManager = LocalFocusManager.current
     val interactionSource = remember { MutableInteractionSource() }
 
@@ -84,20 +95,39 @@ fun Screen(onRefresh: suspend () -> Unit, content: @Composable () -> Unit) {
     val scrollState = rememberScrollState()
 
     val willRefresh by remember {
-        derivedStateOf{refreshState.progress > 1f}
+        derivedStateOf { refreshState.progress > 1f }
     }
 
     val haptics = LocalHapticFeedback.current
 
     LaunchedEffect(willRefresh) {
-        if(willRefresh) {
+        if (willRefresh) {
             haptics.performHapticFeedback(HapticFeedbackType.LongPress)
         }
     }
 
-    if(refreshState.isRefreshing) {
+    val scope = rememberCoroutineScope()
+    if (refreshState.isRefreshing) {
         LaunchedEffect(true) {
-            onRefresh()
+            launch {
+                snack?.showSnackbar("Refreshing...", duration = SnackbarDuration.Short)
+            }
+            when (val res = onRefresh()) {
+                is Result.Success -> scope.launch {
+                    snack?.showSnackbar(
+                        "Refreshed successfully",
+                        duration = SnackbarDuration.Short
+                    )
+                }
+
+                is Result.Error -> scope.launch {
+                    println(res.error)
+                    snack?.showSnackbar(
+                        "Failed to refresh: ${res.error.message}",
+                        duration = SnackbarDuration.Short
+                    )
+                }
+            }
             refreshState.endRefresh()
         }
     }
@@ -115,7 +145,7 @@ fun Screen(onRefresh: suspend () -> Unit, content: @Composable () -> Unit) {
     Surface(color = MaterialTheme.colorScheme.background, modifier = Modifier
         .fillMaxSize()
         .nestedScroll(refreshState.nestedScrollConnection)
-        .padding(top = (PULL_REFRESH_HEIGHT / 2).dp)
+//        .padding(top = (PULL_REFRESH_HEIGHT / 2).dp)
         .clickable(
             indication = null,
             interactionSource = interactionSource
@@ -139,9 +169,9 @@ fun Screen(onRefresh: suspend () -> Unit, content: @Composable () -> Unit) {
                 .fillMaxSize()
                 .padding(horizontal = 16.dp)
         ) {
-            Spacer(modifier = Modifier.height(16.dp))
-            content()
-            Spacer(modifier = Modifier.height(16.dp))
+//            Spacer(modifier = Modifier.height(16.dp))
+            content(snack)
+//            Spacer(modifier = Modifier.height(16.dp))
         }
     }
 }

@@ -11,11 +11,14 @@ import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import org.nautilusapp.nautilus.DataHandler
+import org.nautilusapp.nautilus.DataResult
 import org.nautilusapp.nautilus.Result
+import org.nautilusapp.nautilus.SyncResult
 import org.nautilusapp.nautilus.android.SharedPrefKeys
 import org.nautilusapp.nautilus.android.ui.theme.ColorTheme
 import org.nautilusapp.nautilus.attendance.MeetingLog
 import org.nautilusapp.nautilus.userauth.Subteam
+import org.nautilusapp.nautilus.userauth.TokenUser
 import org.nautilusapp.network.Organization
 
 class MainViewModel(
@@ -36,11 +39,13 @@ class MainViewModel(
         }
     }
 
-    val organizations = listOf(Organization("Team 2658", "https://staging.team2658.org")) //TODO: get from server
+    val organizations =
+        listOf(Organization("Team 2658", "https://staging.team2658.org")) //TODO: get from server
 
     private val storedURL = sharedPref.getString(SharedPrefKeys.URL, null)
 
-    private val initialOrg = organizations.firstOrNull { it.url == storedURL } ?: organizations.first()
+    private val initialOrg =
+        organizations.firstOrNull { it.url == storedURL } ?: organizations.first()
     var organization by mutableStateOf(initialOrg)
         private set
 
@@ -64,9 +69,9 @@ class MainViewModel(
 
     fun login(username: String, password: String, onError: (String) -> Unit) {
         viewModelScope.launch {
-            when(val result = dataHandler.users.login(username, password)) {
+            when (val result = dataHandler.users.login(username, password)) {
                 is Result.Success -> user = result.data.also { sync() }
-                is Result.Error -> onError(result.error)
+                is Result.Error -> onError(result.error.message)
             }
         }
     }
@@ -100,9 +105,9 @@ class MainViewModel(
                 phone,
                 grade
             )
-            when(res) {
+            when (res) {
                 is Result.Success -> user = res.data
-                is Result.Error -> errorCallback(res.error)
+                is Result.Error -> errorCallback(res.error.message)
             }
         }
     }
@@ -114,9 +119,9 @@ class MainViewModel(
                 verifiedBy = meetingInfo.verifiedBy,
                 time = System.currentTimeMillis(),
             )
-            when(res) {
+            when (res) {
                 is Result.Success -> onSuccess().also { user = res.data }
-                is Result.Error -> onError(res.error)
+                is Result.Error -> onError(res.error.message)
             }
         }
     }
@@ -127,16 +132,17 @@ class MainViewModel(
                 user?.username ?: "",
                 password
             ).let {
-                    when(it) {
-                        is Result.Success -> {
-                            val res = dataHandler.users.deleteMe()
-                            when(res) {
-                                is Result.Success -> onComplete(true, null).also { user = null }
-                                is Result.Error -> onComplete(false, res.error)
-                            }
+                when (it) {
+                    is Result.Success -> {
+                        val res = dataHandler.users.deleteMe()
+                        when (res) {
+                            is Result.Success -> onComplete(true, null).also { user = null }
+                            is Result.Error -> onComplete(false, res.error.message)
                         }
-                        is Result.Error -> {}
                     }
+
+                    is Result.Error -> {}
+                }
             }
         }
     }
@@ -144,7 +150,7 @@ class MainViewModel(
     fun sync() {
         viewModelScope.launch {
             dataHandler.sync().let {
-                when(val me = it.user.myUser) {
+                when (val me = it.user.myUser) {
                     is Result.Success -> user = me.data
                     is Result.Error -> println(me.error)
                 }
@@ -152,18 +158,18 @@ class MainViewModel(
         }
     }
 
-    suspend fun coroutineSync() {
-        dataHandler.sync().let {
-            when(val me = it.user.myUser) {
+    suspend fun coroutineSync(): SyncResult {
+        return dataHandler.sync().also {
+            when (val me = it.user.myUser) {
                 is Result.Success -> user = me.data
                 is Result.Error -> println(me.error)
             }
         }
     }
 
-    suspend fun syncMe() {
-        dataHandler.users.refreshLoggedIn().let {
-            when(it) {
+    suspend fun syncMe(): DataResult<TokenUser> {
+        return dataHandler.users.refreshLoggedIn().also {
+            when (it) {
                 is Result.Success -> user = it.data
                 is Result.Error -> println(it.error)
             }
@@ -173,12 +179,17 @@ class MainViewModel(
     fun sync(onProgressChanged: (busy: Boolean, success: Boolean?) -> Unit) {
         onProgressChanged(true, null)
         viewModelScope.launch {
-            println(connectivityManager?.getNetworkCapabilities(connectivityManager.activeNetwork)?.hasCapability(NetworkCapabilities.NET_CAPABILITY_INTERNET))
-            if(connectivityManager?.getNetworkCapabilities(connectivityManager.activeNetwork)?.hasCapability(NetworkCapabilities.NET_CAPABILITY_INTERNET) != true) {
+            println(
+                connectivityManager?.getNetworkCapabilities(connectivityManager.activeNetwork)
+                    ?.hasCapability(NetworkCapabilities.NET_CAPABILITY_INTERNET)
+            )
+            if (connectivityManager?.getNetworkCapabilities(connectivityManager.activeNetwork)
+                    ?.hasCapability(NetworkCapabilities.NET_CAPABILITY_INTERNET) != true
+            ) {
                 return@launch onProgressChanged(false, false)
             }
             dataHandler.sync().let {
-                when(val me = it.user.myUser) {
+                when (val me = it.user.myUser) {
                     is Result.Success -> user = me.data
                     is Result.Error -> {
                         println(me.error)

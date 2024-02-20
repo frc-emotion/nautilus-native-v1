@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Error
+import androidx.compose.material.icons.filled.Info
 import androidx.compose.material.icons.filled.Warning
 import androidx.compose.material3.AssistChipDefaults
 import androidx.compose.material3.Card
@@ -52,6 +53,20 @@ fun WarningIndicator(text: String) {
     }
 }
 
+@Composable
+fun InfoIndicator(text: String) {
+    Card(
+        shape = RoundedCornerShape(4.dp),
+        colors = CardDefaults.cardColors(containerColor = Color(0xFFffe017)),
+    ) {
+        Row(modifier = Modifier.padding(vertical = 4.dp, horizontal = 8.dp), verticalAlignment = Alignment.CenterVertically) {
+            Icon(Icons.Default.Info, contentDescription = "Edit", tint = Color.Black, modifier = Modifier.size(AssistChipDefaults.IconSize))
+            Spacer(Modifier.size(4.dp))
+            Text(text = text, color = Color.Black)
+        }
+    }
+}
+
 @Preview(apiLevel = 33)
 @Composable
 fun ErrorIndicatorPreview() {
@@ -60,6 +75,8 @@ fun ErrorIndicatorPreview() {
            ErrorIndicator("This is an error")
            Spacer(Modifier.size(16.dp))
            WarningIndicator("This is a warning")
+           Spacer(Modifier.size(16.dp))
+           InfoIndicator("This is an info")
        }
    }
 }

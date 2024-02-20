@@ -9,25 +9,25 @@ import androidx.compose.runtime.getValue
 import androidx.navigation.NavController
 import androidx.navigation.NavDestination.Companion.hierarchy
 import androidx.navigation.compose.currentBackStackEntryAsState
-import org.nautilusapp.nautilus.android.viewmodels.MainViewModel
 import org.nautilusapp.nautilus.toCapitalized
 import org.nautilusapp.nautilus.userauth.AccountType
+import org.nautilusapp.nautilus.userauth.UserPermissions
 
 @Composable
-fun NavBar(navController: NavController, viewModel: MainViewModel) {
+fun NavBar(navController: NavController, accountType: AccountType?, permissions: UserPermissions?) {
     val backStackEntry by navController.currentBackStackEntryAsState()
     val currentDestination = backStackEntry?.destination
     val items = when {
-        (viewModel.user?.accountType == AccountType.ADMIN || viewModel.user?.accountType == AccountType.SUPERUSER || viewModel.user?.accountType == AccountType.LEAD) -> listOf(
+        (accountType == AccountType.ADMIN || accountType == AccountType.SUPERUSER || accountType == AccountType.LEAD) -> listOf(
             AppScreens.HOME,
 //            AppScreens.SCOUTING,
-            AppScreens.LEADS,
+//            AppScreens.LEADS,
             AppScreens.SETTINGS
         )
 
-        (viewModel.user?.permissions?.generalScouting == true)
-                || (viewModel.user?.permissions?.pitScouting == true)
-                || (viewModel.user?.permissions?.viewScoutingData == true)
+        (permissions?.generalScouting == true)
+                || (permissions?.pitScouting == true)
+                || (permissions?.viewScoutingData == true)
         -> listOf(
             AppScreens.HOME,
 //            AppScreens.SCOUTING,

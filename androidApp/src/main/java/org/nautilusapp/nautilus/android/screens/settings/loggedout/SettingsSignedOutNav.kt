@@ -37,9 +37,13 @@ fun NotLoggedInScreen(
             }
         }
         composable(SignedOutScreens.REGISTER.name) {
-            RegisterScreen(onRegister) {
-                navController.navigate(SignedOutScreens.LOGIN.name)
-            }
+            RegisterScreen(
+                onRegister = onRegister,
+                onLogin = { navController.navigate(SignedOutScreens.LOGIN.name) },
+                organization = organization,
+                orgs = orgs,
+                onSetOrganization = setOrganization
+            )
         }
     }
 }

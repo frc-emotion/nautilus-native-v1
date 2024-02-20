@@ -20,7 +20,11 @@ import androidx.activity.compose.setContent
 import androidx.activity.viewModels
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Snackbar
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -156,20 +160,26 @@ class MainActivity : ComponentActivity() {
                 primaryViewModel.getDataHandler().bgSync()
             }
 
+            val snack = remember { SnackbarHostState() }
+
             MainTheme(preference =
                 primaryViewModel.theme
             ) {
                 LoadingSpinner(isBusy)
                 if(manifestOk == true) {
                     if (authState(primaryViewModel.user) == AuthState.LOGGED_IN && rootURL?.isNotBlank() == true) {
-                        LoggedInNavigator(primaryViewModel, dataHandler, nfcViewmodel)
+                        LoggedInNavigator(primaryViewModel, dataHandler, nfcViewmodel, snack)
                     } else {
                         if(rootURL?.isBlank() == true) {
                             dataHandler.users.logout()
                         }
-                        Scaffold { padding ->
+                        Scaffold(
+                            snackbarHost = { SnackbarHost(snack) {
+                                Snackbar(snackbarData = it, containerColor = cardColor(), contentColor = MaterialTheme.colorScheme.onSurface)
+                            } },
+                        ) { padding ->
                             Box(modifier = Modifier.padding(padding)) {
-                                SettingsScreen(primaryViewModel)
+                                SettingsScreen(primaryViewModel, snack = snack)
                             }
                         }
                     }

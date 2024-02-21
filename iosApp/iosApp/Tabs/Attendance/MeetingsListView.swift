@@ -10,8 +10,8 @@ import SwiftUI
 import shared
 
 struct MeetingsListView: View {
+    @EnvironmentObject var env: EnvironmentModel
     @State var meetings: [shared.Meeting]?
-    @State var user: shared.User
     @State private var showingAlert = false
     @State var alertMessage = ""
     @Binding var isPresented: Bool
@@ -21,7 +21,8 @@ struct MeetingsListView: View {
         NavigationStack {
             List {
                 NavigationLink {
-                    MeetingCreationView(user: user, reloader: $promptReload)
+                    MeetingCreationView(reloader: $promptReload)
+                        .environmentObject(env)
                 } label: {
                     HStack {
                         Image(systemName: "plus")
@@ -36,7 +37,7 @@ struct MeetingsListView: View {
                         // list is reversed so most recent meetings are on top
                         ForEach(meetings!.reversed(), id: \.self) { meeting in
                             NavigationLink {
-                                MeetingView(user: user, meeting: meeting)
+                                MeetingView(user: env.user!, meeting: meeting)
                             } label: {
                                 MeetingBar(meeting: meeting)
                                     .swipeActions(edge: .trailing) {
@@ -47,9 +48,10 @@ struct MeetingsListView: View {
                                         //                                                .tint(.purple)
                                         //                                        }
                                         Button(role: .destructive) {
-//                                            let response = try await
+                                            //                                            let response = try await
                                             Task {
-                                                let _ = try await shared.EmotionClient().deleteMeeting(id: meeting._id, user: user)
+                                                //                                                let _ = try await shared.EmotionClient().deleteMeeting(id: meeting._id, user: user)
+                                                try await env.dh.attendance.delete(id: meeting._id)
                                                 promptReload = true
                                             }
                                         } label: {
@@ -58,12 +60,12 @@ struct MeetingsListView: View {
                                     }
                             }
                         }
-//                        NavigationLink {
-//                            // ArchivedMeetingsListView()
-//                        } label: {
-//                            Text("Archived")
-//                                .font(.body.weight(.bold))
-//                        }
+                        //                        NavigationLink {
+                        //                            // ArchivedMeetingsListView()
+                        //                        } label: {
+                        //                            Text("Archived")
+                        //                                .font(.body.weight(.bold))
+                        //                        }
                     }
                 }
             }
@@ -72,14 +74,7 @@ struct MeetingsListView: View {
             .toolbar {
                 ToolbarItem(placement: .topBarLeading) {
                     Button {
-                        Task {
-                            guard let response = try await shared.EmotionClient().getMeetings(user: user) else {alertMessage = "Unable to get list of meetings. Please try again later."
-                                showingAlert = true
-                                return
-                            }
-                            
-                            meetings = response
-                        }
+                        promptReload = true
                     } label: {
                         Image(systemName: "arrow.clockwise")
                             .rotationEffect(.degrees(30.00))
@@ -95,14 +90,7 @@ struct MeetingsListView: View {
             }
         }
         .onAppear() {
-            Task {
-                guard let response = try await shared.EmotionClient().getMeetings(user: user) else {alertMessage = "Unable to get list of meetings. Please try again later."
-                    showingAlert = true
-                    return
-                }
-                
-                meetings = response
-            }
+            promptReload = true
         }
         .alert(alertMessage, isPresented: $showingAlert) {
             Button("Ok", role: .cancel) {}
@@ -110,19 +98,17 @@ struct MeetingsListView: View {
         .onChange(of: promptReload) { _ in
             if (promptReload == true) {
                 Task {
-                    guard let response = try await shared.EmotionClient().getMeetings(user: user) else {alertMessage = "Unable to get list of meetings. Please try again later."
-                        showingAlert = true
-                        return
+                    let _ = env.dh.attendance.getAll { newMeetings in
+                        meetings = newMeetings
+                        promptReload = false
                     }
-                    
-                    meetings = response
+                    promptReload = false
                 }
-                promptReload = false
             }
         }
     }
 }
 
 #Preview {
-    MeetingsListView(user: HelpfulVars().testuser, isPresented: .constant(true))
+    MeetingsListView(isPresented: .constant(true))
 }

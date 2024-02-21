@@ -10,7 +10,9 @@ import SwiftUI
 import shared
 
 struct UserView: View {
-    var user: shared.User
+    // TODO: This needs to work for both Token & non-token users
+    
+    var user: shared.TokenUser
 
     
     var body: some View {
@@ -28,19 +30,23 @@ struct UserView: View {
                     }
                 }
                 VStack(alignment: .leading) {
-                    Text("\(user.firstName) \(user.lastName)")
+                    Text("\(user.firstname) \(user.lastname)")
                         .font(.title)
                     
                     HStack {
-                        Text(user.customRoleMessage ?? (user.accountType.value >= 2 ? "\(user.subteam.description().capitalized) Team Lead" : "\(user.subteam.description().capitalized) Team Member"))
-                        Spacer()
-                        switch (user.grade) {
-                        case 9: Text("Freshman")
-                        case 10: Text("Sophomore")
-                        case 11: Text("Junior")
-                        case 12: Text("Senior")
-                        default: Text("")
+                        if (user.subteam != nil) {
+                            Text((user.accountType.value >= 2 ? "\(user.subteam!.description().capitalized) Team Lead" : "\(user.subteam!.description().capitalized) Team Member"))
+                        } else {
+                            Text("No subteam")
                         }
+//                        Spacer()
+//                        switch (user.grade) {
+//                        case 9: Text("Freshman")
+//                        case 10: Text("Sophomore")
+//                        case 11: Text("Junior")
+//                        case 12: Text("Senior")
+//                        default: Text("")
+//                        }
                     }
                     .font(.subheadline).foregroundColor(.secondary)
                 }

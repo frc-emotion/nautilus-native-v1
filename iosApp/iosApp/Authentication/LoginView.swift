@@ -11,11 +11,10 @@ import SwiftUI
 import shared
 
 struct LoginView: View {
-    @EnvironmentObject var vm: UserStateViewModel
+    @EnvironmentObject var env: EnvironmentModel
     @State var username = ""
     @State var password = ""
     @State var loginErrorMsg = ""
-    let client = shared.EmotionClient()
     
     var body: some View {
         NavigationStack {
@@ -63,20 +62,8 @@ struct LoginView: View {
                 
                 Button (action: {
                     Task {
-                        let result = await vm.signIn(username: username, password: password)
-                        switch result {
-                        case .success(_):
-                            loginErrorMsg = ""
-                            // do nothing
-                            break
-                        case .failure(let error):
-                            switch error {
-                            case .signInError(let message):
-                                loginErrorMsg = message
-                                break
-                            default:
-                                print("Unknown error type")
-                            }
+                        let _ = try await env.dh.users.login(username: username, password: password) { err in
+                            loginErrorMsg = err.message
                         }
                     }
                 }) {

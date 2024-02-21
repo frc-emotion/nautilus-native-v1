@@ -19,12 +19,16 @@ struct UserBar: View {
                 .frame(width: 60, height: 60)
                 .clipShape(Circle())
             VStack(alignment: .leading, spacing: 2.0) {
-                Text("\(user.firstName) \(user.lastName)")
+                Text("\(user.firstname) \(user.lastname)")
                     .font(.title)
                 
-                Text(user.customRoleMessage ?? (user.accountType.value >= 2 ? "\(user.subteam.description().capitalized) Team Lead" : "\(user.subteam.description().capitalized) Team Member"))
-                    .font(.subheadline)
-                    .foregroundColor(Color.gray)
+                if (user.subteam != nil) {
+                    Text((user.accountType.value >= 2 ? "\(user.subteam!.description().capitalized) Team Lead" : "\(user.subteam!.description().capitalized) Team Member"))
+                        .font(.subheadline)
+                        .foregroundColor(Color.gray)
+                } else {
+                    Text("No subteam")
+                }
             }
         }
     }

@@ -11,13 +11,13 @@ import shared
 
 struct DirectoryView: View {
     // MARK: - State Properties
-    @State var users: [shared.User]?
+    @State var users: [shared.UserWithoutToken]?
     @State private var popoverShown = false
     @State private var errorLoadingUsers = false
     @State private var alertBoxShowing = false
-    @State private var selectedUser: shared.User?
+    @State private var selectedUser: shared.UserWithoutToken?
     //    @State private var alertMsg = ""
-    @EnvironmentObject var vm: UserStateViewModel
+    @EnvironmentObject var env: EnvironmentModel
     // MARK: - Sort Users by Subteam
     //    var subteamSortedUsers: [shared.User]? {
     //        if (users != nil) {
@@ -27,12 +27,12 @@ struct DirectoryView: View {
     //        }
     //    }
     
-    var subteamSortedUsers: [String: [shared.User]]? {
+    var subteamSortedUsers: [String: [shared.UserWithoutToken]]? {
         if let users = users {
-            var sortedUsers = users.sorted { $0.lastName.lowercased() < $1.lastName.lowercased() }
+            var sortedUsers = users.sorted { $0.lastname.lowercased() < $1.lastname.lowercased() }
             sortedUsers.sort { $0.accountType.value > $1.accountType.value }
-            sortedUsers.sort { $0.subteam.description() < $1.subteam.description() }
-            return Dictionary(grouping: sortedUsers, by: { $0.subteam.description() })
+            sortedUsers.sort { $0.subteam?.description() ?? "" < $1.subteam?.description() ?? "" }
+            return Dictionary(grouping: sortedUsers, by: { $0.subteam?.description() ?? "" })
         } else {
             return nil
         }
@@ -53,14 +53,13 @@ struct DirectoryView: View {
         }
         .navigationSplitViewStyle(.balanced)
         .onAppear() {
-            Task {
-                guard let response = try await shared.EmotionClient().getUsers(user: vm.user!) else {
+            let _ = env.dh.users.loadAll(onCompleteSync: { res in
+                if res.isEmpty {
                     errorLoadingUsers = true
-                    return
+                } else {
+                    users = res
                 }
-                errorLoadingUsers = false
-                users = response
-            }
+            })
         }
     }
     
@@ -84,7 +83,7 @@ struct DirectoryView: View {
                         if let nextSort = subteamSortedUsers[subteam.description()] {
                             Section(header: Text(subteam.description())) {
                                 ForEach(nextSort, id: \.self) { user in
-                                    DirectoryBar(user: user)
+                                    DirectoryBar(user: env.user)
                                 }
                             }
                         }
@@ -98,10 +97,10 @@ struct DirectoryView: View {
     // MARK: - Previews
     struct DirectoryView_Previews: PreviewProvider {
         static var previews: some View {
-            DirectoryView().environmentObject({ () -> UserStateViewModel in
-                let vm = UserStateViewModel()
-                vm.user = HelpfulVars().testuser
-                return vm
+            DirectoryView().environmentObject({ () -> EnvironmentModel in
+                let env = EnvironmentModel()
+                env.user = HelpfulVars().testuser
+                return env
             }() )
         }
     }

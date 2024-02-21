@@ -2,16 +2,16 @@ import SwiftUI
 import shared
 
 struct SettingsView: View {
-    @EnvironmentObject var vm: UserStateViewModel
+    @EnvironmentObject var env: EnvironmentModel
     
     var body: some View {
         NavigationStack {
             List {
                 Section {
                     NavigationLink {
-                        UserView(user: vm.user!)
+                        UserView(user: env.user!)
                     } label: {
-                        UserBar(user: vm.user!)
+                        UserBar(user: env.user!)
                     }
 //                    Not yet implemented
 //                    NavigationLink {
@@ -31,7 +31,7 @@ struct SettingsView: View {
                 Section {
                     Button (action: {
                         Task {
-                            await vm.signOut()
+                            env.dh.users.logout()
                         }
                     }) {
                         Text("Log Out")
@@ -47,10 +47,10 @@ struct SettingsView: View {
 
 struct SettingsView_Previews: PreviewProvider {
     static var previews: some View {
-        SettingsView().environmentObject({ () -> UserStateViewModel in
-            let vm = UserStateViewModel()
-            vm.user = HelpfulVars().testuser
-            return vm
+        SettingsView().environmentObject({ () -> EnvironmentModel in
+            let env = EnvironmentModel()
+            env.user = HelpfulVars().testuser
+            return env
         }() )
     }
 }

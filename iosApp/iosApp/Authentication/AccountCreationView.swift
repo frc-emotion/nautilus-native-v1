@@ -20,8 +20,7 @@ import shared
 //}
 
 struct AccountCreationView: View {
-    
-    @EnvironmentObject var vm: UserStateViewModel
+    @EnvironmentObject var env: EnvironmentModel
     @State var firstname = ""
     @State var lastname = ""
     @State var email = ""
@@ -174,21 +173,8 @@ struct AccountCreationView: View {
                                 break
                             }
                             
-                            // result of call is unused because UserStateViewModel will automatically navigate away once the user account is created.
-                            let response = await vm.createAccount(firstname: firstname, lastname: lastname, username: username, email: email, password: password, subteam: subteam, phone: phone, grade: Int32(grade) ?? 0)
-                            
-                            switch response {
-                            case .success(_):
-                                errorMsg = ""
-                                // do nothing
-                                break
-                            case .failure(let error):
-                                switch error {
-                                case .createAccountError(let message):
-                                    errorMsg = message
-                                default:
-                                    errorMsg = "Unknown error"
-                                }
+                            let _ = try await env.dh.users.register(username: username, password: password, email: email, firstName: firstname, lastName: lastname, subteam: subteam, phone: phone, grade: Int32(grade) ?? 0) { err in
+                                errorMsg = err.message
                             }
                         } else {
                             errorMsg = "Passwords do not match"

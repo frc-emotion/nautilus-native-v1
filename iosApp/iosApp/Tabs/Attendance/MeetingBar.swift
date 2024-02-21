@@ -27,5 +27,5 @@ struct MeetingBar: View {
 }
 
 #Preview {
-    MeetingBar(meeting: Meeting(_id: "65711ee971a64fece9e56895", startTime: 1701910800000, endTime: 1701918000000, type: "meeting", description: "first general meeting", value: 2, createdBy: "640f5ba96c4bc4abede3096e"))
+    MeetingBar(meeting: shared.Meeting(_id: "0", startTime: 0, endTime: 3600, type: "general", description: "sample meeting", value: 2, createdBy: "0", attendancePeriod: "0", isArchived: false, username: "testuser1"))
 }

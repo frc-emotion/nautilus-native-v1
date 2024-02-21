@@ -65,11 +65,11 @@ struct MeetingView: View {
         .padding(.top)
         .onAppear() {
             Task {
-                guard let response = try await shared.EmotionClient().getUserById(id: meeting.createdBy, user: user) else {
-                    creatorName = "Unknown"
-                    return
-                }
-                creatorName = "\(response.firstName) \(response.lastName)"
+//                guard let response = try await shared.EmotionClient().getUserById(id: meeting.createdBy, user: user) else {
+//                    creatorName = "Unknown"
+//                    return
+//                }
+//                creatorName = "\(response.firstName) \(response.lastName)"
             }
         }
     }

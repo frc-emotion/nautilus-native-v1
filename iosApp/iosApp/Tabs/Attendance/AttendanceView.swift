@@ -26,8 +26,12 @@ struct AttendanceView: View {
     @EnvironmentObject var env: EnvironmentModel
 
     var body: some View {
-        let hours: Int32 = if env.user!.attendance.isEmpty {0} else {env.user!.attendance[env.user!.attendance.count - 1].totalHoursLogged}
+        let att = env.user?.attendance.values.reversed().first
+        let hours = att?.totalHoursLogged ?? 0
         let progress = Double(hours) / 36
+        let test: String? = env.user?.attendance.keys.first
+        let attObj = env.user?.attendance
+        let meow: Int32 = if(test == nil || attObj == nil ) { 0 } else { attObj![test!]?.totalHoursLogged ?? 0 }
         
         NavigationStack {
             VStack {
@@ -59,20 +63,20 @@ struct AttendanceView: View {
                 }
             }
             
-            .onChange(of: data) { newData in
-                if newData != "" {
-                    Task {
-                        let response = try await env.dh.attendance.attend(meetingId: newData, time: Int64((NSDate().timeIntervalSince1970) * 1000), verifiedBy: nil) { errorMsgIn in
-                            Task {
-                                let json = try JSON(data: errorMsgIn)
-                                errorMsg = "Error: " + json["message"].stringValue
-                            }
-                        } onSuccess: {
-                            <#code#>
-                        }
-                    }
-                }
-            }
+//            .onChange(of: data) { newData in
+//                if newData != "" {
+//                    Task {
+//                        let response = try await env.dh.attendance.attend(meetingId: newData, time: Int64((NSDate().timeIntervalSince1970) * 1000), verifiedBy: nil) { errorMsgIn in
+//                            Task {
+//                                let json = try JSON(data: errorMsgIn)
+//                                errorMsg = "Error: " + json["message"].stringValue
+//                            }
+//                        } onSuccess: {
+//                            
+//                        }
+//                    }
+//                }
+//            }
             .navigationBarTitleDisplayMode(.inline)
             .navigationTitle("Attendance")
             .toolbar {
@@ -84,14 +88,14 @@ struct AttendanceView: View {
                 //                        Image(systemName: "clock.arrow.circlepath")
                 //                    }
                 //                }
-                ToolbarItem(placement: .topBarTrailing) {
-                    Button {
-                        // refresh
-                    } label: {
-                        Image(systemName: "arrow.clockwise")
-                            .rotationEffect(.degrees(30.00))
-                    }
-                }
+//                ToolbarItem(placement: .topBarTrailing) {
+//                    Button {
+//                        // refresh
+//                    } label: {
+//                        Image(systemName: "arrow.clockwise")
+//                            .rotationEffect(.degrees(30.00))
+//                    }
+//                }
                 // leads: view meetings
                 ToolbarItem(placement: .topBarTrailing) {
                     if (env.user!.accountType == shared.AccountType.lead || env.user!.accountType == shared.AccountType.admin || env.user!.accountType == shared.AccountType.superuser) {
@@ -102,7 +106,8 @@ struct AttendanceView: View {
                         }
                         .popover(isPresented: $meetingsPopoverDisplayed, arrowEdge: .bottom) {
                             NavigationView {
-                                MeetingsListView(user: env.user!, isPresented: $meetingsPopoverDisplayed)
+                                MeetingsListView(isPresented: $meetingsPopoverDisplayed)
+                                    .environmentObject(env)
                             }
                         }
                     }

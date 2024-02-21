@@ -18,9 +18,8 @@ class EnvironmentModel: ObservableObject {
     @Published var errorMessage: String?
     @Published var errorCode: Int?
     
-    
     init() {
-        dh = shared.DataHandler(routeBase: "staging.team2658.org", databaseDriverFactory: IosDatabaseDriver()) {
+        dh = shared.DataHandler(routeBase: "https://staging.team2658.org", databaseDriverFactory: IosDatabaseDriver()) {
             return KeychainSwift().get("userToken")
         } setToken: { newToken in
             if (newToken != nil) {
@@ -36,15 +35,7 @@ class EnvironmentModel: ObservableObject {
         })
     }
     
-//    func refreshUser() async throws -> String {
-//        guard let newUser = try await dh.users.refreshLoggedIn() else {
-//            return ""
-//        }
-//        user = newUser
-//    }
-    
     func refreshUser() async throws {
         user = try await dh.users.refreshLoggedIn(onError: {e in self.errorMessage = e.message; self.errorCode = e.code?.intValue})
     }
-    
 }

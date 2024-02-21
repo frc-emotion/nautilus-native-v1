@@ -1,3 +1,5 @@
+@file:Suppress("unused")
+
 package org.nautilusapp.nautilus
 
 import app.cash.sqldelight.adapter.primitive.IntColumnAdapter
@@ -36,7 +38,7 @@ import org.nautilusapp.openapi.MANIFEST
 import org.nautilusapp.openapi.manifestCompat
 
 class DataHandler(
-    private val routeBase: String,
+    routeBase: String,
     databaseDriverFactory: DatabaseDriverFactory,
     private val getToken: () -> String?,
     private val setToken: (String?) -> Unit
@@ -107,7 +109,8 @@ class DataHandler(
      * @return **true** if the server manifest matches the local manifest or if there is an error, **false** if it does not
      */
     suspend fun manifestOk(): Boolean {
-        val manifest = Result.unwrapOrNull(network.getAppManifest()) ?: return true
+//        val manifest = Result.unwrapOrNull(network.getAppManifest()) ?: return true
+        val manifest = network.getAppManifest().unwrapOrNull() ?: return true
         return manifestCompat(
             compare = MANIFEST,
             manifest = manifest,
@@ -145,6 +148,7 @@ class DataHandler(
                 }
             }
         }
+
 
         override suspend fun register(
             username: String,
@@ -239,6 +243,7 @@ class DataHandler(
             }
         }
 
+
         override fun loadLoggedIn(): DataResult<TokenUser> {
             val token = getToken()
                 ?: return Result.Error(
@@ -260,6 +265,7 @@ class DataHandler(
                 }
             }
         }
+
 
         private suspend fun syncUsers(): DataResult<List<User.WithoutToken>> {
             return withContext(Dispatchers.IO) {
@@ -374,7 +380,7 @@ class DataHandler(
     }
 
     val attendance = object : AttendanceNamespace {
-        override suspend fun sync(): UploadDownloadResult<List<DataResult<TokenUser>>, DataResult<List<Meeting>>> {
+        override suspend fun sync(): AttendanceResult {
             return withContext(Dispatchers.IO) {
                 val usr = user()
                 val downloadRes = scope.async {
@@ -420,7 +426,7 @@ class DataHandler(
                 val uploadRes = async {
                     uploadCachedAttendance()
                 }
-                UploadDownloadResult(upload = uploadRes.await(), download = downloadRes.await())
+                AttendanceResult(upload = uploadRes.await(), download = downloadRes.await())
             }
         }
 
@@ -841,7 +847,7 @@ class DataHandler(
 
     val crescendo = object : CrescendoNamespace {
 
-        override suspend fun sync(): UploadDownloadResult<List<DataResult<Crescendo>>, DataResult<List<Crescendo>>> {
+        override suspend fun sync(): CrescendoResult {
             return withContext(Dispatchers.IO) {
                 val usr = user()
                 val downloadRes =
@@ -928,7 +934,7 @@ class DataHandler(
                         }
                     }
                 }
-                UploadDownloadResult(upload = uploadRes, download = downloadRes)
+                CrescendoResult(upload = uploadRes, download = downloadRes)
             }
         }
 
@@ -949,22 +955,6 @@ class DataHandler(
             crescendoDB.deleteAll()
         }
 
-//        override suspend fun delete(id: String): DataResult<Unit> {
-//            withContext(Dispatchers.IO) {
-//                when(val res = network.crescendo.del(user, id)) {
-//                    is Result.Success -> {
-//                        crescendoDB.delete(id)
-//                        Result.Success(Unit)
-//                    }
-//                    is Result.Error -> when(val error = res.error) {
-//                        is KtorError.CLIENT -> Result.Error(Error("Error ${error.code}: ${error.message}", error.code))
-//                        KtorError.IO -> Result.Error(Error("IO error. Please make sure you are connected to the internet."))
-//                        is KtorError.SERVER -> Result.Error(Error("Server error ${error.code}: ${error.message}", error.code))
-//                        KtorError.AUTH -> Result.Error(Error("Authentication error: Your login session is invalid. Please log out and log back in.", 401))
-//                    }
-//                }
-//            }
-//        }
 
         override suspend fun upload(data: CrescendoRequestBody): DataResult<Crescendo> {
             return withContext(Dispatchers.IO) {
@@ -1065,6 +1055,15 @@ class DataHandler(
     //   don't exist on the type of the object
     interface UserNamspace {
         suspend fun login(username: String, password: String): DataResult<TokenUser>
+
+        suspend fun login(
+            username: String,
+            password: String,
+            onError: (Error) -> Unit
+        ): TokenUser? {
+            return this.login(username, password).unwrap(onError)
+        }
+
         suspend fun register(
             username: String,
             password: String,
@@ -1076,18 +1075,54 @@ class DataHandler(
             grade: Int,
         ): DataResult<TokenUser>
 
+        suspend fun register(
+            username: String,
+            password: String,
+            email: String,
+            firstName: String,
+            lastName: String,
+            subteam: Subteam,
+            phone: String,
+            grade: Int,
+            onError: (Error) -> Unit
+        ): TokenUser? {
+            return this.register(
+                username,
+                password,
+                email,
+                firstName,
+                lastName,
+                subteam,
+                phone,
+                grade
+            ).unwrap(onError)
+        }
+
         fun logout()
         suspend fun refreshLoggedIn(): DataResult<TokenUser>
+        suspend fun refreshLoggedIn(onError: (Error) -> Unit): TokenUser? {
+            return this.refreshLoggedIn().unwrap(onError)
+        }
+
         fun loadLoggedIn(): DataResult<TokenUser>
+        fun loadLoggedIn(onError: (Error) -> Unit): TokenUser? {
+            return this.loadLoggedIn().unwrap(onError)
+        }
+
         fun loadAll(): List<User.WithoutToken>
         fun loadAll(onCompleteSync: (List<User.WithoutToken>) -> Unit): List<User.WithoutToken>
         fun clearAll()
         suspend fun sync(): SyncUserResult
         suspend fun deleteMe(): DataResult<Unit>
+        suspend fun deleteMe(onError: (Error) -> Unit) {
+            this.deleteMe().let {
+                if (it is Result.Error) onError(it.error)
+            }
+        }
     }
 
     interface AttendanceNamespace {
-        suspend fun sync(): UploadDownloadResult<List<DataResult<TokenUser>>, DataResult<List<Meeting>>>
+        suspend fun sync(): AttendanceResult
 
         fun getAll(): List<Meeting>
 
@@ -1107,9 +1142,21 @@ class DataHandler(
 
         suspend fun archiveMeeting(id: String): DataResult<Unit>
 
+        suspend fun archiveMeeting(id: String, onError: (Error) -> Unit) {
+            this.archiveMeeting(id).let {
+                if (it is Result.Error) onError(it.error)
+            }
+        }
+
         fun clear()
 
-        suspend fun delete(id: String): DataResult<Unit> //true = success
+        suspend fun delete(id: String): DataResult<Unit>
+
+        suspend fun delete(id: String, onError: (Error) -> Unit) {
+            this.delete(id).let {
+                if (it is Result.Error) onError(it.error)
+            }
+        }
 
         suspend fun create(
             startTime: Long,
@@ -1120,16 +1167,48 @@ class DataHandler(
             attendancePeriod: String,
         ): DataResult<Meeting>
 
+        suspend fun create(
+            startTime: Long,
+            endTime: Long,
+            type: String,
+            description: String,
+            value: Int,
+            attendancePeriod: String,
+            onError: (Error) -> Unit
+        ): Meeting? {
+            return this.create(startTime, endTime, type, description, value, attendancePeriod)
+                .unwrap(onError)
+        }
+
         suspend fun attend(
             meetingId: String,
             time: Long,
             verifiedBy: String,
         ): DataResult<TokenUser>
 
+        suspend fun attend(
+            meetingId: String,
+            time: Long,
+            verifiedBy: String,
+            onError: (Error) -> Unit
+        ): TokenUser? {
+            return this.attend(meetingId, time, verifiedBy).unwrap(onError)
+        }
     }
 
     interface SeasonsNamespace {
         suspend fun sync(): DataResult<List<Season>>
+        suspend fun sync(onError: (Error) -> Unit): List<Season>? {
+            return when (val res = this.sync()) {
+                is Result.Success -> res.data
+                is Result.Error -> {
+                    onError(res.error)
+                    null
+                }
+
+            }
+        }
+
         fun getComps(year: Int): List<String>
         fun getComps(year: Int, onCompleteSync: (List<String>) -> Unit): List<String>
         fun getAttendancePeriods(): List<String>
@@ -1137,13 +1216,24 @@ class DataHandler(
     }
 
     interface CrescendoNamespace {
-        suspend fun sync(): UploadDownloadResult<List<DataResult<Crescendo>>, DataResult<List<Crescendo>>>
+        suspend fun sync(): CrescendoResult
         fun getAll(): List<Crescendo>
         fun getAll(onCompleteSync: (List<Crescendo>) -> Unit): List<Crescendo>
         fun clearDownloads()
-
-        //        suspend fun delete(id: String): DataResult<Unit>
         suspend fun upload(data: CrescendoRequestBody): DataResult<Crescendo>
+        suspend fun upload(data: CrescendoRequestBody, onError: (Error) -> Unit): Crescendo? {
+            return this.upload(data).unwrap(onError)
+        }
+    }
+}
+
+fun DataResult<Crescendo>.unwrap(onError: (Error) -> Unit): Crescendo? {
+    return when (this) {
+        is Result.Success -> this.data
+        is Result.Error -> {
+            onError(this.error)
+            null
+        }
     }
 }
 
@@ -1153,25 +1243,93 @@ typealias DataResult<T> = Result<T, Error>
 data class SyncUserResult(
     val myUser: DataResult<TokenUser>,
     val userList: DataResult<List<User.WithoutToken>>
-)
+) {
+    fun unwrapMyUser(onError: (Error) -> Unit): TokenUser? {
+        return when (val res = myUser) {
+            is Result.Success -> res.data
+            is Result.Error -> {
+                onError(res.error)
+                null
+            }
+        }
+    }
 
-data class UploadDownloadResult<T, U>(val upload: T, val download: U)
+    fun unwrapUserList(onError: (Error) -> Unit): List<User.WithoutToken>? {
+        return when (val res = userList) {
+            is Result.Success -> res.data
+            is Result.Error -> {
+                onError(res.error)
+                null
+            }
+        }
+    }
+}
+
+
+//data class UploadDownloadResult<T, U>(val upload: T, val download: U)
+
+interface UploadDownloadResult<T, U> {
+    val upload: T
+    val download: U
+}
+
+data class AttendanceResult(
+    override val upload: List<DataResult<TokenUser>>,
+    override val download: DataResult<List<Meeting>>
+) : UploadDownloadResult<List<DataResult<TokenUser>>, DataResult<List<Meeting>>> {
+    val uploadStatuses = upload.map { it is Result.Success }
+    val uploadFailures = upload.filterIsInstance<Result.Error<Error>>().map { it.error }
+    fun unwrapDownload(onError: (Error) -> Unit): List<Meeting>? {
+        return when (val res = download) {
+            is Result.Success -> res.data
+            is Result.Error -> {
+                onError(res.error)
+                null
+            }
+        }
+    }
+}
+
+data class CrescendoResult(
+    override val upload: List<DataResult<Crescendo>>,
+    override val download: DataResult<List<Crescendo>>
+) : UploadDownloadResult<List<DataResult<Crescendo>>, DataResult<List<Crescendo>>> {
+    val uploadStatuses = upload.map { it is Result.Success }
+    val uploadFailures = upload.filterIsInstance<Result.Error<Error>>().map { it.error }
+    fun unwrapDownload(onError: (Error) -> Unit): List<Crescendo>? {
+        return when (val res = download) {
+            is Result.Success -> res.data
+            is Result.Error -> {
+                onError(res.error)
+                null
+            }
+        }
+    }
+}
+
 
 data class UploadQueueLength(val attendance: Long, val crescendo: Long)
 
+//data class AttendanceResult(
+//    val uploadStatuses: List<Boolean>,
+//    val uploadFailures: List<Error>,
+//    val downloadData: List<Meeting>?,
+//    val downloadError: Error?
+//)
+
 data class SyncResult(
     val user: SyncUserResult,
-    val attendance: UploadDownloadResult<List<DataResult<TokenUser>>, DataResult<List<Meeting>>>,
+    val attendance: AttendanceResult,
     val seasons: DataResult<List<Season>>,
-    val crescendo: UploadDownloadResult<List<DataResult<Crescendo>>, DataResult<List<Crescendo>>>,
+    val crescendo: CrescendoResult,
     val all: DataResult<Unit>,
     val allUnprotected: DataResult<Unit>
 ) {
     constructor(
         user: SyncUserResult,
-        attendance: UploadDownloadResult<List<DataResult<TokenUser>>, DataResult<List<Meeting>>>,
+        attendance: AttendanceResult,
         seasons: DataResult<List<Season>>,
-        crescendo: UploadDownloadResult<List<DataResult<Crescendo>>, DataResult<List<Crescendo>>>
+        crescendo: CrescendoResult
     ) : this(
         user = user,
         attendance = attendance,
@@ -1221,4 +1379,44 @@ data class SyncResult(
             ))
         }
     )
+
+    val allUnwrapped = all.unwrap()
+    val allUnprotectedUnwrapped = allUnprotected.unwrap()
+
+    fun unwrapSeasons(onError: (Error) -> Unit): List<Season>? {
+        return when (val res = seasons) {
+            is Result.Success -> res.data
+            is Result.Error -> {
+                onError(res.error)
+                null
+            }
+        }
+    }
+}
+
+fun DataResult<Unit>.unwrap(): OkOrMessage {
+    return when (this) {
+        is Result.Success -> OkOrMessage(true, null)
+        is Result.Error -> OkOrMessage(false, this.error.message)
+    }
+}
+
+fun DataResult<TokenUser>.unwrap(onError: (Error) -> Unit): TokenUser? {
+    return when (this) {
+        is Result.Success -> this.data
+        is Result.Error -> {
+            onError(this.error)
+            null
+        }
+    }
+}
+
+fun DataResult<Meeting>.unwrap(onError: (Error) -> Unit): Meeting? {
+    return when (this) {
+        is Result.Success -> this.data
+        is Result.Error -> {
+            onError(this.error)
+            null
+        }
+    }
 }

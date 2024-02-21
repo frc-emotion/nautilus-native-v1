@@ -13,11 +13,14 @@ import KeychainSwift
 
 @MainActor
 class EnvironmentModel: ObservableObject {
-    @Published var user: shared.User?
+    @Published var user: shared.TokenUser?
     @Published var dh: shared.DataHandler
+    @Published var errorMessage: String?
+    @Published var errorCode: Int?
+    
     
     init() {
-        dh = shared.DataHandler(databaseDriverFactory: IosDatabaseDriver()) {
+        dh = shared.DataHandler(routeBase: "staging.team2658.org", databaseDriverFactory: IosDatabaseDriver()) {
             return KeychainSwift().get("userToken")
         } setToken: { newToken in
             if (newToken != nil) {
@@ -27,13 +30,21 @@ class EnvironmentModel: ObservableObject {
             }
         }
         
-        user = dh.users.loadLoggedIn()
+        user = dh.users.loadLoggedIn(onError: {e in
+            self.errorMessage = e.message
+            self.errorCode = e.code?.intValue
+        })
     }
     
-    func refreshUser() async throws -> String {
-        guard let newUser = try await dh.users.refreshLoggedIn() else {
-            return ""
-        }
-        user = newUser
+//    func refreshUser() async throws -> String {
+//        guard let newUser = try await dh.users.refreshLoggedIn() else {
+//            return ""
+//        }
+//        user = newUser
+//    }
+    
+    func refreshUser() async throws {
+        user = try await dh.users.refreshLoggedIn(onError: {e in self.errorMessage = e.message; self.errorCode = e.code?.intValue})
     }
+    
 }

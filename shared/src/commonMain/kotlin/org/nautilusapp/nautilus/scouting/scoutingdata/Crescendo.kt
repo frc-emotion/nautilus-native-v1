@@ -23,26 +23,26 @@ data class Crescendo(
     val stage: CrescendoStage,
     val ranking: CrescendoRankingPoints,
     val createdBy: String,
-): ScoutingData
+) : ScoutingData
 
 @Serializable
 data class CrescendoRequestBody(
     val auto: CrescendoAuto,
-    val comments: String?,
-    val competition: String,
-    val defensive: Boolean,
-    val matchNumber: Int,
-    val penaltyPointsEarned: Int,
-    val ranking: CrescendoRankingPoints,
-    val rankingPoints: Int,
-    val score: Int,
+    override val comments: String?,
+    override val competition: String,
+    override val defensive: Boolean,
+    override val matchNumber: Int,
+    override val penaltyPointsEarned: Int,
+    override val ranking: CrescendoRankingPoints,
+    override val rankingPoints: Int,
+    override val score: Int,
     val stage: CrescendoStage,
-    val teamNumber: Int,
+    override val teamNumber: Int,
     val teleop: CrescendoTeleop,
-    val tied: Boolean,
-    val won: Boolean,
-    val brokeDown: Boolean,
-)
+    override val tied: Boolean,
+    override val won: Boolean,
+    override val brokeDown: Boolean,
+) : ScoutingSubmission
 
 @Serializable
 data class CrescendoAuto(
@@ -69,10 +69,13 @@ data class CrescendoStage(
 enum class CrescendoStageState {
     @SerialName("NOT_PARKED")
     NOT_PARKED,
+
     @SerialName("PARKED")
     PARKED,
+
     @SerialName("ONSTAGE")
     ONSTAGE,
+
     @SerialName("ONSTAGE_SPOTLIT")
     ONSTAGE_SPOTLIT
 }
@@ -81,4 +84,4 @@ enum class CrescendoStageState {
 data class CrescendoRankingPoints(
     val melody: Boolean,
     val ensemble: Boolean,
-)
+) : RP(rp1 = melody, rp2 = ensemble)

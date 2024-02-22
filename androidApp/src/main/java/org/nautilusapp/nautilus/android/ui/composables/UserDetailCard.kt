@@ -11,6 +11,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ExpandLess
 import androidx.compose.material.icons.filled.ExpandMore
+import androidx.compose.material.icons.filled.Star
 import androidx.compose.material.icons.filled.Verified
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
@@ -33,6 +34,7 @@ import org.nautilusapp.nautilus.userauth.AccountType
 import org.nautilusapp.nautilus.userauth.Subteam
 import org.nautilusapp.nautilus.userauth.User
 import org.nautilusapp.nautilus.userauth.UserPermissions
+import org.nautilusapp.nautilus.userauth.isLead
 
 @Composable
 fun UserDetailCard(user: User, isInitiallyExpanded: Boolean = false) {
@@ -44,9 +46,11 @@ fun UserDetailCard(user: User, isInitiallyExpanded: Boolean = false) {
                 isExpanded = !isExpanded
             }
     ) {
-        Box (modifier = Modifier
-            .padding(32.dp)
-            .fillMaxWidth()) {
+        Box(
+            modifier = Modifier
+                .padding(vertical = 8.dp, horizontal = 16.dp)
+                .fillMaxWidth()
+        ) {
             Column {
                 Text(
                     text = "${user.firstname} ${user.lastname}",
@@ -65,15 +69,12 @@ fun UserDetailCard(user: User, isInitiallyExpanded: Boolean = false) {
                 )
                 Spacer(modifier = Modifier.size(4.dp))
                 Text(
-                    text = when(val subteam = user.subteam) {
-                        Subteam.NONE, null -> "No Subteam"
-                        else -> subteam.name.toCapitalized()
-                    },
+                    text = user.subteam.displayName,
                     style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.ExtraBold),
                     color = MaterialTheme.colorScheme.onSurface
                 )
 
-                if(isExpanded && user is User.Full) {
+                if (isExpanded && user is User.Full) {
                     Spacer(modifier = Modifier.size(16.dp))
                     Text(
                         text = "Grade: ${user.grade}",
@@ -85,31 +86,47 @@ fun UserDetailCard(user: User, isInitiallyExpanded: Boolean = false) {
                         style = MaterialTheme.typography.bodyLarge
                     )
                     Spacer(modifier = Modifier.size(16.dp))
-                    val rolesStr = if(user.roles.isEmpty()) "None" else user.roles.joinToString(", ")
+                    val rolesStr =
+                        if (user.roles.isEmpty()) "None" else user.roles.joinToString(", ")
                     Text(
                         text = "Roles: $rolesStr",
                         style = MaterialTheme.typography.bodyLarge
                     )
-                    when(user.accountType) {
+                    when (user.accountType) {
                         AccountType.ADMIN, AccountType.SUPERUSER -> {
-                            Spacer(modifier = Modifier.size(16.dp))
+                            Spacer(modifier = Modifier.size(8.dp))
                             Row(verticalAlignment = Alignment.CenterVertically) {
                                 Text(
                                     text = "Admin Access ",
                                     style = MaterialTheme.typography.bodyLarge.copy(fontWeight = FontWeight.ExtraBold),
                                     color = MaterialTheme.colorScheme.primary
                                 )
-                                Icon(Icons.Filled.Verified, contentDescription = "Verified", tint = Color(0xFF0ac93a))
+                                Icon(
+                                    Icons.Filled.Verified,
+                                    contentDescription = "Verified",
+                                    tint = Color(0xFF0ac93a)
+                                )
                             }
                         }
+
+                        AccountType.LEAD -> {
+                            Spacer(modifier = Modifier.size(8.dp))
+                            Text(
+                                text = "Lead",
+                                style = MaterialTheme.typography.bodyLarge.copy(fontWeight = FontWeight.ExtraBold),
+                                color = MaterialTheme.colorScheme.primary
+                            )
+                        }
+
                         AccountType.UNVERIFIED -> {
-                            Spacer(modifier = Modifier.size(16.dp))
+                            Spacer(modifier = Modifier.size(8.dp))
                             Text(
                                 text = "Not Verified ❌",
                                 style = MaterialTheme.typography.bodyLarge.copy(fontWeight = FontWeight.ExtraBold),
                                 color = MaterialTheme.colorScheme.error
                             )
                         }
+
                         else -> {}
                     }
                     Spacer(modifier = Modifier.size(8.dp))
@@ -129,17 +146,35 @@ fun UserDetailCard(user: User, isInitiallyExpanded: Boolean = false) {
                         }
 
                     }
-                }
-                else if(user is User.Full) {
-                    Box(contentAlignment = Alignment.CenterStart, modifier = Modifier.fillMaxWidth()) {
+                } else if (user is User.Full) {
+                    Box(
+                        contentAlignment = Alignment.CenterStart,
+                        modifier = Modifier.fillMaxWidth()
+                    ) {
                         Spacer(modifier = Modifier.size(8.dp))
-                        Text(". . . more", style = MaterialTheme.typography.labelLarge, color = MaterialTheme.colorScheme.outline)
+                        Text(
+                            ". . . more",
+                            style = MaterialTheme.typography.labelLarge,
+                            color = MaterialTheme.colorScheme.outline
+                        )
                     }
                 }
             }
-            if(user is User.Full) {
-                val icon = if(isExpanded) Icons.Default.ExpandLess else Icons.Default.ExpandMore
-                Icon(icon, contentDescription = "Expand Card", modifier = Modifier.align(Alignment.TopEnd))
+            if (user is User.Full) {
+                val icon = if (isExpanded) Icons.Default.ExpandLess else Icons.Default.ExpandMore
+                Icon(
+                    icon,
+                    contentDescription = "Expand Card",
+                    modifier = Modifier.align(Alignment.TopEnd)
+                )
+            }
+            if ((user.isLead)) {
+                Icon(
+                    Icons.Filled.Star,
+                    contentDescription = "Lead",
+                    tint = MaterialTheme.colorScheme.outline,
+                    modifier = Modifier.align(Alignment.CenterEnd)
+                )
             }
         }
     }
@@ -158,3 +193,8 @@ fun UserPermissions.asMap(): Map<String, Boolean> {
     )
 }
 
+val Subteam?.displayName: String
+    get() = when (this) {
+        Subteam.NONE, null -> "No Subteam"
+        else -> this.name.toCapitalized()
+    }

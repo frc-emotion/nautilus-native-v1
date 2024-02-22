@@ -11,6 +11,7 @@ import androidx.navigation.compose.rememberNavController
 import org.nautilusapp.nautilus.DataHandler
 import org.nautilusapp.nautilus.android.screens.home.HomeScreen
 import org.nautilusapp.nautilus.android.screens.settings.SettingsScreen
+import org.nautilusapp.nautilus.android.screens.users.UsersScreen
 import org.nautilusapp.nautilus.android.viewmodels.MainViewModel
 import org.nautilusapp.nautilus.android.viewmodels.NFCViewmodel
 
@@ -51,12 +52,7 @@ fun LoggedInNavigator(
                 }
             }
             composable(AppScreen.USERS.name) {
-                NestedScaffold(snack = snack, topBar = {
-                    TopAppBar(title = {
-                        Text("Users")
-                    })
-                }) {
-                }
+                UsersScreen(dataHandler, snack)
             }
             composable(AppScreen.SCOUTING.name) {
 

@@ -15,11 +15,12 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.tooling.preview.PreviewFontScale
 import androidx.compose.ui.unit.dp
 import org.nautilusapp.nautilus.DataHandler
 import org.nautilusapp.nautilus.DataResult
 import org.nautilusapp.nautilus.Result
-import org.nautilusapp.nautilus.android.MainTheme
+import org.nautilusapp.nautilus.android.PreviewTheme
 import org.nautilusapp.nautilus.android.ui.composables.UserDetailCard
 import org.nautilusapp.nautilus.android.ui.composables.containers.LazyScreen
 import org.nautilusapp.nautilus.android.ui.composables.displayName
@@ -59,13 +60,13 @@ fun UserList(
             }
             val (lead, rest) = list.partition { it.isLead }
             items(lead.sortedBy {
-                it.lastname
+                it.lastname.lowercase()
             }, key = { it._id }) {
                 UserDetailCard(user = it)
                 Spacer(modifier = Modifier.size(8.dp))
             }
             items(rest.sortedBy {
-                it.lastname
+                it.lastname.lowercase()
             }, key = { it._id }) {
                 UserDetailCard(user = it)
                 Spacer(modifier = Modifier.size(8.dp))
@@ -98,13 +99,14 @@ fun UsersScreen(
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Preview(apiLevel = 33)
+@PreviewFontScale
 @Composable
 fun UserListPreview() {
     val users = (1..40).map {
-        exampleUser(it, false)
+        exampleUser(it, false, AccountType.LEAD)
     }
     val snack = remember { SnackbarHostState() }
-    MainTheme(preference = ColorTheme.NAUTILUS_MIDNIGHT) {
+    PreviewTheme(preference = ColorTheme.NAUTILUS_DARK, darkTheme = true) {
         NestedScaffold(snack, topBar = {
             TopAppBar(title = {
                 Text("Users")
@@ -115,13 +117,17 @@ fun UserListPreview() {
     }
 }
 
-fun exampleUser(index: Int, full: Boolean = false): User.WithoutToken {
+fun exampleUser(
+    index: Int,
+    full: Boolean = false,
+    accountType: AccountType = AccountType.BASE
+): User.WithoutToken {
     if (full) {
         return FullUser(
             _id = index.toString(),
             username = "user_$index",
             email = "user$index@meow.meow",
-            accountType = AccountType.BASE,
+            accountType = accountType,
             firstname = "User",
             lastname = "McUserface",
             roles = emptyList(),
@@ -138,7 +144,7 @@ fun exampleUser(index: Int, full: Boolean = false): User.WithoutToken {
         _id = index.toString(),
         username = "user_$index",
         email = "user$index@meow.meow",
-        accountType = AccountType.BASE,
+        accountType = accountType,
         firstname = "User",
         lastname = "McUserface",
         roles = emptyList(),

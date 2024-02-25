@@ -5,9 +5,12 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.text.InlineTextContent
+import androidx.compose.foundation.text.appendInlineContent
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ExpandLess
 import androidx.compose.material.icons.filled.ExpandMore
@@ -26,8 +29,12 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.Placeholder
+import androidx.compose.ui.text.PlaceholderVerticalAlign
+import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.em
 import org.nautilusapp.nautilus.android.cardColor
 import org.nautilusapp.nautilus.toCapitalized
 import org.nautilusapp.nautilus.userauth.AccountType
@@ -52,10 +59,53 @@ fun UserDetailCard(user: User, isInitiallyExpanded: Boolean = false) {
                 .fillMaxWidth()
         ) {
             Column {
+//                Row {
+                val extra = if (user.isLead) mapOf(
+                    "star" to InlineTextContent(
+                        Placeholder(
+                            width = 1.em,
+                            height = 1.em,
+                            placeholderVerticalAlign = PlaceholderVerticalAlign.TextCenter
+                        )
+                    ) {
+                        Box {
+                            Icon(
+                                Icons.Filled.Star,
+                                contentDescription = "Lead",
+                                tint = MaterialTheme.colorScheme.outline,
+                                modifier = Modifier
+                                    .align(Alignment.Center)
+                                    .fillMaxSize(0.9f)
+                            )
+                        }
+                    }
+                ) else emptyMap()
+                val text = buildAnnotatedString {
+                    append(user.firstname)
+                    append(" ")
+                    append(user.lastname)
+                    if (user.isLead) {
+                        append("\t")
+                        appendInlineContent("star")
+                    }
+                }
                 Text(
-                    text = "${user.firstname} ${user.lastname}",
+//                    text = "${user.firstname} ${user.lastname}",
+                    text = text,
+                    inlineContent = extra,
                     style = MaterialTheme.typography.headlineMedium
                 )
+//                    if ((user.isLead)) {
+//                        Spacer(modifier = Modifier.size(4.dp))
+//                        Icon(
+//                            Icons.Filled.Star,
+//                            contentDescription = "Lead",
+//                            tint = MaterialTheme.colorScheme.outline,
+//                            modifier = Modifier.align(Alignment.CenterVertically)
+//                        )
+//                    }
+//                }
+
 //            Spacer(modifier = Modifier.size(2.dp))
                 Text(
                     text = "@${user.username}",
@@ -166,14 +216,6 @@ fun UserDetailCard(user: User, isInitiallyExpanded: Boolean = false) {
                     icon,
                     contentDescription = "Expand Card",
                     modifier = Modifier.align(Alignment.TopEnd)
-                )
-            }
-            if ((user.isLead)) {
-                Icon(
-                    Icons.Filled.Star,
-                    contentDescription = "Lead",
-                    tint = MaterialTheme.colorScheme.outline,
-                    modifier = Modifier.align(Alignment.CenterEnd)
                 )
             }
         }

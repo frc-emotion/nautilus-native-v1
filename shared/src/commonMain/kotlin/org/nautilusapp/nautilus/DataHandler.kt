@@ -25,7 +25,7 @@ import org.nautilusapp.localstorage.UsersDB
 import org.nautilusapp.localstorage.uploadcache.Crescendo_upload_table
 import org.nautilusapp.nautilus.attendance.Meeting
 import org.nautilusapp.nautilus.scouting.scoutingdata.Crescendo
-import org.nautilusapp.nautilus.scouting.scoutingdata.CrescendoRequestBody
+import org.nautilusapp.nautilus.scouting.scoutingdata.CrescendoSubmission
 import org.nautilusapp.nautilus.userauth.Subteam
 import org.nautilusapp.nautilus.userauth.TokenUser
 import org.nautilusapp.nautilus.userauth.User
@@ -956,7 +956,7 @@ class DataHandler(
         }
 
 
-        override suspend fun upload(data: CrescendoRequestBody): DataResult<Crescendo> {
+        override suspend fun upload(data: CrescendoSubmission): DataResult<Crescendo> {
             return withContext(Dispatchers.IO) {
                 when (val res = network.crescendo.uploadCrescendo(
                     user()
@@ -1220,8 +1220,8 @@ class DataHandler(
         fun getAll(): List<Crescendo>
         fun getAll(onCompleteSync: (List<Crescendo>) -> Unit): List<Crescendo>
         fun clearDownloads()
-        suspend fun upload(data: CrescendoRequestBody): DataResult<Crescendo>
-        suspend fun upload(data: CrescendoRequestBody, onError: (Error) -> Unit): Crescendo? {
+        suspend fun upload(data: CrescendoSubmission): DataResult<Crescendo>
+        suspend fun upload(data: CrescendoSubmission, onError: (Error) -> Unit): Crescendo? {
             return this.upload(data).unwrap(onError)
         }
     }

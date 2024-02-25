@@ -10,6 +10,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import org.nautilusapp.nautilus.DataHandler
 import org.nautilusapp.nautilus.android.screens.home.HomeScreen
+import org.nautilusapp.nautilus.android.screens.scouting.standscoutingforms.crescendo.CrescendoForm
 import org.nautilusapp.nautilus.android.screens.settings.SettingsScreen
 import org.nautilusapp.nautilus.android.screens.users.UsersScreen
 import org.nautilusapp.nautilus.android.viewmodels.MainViewModel
@@ -55,7 +56,14 @@ fun LoggedInNavigator(
                 UsersScreen(dataHandler, snack)
             }
             composable(AppScreen.SCOUTING.name) {
-
+                if (primaryViewModel.user?.permissions?.generalScouting == true)
+                    NestedScaffold(snack = snack, topBar = {
+                        TopAppBar(title = {
+                            Text("Crescendo Scouting")
+                        })
+                    }) {
+                        CrescendoForm(dh = dataHandler, snack)
+                    }
             }
         }
     }

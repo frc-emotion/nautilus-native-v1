@@ -26,7 +26,7 @@ import kotlinx.serialization.json.Json
 import org.nautilusapp.nautilus.Result
 import org.nautilusapp.nautilus.attendance.Meeting
 import org.nautilusapp.nautilus.scouting.scoutingdata.Crescendo
-import org.nautilusapp.nautilus.scouting.scoutingdata.CrescendoRequestBody
+import org.nautilusapp.nautilus.scouting.scoutingdata.CrescendoSubmission
 import org.nautilusapp.nautilus.userauth.FullUser
 import org.nautilusapp.nautilus.userauth.PartialUser
 import org.nautilusapp.nautilus.userauth.Subteam
@@ -454,7 +454,7 @@ class NetworkClient(base: String) {
 
         override suspend fun uploadCrescendo(
             user: TokenUser,
-            data: CrescendoRequestBody
+            data: CrescendoSubmission
         ): Result<Crescendo, KtorError> {
             if (user.isInvalid()) return Result.Error(KtorError.AUTH)
             return try {
@@ -568,7 +568,7 @@ class NetworkClient(base: String) {
         suspend fun getCrescendos(user: TokenUser): Result<List<Crescendo>, KtorError>
         suspend fun uploadCrescendo(
             user: TokenUser,
-            data: CrescendoRequestBody
+            data: CrescendoSubmission
         ): Result<Crescendo, KtorError>
 
         suspend fun getMyCrescendos(user: TokenUser): Result<List<Crescendo>, KtorError>

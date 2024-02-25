@@ -26,7 +26,7 @@ data class Crescendo(
 ) : ScoutingData
 
 @Serializable
-data class CrescendoRequestBody(
+data class CrescendoSubmission(
     val auto: CrescendoAuto,
     override val comments: String?,
     override val competition: String,

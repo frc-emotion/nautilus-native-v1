@@ -2,6 +2,7 @@ package org.nautilusapp.nautilus.android.screens.scouting.standscoutingforms
 
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.material3.AlertDialog
@@ -10,7 +11,6 @@ import androidx.compose.material3.Divider
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
-import androidx.compose.material3.RadioButton
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
@@ -25,31 +25,48 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import kotlinx.coroutines.launch
+import org.nautilusapp.nautilus.DataResult
+import org.nautilusapp.nautilus.Result
+import org.nautilusapp.nautilus.android.PreviewTheme
+import org.nautilusapp.nautilus.android.screens.scouting.components.RPInput
 import org.nautilusapp.nautilus.android.ui.composables.DropDown
 import org.nautilusapp.nautilus.android.ui.composables.ErrorAlertDialog
+import org.nautilusapp.nautilus.android.ui.composables.LabelledRadioButton
 import org.nautilusapp.nautilus.android.ui.composables.LabelledTextBoxSingleLine
 import org.nautilusapp.nautilus.android.ui.composables.SuccessAlertDialog
 import org.nautilusapp.nautilus.android.ui.composables.TextArea
 import org.nautilusapp.nautilus.android.ui.composables.YesNoSelector
+import org.nautilusapp.nautilus.android.ui.composables.containers.Screen
+import org.nautilusapp.nautilus.android.ui.composables.indicators.ErrorIndicator
+import org.nautilusapp.nautilus.android.ui.theme.ColorTheme
 import org.nautilusapp.nautilus.scouting.GameResult
 
+
+/**
+ * @param competitions list of competitions this
+ * @param onFormSubmit handle submit for individual game (Rapid React, ChargedUp, etc) and use callback to clear form after
+ * @param rankingPointNames names of ranking points for individual game (Rapid React, ChargedUp, etc)
+ * @param contentInputsOkay validate that game-specific fields are filled in and valid before allowing submission
+ * @param clearContentInputs clear game-specific fields when form is cleared or submitted
+ * @param contents inputs for individual game (Rapid React, ChargedUp, etc)
+ */
 @Composable
 fun BaseScoutingForm(
     competitions: List<String>,
-    onFormSubmit: suspend (baseData: ScoutingData) -> Boolean, //true for success, false for failure
-    //handle submit for individual game (Rapid React, ChargedUp, etc) and use callback to clear form after
+    rankingPointNames: Pair<String, String>,
+    onFormSubmit: suspend (baseData: ScoutingSubmissionImpl) -> DataResult<*>,
     contentInputsOkay: Boolean,
-    //make sure game-specific required fields are filled in and valid
     clearContentInputs: () -> Unit,
-    //callback to clear game-specific fields
     contents: @Composable () -> Unit,
-    //put in inputs for game-specific fields in here
 ) {
-    var competition by rememberSaveable { mutableStateOf(
-        if (competitions.isNotEmpty()) competitions.last() else ""
-    ) } //default to most recent competition
+    var competition by rememberSaveable {
+        mutableStateOf(
+            if (competitions.isNotEmpty()) competitions.last() else ""
+        )
+    } //default to most recent competition
     var teamNumber by rememberSaveable { mutableStateOf("") }
     var matchNumber by rememberSaveable { mutableStateOf("") }
     var defensive by rememberSaveable { mutableStateOf<Boolean?>(null) }
@@ -58,6 +75,8 @@ fun BaseScoutingForm(
     var penaltyPointsEarned by rememberSaveable { mutableStateOf("") }
     var comments by rememberSaveable { mutableStateOf("") }
     var brokeDown by rememberSaveable { mutableStateOf<Boolean?>(null) }
+    var rp1: Boolean? by rememberSaveable { mutableStateOf(null) }
+    var rp2: Boolean? by rememberSaveable { mutableStateOf(null) }
 
     val focusManager = LocalFocusManager.current
 
@@ -70,12 +89,16 @@ fun BaseScoutingForm(
             && penaltyPointsEarned.toIntOrNull() != null
             && brokeDown != null
             && contentInputsOkay
+            && rp1 != null
+            && rp2 != null
 
     var showInvalidInputDialog by remember { mutableStateOf(false) }
     var showSubmitDialog by remember { mutableStateOf(false) }
     var showClearFormDialog by remember { mutableStateOf(false) }
     var showSuccessDialog by remember { mutableStateOf(false) }
     var showErrorDialog by remember { mutableStateOf(false) }
+    var errorText by remember { mutableStateOf("") }
+
 
     fun clearForm() {
         teamNumber = ""
@@ -93,7 +116,7 @@ fun BaseScoutingForm(
     Text(text = "Match Info", style = MaterialTheme.typography.titleLarge)
     Spacer(modifier = Modifier.size(16.dp))
     DropDown(label = "Competition", value = competition.ifBlank { "Select: " }) {
-        if(competitions.isNotEmpty()) {
+        if (competitions.isNotEmpty()) {
             competitions.forEachIndexed { index, comp ->
                 DropdownMenuItem(text = { Text(comp) }, onClick = { competition = comp })
                 if (index != competitions.lastIndex) {
@@ -120,16 +143,24 @@ fun BaseScoutingForm(
         keyboardType = KeyboardType.Number,
         onValueChange = { matchNumber = it })
     Spacer(modifier = Modifier.size(16.dp))
+
     contents()
+
+    Spacer(modifier = Modifier.size(16.dp))
+    RPInput(
+        names = rankingPointNames,
+        values = Pair(rp1, rp2),
+        onFirstChanged = { rp1 = it },
+        onSecondChanged = { rp2 = it })
     Spacer(modifier = Modifier.size(16.dp))
     Text(text = "Robot Information", style = MaterialTheme.typography.titleLarge)
-    Spacer(Modifier.size(16.dp))
-    YesNoSelector(label = "Robot Was Defensive?", value = defensive, setValue = { defensive = it })
-    Spacer(modifier = Modifier.size(16.dp))
+    Spacer(Modifier.size(8.dp))
+    YesNoSelector(label = "Defense Bot?", value = defensive, setValue = { defensive = it })
+    Spacer(modifier = Modifier.size(8.dp))
     YesNoSelector(label = "Robot Broke Down?", value = brokeDown, setValue = { brokeDown = it })
     Spacer(modifier = Modifier.size(16.dp))
     Text(text = "Scores and Match Results", style = MaterialTheme.typography.titleLarge)
-    Spacer(modifier = Modifier.size(16.dp))
+    Spacer(modifier = Modifier.size(8.dp))
     LabelledTextBoxSingleLine(
         label = "Penalty Points Earned",
         text = penaltyPointsEarned,
@@ -137,7 +168,7 @@ fun BaseScoutingForm(
         imeAction = ImeAction.Next,
         keyboardType = KeyboardType.Number,
         onValueChange = { penaltyPointsEarned = it })
-    Spacer(modifier = Modifier.size(16.dp))
+    Spacer(modifier = Modifier.size(8.dp))
     LabelledTextBoxSingleLine(
         label = "Final Score",
         text = finalScore,
@@ -145,44 +176,40 @@ fun BaseScoutingForm(
         imeAction = ImeAction.Next,
         keyboardType = KeyboardType.Number,
         onValueChange = { finalScore = it })
-    Spacer(modifier = Modifier.size(16.dp))
+    Spacer(modifier = Modifier.size(8.dp))
     Text(text = "Game Result", style = MaterialTheme.typography.labelLarge)
     Spacer(modifier = Modifier.size(4.dp))
     Row(verticalAlignment = Alignment.CenterVertically) {
-        RadioButton(
-            selected = gameResult == GameResult.WIN,
-            onClick = { gameResult = GameResult.WIN })
-        Text(text = "Win", style = MaterialTheme.typography.labelLarge)
-        Spacer(modifier = Modifier.width(8.dp))
-        RadioButton(
-            selected = gameResult == GameResult.LOSS,
-            onClick = { gameResult = GameResult.LOSS })
-        Text(text = "Loss", style = MaterialTheme.typography.labelLarge)
-        Spacer(modifier = Modifier.width(8.dp))
-        RadioButton(
-            selected = gameResult == GameResult.TIE,
-            onClick = { gameResult = GameResult.TIE })
-        Text(text = "Tie", style = MaterialTheme.typography.labelLarge)
+        LabelledRadioButton(label = "Win", selected = gameResult == GameResult.WIN) {
+            gameResult = GameResult.WIN
+        }
+        Spacer(modifier = Modifier.size(8.dp))
+        LabelledRadioButton(label = "Loss", selected = gameResult == GameResult.LOSS) {
+            gameResult = GameResult.LOSS
+        }
+        Spacer(modifier = Modifier.size(8.dp))
+        LabelledRadioButton(label = "Tie", selected = gameResult == GameResult.TIE) {
+            gameResult = GameResult.TIE
+        }
     }
     Spacer(modifier = Modifier.size(16.dp))
     TextArea(label = "Comments/Notes", text = comments, onValueChange = { comments = it })
     Spacer(modifier = Modifier.size(16.dp))
     if (!inputsOkay) {
-        Text(
-            text = "Some inputs are invalid/empty. Please check all form fields",
-            style = MaterialTheme.typography.labelLarge,
-            color = MaterialTheme.colorScheme.error
-        )
+        ErrorIndicator(text = "Some inputs are invalid/empty. Please check all form fields")
         Spacer(modifier = Modifier.size(16.dp))
     }
     Row(verticalAlignment = Alignment.CenterVertically) {
-        Button(onClick = {
-            if (inputsOkay) {
-                showSubmitDialog = true
-            } else {
-                showInvalidInputDialog = true
-            }
-        }) {
+        Button(
+            onClick = {
+                if (inputsOkay) {
+                    showSubmitDialog = true
+                } else {
+                    showInvalidInputDialog = true
+                }
+            },
+            enabled = inputsOkay
+        ) {
             Text(text = "Submit")
         }
         Spacer(modifier = Modifier.width(16.dp))
@@ -192,6 +219,7 @@ fun BaseScoutingForm(
             Text(text = "Clear")
         }
     }
+    Spacer(modifier = Modifier.height(64.dp))
 
     if (showClearFormDialog) {
         AlertDialog(onDismissRequest = {}, dismissButton = {
@@ -241,26 +269,36 @@ fun BaseScoutingForm(
             },
             confirmButton = {
                 Button(onClick = {
-                      scope.launch {
-                        val success = onFormSubmit(
-                            ScoutingData(
+                    scope.launch {
+                        val res = onFormSubmit(
+                            ScoutingSubmissionImpl(
                                 competition = competition,
                                 teamNumber = teamNumber.toInt(),
                                 matchNumber = matchNumber.toInt(),
                                 defensive = defensive!!,
-                                finalScore = finalScore.toInt(),
+                                score = finalScore.toInt(),
                                 won = gameResult == GameResult.WIN,
                                 tied = gameResult == GameResult.TIE,
                                 penaltyPointsEarned = penaltyPointsEarned.toInt(),
                                 brokeDown = brokeDown!!,
                                 comments = comments,
+                                rankingPoints = calculateRP(rp1!!, rp2!!, gameResult),
+                                ranking = RPImpl(
+                                    first = rp1!!,
+                                    second = rp2!!
+                                )
                             )
                         )
-                        if (success) {
-                            clearForm()
-                            showSuccessDialog = true
-                        } else {
-                            showErrorDialog = true
+                        when (res) {
+                            is Result.Success -> {
+                                clearForm()
+                                showSuccessDialog = true
+                            }
+
+                            is Result.Error -> {
+                                showErrorDialog = true
+                                errorText = res.error.message
+                            }
                         }
                     }
                 }) {
@@ -280,8 +318,48 @@ fun BaseScoutingForm(
         showSuccessDialog = false
     }
 
-   ErrorAlertDialog(show =showErrorDialog) {
+    ErrorAlertDialog(show = showErrorDialog) {
         showErrorDialog = false
-   }
+    }
 
+}
+
+@Preview
+@Composable
+fun BaseScoutPreview() {
+    val competitions = listOf("test", "meow", "woof")
+    PreviewTheme(preference = ColorTheme.NAUTILUS_DARK) {
+        Screen {
+            BaseScoutingForm(
+                competitions = competitions,
+                rankingPointNames = Pair("RP1", "RP2"),
+                onFormSubmit = { Result.Success(Unit) },
+                contentInputsOkay = true,
+                clearContentInputs = {},
+                contents = {
+                    Text(text = "Test")
+                }
+            )
+        }
+    }
+}
+
+/**
+ * Calculates ranking points based on game result and ranking point conditions
+ * @returns number of ranking points earned in range 0..4
+ */
+fun calculateRP(rp1: Boolean, rp2: Boolean, gameResult: GameResult?): Int {
+    var out = 0
+    if (rp1) {
+        out += 1
+    }
+    if (rp2) {
+        out += 1
+    }
+    when (gameResult) {
+        GameResult.WIN -> out += 2
+        GameResult.TIE -> out++
+        else -> Unit
+    }
+    return out
 }

@@ -30,22 +30,28 @@ fun PullRefreshIndicator(
     refreshState: PullToRefreshState,
 ) {
     val willRefresh by remember {
-        derivedStateOf{refreshState.progress > 1f}
+        derivedStateOf { refreshState.progress > 1f }
     }
-    if(refreshState.progress > 0 || refreshState.isRefreshing) {
-        Box (
+    if (refreshState.progress > 0 || refreshState.isRefreshing) {
+        Box(
             Modifier
                 .height(IntrinsicSize.Min)
-                .padding(start = 16.dp, end = 16.dp )
-                .alpha(if(refreshState.isRefreshing) 1.0f else (refreshState.progress*4).coerceAtMost(1.0f))
+                .padding(start = 16.dp, end = 16.dp)
+                .alpha(
+                    if (refreshState.isRefreshing) 1.0f else (refreshState.progress * 4).coerceAtMost(
+                        1.0f
+                    )
+                )
                 .fillMaxWidth(),
-            contentAlignment = Alignment.TopCenter){
+            contentAlignment = Alignment.TopCenter
+        ) {
             when {
                 willRefresh || refreshState.isRefreshing -> LinearProgressIndicator(
                     color = MaterialTheme.colorScheme.primary,
                     strokeCap = StrokeCap.Round,
                     modifier = Modifier.fillMaxWidth()
                 )
+
                 refreshState.progress in 0f..1f -> LinearProgressIndicator(
                     progress = { refreshState.progress },
                     color = MaterialTheme.colorScheme.primary,
@@ -62,7 +68,7 @@ fun PullRefreshIndicator(
 @Preview(apiLevel = 33)
 @Composable
 fun IndPrev() {
-    MainTheme(preference = ColorTheme.NAUTILUS_MIDNIGHT) {
+    MainTheme(preference = ColorTheme.NAUTILUS_DARK) {
         BlackScreen {
             PullRefreshIndicator(refreshState = rememberPullToRefreshState().apply { startRefresh() })
         }

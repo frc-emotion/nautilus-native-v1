@@ -10,7 +10,9 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import org.nautilusapp.nautilus.DataHandler
 import org.nautilusapp.nautilus.android.screens.home.HomeScreen
+import org.nautilusapp.nautilus.android.screens.scouting.standscoutingforms.crescendo.CrescendoForm
 import org.nautilusapp.nautilus.android.screens.settings.SettingsScreen
+import org.nautilusapp.nautilus.android.screens.users.UsersScreen
 import org.nautilusapp.nautilus.android.viewmodels.MainViewModel
 import org.nautilusapp.nautilus.android.viewmodels.NFCViewmodel
 
@@ -24,43 +26,16 @@ fun LoggedInNavigator(
 ) {
     val navController = rememberNavController()
 
-//    Scaffold(
-//        bottomBar = { NavBar(navController, primaryViewModel) },
-//        snackbarHost = { SnackbarHost(snack) {
-//            Snackbar(snackbarData = it, containerColor = cardColor(), contentColor = MaterialTheme.colorScheme.onSurface)
-//        } }
-//    ) { padding ->
-//        NavHost(
-//            navController = navController,
-//            startDestination = AppScreens.HOME.name,
-//            Modifier.padding(padding)
-//        ) {
-//            composable(AppScreens.HOME.name) {
-//                HomeScreen(nfcViewmodel = nfcViewmodel, primaryViewModel = primaryViewModel, snack = snack)
-//            }
-//            composable(AppScreens.SETTINGS.name) {
-//                SettingsScreen(primaryViewModel, snack = snack)
-//            }
-//            composable(AppScreens.LEADS.name) {
-//                LeadsScreen(viewModel = primaryViewModel, nfc = nfcViewmodel, dataHandler = dataHandler, snack = snack)
-//            }
-//            composable(AppScreens.SCOUTING.name) {
-//                ScoutingScreen(primaryViewModel)
-//            }
-//        }
-//    }
-
     ScreenScaffold(
         navController = navController,
-        accountType = primaryViewModel.user?.accountType,
         perms = primaryViewModel.user?.permissions,
         snack = snack
     ) {
         NavHost(
             navController = navController,
-            startDestination = AppScreens.HOME.name,
+            startDestination = AppScreen.HOME.name,
         ) {
-            composable(AppScreens.HOME.name) {
+            composable(AppScreen.HOME.name) {
                 HomeScreen(
                     primaryViewModel = primaryViewModel,
                     snack = snack,
@@ -68,7 +43,7 @@ fun LoggedInNavigator(
                     nfcViewmodel = nfcViewmodel
                 )
             }
-            composable(AppScreens.SETTINGS.name) {
+            composable(AppScreen.SETTINGS.name) {
                 NestedScaffold(snack = snack, topBar = {
                     TopAppBar(title = {
                         Text("Settings")
@@ -76,6 +51,19 @@ fun LoggedInNavigator(
                 }) {
                     SettingsScreen(primaryViewModel, snack = snack)
                 }
+            }
+            composable(AppScreen.USERS.name) {
+                UsersScreen(dataHandler, snack)
+            }
+            composable(AppScreen.SCOUTING.name) {
+                if (primaryViewModel.user?.permissions?.generalScouting == true)
+                    NestedScaffold(snack = snack, topBar = {
+                        TopAppBar(title = {
+                            Text("Crescendo Scouting")
+                        })
+                    }) {
+                        CrescendoForm(dh = dataHandler, snack)
+                    }
             }
         }
     }

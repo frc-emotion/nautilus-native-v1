@@ -140,7 +140,7 @@ fun MeetingItemPreview() {
         type = "test",
         value = 0
     )
-    MainTheme(preference = ColorTheme.NAUTILUS_MIDNIGHT) {
+    MainTheme(preference = ColorTheme.NAUTILUS_DARK) {
         Screen {
             MeetingItem(
                 meeting = mtg,

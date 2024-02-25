@@ -2,6 +2,7 @@ package org.nautilusapp.nautilus.android.screens.home.admin
 
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.size
@@ -166,8 +167,8 @@ fun AttendanceVerificationPage(
 
 
     val attendancePeriods = dataHandler.seasons.getAttendancePeriods()
-    val archiveDisplay = if (showArchived && isAdmin(viewModel.user)) archived else listOf()
-    val pastDisplay = if (showPast && isAdmin(viewModel.user)) pastMeetings else listOf()
+    val archiveDisplay = if (showArchived && (viewModel.user.isAdmin)) archived else listOf()
+    val pastDisplay = if (showPast && viewModel.user.isAdmin) pastMeetings else listOf()
 
     val localConf = LocalConfiguration.current
 
@@ -294,7 +295,7 @@ fun AttendanceVerificationPage(
                             }
                         )
                     }
-                    if (isAdmin(viewModel.user)) {
+                    if ((viewModel.user.isAdmin)) {
                         Box {
                             IconButton(onClick = { showViewOptionsMenu = true }) {
                                 Icon(
@@ -345,6 +346,7 @@ fun AttendanceVerificationPage(
             LazyScreen(
                 onRefresh = { dataHandler.attendance.sync().download.also { loadMeetings() } },
                 snack = snack,
+                contentPadding = PaddingValues(horizontal = 8.dp)
             ) {
                 if (meetings.isEmpty()) {
                     item("No current available") {
@@ -379,14 +381,14 @@ fun AttendanceVerificationPage(
                     )
                 }
                 item("Past meetings") {
-                    if (showPast && isAdmin(viewModel.user)) {
+                    if (showPast && (viewModel.user.isAdmin)) {
                         Spacer(modifier = Modifier.size(16.dp))
                         Text(text = "Past Meetings", style = MaterialTheme.typography.headlineLarge)
                         Spacer(modifier = Modifier.size(8.dp))
                     }
                 }
                 items(pastDisplay.size, key = { pastDisplay[it]._id }) {
-                    if (showPast && isAdmin(viewModel.user)) {
+                    if (showPast && (viewModel.user.isAdmin)) {
                         val mtg = pastDisplay[it]
                         MeetingItem(meeting = mtg,
                             onWrite = { meetingIdToWrite = it },
@@ -403,13 +405,13 @@ fun AttendanceVerificationPage(
                     }
                 }
                 item("No past found") {
-                    if (pastMeetings.isEmpty() && showPast && isAdmin(viewModel.user)) Text(
+                    if (pastMeetings.isEmpty() && showPast && (viewModel.user.isAdmin)) Text(
                         text = "None Found",
                         style = MaterialTheme.typography.titleMedium
                     )
                 }
                 item("Archived") {
-                    if (isAdmin(viewModel.user) && showArchived) {
+                    if ((viewModel.user.isAdmin) && showArchived) {
                         Spacer(modifier = Modifier.size(16.dp))
                         Text(
                             text = "Archived Meetings",
@@ -419,7 +421,7 @@ fun AttendanceVerificationPage(
                     }
                 }
                 items((archiveDisplay.size), { archiveDisplay[it]._id }) {
-                    if (isAdmin(viewModel.user) && showArchived) {
+                    if ((viewModel.user.isAdmin) && showArchived) {
                         val mtg = archiveDisplay[it]
                         MeetingItem(meeting = mtg,
                             onWrite = { meetingIdToWrite = it },
@@ -436,7 +438,7 @@ fun AttendanceVerificationPage(
                     }
                 }
                 item("no archived") {
-                    if (isAdmin(viewModel.user) && showArchived && archived.isEmpty()) {
+                    if ((viewModel.user.isAdmin) && showArchived && archived.isEmpty()) {
                         Text(text = "None Found", style = MaterialTheme.typography.titleMedium)
                     }
                 }

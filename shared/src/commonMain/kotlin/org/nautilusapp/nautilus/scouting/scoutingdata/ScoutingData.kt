@@ -1,5 +1,7 @@
 package org.nautilusapp.nautilus.scouting.scoutingdata
 
+import kotlinx.serialization.Serializable
+
 interface ScoutingData {
     val competition: String
     val teamNumber: Int
@@ -15,3 +17,25 @@ interface ScoutingData {
     val rankingPoints: Int
     val _id: String
 }
+
+interface ScoutingSubmission {
+    val comments: String?
+    val competition: String
+    val defensive: Boolean
+    val matchNumber: Int
+    val penaltyPointsEarned: Int
+    val rankingPoints: Int
+    val ranking: RP
+    val score: Int
+    val teamNumber: Int
+    val tied: Boolean
+    val won: Boolean
+    val brokeDown: Boolean
+}
+
+@Serializable
+abstract class RP(
+    protected val rp1: Boolean,
+    protected val rp2: Boolean
+)
+

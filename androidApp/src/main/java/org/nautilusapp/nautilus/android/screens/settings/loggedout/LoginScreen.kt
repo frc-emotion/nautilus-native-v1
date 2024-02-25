@@ -114,7 +114,7 @@ fun LoginScreen(
 @Composable
 @Preview(apiLevel = 33)
 fun LoginScreenPreview() {
-    MainTheme(preference = ColorTheme.NAUTILUS_MIDNIGHT) {
+    MainTheme(preference = ColorTheme.NAUTILUS_DARK) {
         Screen {
             LoginScreen(
                 onLogin = { _, _, _: (String) -> Unit -> },

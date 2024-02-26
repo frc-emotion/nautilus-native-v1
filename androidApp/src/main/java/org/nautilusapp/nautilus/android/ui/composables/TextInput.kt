@@ -270,8 +270,7 @@ fun NumberInput(
                 if (it.isBlank()) {
                     onValueChange(null)
                 }
-                if (it.toIntOrNull() != null && (it.toInt() in minValue..maxValue)
-                ) {
+                if (it.toIntOrNull() in minValue..maxValue) {
                     onValueChange(it.toInt())
                 }
             },

@@ -32,8 +32,8 @@ fun CrescendoSubmission.Companion.from(
     stage = stage,
     comments = base.comments,
     ranking = CrescendoRankingPoints(
-        melody = base.ranking.first,
-        ensemble = base.ranking.second
+        melody = base.ranking.rp1,
+        ensemble = base.ranking.rp2
     ),
     brokeDown = base.brokeDown,
     competition = base.competition,

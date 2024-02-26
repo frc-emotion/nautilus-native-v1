@@ -3,6 +3,7 @@ package org.nautilusapp.nautilus.android.screens.home.admin
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.size
@@ -307,24 +308,28 @@ fun AttendanceVerificationPage(
                                 expanded = showViewOptionsMenu,
                                 onDismissRequest = { showViewOptionsMenu = false }) {
                                 DropdownMenuItem(onClick = { showPast = !showPast }, text = {
-                                    if (showPast)
-                                        Icon(
-                                            Icons.Filled.Check,
-                                            contentDescription = null
-                                        )
-                                    Spacer(Modifier.size(8.dp))
-                                    Text("Past Meetings")
-                                })
-                                DropdownMenuItem(
-                                    onClick = { showArchived = !showArchived },
-                                    text = {
-                                        if (showArchived)
+                                    Row {
+                                        if (showPast)
                                             Icon(
                                                 Icons.Filled.Check,
                                                 contentDescription = null
                                             )
                                         Spacer(Modifier.size(8.dp))
-                                        Text("Archived Meetings")
+                                        Text("Past Meetings")
+                                    }
+                                })
+                                DropdownMenuItem(
+                                    onClick = { showArchived = !showArchived },
+                                    text = {
+                                        Row {
+                                            if (showArchived)
+                                                Icon(
+                                                    Icons.Filled.Check,
+                                                    contentDescription = null
+                                                )
+                                            Spacer(Modifier.size(8.dp))
+                                            Text("Archived Meetings")
+                                        }
                                     }
                                 )
                             }

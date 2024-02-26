@@ -15,6 +15,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Remove
@@ -33,6 +34,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.platform.LocalView
+import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
@@ -70,7 +72,7 @@ fun Incrementer(
             TextField(
                 value = (value?.toString() ?: ""),
                 onValueChange = {
-                    if (it.isNotBlank() && it.toInt() in range) {
+                    if (it.isNotBlank() && it.toIntOrNull() in range) {
                         onValueChange(it.toInt())
                     } else if (it.isBlank()) onValueChange(null)
                 },
@@ -90,6 +92,7 @@ fun Incrementer(
                 },
                 singleLine = true,
                 isError = showError && (value == null),
+                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number)
             )
             Row(
                 Modifier

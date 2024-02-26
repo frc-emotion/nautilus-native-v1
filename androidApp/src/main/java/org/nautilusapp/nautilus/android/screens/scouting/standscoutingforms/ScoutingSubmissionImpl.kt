@@ -19,6 +19,6 @@ data class ScoutingSubmissionImpl(
 ) : ScoutingSubmission
 
 data class RPImpl(
-    val first: Boolean,
-    val second: Boolean,
-) : RP(rp1 = first, rp2 = second)
+    override val rp1: Boolean,
+    override val rp2: Boolean,
+) : RP

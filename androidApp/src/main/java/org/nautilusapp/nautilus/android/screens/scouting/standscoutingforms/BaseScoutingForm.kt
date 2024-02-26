@@ -41,6 +41,7 @@ import org.nautilusapp.nautilus.android.ui.composables.TextArea
 import org.nautilusapp.nautilus.android.ui.composables.YesNoSelector
 import org.nautilusapp.nautilus.android.ui.composables.containers.Screen
 import org.nautilusapp.nautilus.android.ui.composables.indicators.ErrorIndicator
+import org.nautilusapp.nautilus.android.ui.composables.indicators.LoadingSpinner
 import org.nautilusapp.nautilus.android.ui.theme.ColorTheme
 import org.nautilusapp.nautilus.scouting.GameResult
 
@@ -98,6 +99,8 @@ fun BaseScoutingForm(
     var showSuccessDialog by remember { mutableStateOf(false) }
     var showErrorDialog by remember { mutableStateOf(false) }
     var errorText by remember { mutableStateOf("") }
+
+    var isBusy by remember { mutableStateOf(false) }
 
 
     fun clearForm() {
@@ -270,6 +273,7 @@ fun BaseScoutingForm(
             confirmButton = {
                 Button(onClick = {
                     scope.launch {
+                        isBusy = true
                         val res = onFormSubmit(
                             ScoutingSubmissionImpl(
                                 competition = competition,
@@ -284,19 +288,21 @@ fun BaseScoutingForm(
                                 comments = comments,
                                 rankingPoints = calculateRP(rp1!!, rp2!!, gameResult),
                                 ranking = RPImpl(
-                                    first = rp1!!,
-                                    second = rp2!!
+                                    rp1 = rp1!!,
+                                    rp2 = rp2!!
                                 )
                             )
                         )
                         when (res) {
                             is Result.Success -> {
                                 clearForm()
+                                isBusy = false
                                 showSuccessDialog = true
                             }
 
                             is Result.Error -> {
                                 showErrorDialog = true
+                                isBusy = false
                                 errorText = res.error.message
                             }
                         }
@@ -314,11 +320,13 @@ fun BaseScoutingForm(
         )
     }
 
+    LoadingSpinner(isBusy = isBusy)
+
     SuccessAlertDialog(show = showSuccessDialog) {
         showSuccessDialog = false
     }
 
-    ErrorAlertDialog(show = showErrorDialog) {
+    ErrorAlertDialog(show = showErrorDialog, text = errorText) {
         showErrorDialog = false
     }
 

@@ -84,4 +84,7 @@ enum class CrescendoStageState {
 data class CrescendoRankingPoints(
     val melody: Boolean,
     val ensemble: Boolean,
-) : RP(rp1 = melody, rp2 = ensemble)
+) : RP {
+    override val rp1 = melody
+    override val rp2 = ensemble
+}

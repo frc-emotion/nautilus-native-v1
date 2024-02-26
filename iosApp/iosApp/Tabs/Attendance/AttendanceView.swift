@@ -98,16 +98,18 @@ struct AttendanceView: View {
 //                }
                 // leads: view meetings
                 ToolbarItem(placement: .topBarTrailing) {
-                    if (env.user!.accountType == shared.AccountType.lead || env.user!.accountType == shared.AccountType.admin || env.user!.accountType == shared.AccountType.superuser) {
-                        Button(action: {
-                            meetingsPopoverDisplayed.toggle()
-                        }) {
-                            Image(systemName: "calendar")
-                        }
-                        .popover(isPresented: $meetingsPopoverDisplayed, arrowEdge: .bottom) {
-                            NavigationView {
-                                MeetingsListView(isPresented: $meetingsPopoverDisplayed)
-                                    .environmentObject(env)
+                    if (env.user != nil) {
+                        if (env.user!.accountType == shared.AccountType.lead || env.user!.accountType == shared.AccountType.admin || env.user!.accountType == shared.AccountType.superuser) {
+                            Button(action: {
+                                meetingsPopoverDisplayed.toggle()
+                            }) {
+                                Image(systemName: "calendar")
+                            }
+                            .popover(isPresented: $meetingsPopoverDisplayed, arrowEdge: .bottom) {
+                                NavigationView {
+                                    MeetingsListView(isPresented: $meetingsPopoverDisplayed)
+                                        .environmentObject(env)
+                                }
                             }
                         }
                     }

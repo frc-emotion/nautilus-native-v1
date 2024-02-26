@@ -44,16 +44,18 @@ struct ApplicationSwitcher: View {
                         }
                         .environmentObject(env)
                     
-//                    DirectoryView(dh: $dh)
-//                        .tabItem {
-//                            Label("People", systemImage: "person.2.fill")
-//                        }
+                    DirectoryView()
+                        .tabItem {
+                            Label("People", systemImage: "person.2.fill")
+                        }
+                        .environmentObject(env)
                 }
-//                SettingsView(dh: $dh)
-//                    .navigationTitle("Settings")
-//                    .tabItem {
-//                        Label("Settings", systemImage: "gear")
-//                    }
+                SettingsView()
+                    .navigationTitle("Settings")
+                    .tabItem {
+                        Label("Settings", systemImage: "gear")
+                    }
+                    .environmentObject(env)
             }
         } else {
             AuthenticationView()

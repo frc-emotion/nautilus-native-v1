@@ -13,11 +13,11 @@ CREATE TABLE meeting_table (
 );
 
 insertOne {
-BEGIN TRANSACTION;
+-- BEGIN TRANSACTION;
 DELETE FROM meeting_table WHERE id = :id;
 INSERT OR ROLLBACK INTO meeting_table (id, startTime, endTime, type, description, value, createdBy, attendance_period, archived)
 VALUES (:id, :startTime, :endTime, :type, :description, :value, :createdBy, :attendance_period, :archived);
-COMMIT;
+-- COMMIT;
 }
 
 removeAll:

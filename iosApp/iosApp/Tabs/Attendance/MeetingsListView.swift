@@ -21,8 +21,8 @@ struct MeetingsListView: View {
         NavigationStack {
             List {
                 NavigationLink {
-                    MeetingCreationView(reloader: $promptReload)
-                        .environmentObject(env)
+//                    MeetingCreationView(reloader: $promptReload)
+//                        .environmentObject(env)
                 } label: {
                     HStack {
                         Image(systemName: "plus")

@@ -11,9 +11,8 @@ import shared
 
 struct UserView: View {
     // TODO: This needs to work for both Token & non-token users
+    @State var user: shared.User
     
-    var user: shared.TokenUser
-
     
     var body: some View {
         ScrollView {
@@ -39,7 +38,7 @@ struct UserView: View {
                         } else {
                             Text("No subteam")
                         }
-//                        Spacer()
+                        Spacer()
 //                        switch (user.grade) {
 //                        case 9: Text("Freshman")
 //                        case 10: Text("Sophomore")
@@ -47,6 +46,7 @@ struct UserView: View {
 //                        case 12: Text("Senior")
 //                        default: Text("")
 //                        }
+                        Text("")
                     }
                     .font(.subheadline).foregroundColor(.secondary)
                 }

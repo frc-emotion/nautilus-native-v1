@@ -10,7 +10,7 @@ import SwiftUI
 import shared
 
 struct UserBar: View {
-    var user: shared.User
+    @EnvironmentObject var env: EnvironmentModel
     
     var body: some View {
         HStack(alignment: .center, spacing: 15) {
@@ -19,15 +19,17 @@ struct UserBar: View {
                 .frame(width: 60, height: 60)
                 .clipShape(Circle())
             VStack(alignment: .leading, spacing: 2.0) {
-                Text("\(user.firstname) \(user.lastname)")
-                    .font(.title)
-                
-                if (user.subteam != nil) {
-                    Text((user.accountType.value >= 2 ? "\(user.subteam!.description().capitalized) Team Lead" : "\(user.subteam!.description().capitalized) Team Member"))
-                        .font(.subheadline)
-                        .foregroundColor(Color.gray)
-                } else {
-                    Text("No subteam")
+                if (env.user != nil){
+                    Text("\(env.user!.firstname) \(env.user!.lastname)")
+                        .font(.title)
+                    
+                    if (env.user!.subteam != nil) {
+                        Text((env.user!.accountType.value >= 2 ? "\(env.user!.subteam!.description().capitalized) Team Lead" : "\(env.user!.subteam!.description().capitalized) Team Member"))
+                            .font(.subheadline)
+                            .foregroundColor(Color.gray)
+                    } else {
+                        Text("No subteam")
+                    }
                 }
             }
         }
@@ -36,6 +38,6 @@ struct UserBar: View {
 
 struct UserBar_Previews: PreviewProvider {
     static var previews: some View {
-        UserBar(user: HelpfulVars().testuser)
+        UserBar()
     }
 }

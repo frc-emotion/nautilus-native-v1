@@ -10,17 +10,17 @@ import SwiftUI
 import shared
 
 struct DirectoryBar: View {
-    var user: shared.TokenUser
+    var user: shared.User
     
     var body: some View {
         if (user.accountType.value >= 2) {
             HStack {
-                Text("\(user.firstname) \(user.lastname)")
+                Text("\(user.firstname.capitalized) \(user.lastname.capitalized)")
                     .fontWeight(.bold)
             }
         } else {
             HStack {
-                Text("\(user.firstname) \(user.lastname)")
+                Text("\(user.firstname.capitalized) \(user.lastname.capitalized)")
             }
         }
         

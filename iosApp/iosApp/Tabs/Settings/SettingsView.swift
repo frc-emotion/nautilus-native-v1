@@ -11,8 +11,12 @@ struct SettingsView: View {
                     NavigationLink {
                         UserView(user: env.user!)
                     } label: {
-                        UserBar(user: env.user!)
+                        if (env.user != nil) {
+                            UserBar()
+                                .environmentObject(env)
+                        }
                     }
+                       
 //                    Not yet implemented
 //                    NavigationLink {
 //                        AccountView()
@@ -31,6 +35,7 @@ struct SettingsView: View {
                 Section {
                     Button (action: {
                         Task {
+                            env.updateUser(newUser: nil)
                             env.dh.users.logout()
                         }
                     }) {

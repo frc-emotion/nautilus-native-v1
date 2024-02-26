@@ -47,19 +47,19 @@ getCompetitionsByYear:
 SELECT name, year FROM competition_table WHERE year = ?;
 
 deleteAllSeasons {
-    BEGIN TRANSACTION;
+--     BEGIN TRANSACTION;
     DELETE FROM attendance_periods_table;
     DELETE FROM competition_table;
     DELETE FROM season_table;
-    COMMIT;
+--     COMMIT;
 }
 
 deleteSeason {
-    BEGIN TRANSACTION;
+--     BEGIN TRANSACTION;
     DELETE FROM attendance_periods_table WHERE year = :season;
     DELETE FROM competition_table WHERE year = :season;
     DELETE FROM season_table WHERE year = :season;
-    COMMIT;
+--     COMMIT;
 }
 
 getAttendancePeriods:

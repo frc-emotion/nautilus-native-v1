@@ -15,7 +15,7 @@ struct DirectoryView: View {
     @State private var popoverShown = false
     @State private var errorLoadingUsers = false
     @State private var alertBoxShowing = false
-    @State private var selectedUser: shared.UserWithoutToken?
+    @State private var selectedUser: shared.PartialUser?
     //    @State private var alertMsg = ""
     @EnvironmentObject var env: EnvironmentModel
     // MARK: - Sort Users by Subteam
@@ -27,12 +27,15 @@ struct DirectoryView: View {
     //        }
     //    }
     
-    var subteamSortedUsers: [String: [shared.UserWithoutToken]]? {
+    var subteamSortedUsers: [String: [shared.PartialUser]]? {
         if let users = users {
             var sortedUsers = users.sorted { $0.lastname.lowercased() < $1.lastname.lowercased() }
             sortedUsers.sort { $0.accountType.value > $1.accountType.value }
             sortedUsers.sort { $0.subteam?.description() ?? "" < $1.subteam?.description() ?? "" }
-            return Dictionary(grouping: sortedUsers, by: { $0.subteam?.description() ?? "" })
+            let converted: [PartialUser] = sortedUsers.map { user in
+                return PartialUser(_id: user._id, firstname: user.firstname, lastname: user.lastname, username: user.username, email: user.email, subteam: user.subteam, roles: user.roles, accountType: user.accountType)
+            }
+            return Dictionary(grouping: converted, by: { $0.subteam?.description() ?? "" })
         } else {
             return nil
         }
@@ -83,7 +86,8 @@ struct DirectoryView: View {
                         if let nextSort = subteamSortedUsers[subteam.description()] {
                             Section(header: Text(subteam.description())) {
                                 ForEach(nextSort, id: \.self) { user in
-                                    DirectoryBar(user: env.user)
+                                    DirectoryBar(user: user)
+                                    
                                 }
                             }
                         }

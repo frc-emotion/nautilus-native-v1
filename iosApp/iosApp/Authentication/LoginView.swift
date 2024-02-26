@@ -62,8 +62,10 @@ struct LoginView: View {
                 
                 Button (action: {
                     Task {
-                        let _ = try await env.dh.users.login(username: username, password: password) { err in
-                            loginErrorMsg = err.message
+                        do {
+                            try await env.login(username: username, password: password)
+                        } catch {
+                            loginErrorMsg = "Error logging in."
                         }
                     }
                 }) {

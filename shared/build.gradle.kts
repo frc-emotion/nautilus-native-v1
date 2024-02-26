@@ -1,8 +1,8 @@
 plugins {
-    kotlin("multiplatform")
-    id("com.android.library")
-    kotlin("plugin.serialization")
-    id("app.cash.sqldelight")
+    alias(libs.plugins.kotlin.multiplatform)
+    alias(libs.plugins.android.library)
+    alias(libs.plugins.kotlin.plugin.serialization)
+    alias(libs.plugins.sqldelight)
 }
 
 @OptIn(org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi::class)
@@ -16,7 +16,7 @@ kotlin {
             }
         }
     }
-    
+
     listOf(
         iosX64(),
         iosArm64(),
@@ -28,18 +28,16 @@ kotlin {
     }
 
     sourceSets {
-        val ktorVersion = "2.3.7"
-        val sqlDelightVersion = "2.0.1"
         val commonMain by getting {
             dependencies {
                 //put your multiplatform dependencies here
-                implementation("io.ktor:ktor-client-core:$ktorVersion")
-                implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.7.3")
-                implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.6.0")
-                implementation("io.ktor:ktor-client-content-negotiation:$ktorVersion")
-                implementation("io.ktor:ktor-serialization-kotlinx-json:$ktorVersion")
-                implementation("app.cash.sqldelight:runtime:$sqlDelightVersion")
-                implementation("app.cash.sqldelight:primitive-adapters:$sqlDelightVersion")
+                implementation(libs.ktor.client.core)
+                implementation(libs.kotlinx.coroutines.core)
+                implementation(libs.kotlinx.serialization.json)
+                implementation(libs.ktor.client.content.negotiation)
+                implementation(libs.ktor.serialization.kotlinx.json)
+                implementation(libs.runtime)
+                implementation(libs.primitive.adapters)
             }
         }
         val commonTest by getting {
@@ -50,15 +48,15 @@ kotlin {
         val androidMain by getting {
             dependencies {
                 //put your android dependencies here
-                implementation("io.ktor:ktor-client-okhttp:$ktorVersion")
-                implementation("app.cash.sqldelight:android-driver:$sqlDelightVersion")
+                implementation(libs.ktor.client.okhttp)
+                implementation(libs.android.driver)
             }
         }
         val iosMain by getting {
             dependsOn(commonMain)
             dependencies {
-                implementation("io.ktor:ktor-client-darwin:$ktorVersion")
-                implementation("app.cash.sqldelight:native-driver:$sqlDelightVersion")
+                implementation(libs.ktor.client.darwin)
+                implementation(libs.native.driver)
             }
         }
     }
@@ -73,7 +71,7 @@ android {
     buildToolsVersion = "34.0.0"
 }
 dependencies {
-    implementation("androidx.core:core-ktx:1.12.0")
+    implementation(libs.androidx.core.ktx)
 }
 
 sqldelight {

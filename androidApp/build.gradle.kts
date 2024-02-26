@@ -1,8 +1,7 @@
 plugins {
-    id("com.android.application")
-    id("com.google.devtools.ksp")
-    kotlin("android")
-    id("kotlin-parcelize")
+    alias(libs.plugins.android.application)
+    alias(libs.plugins.google.devtools.ksp)
+    alias(libs.plugins.kotlin.android)
 }
 
 android {
@@ -48,17 +47,15 @@ android {
 
 dependencies {
     implementation(project(":shared"))
-    val compose = "1.6.1"
-    implementation("androidx.compose.ui:ui:$compose")
-    implementation("androidx.compose.ui:ui-tooling:$compose")
-    implementation("androidx.compose.ui:ui-tooling-preview:$compose")
-    implementation("androidx.compose.foundation:foundation:$compose")
-    implementation("androidx.compose.material:material:$compose")
-    implementation("androidx.activity:activity-compose:1.8.2")
-    implementation("androidx.compose.material3:material3:1.2.0")
-    implementation("androidx.compose.material:material-icons-extended")
-    implementation("androidx.navigation:navigation-compose:2.7.7")
-    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.7.3")
-    val workVersion = "2.9.0"
-    implementation("androidx.work:work-runtime-ktx:$workVersion")
+    implementation(platform(libs.androidx.compose.bom))
+    implementation(libs.androidx.compose.ui.ui)
+    implementation(libs.androidx.compose.ui.tooling)
+    implementation(libs.androidx.compose.ui.tooling.preview)
+    implementation(libs.androidx.compose.foundation.foundation)
+    implementation(libs.androidx.activity.activity.compose)
+    implementation(libs.androidx.compose.material3.material3)
+    implementation(libs.androidx.compose.material.icons.extended)
+    implementation(libs.androidx.navigation.compose)
+    implementation(libs.kotlinx.coroutines.android)
+    implementation(libs.androidx.work.runtime.ktx)
 }

@@ -7,7 +7,6 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.DropdownMenuItem
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Add
@@ -20,6 +19,7 @@ import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.DatePickerState
 import androidx.compose.material3.DropdownMenu
+import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ElevatedAssistChip
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FloatingActionButton
@@ -306,7 +306,7 @@ fun AttendanceVerificationPage(
                             DropdownMenu(
                                 expanded = showViewOptionsMenu,
                                 onDismissRequest = { showViewOptionsMenu = false }) {
-                                DropdownMenuItem(onClick = { showPast = !showPast }) {
+                                DropdownMenuItem(onClick = { showPast = !showPast }, text = {
                                     if (showPast)
                                         Icon(
                                             Icons.Filled.Check,
@@ -314,16 +314,19 @@ fun AttendanceVerificationPage(
                                         )
                                     Spacer(Modifier.size(8.dp))
                                     Text("Past Meetings")
-                                }
-                                DropdownMenuItem(onClick = { showArchived = !showArchived }) {
-                                    if (showArchived)
-                                        Icon(
-                                            Icons.Filled.Check,
-                                            contentDescription = null
-                                        )
-                                    Spacer(Modifier.size(8.dp))
-                                    Text("Archived Meetings")
-                                }
+                                })
+                                DropdownMenuItem(
+                                    onClick = { showArchived = !showArchived },
+                                    text = {
+                                        if (showArchived)
+                                            Icon(
+                                                Icons.Filled.Check,
+                                                contentDescription = null
+                                            )
+                                        Spacer(Modifier.size(8.dp))
+                                        Text("Archived Meetings")
+                                    }
+                                )
                             }
                         }
                     }

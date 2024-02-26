@@ -4,44 +4,34 @@
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.NFC" />
-    <uses-feature android:name="android.hardware.nfc" android:required="true" />
+
+    <uses-feature
+        android:name="android.hardware.nfc"
+        android:required="true" />
     <application
-        android:supportsRtl="true"
+        android:icon="@mipmap/ic_launcher"
         android:label="Nautilus FRC"
-        android:icon = "@mipmap/ic_launcher"
-        android:theme="@style/AppTheme"
-        android:usesCleartextTraffic="true">
+        android:supportsRtl="true"
+        android:theme="@style/AppTheme">
         <activity
             android:name=".MainActivity"
             android:exported="true"
-            android:launchMode="singleInstance"
-            >
+            android:launchMode="singleInstance">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
             <intent-filter>
-                <action android:name="android.nfc.action.NDEF_DISCOVERED"/>
-                <category android:name="android.intent.category.DEFAULT"/>
+                <action android:name="android.nfc.action.NDEF_DISCOVERED" />
+                <category android:name="android.intent.category.DEFAULT" />
                 <data android:mimeType="application/nautilus" />
             </intent-filter>
-<!-- legacy compat           -->
+            <!-- legacy compat           -->
             <intent-filter>
-                <action android:name="android.nfc.action.NDEF_DISCOVERED"/>
-                <category android:name="android.intent.category.DEFAULT"/>
+                <action android:name="android.nfc.action.NDEF_DISCOVERED" />
+                <category android:name="android.intent.category.DEFAULT" />
                 <data android:mimeType="application/emotion" />
             </intent-filter>
-<!--            <intent-filter>-->
-<!--                <action android:name="android.nfc.action.TAG_DISCOVERED"/>-->
-<!--                <category android:name="android.intent.category.DEFAULT"/>-->
-<!--            </intent-filter>-->
-<!--            <intent-filter>-->
-<!--                <action android:name="android.nfc.action.TECH_DISCOVERED"/>-->
-<!--                <category android:name="android.intent.category.DEFAULT"/>-->
-<!--            </intent-filter>-->
-<!--            <meta-data android:name="android.nfc.action.TECH_DISCOVERED"-->
-<!--                android:resource="@xml/nfc_tech_filter"-->
-<!--                />-->
         </activity>
     </application>
 </manifest> 

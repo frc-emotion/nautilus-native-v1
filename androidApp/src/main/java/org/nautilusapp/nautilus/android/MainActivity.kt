@@ -57,10 +57,6 @@ class MainActivity : ComponentActivity() {
     private lateinit var workManager: WorkManager
     private lateinit var pendingIntent: PendingIntent
     private val intentFilters = arrayOf(
-//        IntentFilter(ACTION_NDEF_DISCOVERED).apply {
-//            addDataType("*/*")
-//        },
-//        IntentFilter(ACTION_TAG_DISCOVERED),
         IntentFilter(ACTION_TECH_DISCOVERED)
     )
     private val techLists = arrayOf(
@@ -72,7 +68,8 @@ class MainActivity : ComponentActivity() {
 
     private val updateIntent = Intent(Intent.ACTION_VIEW).apply {
         data = Uri.parse(
-            "https://play.google.com/store/apps/details?id=org.nautilusapp.nautilus")
+            "https://play.google.com/store/apps/details?id=org.nautilusapp.nautilus"
+        )
         setPackage("com.android.vending")
     }
 
@@ -80,11 +77,13 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         println("onCreate")
 
-        val sharedPref = this.getSharedPreferences("org.org.nautilusapp.nautilus.android", MODE_PRIVATE)
+        val sharedPref =
+            this.getSharedPreferences("org.org.nautilusapp.nautilus.android", MODE_PRIVATE)
 
         val rootURL = sharedPref.getString(SharedPrefKeys.URL, null)
 
-        dataHandler = DataHandler(databaseDriverFactory =
+        dataHandler = DataHandler(
+            databaseDriverFactory =
             org.nautilusapp.localstorage.AndroidDatabaseDriver(this),
             getToken = {
                 return@DataHandler sharedPref.getString(SharedPrefKeys.TOKEN, null)
@@ -140,11 +139,11 @@ class MainActivity : ComponentActivity() {
             }
 
             val primaryViewModel = viewModel<MainViewModel>(
-                factory = object: ViewModelProvider.Factory {
+                factory = object : ViewModelProvider.Factory {
                     @Suppress("UNCHECKED_CAST")
                     override fun <T : ViewModel> create(
                         modelClass: Class<T>,
-                    ):T {
+                    ): T {
                         return MainViewModel(dataHandler, connectivityManager, sharedPref) as T
                     }
                 }
@@ -162,21 +161,28 @@ class MainActivity : ComponentActivity() {
 
             val snack = remember { SnackbarHostState() }
 
-            MainTheme(preference =
+            MainTheme(
+                preference =
                 primaryViewModel.theme
             ) {
                 LoadingSpinner(isBusy)
-                if(manifestOk == true) {
+                if (manifestOk == true) {
                     if (authState(primaryViewModel.user) == AuthState.LOGGED_IN && rootURL?.isNotBlank() == true) {
                         LoggedInNavigator(primaryViewModel, dataHandler, nfcViewmodel, snack)
                     } else {
-                        if(rootURL?.isBlank() == true) {
+                        if (rootURL?.isBlank() == true) {
                             dataHandler.users.logout()
                         }
                         Scaffold(
-                            snackbarHost = { SnackbarHost(snack) {
-                                Snackbar(snackbarData = it, containerColor = cardColor(), contentColor = MaterialTheme.colorScheme.onSurface)
-                            } },
+                            snackbarHost = {
+                                SnackbarHost(snack) {
+                                    Snackbar(
+                                        snackbarData = it,
+                                        containerColor = cardColor(),
+                                        contentColor = MaterialTheme.colorScheme.onSurface
+                                    )
+                                }
+                            },
                         ) { padding ->
                             Box(modifier = Modifier.padding(padding)) {
                                 SettingsScreen(primaryViewModel, snack = snack)
@@ -193,12 +199,9 @@ class MainActivity : ComponentActivity() {
                     }
                 }
             }
-
-
-
-
         }
     }
+
     override fun onDestroy() {
         super.onDestroy()
         dataHandler.getNetworkClient().close()
@@ -221,7 +224,7 @@ class MainActivity : ComponentActivity() {
 
     override fun onResume() {
         super.onResume()
-        if(adapter == null) {
+        if (adapter == null) {
             adapter = getDefaultAdapter(this)
         }
         println("onResume")
@@ -231,7 +234,7 @@ class MainActivity : ComponentActivity() {
 
     private fun handleNFCIntent(intent: Intent?) {
         println("Handling NFC Intent: ${intent?.action}")
-        if(intent?.action == ACTION_TECH_DISCOVERED || intent?.action == ACTION_NDEF_DISCOVERED || intent?.action == ACTION_TAG_DISCOVERED) {
+        if (intent?.action == ACTION_TECH_DISCOVERED || intent?.action == ACTION_NDEF_DISCOVERED || intent?.action == ACTION_TAG_DISCOVERED) {
             when {
                 SDK_INT >= 33 -> {
                     this.nfcViewmodel.setTag(
@@ -249,20 +252,23 @@ class MainActivity : ComponentActivity() {
                 }
             }
         }
-        if(intent?.action == ACTION_NDEF_DISCOVERED) {
+        if (intent?.action == ACTION_NDEF_DISCOVERED) {
             when {
                 SDK_INT >= 33 -> {
-                        intent.getParcelableArrayExtra(NfcAdapter.EXTRA_NDEF_MESSAGES, NdefMessage::class.java)?.also { raw ->
-                           this.nfcViewmodel.setNdef( raw.map{ it as NdefMessage } )
-                        }
+                    intent.getParcelableArrayExtra(
+                        NfcAdapter.EXTRA_NDEF_MESSAGES,
+                        NdefMessage::class.java
+                    )?.also { raw ->
+                        this.nfcViewmodel.setNdef(raw.map { it as NdefMessage })
+                    }
 
                     println("NFC Tag Detected")
                 }
 
                 else -> {
                     @Suppress("DEPRECATION")
-                    intent.getParcelableArrayExtra(NfcAdapter.EXTRA_NDEF_MESSAGES)?.also { raw->
-                        this.nfcViewmodel.setNdef( raw.map { it as NdefMessage } )
+                    intent.getParcelableArrayExtra(NfcAdapter.EXTRA_NDEF_MESSAGES)?.also { raw ->
+                        this.nfcViewmodel.setNdef(raw.map { it as NdefMessage })
                     }
                 }
             }

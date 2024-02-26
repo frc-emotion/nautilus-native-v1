@@ -46,19 +46,22 @@ fun DropDown(label: String, value: String, children: @Composable () -> Unit) {
             .fillMaxWidth()
             .clickable { open = !open }
     ) {
-        Box(modifier = Modifier
-            .padding(16.dp)
-            .fillMaxWidth(),
+        Box(
+            modifier = Modifier
+                .padding(16.dp)
+                .fillMaxWidth(),
             contentAlignment = Alignment.CenterStart
         ) {
-            if(value.isBlank()) {
+            if (value.isBlank()) {
                 Text(text = label, color = MaterialTheme.colorScheme.outline)
             } else {
                 Text(text = value)
             }
-            val icon = if(open) Icons.Outlined.ExpandLess else Icons.Outlined.ExpandMore
-            val tint = if(value.isBlank()) MaterialTheme.colorScheme.outline else MaterialTheme.colorScheme.primary
-            Icon(icon, contentDescription = "More",
+            val icon = if (open) Icons.Outlined.ExpandLess else Icons.Outlined.ExpandMore
+            val tint =
+                if (value.isBlank()) MaterialTheme.colorScheme.outline else MaterialTheme.colorScheme.primary
+            Icon(
+                icon, contentDescription = "More",
                 tint = tint,
                 modifier = Modifier.align(Alignment.CenterEnd)
             )
@@ -73,19 +76,21 @@ fun DropDown(label: String, value: String, children: @Composable () -> Unit) {
 @Composable
 fun TextDropDown(label: String, value: String, children: @Composable () -> Unit) {
     var open by remember { mutableStateOf(false) }
-    Row (verticalAlignment = Alignment.CenterVertically) {
+    Row(verticalAlignment = Alignment.CenterVertically) {
         Text(text = label, style = MaterialTheme.typography.labelLarge)
         Spacer(modifier = Modifier.width(4.dp))
         Box {
             TextButton(onClick = { open = !open }) {
-                if(value.isBlank()) {
+                if (value.isBlank()) {
                     Text(text = label, color = MaterialTheme.colorScheme.outline)
                 } else {
                     Text(text = value)
                 }
-                val icon = if(open) Icons.Outlined.ExpandLess else Icons.Outlined.ExpandMore
-                val tint = if(value.isBlank()) MaterialTheme.colorScheme.outline else MaterialTheme.colorScheme.primary
-                Icon(icon, contentDescription = "More",
+                val icon = if (open) Icons.Outlined.ExpandLess else Icons.Outlined.ExpandMore
+                val tint =
+                    if (value.isBlank()) MaterialTheme.colorScheme.outline else MaterialTheme.colorScheme.primary
+                Icon(
+                    icon, contentDescription = "More",
                     tint = tint,
                 )
             }
@@ -97,12 +102,23 @@ fun TextDropDown(label: String, value: String, children: @Composable () -> Unit)
 }
 
 @Composable
-fun TextDropDown(label: String, value: String, items: List<String>, onValueChange: (String) -> Unit ) =
+fun TextDropDown(
+    label: String,
+    value: String,
+    items: List<String>,
+    onValueChange: (String) -> Unit
+) =
     TextDropDown(label, value, items, onValueChange) { it }
 
 
 @Composable
-fun <T> TextDropDown(label: String, value: T, items: List<T>, onValueChange: (T) -> Unit, getStr: (T) -> String) {
+fun <T> TextDropDown(
+    label: String,
+    value: T,
+    items: List<T>,
+    onValueChange: (T) -> Unit,
+    getStr: (T) -> String
+) {
     var open by remember { mutableStateOf(false) }
     val str = getStr(value)
     Row(verticalAlignment = Alignment.CenterVertically) {
@@ -110,14 +126,16 @@ fun <T> TextDropDown(label: String, value: T, items: List<T>, onValueChange: (T)
         Spacer(modifier = Modifier.width(4.dp))
         Box {
             TextButton(onClick = { open = !open }, enabled = items.isNotEmpty()) {
-                if(str.isBlank()) {
+                if (str.isBlank()) {
                     Text(text = label, color = MaterialTheme.colorScheme.outline)
                 } else {
                     Text(text = str)
                 }
-                val icon = if(open) Icons.Outlined.ExpandLess else Icons.Outlined.ExpandMore
-                val tint = if(str.isBlank() || items.isEmpty()) MaterialTheme.colorScheme.outline else MaterialTheme.colorScheme.primary
-                Icon(icon, contentDescription = "More",
+                val icon = if (open) Icons.Outlined.ExpandLess else Icons.Outlined.ExpandMore
+                val tint =
+                    if (str.isBlank() || items.isEmpty()) MaterialTheme.colorScheme.outline else MaterialTheme.colorScheme.primary
+                Icon(
+                    icon, contentDescription = "More",
                     tint = tint,
                 )
             }
@@ -135,11 +153,17 @@ fun <T> TextDropDown(label: String, value: T, items: List<T>, onValueChange: (T)
 
 @Composable
 fun DropDown(label: String, value: String, items: List<String>, onValueChange: (String) -> Unit) =
-    DropDown (label, value, items, onValueChange) { it }
+    DropDown(label, value, items, onValueChange) { it }
 
 
 @Composable
-fun <T> DropDown(label: String, value: T, items: List<T>, onValueChange: (T) -> Unit, getStr: (T) -> String) {
+fun <T> DropDown(
+    label: String,
+    value: T,
+    items: List<T>,
+    onValueChange: (T) -> Unit,
+    getStr: (T) -> String
+) {
     var open by remember { mutableStateOf(false) }
     val str = getStr(value)
     Text(text = label, style = MaterialTheme.typography.labelLarge)
@@ -150,19 +174,22 @@ fun <T> DropDown(label: String, value: T, items: List<T>, onValueChange: (T) -> 
             .fillMaxWidth()
             .clickable { open = !open }
     ) {
-        Box(modifier = Modifier
-            .padding(16.dp)
-            .fillMaxWidth(),
+        Box(
+            modifier = Modifier
+                .padding(16.dp)
+                .fillMaxWidth(),
             contentAlignment = Alignment.CenterStart
         ) {
-            if(str.isBlank()) {
+            if (str.isBlank()) {
                 Text(text = label, color = MaterialTheme.colorScheme.outline)
             } else {
                 Text(text = str)
             }
-            val icon = if(open) Icons.Outlined.ExpandLess else Icons.Outlined.ExpandMore
-            val tint = if(str.isBlank() || items.isEmpty()) MaterialTheme.colorScheme.outline else MaterialTheme.colorScheme.primary
-            Icon(icon, contentDescription = "More",
+            val icon = if (open) Icons.Outlined.ExpandLess else Icons.Outlined.ExpandMore
+            val tint =
+                if (str.isBlank() || items.isEmpty()) MaterialTheme.colorScheme.outline else MaterialTheme.colorScheme.primary
+            Icon(
+                icon, contentDescription = "More",
                 tint = tint,
                 modifier = Modifier.align(Alignment.CenterEnd)
             )
@@ -180,9 +207,9 @@ fun <T> DropDown(label: String, value: T, items: List<T>, onValueChange: (T) -> 
 @Composable
 @Preview(apiLevel = 33)
 fun DropDownPreview() {
-    MainTheme(preference = ColorTheme.NAUTILUS_MIDNIGHT) {
+    MainTheme(preference = ColorTheme.NAUTILUS_DARK) {
         Screen {
-            var selected by remember { mutableStateOf("2024spring")}
+            var selected by remember { mutableStateOf("2024spring") }
             DropDown(label = "Time Period", value = selected) {
                 DropdownMenuItem(onClick = { selected = "2024spring" }, text = {
                     Text(text = "2024spring")
@@ -192,7 +219,11 @@ fun DropDownPreview() {
                 })
             }
             Spacer(Modifier.size(32.dp))
-            DropDown(label = "Other", value = selected, items = listOf("2024spring", "super long name", "2023fall")) {
+            DropDown(
+                label = "Other",
+                value = selected,
+                items = listOf("2024spring", "super long name", "2023fall")
+            ) {
                 selected = it
             }
             Spacer(modifier = Modifier.size(32.dp))
@@ -204,12 +235,16 @@ fun DropDownPreview() {
                     Text(text = "2024fall")
                 })
             }
-            TextDropDown(label = "Other", value = selected, items = listOf("2024spring", "super long name", "2023fall")) {
+            TextDropDown(
+                label = "Other",
+                value = selected,
+                items = listOf("2024spring", "super long name", "2023fall")
+            ) {
                 selected = it
             }
 
-            TextDropDown(label = "Empty", value = "" ) {}
-            DropDown(label = "Empty", value = "" ) {}
+            TextDropDown(label = "Empty", value = "") {}
+            DropDown(label = "Empty", value = "") {}
             TextDropDown(label = "Other", value = selected, items = emptyList()) {
                 selected = it
             }

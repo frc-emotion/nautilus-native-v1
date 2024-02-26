@@ -15,3 +15,29 @@ interface ScoutingData {
     val rankingPoints: Int
     val _id: String
 }
+
+interface ScoutingSubmission {
+    val comments: String?
+    val competition: String
+    val defensive: Boolean
+    val matchNumber: Int
+    val penaltyPointsEarned: Int
+    val rankingPoints: Int
+    val ranking: RP
+    val score: Int
+    val teamNumber: Int
+    val tied: Boolean
+    val won: Boolean
+    val brokeDown: Boolean
+}
+
+//@Serializable
+//abstract class RP(
+//    private val rp1: Boolean,
+//    private val rp2: Boolean
+//)
+//
+interface RP {
+    val rp1: Boolean
+    val rp2: Boolean
+}

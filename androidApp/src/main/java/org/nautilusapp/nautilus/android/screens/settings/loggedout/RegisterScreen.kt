@@ -28,6 +28,7 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import kotlinx.coroutines.launch
+import org.nautilusapp.nautilus.android.ui.composables.LabelledRadioButton
 import org.nautilusapp.nautilus.android.ui.composables.LabelledTextBoxSingleLine
 import org.nautilusapp.nautilus.android.ui.composables.LoginInput
 import org.nautilusapp.nautilus.android.ui.composables.LoginType
@@ -164,13 +165,9 @@ fun RegisterScreen(
         }
         Spacer(modifier = Modifier.size(16.dp))
         Text(text = "Subteam", style = MaterialTheme.typography.labelLarge)
-        for (entry in Subteam.values().slice(1 until Subteam.values().size)) {
-            Row(
-                verticalAlignment = Alignment.CenterVertically,
-            ) {
-                RadioButton(selected = (entry == subteam), onClick = { subteam = entry })
-                Spacer(modifier = Modifier.width(2.dp))
-                Text(text = entry.name.toCapitalized(), style = MaterialTheme.typography.bodyLarge)
+        for (entry in Subteam.entries.slice(1 until Subteam.values().size)) {
+            LabelledRadioButton(label = entry.name.toCapitalized(), selected = entry == subteam) {
+                subteam = entry
             }
         }
         Spacer(modifier = Modifier.size(32.dp))

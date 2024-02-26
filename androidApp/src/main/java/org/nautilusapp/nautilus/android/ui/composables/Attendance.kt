@@ -22,7 +22,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import org.nautilusapp.nautilus.android.MainTheme
+import org.nautilusapp.nautilus.android.PreviewTheme
 import org.nautilusapp.nautilus.android.ui.composables.containers.Screen
 import org.nautilusapp.nautilus.android.ui.composables.indicators.InfoIndicator
 import org.nautilusapp.nautilus.android.ui.theme.ColorTheme
@@ -61,11 +61,11 @@ fun UserAttendanceView(userAttendance: Map<String, UserAttendance>) {
                 )
             }
             CircularProgressIndicator(
-                progress = progress,
+                progress = { progress },
                 modifier = Modifier.aspectRatio(1f),
-                trackColor = MaterialTheme.colorScheme.secondaryContainer,
                 strokeWidth = 12.dp,
-                strokeCap = StrokeCap.Round
+                trackColor = MaterialTheme.colorScheme.secondaryContainer,
+                strokeCap = StrokeCap.Round,
             )
         }
     } else {
@@ -73,23 +73,6 @@ fun UserAttendanceView(userAttendance: Map<String, UserAttendance>) {
     }
 
 
-}
-
-//@Preview
-@Composable
-fun UserAttendanceViewPreview() {
-    Screen {
-        UserAttendanceView(
-            mapOf(
-                "2024spring" to
-                        UserAttendance(10, emptyList()),
-                "2024fall" to
-                        UserAttendance(20, emptyList())
-            )
-        )
-        Spacer(modifier = Modifier.size(256.dp))
-        UserAttendanceView(userAttendance = emptyMap())
-    }
 }
 
 @Composable
@@ -113,12 +96,12 @@ fun AttendanceNfcUI(tagData: MeetingLog?, onLogAttendance: (MeetingLog) -> Unit)
     }
 }
 
-@Preview(apiLevel = 33)
+@Preview()
 @Composable
 fun AttendanceNfcUIPreview() {
     val space = Modifier.size(48.dp)
     var mock by remember { mutableStateOf<MeetingLog?>(null) }
-    MainTheme(preference = ColorTheme.MATERIAL3) {
+    PreviewTheme(preference = ColorTheme.NAUTILUS_DARK) {
         Screen {
             UserAttendanceView(userAttendance = emptyMap())
             Spacer(space)

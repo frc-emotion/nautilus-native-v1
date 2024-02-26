@@ -34,3 +34,18 @@ fun ErrorAlertDialog(show: Boolean, onConfirmPressed: () -> Unit) {
         })
     }
 }
+
+@Composable
+fun ErrorAlertDialog(show: Boolean, text: String, onConfirmPressed: () -> Unit) {
+    if (show) {
+        AlertDialog(onDismissRequest = {}, confirmButton = {
+            TextButton(onClick = onConfirmPressed) {
+                Text(text = "OK")
+            }
+        }, title = {
+            Text(text = "Error")
+        }, text = {
+            Text(text = text)
+        })
+    }
+}

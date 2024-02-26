@@ -51,6 +51,7 @@ fun LazyScreen(
     onRefresh: suspend () -> DataResult<*>,
     beforeLazyList: @Composable () -> Unit = {},
     snack: SnackbarHostState? = null,
+    contentPadding: PaddingValues = PaddingValues(horizontal = 32.dp),
     content: LazyListScope.(SnackbarHostState?) -> Unit
 ) {
     val state = rememberLazyListState()
@@ -160,7 +161,7 @@ fun LazyScreen(
                 beforeLazyList()
                 LazyColumn(
                     state = state,
-                    contentPadding = PaddingValues(horizontal = 32.dp),
+                    contentPadding = contentPadding,
                     modifier = Modifier
                         .fillMaxWidth(),
                     content = {

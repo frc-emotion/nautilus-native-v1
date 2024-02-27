@@ -10,13 +10,13 @@ import kotlinx.serialization.encoding.Encoder
 
 @Serializable(with = SubteamSerializer::class)
 enum class Subteam {
-    NONE,
-    SOFTWARE,
-    ELECTRICAL,
-    BUILD,
-    MARKETING,
-    DESIGN,
     EXECUTIVE,
+    BUILD,
+    DESIGN,
+    ELECTRICAL,
+    MARKETING,
+    SOFTWARE,
+    NONE
 }
 
 object SubteamSerializer: KSerializer<Subteam> {

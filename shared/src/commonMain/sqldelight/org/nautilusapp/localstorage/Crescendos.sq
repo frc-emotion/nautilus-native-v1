@@ -30,11 +30,11 @@ CREATE TABLE crescendo_table (
 );
 
 insert {
-BEGIN TRANSACTION;
+-- BEGIN TRANSACTION;
 DELETE FROM crescendo_table WHERE id = :id;
 INSERT OR ROLLBACK INTO crescendo_table(id, competition, teamNumber, teamName, matchNumber, score, penalty, won, tie, comments, defensive, brokeDown, rankingPoints, auto_leave, auto_ampNotes, auto_speakerNotes, teleop_ampNotes, teleop_speakerUnamped, teleop_speakerAmped, stageState, harmony, trapNotes, melody, ensemble, created_by)
 VALUES (:id, :competition, :teamNumber, :teamName, :matchNumber, :score, :penalty, :won, :tie, :comments, :defensive, :brokeDown, :rankingPoints, :autoLeave, :autoAmp, :autoSpeaker, :teleopAmp, :teleopSpeakerUnamp, :teleopSpeakerAmp, :stageState, :harmony, :trapNotes, :melody, :ensemble, :created_by);
-COMMIT;
+-- COMMIT;
 }
 
 getAll:

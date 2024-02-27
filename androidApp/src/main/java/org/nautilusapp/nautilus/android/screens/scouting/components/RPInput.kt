@@ -14,13 +14,15 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import org.nautilusapp.nautilus.android.PreviewTheme
+import org.nautilusapp.nautilus.android.screens.scouting.standscoutingforms.RPInfo
 import org.nautilusapp.nautilus.android.ui.composables.YesNoSelector
 import org.nautilusapp.nautilus.android.ui.composables.containers.Screen
 import org.nautilusapp.nautilus.android.ui.theme.ColorTheme
+import org.nautilusapp.nautilus.scouting.tooltips.TooltipInfo
 
 @Composable
 fun RPInput(
-    names: Pair<String, String>,
+    info: Pair<RPInfo, RPInfo>,
     values: Pair<Boolean?, Boolean?>,
     onFirstChanged: (Boolean) -> Unit,
     onSecondChanged: (Boolean) -> Unit
@@ -28,22 +30,33 @@ fun RPInput(
     Text(text = "Ranking Points", style = MaterialTheme.typography.titleLarge)
     Spacer(modifier = Modifier.size(8.dp))
     Column {
-        YesNoSelector(label = names.first, value = values.first, onFirstChanged)
+        YesNoSelector(
+            label = info.first.name,
+            value = values.first,
+            info.first.tooltipInfo,
+            onFirstChanged
+        )
         Spacer(modifier = Modifier.size(8.dp))
-        YesNoSelector(names.second, values.second, onSecondChanged)
+        YesNoSelector(
+            info.second.name,
+            values.second,
+            info.second.tooltipInfo,
+            onSecondChanged
+        )
     }
 }
 
 @Preview
 @Composable
 fun RPInputPreview() {
-    val names = Pair("First", "Second")
+    val info = RPInfo(name = "Meow", tooltipInfo = TooltipInfo("", ""))
+    val info2 = info.copy(name = "Meow2")
     var first: Boolean? by remember { mutableStateOf(null) }
     var second: Boolean? by remember { mutableStateOf(null) }
     PreviewTheme(preference = ColorTheme.NAUTILUS_DARK) {
         Screen {
             RPInput(
-                names = names,
+                info = Pair(info, info2),
                 values = Pair(first, second),
                 onFirstChanged = { first = it },
                 onSecondChanged = { second = it }

@@ -149,6 +149,13 @@ class MainActivity : ComponentActivity() {
                 }
             )
 
+            LaunchedEffect(primaryViewModel.user) {
+                if (primaryViewModel.user == null) {
+                    nfcViewmodel.setTag(null)
+                    nfcViewmodel.setNdef(null)
+                }
+            }
+
             workManager.enqueueUniquePeriodicWork(
                 "sync",
                 ExistingPeriodicWorkPolicy.KEEP,

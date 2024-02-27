@@ -9,7 +9,6 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.CloudDone
-import androidx.compose.material.icons.filled.Info
 import androidx.compose.material.icons.filled.SyncProblem
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
@@ -17,7 +16,6 @@ import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Text
@@ -41,6 +39,7 @@ import org.nautilusapp.nautilus.android.ui.composables.LoginType
 import org.nautilusapp.nautilus.android.ui.composables.UserDetailCard
 import org.nautilusapp.nautilus.android.ui.composables.containers.Screen
 import org.nautilusapp.nautilus.android.ui.composables.indicators.LoadingSpinner
+import org.nautilusapp.nautilus.android.ui.composables.indicators.ModalTooltip
 import org.nautilusapp.nautilus.android.viewmodels.MainViewModel
 import org.nautilusapp.nautilus.userauth.AuthState
 import org.nautilusapp.nautilus.userauth.authState
@@ -170,7 +169,7 @@ fun SettingsLoggedIn(vm: MainViewModel) {
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ShouldSyncIndicator(count: Long) {
-    var showInfo by remember { mutableStateOf(false) }
+//    var showInfo by remember { mutableStateOf(false) }
 
     Card(
         shape = RoundedCornerShape(4.dp),
@@ -192,25 +191,30 @@ fun ShouldSyncIndicator(count: Long) {
             Spacer(modifier = Modifier.size(8.dp))
             Text(text = if (count > 0) "$count items to sync" else "Up to date")
             if (count > 0) {
-                IconButton(onClick = { showInfo = true }) {
-                    Icon(Icons.Filled.Info, contentDescription = "Info", tint = Color(0xEE717171))
-                }
+//                IconButton(onClick = { showInfo = true }) {
+//                    Icon(Icons.Filled.Info, contentDescription = "Info", tint = Color(0xEE717171))
+//                }
+                ModalTooltip(
+                    text = "You have $count items that need to be synced. Please connect to the internet" +
+                            " and sync so your attendance and scouting data can be recorded",
+                    title = "Sync Needed"
+                )
             }
         }
     }
-    if (showInfo) {
-        AlertDialog(onDismissRequest = { showInfo = false },
-            title = {
-                Text(text = "Sync Needed")
-            }, text = {
-                Text(text = "You have $count items that need to be synced. Please connect to the internet and sync so your attendance and scouting data can be recorded")
-            }, confirmButton = {
-                Button(onClick = { showInfo = false }) {
-                    Text(text = "OK")
-                }
-            }
-        )
-    }
+//    if (showInfo) {
+//        AlertDialog(onDismissRequest = { showInfo = false },
+//            title = {
+//                Text(text = "Sync Needed")
+//            }, text = {
+//                Text(text = "You have $count items that need to be synced. Please connect to the internet and sync so your attendance and scouting data can be recorded")
+//            }, confirmButton = {
+//                Button(onClick = { showInfo = false }) {
+//                    Text(text = "OK")
+//                }
+//            }
+//        )
+//    }
 }
 
 @Composable

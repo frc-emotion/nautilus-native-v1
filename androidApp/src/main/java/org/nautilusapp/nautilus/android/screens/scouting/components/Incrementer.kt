@@ -26,6 +26,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -34,7 +35,10 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.platform.LocalView
+import androidx.compose.ui.text.TextRange
 import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.text.input.TextFieldValue
+import androidx.compose.ui.text.input.getSelectedText
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
@@ -52,6 +56,16 @@ fun Incrementer(
     range: IntRange = 0..100,
 ) {
     var showError by remember { mutableStateOf(false) }
+    var isFocused by remember {
+        mutableStateOf(false)
+    }
+    var state by remember {
+        mutableStateOf(TextFieldValue(value?.toString() ?: ""))
+    }
+    LaunchedEffect(value) {
+        state = state.copy(text = value?.toString() ?: "")
+
+    }
     val foc = LocalFocusManager.current
     val intSource = remember { MutableInteractionSource() }
     val view = LocalView.current
@@ -59,6 +73,24 @@ fun Incrementer(
         view.performHapticFeedback(HapticFeedbackConstants.VIRTUAL_KEY)
         view.playSoundEffect(SoundEffectConstants.CLICK)
     }
+
+    LaunchedEffect(isFocused) {
+        if (!showError && isFocused) showError = true
+        if (!isFocused) state = state.copy(text = value?.toString() ?: "")
+    }
+
+    LaunchedEffect(value) {
+        if (value == 0 && isFocused) {
+            state = state.copy(selection = TextRange(0, state.text.length))
+        } else if (state.getSelectedText().isNotBlank() || !isFocused) state =
+            state.copy(selection = TextRange.Zero)
+    }
+    LaunchedEffect(isFocused) {
+        state = if (isFocused) {
+            state.copy(selection = TextRange(0, state.text.length))
+        } else state.copy(selection = TextRange.Zero)
+    }
+
     Column(modifier = Modifier.clickable(indication = null, interactionSource = intSource) {
         foc.clearFocus()
     }) {
@@ -70,15 +102,17 @@ fun Incrementer(
                 .fillMaxWidth()
         ) {
             TextField(
-                value = (value?.toString() ?: ""),
-                onValueChange = {
+                value = state,
+                onValueChange = { s ->
+                    state = s
+                    val it = s.text
                     if (it.isNotBlank() && it.toIntOrNull() in range) {
                         onValueChange(it.toInt())
                     } else if (it.isBlank()) onValueChange(null)
                 },
                 modifier = Modifier
                     .onFocusChanged {
-                        if (!showError && it.isFocused) showError = true
+                        isFocused = it.isFocused
                     }
                     .weight(0.75f),
                 placeholder = {

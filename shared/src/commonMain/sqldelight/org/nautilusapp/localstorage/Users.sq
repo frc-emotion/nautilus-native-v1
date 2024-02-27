@@ -70,81 +70,81 @@ CREATE TABLE attendance_logs_table (
 
 
 deleteOne {
- BEGIN TRANSACTION;
+--  BEGIN TRANSACTION;
  DELETE FROM attendance_logs_table WHERE user_id = :id;
  DELETE FROM attendance_table WHERE user_id = :id;
  DELETE FROM user_extras_table WHERE user_id = :id;
  DELETE FROM roles_table WHERE user_id = :id;
  DELETE FROM user_table WHERE id = :id;
- COMMIT;
+--  COMMIT;
 }
 
 insertBase {
-    BEGIN TRANSACTION;
+--     BEGIN TRANSACTION;
      DELETE FROM user_table WHERE username = :username OR email = :email OR id = :id;
      INSERT INTO user_table (id, firstname, lastname, username, email, subteam, accountType)
         VALUES (:id, :firstname, :lastname, :username, :email, :subteam, :accountType);
-    COMMIT;
+--     COMMIT;
 }
 
 insertExtras {
-    BEGIN TRANSACTION;
+--     BEGIN TRANSACTION;
     DELETE FROM user_extras_table WHERE user_id = :id;
     INSERT INTO user_extras_table (accountUpdateVersion, grade, phone, permissions_generalScouting, permissions_pitScouting, permissions_viewMeetings, permissions_viewScoutingData, permissions_blogPosts, permissions_deleteMeetings, permissions_makeAnnouncements, permissions_makeMeetings, user_id, isLoggedInUser)
         VALUES (:accountUpdateVersion, :grade, :phone, :permissions_generalScouting, :permissions_pitScouting, :permissions_viewMeetings, :permissions_viewScoutingData, :permissions_blogPosts, :permissions_deleteMeetings, :permissions_makeAnnouncements, :permissions_makeMeetings, :id, :isLogin);
-    COMMIT;
+--     COMMIT;
 }
 
 insertRole {
-    BEGIN TRANSACTION;
+--     BEGIN TRANSACTION;
     DELETE FROM roles_table WHERE user_id = :id AND name = :name;
     INSERT INTO roles_table (name, user_id) VALUES (:name, :id);
-    COMMIT;
+--     COMMIT;
 }
 
 insertAttendance {
-    BEGIN TRANSACTION;
+--     BEGIN TRANSACTION;
     DELETE FROM attendance_table WHERE user_id = :id AND attendance_period = :attendance_period;
     INSERT INTO attendance_table (attendance_period, total_hours, user_id) VALUES (:attendance_period, :total_hours, :id);
-    COMMIT;
+--     COMMIT;
 }
 
 insertAttendanceLog {
-    BEGIN TRANSACTION;
+--     BEGIN TRANSACTION;
     DELETE FROM attendance_logs_table WHERE user_id = :id AND meeting_id = :meeting_id AND attendance_period = :attendance_period;
     INSERT INTO attendance_logs_table (meeting_id, verified_by, user_id, attendance_period) VALUES (:meeting_id, :verified_by, :id, :attendance_period);
-    COMMIT;
+--     COMMIT;
 }
 
 
 deleteLoggedIn {
-    BEGIN TRANSACTION;
+--     BEGIN TRANSACTION;
     DELETE FROM attendance_logs_table WHERE user_id = (SELECT user_id FROM user_extras_table AS id WHERE isLoggedInUser = 1 LIMIT 1);
     DELETE FROM attendance_table WHERE user_id = (SELECT user_id FROM user_extras_table AS id WHERE isLoggedInUser = 1 LIMIT 1);
     DELETE FROM user_extras_table WHERE isLoggedInUser = 1;
     DELETE FROM roles_table WHERE user_id = (SELECT user_id FROM user_extras_table AS id WHERE isLoggedInUser = 1 LIMIT 1);
     DELETE FROM user_table WHERE id = (SELECT user_id FROM user_extras_table AS id WHERE isLoggedInUser = 1 LIMIT 1);
-    COMMIT;
+--     COMMIT;
 }
 
 deleteNotLoggedIn {
-   BEGIN TRANSACTION;
+--    BEGIN TRANSACTION;
    DELETE FROM attendance_logs_table WHERE user_id = (SELECT user_id FROM user_extras_table AS id WHERE isLoggedInUser = 0);
    DELETE FROM attendance_table WHERE user_id = (SELECT user_id FROM user_extras_table AS id WHERE isLoggedInUser = 0);
    DELETE FROM user_extras_table WHERE isLoggedInUser = 0;
    DELETE FROM roles_table WHERE user_id = (SELECT user_id FROM user_extras_table AS id WHERE isLoggedInUser = 0);
    DELETE FROM user_table WHERE id = (SELECT user_id FROM user_extras_table AS id WHERE isLoggedInUser = 0);
-   COMMIT;
+--    COMMIT;
 }
 
 deleteAll {
-    BEGIN TRANSACTION;
+--     BEGIN TRANSACTION;
     DELETE FROM attendance_logs_table;
     DELETE FROM attendance_table;
     DELETE FROM user_extras_table;
     DELETE FROM roles_table;
     DELETE FROM user_table;
-    COMMIT;
+--     COMMIT;
 }
 
 getLoggedInUser:

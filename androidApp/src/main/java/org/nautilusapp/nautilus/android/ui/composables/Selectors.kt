@@ -10,14 +10,21 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import org.nautilusapp.nautilus.android.ui.composables.indicators.Show
+import org.nautilusapp.nautilus.android.ui.composables.indicators.TooltipSize
+import org.nautilusapp.nautilus.scouting.tooltips.TooltipInfo
 
 @Composable
 fun YesNoSelector(
     label: String,
     value: Boolean?,
+    tooltip: TooltipInfo? = null,
     setValue: (Boolean) -> Unit
 ) {
-    Text(text = label, style = MaterialTheme.typography.labelLarge)
+    Row(verticalAlignment = Alignment.CenterVertically) {
+        Text(text = label, style = MaterialTheme.typography.labelLarge)
+        tooltip?.Show(TooltipSize.Small)
+    }
     Spacer(modifier = Modifier.size(4.dp))
     Row(verticalAlignment = Alignment.CenterVertically) {
 //        RadioButton(selected = value == true, onClick = { setValue(true) })
@@ -32,4 +39,9 @@ fun YesNoSelector(
             setValue(false)
         }
     }
+}
+
+@Composable
+fun YesNoSelector(label: String, value: Boolean?, setValue: (Boolean) -> Unit) {
+    YesNoSelector(label, value, null, setValue)
 }

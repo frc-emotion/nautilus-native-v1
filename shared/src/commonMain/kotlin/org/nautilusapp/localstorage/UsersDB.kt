@@ -16,8 +16,10 @@ class UsersDB(db: AppDatabase) {
     private val users = db.usersQueries
 
     private fun insertUser(user: User) {
-        if(user is User.WithoutToken && user._id == users.getLoggedInUser().executeAsOneOrNull()?.id) return
-        if(user is TokenUser) users.deleteLoggedIn()
+        if (user is User.WithoutToken && user._id == users.getLoggedInUser()
+                .executeAsOneOrNull()?.id
+        ) return
+        if (user is TokenUser) users.deleteLoggedIn()
 
         users.insertBase(
             username = user.username,
@@ -26,7 +28,9 @@ class UsersDB(db: AppDatabase) {
             email = user.email,
             accountType = user.accountType.value,
             id = user._id,
-            subteam = user.subteam?.name?.trim()?.lowercase()?: "none",
+            subteam = user.subteam?.name?.trim()?.lowercase() ?: "none",
+            phone = user.phone,
+            grade = user.grade
         )
 
         user.roles.forEach {
@@ -36,37 +40,35 @@ class UsersDB(db: AppDatabase) {
             )
         }
 
-       if (user is User.Full) {
-           users.insertExtras(
-            id = user._id,
-            accountUpdateVersion = user.accountUpdateVersion,
-            grade = user.grade,
-            phone = user.phone,
-            permissions_generalScouting = user.permissions.generalScouting,
-            permissions_pitScouting = user.permissions.pitScouting,
-            permissions_viewMeetings = user.permissions.viewMeetings,
-            permissions_viewScoutingData = user.permissions.viewScoutingData,
-            permissions_blogPosts = user.permissions.blogPosts,
-            permissions_deleteMeetings = user.permissions.deleteMeetings,
-            permissions_makeAnnouncements = user.permissions.makeAnnouncements,
-            permissions_makeMeetings = user.permissions.makeMeetings,
-            isLogin = user is TokenUser,
-               )
-           user.attendance.entries.forEach { (k, v) ->
-               users.insertAttendance(
-                   id = user._id,
-                   attendance_period = k,
-                   total_hours = v.totalHoursLogged,
-               )
+        if (user is User.Full) {
+            users.insertExtras(
+                id = user._id,
+                accountUpdateVersion = user.accountUpdateVersion,
+                permissions_generalScouting = user.permissions.generalScouting,
+                permissions_pitScouting = user.permissions.pitScouting,
+                permissions_viewMeetings = user.permissions.viewMeetings,
+                permissions_viewScoutingData = user.permissions.viewScoutingData,
+                permissions_blogPosts = user.permissions.blogPosts,
+                permissions_deleteMeetings = user.permissions.deleteMeetings,
+                permissions_makeAnnouncements = user.permissions.makeAnnouncements,
+                permissions_makeMeetings = user.permissions.makeMeetings,
+                isLogin = user is TokenUser,
+            )
+            user.attendance.entries.forEach { (k, v) ->
+                users.insertAttendance(
+                    id = user._id,
+                    attendance_period = k,
+                    total_hours = v.totalHoursLogged,
+                )
                 v.logs.forEach {
-                     users.insertAttendanceLog(
-                         id = user._id,
-                         meeting_id = it.meetingId,
-                         verified_by = it.verifiedBy,
-                         attendance_period = k
-                     )
+                    users.insertAttendanceLog(
+                        id = user._id,
+                        meeting_id = it.meetingId,
+                        verified_by = it.verifiedBy,
+                        attendance_period = k
+                    )
                 }
-           }
+            }
         }
     }
 
@@ -105,6 +107,8 @@ class UsersDB(db: AppDatabase) {
                 },
                 roles = roles,
                 accountType = AccountType.of(user.accountType),
+                phone = user.phone,
+                grade = user.grade
             )
         val attendance = getAttendance(user.id)
         return FullUser(
@@ -113,7 +117,7 @@ class UsersDB(db: AppDatabase) {
             lastname = user.lastname,
             username = user.username,
             email = user.email,
-            subteam = when(user.subteam.trim().lowercase()) {
+            subteam = when (user.subteam.trim().lowercase()) {
                 "software" -> Subteam.SOFTWARE
                 "electrical" -> Subteam.ELECTRICAL
                 "build" -> Subteam.BUILD
@@ -126,7 +130,7 @@ class UsersDB(db: AppDatabase) {
             accountType = AccountType.of(user.accountType),
             accountUpdateVersion = extras.accountUpdateVersion,
             attendance = attendance,
-            grade = extras.grade,
+            grade = user.grade,
             permissions = UserPermissions(
                 generalScouting = extras.permissions_generalScouting,
                 pitScouting = extras.permissions_pitScouting,
@@ -137,7 +141,7 @@ class UsersDB(db: AppDatabase) {
                 makeAnnouncements = extras.permissions_makeAnnouncements,
                 makeMeetings = extras.permissions_makeMeetings,
             ),
-            phone = extras.phone,
+            phone = user.phone,
         )
     }
 
@@ -166,7 +170,7 @@ class UsersDB(db: AppDatabase) {
                     lastname = usr.lastname,
                     username = usr.username,
                     email = usr.email,
-                    subteam = when(usr.subteam.trim().lowercase()) {
+                    subteam = when (usr.subteam.trim().lowercase()) {
                         "software" -> Subteam.SOFTWARE
                         "electrical" -> Subteam.ELECTRICAL
                         "build" -> Subteam.BUILD
@@ -202,12 +206,12 @@ class UsersDB(db: AppDatabase) {
 
     fun updateLoggedInUser(user: TokenUser, setToken: (String?) -> Unit): TokenUser? {
         return try {
-        users.transaction {
-            users.deleteLoggedIn()
-            insertUser(user)
-        }
-        setToken(user.token)
-        getLoggedInUser(user.token)
+            users.transaction {
+                users.deleteLoggedIn()
+                insertUser(user)
+            }
+            setToken(user.token)
+            getLoggedInUser(user.token)
         } catch (e: Exception) {
             e.printStackTrace()
             null

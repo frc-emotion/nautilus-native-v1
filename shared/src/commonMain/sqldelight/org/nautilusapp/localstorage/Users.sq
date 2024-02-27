@@ -1,21 +1,6 @@
 import kotlin.Int;
 import kotlin.Boolean;
 
--- CREATE TABLE user_table (
---     id TEXT PRIMARY KEY NOT NULL,
---     firstname TEXT NOT NULL,
---     lastname TEXT NOT NULL,
---     username TEXT UNIQUE NOT NULL,
---     email TEXT UNIQUE NOT NULL,
---     phone TEXT UNIQUE NOT NULL,
---     subteam TEXT NOT NULL,
---     grade INTEGER AS Int NOT NULL,
---     rolesJSON TEXT NOT NULL,
---     accountType INTEGER AS Int NOT NULL,
---     attendanceJSON TEXT NOT NULL,
---     isLoggedInUser INTEGER AS Boolean NOT NULL
--- );
-
 CREATE TABLE user_table (
     id TEXT PRIMARY KEY NOT NULL,
     firstname TEXT NOT NULL,
@@ -23,13 +8,13 @@ CREATE TABLE user_table (
     username TEXT UNIQUE NOT NULL,
     email TEXT UNIQUE NOT NULL,
     subteam TEXT NOT NULL,
-    accountType INTEGER AS Int NOT NULL
+    accountType INTEGER AS Int NOT NULL,
+    grade INTEGER AS Int,
+    phone TEXT NOT NULL
 );
 
 CREATE TABLE user_extras_table (
     accountUpdateVersion INTEGER AS Int NOT NULL,
-    grade INTEGER AS Int,
-    phone TEXT,
     permissions_generalScouting INTEGER AS Boolean NOT NULL,
     permissions_pitScouting INTEGER AS Boolean NOT NULL,
     permissions_viewMeetings INTEGER AS Boolean NOT NULL,
@@ -70,81 +55,63 @@ CREATE TABLE attendance_logs_table (
 
 
 deleteOne {
---  BEGIN TRANSACTION;
  DELETE FROM attendance_logs_table WHERE user_id = :id;
  DELETE FROM attendance_table WHERE user_id = :id;
  DELETE FROM user_extras_table WHERE user_id = :id;
  DELETE FROM roles_table WHERE user_id = :id;
  DELETE FROM user_table WHERE id = :id;
---  COMMIT;
 }
 
 insertBase {
---     BEGIN TRANSACTION;
      DELETE FROM user_table WHERE username = :username OR email = :email OR id = :id;
-     INSERT INTO user_table (id, firstname, lastname, username, email, subteam, accountType)
-        VALUES (:id, :firstname, :lastname, :username, :email, :subteam, :accountType);
---     COMMIT;
+     INSERT INTO user_table (id, firstname, lastname, username, email, subteam, accountType, grade, phone)
+        VALUES (:id, :firstname, :lastname, :username, :email, :subteam, :accountType, :grade, :phone);
 }
 
 insertExtras {
---     BEGIN TRANSACTION;
     DELETE FROM user_extras_table WHERE user_id = :id;
-    INSERT INTO user_extras_table (accountUpdateVersion, grade, phone, permissions_generalScouting, permissions_pitScouting, permissions_viewMeetings, permissions_viewScoutingData, permissions_blogPosts, permissions_deleteMeetings, permissions_makeAnnouncements, permissions_makeMeetings, user_id, isLoggedInUser)
-        VALUES (:accountUpdateVersion, :grade, :phone, :permissions_generalScouting, :permissions_pitScouting, :permissions_viewMeetings, :permissions_viewScoutingData, :permissions_blogPosts, :permissions_deleteMeetings, :permissions_makeAnnouncements, :permissions_makeMeetings, :id, :isLogin);
---     COMMIT;
+    INSERT INTO user_extras_table (accountUpdateVersion, permissions_generalScouting, permissions_pitScouting, permissions_viewMeetings, permissions_viewScoutingData, permissions_blogPosts, permissions_deleteMeetings, permissions_makeAnnouncements, permissions_makeMeetings, user_id, isLoggedInUser)
+        VALUES (:accountUpdateVersion,:permissions_generalScouting, :permissions_pitScouting, :permissions_viewMeetings, :permissions_viewScoutingData, :permissions_blogPosts, :permissions_deleteMeetings, :permissions_makeAnnouncements, :permissions_makeMeetings, :id, :isLogin);
 }
 
 insertRole {
---     BEGIN TRANSACTION;
     DELETE FROM roles_table WHERE user_id = :id AND name = :name;
     INSERT INTO roles_table (name, user_id) VALUES (:name, :id);
---     COMMIT;
 }
 
 insertAttendance {
---     BEGIN TRANSACTION;
     DELETE FROM attendance_table WHERE user_id = :id AND attendance_period = :attendance_period;
     INSERT INTO attendance_table (attendance_period, total_hours, user_id) VALUES (:attendance_period, :total_hours, :id);
---     COMMIT;
 }
 
 insertAttendanceLog {
---     BEGIN TRANSACTION;
     DELETE FROM attendance_logs_table WHERE user_id = :id AND meeting_id = :meeting_id AND attendance_period = :attendance_period;
     INSERT INTO attendance_logs_table (meeting_id, verified_by, user_id, attendance_period) VALUES (:meeting_id, :verified_by, :id, :attendance_period);
---     COMMIT;
 }
 
 
 deleteLoggedIn {
---     BEGIN TRANSACTION;
     DELETE FROM attendance_logs_table WHERE user_id = (SELECT user_id FROM user_extras_table AS id WHERE isLoggedInUser = 1 LIMIT 1);
     DELETE FROM attendance_table WHERE user_id = (SELECT user_id FROM user_extras_table AS id WHERE isLoggedInUser = 1 LIMIT 1);
     DELETE FROM user_extras_table WHERE isLoggedInUser = 1;
     DELETE FROM roles_table WHERE user_id = (SELECT user_id FROM user_extras_table AS id WHERE isLoggedInUser = 1 LIMIT 1);
     DELETE FROM user_table WHERE id = (SELECT user_id FROM user_extras_table AS id WHERE isLoggedInUser = 1 LIMIT 1);
---     COMMIT;
 }
 
 deleteNotLoggedIn {
---    BEGIN TRANSACTION;
    DELETE FROM attendance_logs_table WHERE user_id = (SELECT user_id FROM user_extras_table AS id WHERE isLoggedInUser = 0);
    DELETE FROM attendance_table WHERE user_id = (SELECT user_id FROM user_extras_table AS id WHERE isLoggedInUser = 0);
    DELETE FROM user_extras_table WHERE isLoggedInUser = 0;
    DELETE FROM roles_table WHERE user_id = (SELECT user_id FROM user_extras_table AS id WHERE isLoggedInUser = 0);
    DELETE FROM user_table WHERE id = (SELECT user_id FROM user_extras_table AS id WHERE isLoggedInUser = 0);
---    COMMIT;
 }
 
 deleteAll {
---     BEGIN TRANSACTION;
     DELETE FROM attendance_logs_table;
     DELETE FROM attendance_table;
     DELETE FROM user_extras_table;
     DELETE FROM roles_table;
     DELETE FROM user_table;
---     COMMIT;
 }
 
 getLoggedInUser:

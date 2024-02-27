@@ -12,6 +12,8 @@ sealed interface User {
     val subteam: Subteam?
     val roles: List<String>
     val accountType: AccountType
+    val grade: Int?
+    val phone: String
 
     /**
      * Full user data, only available to admins via getUsers. Does not include the JWT
@@ -19,9 +21,7 @@ sealed interface User {
     sealed interface Full : User {
         val accountUpdateVersion: Int
         val attendance: Map<String, UserAttendance>
-        val grade: Int?
         val permissions: UserPermissions
-        val phone: String?
     }
 
     sealed interface WithoutToken : User
@@ -44,7 +44,7 @@ data class TokenUser(
     override val attendance: Map<String, UserAttendance>,
     override val grade: Int? = null,
     override val permissions: UserPermissions,
-    override val phone: String? = null,
+    override val phone: String,
     val token: String,
 ) : User.Full
 
@@ -58,14 +58,14 @@ data class FullUser(
     override val lastname: String,
     override val username: String,
     override val email: String,
-    override val subteam: Subteam?,
+    override val subteam: Subteam? = null,
     override val roles: List<String>,
     override val accountType: AccountType,
     override val accountUpdateVersion: Int,
     override val attendance: Map<String, UserAttendance>,
-    override val grade: Int?,
+    override val grade: Int? = null,
     override val permissions: UserPermissions,
-    override val phone: String?
+    override val phone: String
 ) : User.Full, User.WithoutToken
 
 /**
@@ -78,9 +78,11 @@ data class PartialUser(
     override val lastname: String,
     override val username: String,
     override val email: String,
-    override val subteam: Subteam?,
+    override val subteam: Subteam? = null,
     override val roles: List<String>,
     override val accountType: AccountType,
+    override val grade: Int? = null,
+    override val phone: String
 ) : User, User.WithoutToken
 
 val User?.isAdmin: Boolean

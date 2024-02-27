@@ -45,7 +45,10 @@ class DataHandler(
 ) {
     private val db = AppDatabase(
         databaseDriverFactory.createDriver(),
-        user_tableAdapter = org.nautilusapp.localstorage.User_table.Adapter(accountTypeAdapter = IntColumnAdapter),
+        user_tableAdapter = org.nautilusapp.localstorage.User_table.Adapter(
+            accountTypeAdapter = IntColumnAdapter,
+            gradeAdapter = IntColumnAdapter,
+        ),
         competition_tableAdapter = Competition_table.Adapter(yearAdapter = IntColumnAdapter),
         season_tableAdapter = Season_table.Adapter(yearAdapter = IntColumnAdapter),
         attendance_periods_tableAdapter = Attendance_periods_table.Adapter(yearAdapter = IntColumnAdapter),
@@ -79,10 +82,13 @@ class DataHandler(
             trapNotesAdapter = IntColumnAdapter,
         ),
         user_extras_tableAdapter = User_extras_table.Adapter(
-            gradeAdapter = IntColumnAdapter,
             accountUpdateVersionAdapter = IntColumnAdapter
         )
     )
+
+    init {
+        println("Server address set to $routeBase")
+    }
 
     private val usersDB = UsersDB(db)
     private val crescendoDB = CrescendoDB(db)

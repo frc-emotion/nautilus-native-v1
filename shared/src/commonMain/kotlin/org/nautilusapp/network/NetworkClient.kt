@@ -58,6 +58,7 @@ class NetworkClient(base: String) {
 
     fun setRootURL(url: String) {
         rootURL = url
+        println(rootURL)
     }
 
     val json = Json {

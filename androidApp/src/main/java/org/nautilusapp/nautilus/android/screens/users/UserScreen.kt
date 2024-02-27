@@ -148,6 +148,8 @@ fun exampleUser(
         firstname = "User",
         lastname = "McUserface",
         roles = emptyList(),
-        subteam = Subteam.SOFTWARE
+        subteam = Subteam.SOFTWARE,
+        grade = 0,
+        phone = "123456789",
     )
 }

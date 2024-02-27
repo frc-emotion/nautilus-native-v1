@@ -78,7 +78,7 @@ class MainActivity : ComponentActivity() {
         println("onCreate")
 
         val sharedPref =
-            this.getSharedPreferences("org.org.nautilusapp.nautilus.android", MODE_PRIVATE)
+            this.getSharedPreferences("org.nautilusapp.nautilus", MODE_PRIVATE)
 
         val rootURL = sharedPref.getString(SharedPrefKeys.URL, null)
 
@@ -240,7 +240,7 @@ class MainActivity : ComponentActivity() {
     }
 
     private fun handleNFCIntent(intent: Intent?) {
-        println("Handling NFC Intent: ${intent?.action}")
+        println("Handling Intent: ${intent?.action}")
         if (intent?.action == ACTION_TECH_DISCOVERED || intent?.action == ACTION_NDEF_DISCOVERED || intent?.action == ACTION_TAG_DISCOVERED) {
             when {
                 SDK_INT >= 33 -> {

@@ -16,6 +16,7 @@ import org.nautilusapp.nautilus.Error
 import org.nautilusapp.nautilus.Result
 import org.nautilusapp.nautilus.android.PreviewTheme
 import org.nautilusapp.nautilus.android.screens.scouting.standscoutingforms.BaseScoutingForm
+import org.nautilusapp.nautilus.android.screens.scouting.standscoutingforms.RPInfo
 import org.nautilusapp.nautilus.android.screens.scouting.standscoutingforms.crescendo.auto.CrescendoAutoInput
 import org.nautilusapp.nautilus.android.screens.scouting.standscoutingforms.crescendo.auto.CrescendoAutoState
 import org.nautilusapp.nautilus.android.screens.scouting.standscoutingforms.crescendo.endgame.CrescendoEndgame
@@ -25,6 +26,7 @@ import org.nautilusapp.nautilus.android.screens.scouting.standscoutingforms.cres
 import org.nautilusapp.nautilus.android.ui.composables.containers.Screen
 import org.nautilusapp.nautilus.android.ui.theme.ColorTheme
 import org.nautilusapp.nautilus.scouting.scoutingdata.CrescendoSubmission
+import org.nautilusapp.nautilus.scouting.tooltips.CrescendoTooltips
 
 @Composable
 fun CrescendoForm(
@@ -66,7 +68,11 @@ fun CrescendoFormUI(
 ) {
     BaseScoutingForm(
         competitions = comps,
-        rankingPointNames = Pair("Melody", "Ensemble"),
+//        rpInfo = Pair("Melody", "Ensemble"),
+        rpInfo = Pair(
+            RPInfo("Melody", CrescendoTooltips.melodyRP),
+            RPInfo("Ensemble", CrescendoTooltips.ensembleRP)
+        ),
         onFormSubmit = {
             val error = Result.Error(Error("Invalid Form Input", 400))
             val a = auto.data ?: return@BaseScoutingForm error

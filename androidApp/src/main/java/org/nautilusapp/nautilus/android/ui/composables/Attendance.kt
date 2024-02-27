@@ -14,6 +14,7 @@ import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -40,13 +41,13 @@ fun UserAttendanceView(userAttendance: Map<String, UserAttendance>) {
     TextDropDown(label = "Time Period:", value = selectedAttendancePeriod, items = attendanceKeys) {
         selectedAttendancePeriod = it
     }
+    LaunchedEffect(userAttendance) {
+        selectedAttendancePeriod = attendanceKeys.lastOrNull() ?: "none"
+    }
     if (userAttendance.isNotEmpty()) {
         val hoursLogged = userAttendance[selectedAttendancePeriod]?.totalHoursLogged?.toFloat()
             ?: 0f
         val progress = (hoursLogged / 36.0f).coerceAtMost(1.0f)
-//        LinearProgressIndicator(progress = progress, modifier = Modifier
-//            .height(16.dp)
-//            .fillMaxWidth())
         Row(
             Modifier
                 .fillMaxWidth()

@@ -28,10 +28,10 @@ CREATE TABLE crescendo_upload_table (
 );
 
 insert {
-BEGIN TRANSACTION;
+-- BEGIN TRANSACTION;
 INSERT OR IGNORE INTO crescendo_upload_table (competition, teamNumber, matchNumber, score, penalty, won, tie, comments, defensive, brokeDown, rankingPoints, autoLeave, autoAmp, autoSpeaker, teleopAmp, teleopSpeakerUnamp, teleopSpeakerAmp, stageState, harmony, trapNotes, melody, ensemble)
 VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?);
-COMMIT;
+-- COMMIT;
 }
 
 getAll:

@@ -46,10 +46,10 @@ import androidx.compose.ui.platform.LocalView
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import org.nautilusapp.nautilus.android.cardColor
+import org.nautilusapp.nautilus.android.screens.scouting.components.Incrementer
 import org.nautilusapp.nautilus.android.smallCardColor
 import org.nautilusapp.nautilus.android.ui.composables.DropDown
 import org.nautilusapp.nautilus.android.ui.composables.LabelledTextBoxSingleLine
-import org.nautilusapp.nautilus.android.ui.composables.NumberInput
 import org.nautilusapp.nautilus.android.ui.composables.indicators.ErrorIndicator
 import org.nautilusapp.nautilus.android.ui.composables.indicators.WarningIndicator
 import org.nautilusapp.nautilus.attendance.MeetingType
@@ -264,12 +264,13 @@ fun MeetingCreationScreen(
                     }
             }
             Spacer(modifier = Modifier.size(16.dp))
-            NumberInput(
+            Incrementer(
                 label = "Meeting Value",
                 value = meetingValue,
                 onValueChange = {
                     meetingValue = it ?: 0
                 })
+            Spacer(modifier = Modifier.size(8.dp))
             DropDown(
                 label = "Meeting Type",
                 value = meetingType,

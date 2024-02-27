@@ -7,8 +7,6 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
-import androidx.compose.material3.Divider
-import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Text
@@ -44,12 +42,13 @@ import org.nautilusapp.nautilus.android.ui.composables.indicators.ErrorIndicator
 import org.nautilusapp.nautilus.android.ui.composables.indicators.LoadingSpinner
 import org.nautilusapp.nautilus.android.ui.theme.ColorTheme
 import org.nautilusapp.nautilus.scouting.GameResult
+import org.nautilusapp.nautilus.scouting.tooltips.TooltipInfo
 
 
 /**
  * @param competitions list of competitions this
  * @param onFormSubmit handle submit for individual game (Rapid React, ChargedUp, etc) and use callback to clear form after
- * @param rankingPointNames names of ranking points for individual game (Rapid React, ChargedUp, etc)
+ * @param rpInfo info of ranking points for individual game (Rapid React, ChargedUp, etc). Includes name and information for the tooltip
  * @param contentInputsOkay validate that game-specific fields are filled in and valid before allowing submission
  * @param clearContentInputs clear game-specific fields when form is cleared or submitted
  * @param contents inputs for individual game (Rapid React, ChargedUp, etc)
@@ -57,7 +56,7 @@ import org.nautilusapp.nautilus.scouting.GameResult
 @Composable
 fun BaseScoutingForm(
     competitions: List<String>,
-    rankingPointNames: Pair<String, String>,
+    rpInfo: Pair<RPInfo, RPInfo>,
     onFormSubmit: suspend (baseData: ScoutingSubmissionImpl) -> DataResult<*>,
     contentInputsOkay: Boolean,
     clearContentInputs: () -> Unit,
@@ -118,18 +117,23 @@ fun BaseScoutingForm(
 
     Text(text = "Match Info", style = MaterialTheme.typography.titleLarge)
     Spacer(modifier = Modifier.size(16.dp))
-    DropDown(label = "Competition", value = competition.ifBlank { "Select: " }) {
-        if (competitions.isNotEmpty()) {
-            competitions.forEachIndexed { index, comp ->
-                DropdownMenuItem(text = { Text(comp) }, onClick = { competition = comp })
-                if (index != competitions.lastIndex) {
-                    Divider()
-                }
-            }
-        } else {
-            DropdownMenuItem(text = { Text("No Competitions Found") }, onClick = { })
-        }
-    }
+//    DropDown(label = "Competition", value = competition.ifBlank { "Select: " }) {
+//        if (competitions.isNotEmpty()) {
+//            competitions.forEachIndexed { index, comp ->
+//                DropdownMenuItem(text = { Text(comp) }, onClick = { competition = comp })
+//                if (index != competitions.lastIndex) {
+//                    Divider()
+//                }
+//            }
+//        } else {
+//            DropdownMenuItem(text = { Text("No Competitions Found") }, onClick = { })
+//        }
+//    }
+    DropDown(
+        label = "Competition",
+        value = competition,
+        items = competitions,
+        onValueChange = { competition = it })
     Spacer(modifier = Modifier.size(16.dp))
     LabelledTextBoxSingleLine(
         label = "Team Number",
@@ -151,7 +155,7 @@ fun BaseScoutingForm(
 
     Spacer(modifier = Modifier.size(16.dp))
     RPInput(
-        names = rankingPointNames,
+        info = rpInfo,
         values = Pair(rp1, rp2),
         onFirstChanged = { rp1 = it },
         onSecondChanged = { rp2 = it })
@@ -336,11 +340,13 @@ fun BaseScoutingForm(
 @Composable
 fun BaseScoutPreview() {
     val competitions = listOf("test", "meow", "woof")
+    val info = RPInfo(name = "Meow", tooltipInfo = TooltipInfo("", ""))
+    val info2 = info.copy(name = "Meow2")
     PreviewTheme(preference = ColorTheme.NAUTILUS_DARK) {
         Screen {
             BaseScoutingForm(
                 competitions = competitions,
-                rankingPointNames = Pair("RP1", "RP2"),
+                rpInfo = Pair(info, info2),
                 onFormSubmit = { Result.Success(Unit) },
                 contentInputsOkay = true,
                 clearContentInputs = {},

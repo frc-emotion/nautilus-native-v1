@@ -9,6 +9,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -17,15 +18,19 @@ import org.nautilusapp.nautilus.android.screens.scouting.components.Incrementer
 import org.nautilusapp.nautilus.android.ui.composables.LabelledRadioButton
 import org.nautilusapp.nautilus.android.ui.composables.containers.Screen
 import org.nautilusapp.nautilus.android.ui.composables.indicators.MinimalWarning
+import org.nautilusapp.nautilus.android.ui.composables.indicators.Show
+import org.nautilusapp.nautilus.android.ui.composables.indicators.TooltipSize
 import org.nautilusapp.nautilus.android.ui.theme.ColorTheme
 import org.nautilusapp.nautilus.scouting.scoutingdata.CrescendoStageState
+import org.nautilusapp.nautilus.scouting.tooltips.CrescendoTooltips
 
 @Composable
 fun CrescendoEndgameInput(
     state: CrescendoEndgame
 ) {
-    Row {
+    Row(verticalAlignment = Alignment.CenterVertically) {
         Text("Endgame", style = MaterialTheme.typography.titleLarge)
+        CrescendoTooltips.endgameState.Show()
         Spacer(modifier = Modifier.size(8.dp))
         if (!state.isValid) {
             MinimalWarning("Empty Fields")
@@ -40,7 +45,10 @@ fun CrescendoEndgameInput(
         }
     }
     Spacer(modifier = Modifier.size(8.dp))
-    Text("Harmony", style = MaterialTheme.typography.labelLarge)
+    Row(verticalAlignment = Alignment.CenterVertically) {
+        Text("Harmony", style = MaterialTheme.typography.labelLarge)
+        CrescendoTooltips.harmonyBonus.Show(TooltipSize.Small)
+    }
     Column(Modifier.padding(start = 4.dp)) {
         LabelledRadioButton(label = "None", selected = state.harmony == 0) {
             state.harmony = 0

@@ -13,20 +13,11 @@ struct DirectoryView: View {
     // MARK: - State Properties
     @State var users: [shared.UserWithoutToken]?
     @State private var popoverShown = false
-    @State private var errorLoadingUsers = false
     @State private var alertBoxShowing = false
     @State private var selectedUser: shared.PartialUser?
     //    @State private var alertMsg = ""
     @EnvironmentObject var env: EnvironmentModel
-    // MARK: - Sort Users by Subteam
-    //    var subteamSortedUsers: [shared.User]? {
-    //        if (users != nil) {
-    //            return users!.sorted { $0.subteam.description() < $1.subteam.description()}
-    //        } else {
-    //            return nil
-    //        }
-    //    }
-    
+    // MARK: - Sort by Subteam
     var subteamSortedUsers: [String: [shared.PartialUser]]? {
         if let users = users {
             var sortedUsers = users.sorted { $0.lastname.lowercased() < $1.lastname.lowercased() }
@@ -46,6 +37,7 @@ struct DirectoryView: View {
             mainListView
                 .navigationTitle("People")
         } detail: {
+            // not changing automatically on iPad
             if (selectedUser != nil) {
                 UserView(user: selectedUser!)
                     .navigationTitle("Profile")
@@ -55,31 +47,19 @@ struct DirectoryView: View {
             }
         }
         .navigationSplitViewStyle(.balanced)
+//        .onChange(of: selectedUser) { _ in
+//            print("\(String(describing: selectedUser?.firstname)) \(String(describing: selectedUser?.lastname))")
+//        }
         .onAppear() {
-            let _ = env.dh.users.loadAll(onCompleteSync: { res in
-                if res.isEmpty {
-                    errorLoadingUsers = true
-                } else {
-                    users = res
-                }
+            users = env.dh.users.loadAll(onCompleteSync: { res in
+                users = res
             })
         }
+        
     }
     
     private var mainListView: some View {
-        //        if (!errorLoadingUsers && users != nil) {
-        //            return List(subteamSortedUsers!, id: \.self, selection: $selectedUser) { (user: shared.User) in
-        //                ForEach(shared.Subteam.entries, id: \.self) { (subteam: shared.Subteam) in
-        //                    Section(header: Text(subteam.description())) {
-        //                        let nextSort = subteamSortedUsers[subteam.description()]
-        //                        ForEach(nextSort) { user in
-        //                            DirectoryBar(user: user)
-        //                        }
-        //                    }
-        //                }
-        //            }
-        //        }
-        if !errorLoadingUsers, users != nil, let subteamSortedUsers = subteamSortedUsers {
+        if users != nil, let subteamSortedUsers = subteamSortedUsers {
             return AnyView (
                 List (selection: $selectedUser) {
                     ForEach(shared.Subteam.entries, id: \.self) { (subteam: shared.Subteam) in
@@ -87,7 +67,6 @@ struct DirectoryView: View {
                             Section(header: Text(subteam.description())) {
                                 ForEach(nextSort, id: \.self) { user in
                                     DirectoryBar(user: user)
-                                    
                                 }
                             }
                         }

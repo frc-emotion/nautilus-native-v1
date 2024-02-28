@@ -21,17 +21,18 @@ import shared
 
 struct AccountCreationView: View {
     @EnvironmentObject var env: EnvironmentModel
-    @State var firstname = ""
-    @State var lastname = ""
-    @State var email = ""
-    @State var username = ""
-    @State var phone = ""
-    @State var grade = ""
-    @State var password = ""
-    @State var passwordConfirm = ""
+    @State private var firstname = ""
+    @State private var lastname = ""
+    @State private var email = ""
+    @State private var username = ""
+    @State private var phone = ""
+    @State private var grade = ""
+    @State private var password = ""
+    @State private var passwordConfirm = ""
 //    @State var subteam = shared.Subteam.none
-    @State var subteamString = "None"
-    @State var errorMsg = ""
+    @State private var subteamString = "None"
+    @State private var errorMsg = ""
+    @State private var isBusy = false
     @FocusState private var numpadFocused: Bool
     
 //    let realSubteams = [NewSubteam(id: 0, value: shared.Subteam.build, name: "Build"), NewSubteam(id: 1, value: shared.Subteam.design, name: "Design"), NewSubteam(id: 2, value: shared.Subteam.electrical, name: "Electrical"), NewSubteam(id: 3, value: shared.Subteam.software, name: "Software"), NewSubteam(id: 4, value: shared.Subteam.marketing, name: "Marketing")] as [NewSubteam]
@@ -143,12 +144,19 @@ struct AccountCreationView: View {
                 Button (action: {
                     Task {
                         var subteam: shared.Subteam
-                        
+                        guard firstname != "" && lastname != "" && email != "" && username != "" && phone != "" && grade != "" && password != "" && passwordConfirm != "" else {
+                            errorMsg = "Please fill in all fields"
+                            return
+                        }
                         if (password == passwordConfirm){
+                            isBusy = true
+                            
                             if (Int(grade) ?? 0 > 12 || Int(grade) ?? 0 < 9) {
                                 errorMsg = "Enter a valid grade 9-12"
+                                isBusy = false
                                 return
                             }
+                            
                             switch subteamString {
                             case "Build":
                                 subteam = shared.Subteam.build
@@ -173,21 +181,39 @@ struct AccountCreationView: View {
                                 break
                             }
                             
-                            let _ = try await env.dh.users.register(username: username, password: password, email: email, firstName: firstname, lastName: lastname, subteam: subteam, phone: phone, grade: Int32(grade) ?? 0) { err in
+                            let response = try await env.dh.users.register(username: username, password: password, email: email, firstName: firstname, lastName: lastname, subteam: subteam, phone: phone, grade: Int32(grade) ?? 0) { err in
                                 errorMsg = err.message
+                                isBusy = false
+                                return
                             }
+                            
+                            guard response != nil else {
+                                errorMsg = "Unknown Error"
+                                isBusy = false
+                                return
+                            }
+                            
+                            env.updateUser(newUser: response)
+                            isBusy = false
                         } else {
                             errorMsg = "Passwords do not match"
                         }
                     }
                 }) {
-                    Text("Create Account")
-                        .frame(height: 30.0)
-                        .frame(maxWidth: .infinity)
+                    if (isBusy) {
+                        AnyView(ProgressView())
+                            .frame(height: 30.0)
+                            .frame(maxWidth: .infinity)
+                    } else {
+                        Text("Create Account")
+                            .frame(height: 30.0)
+                            .frame(maxWidth: .infinity)
+                    }
                 }
                 .padding(.horizontal)
                 .padding(.top, 15)
                 .buttonStyle(.borderedProminent)
+                .tint(isBusy ? Color.secondary : Color.accentColor)
             }
             .submitLabel(.done)
             .onTapGesture {

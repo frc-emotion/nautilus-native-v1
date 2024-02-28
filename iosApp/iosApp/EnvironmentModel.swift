@@ -41,13 +41,6 @@ class EnvironmentModel: ObservableObject {
         }
     }
     
-    func login(username: String, password: String) async throws {
-        let response = try await dh.users.login(username: username, password: password) { err in
-            return
-        }
-        user = response
-    }
-    
 //    this is not allowed?
 //    func logout() async throws {
 //        dh.users.logout()

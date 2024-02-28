@@ -12,9 +12,10 @@ import shared
 
 struct LoginView: View {
     @EnvironmentObject var env: EnvironmentModel
-    @State var username = ""
-    @State var password = ""
-    @State var loginErrorMsg = ""
+    @State private var username = ""
+    @State private var password = ""
+    @State private var loginErrorMsg = ""
+    @State private var isBusy = false
     
     var body: some View {
         NavigationStack {
@@ -61,30 +62,44 @@ struct LoginView: View {
 //                .padding(.vertical, 10.0)
                 
                 Button (action: {
+                    isBusy = true
+                    guard username != "" && password != "" else {
+                        loginErrorMsg = "Please fill in all fields"
+                        isBusy = false
+                        return
+                    }
                     Task {
-                        do {
-                            try await env.login(username: username, password: password)
-                        } catch {
-                            loginErrorMsg = "Error logging in."
+                        loginErrorMsg = ""
+                        let response = try await env.dh.users.login(username: username, password: password) { err in
+                            loginErrorMsg = err.message
                         }
+                        guard response != nil else {
+                            if (loginErrorMsg == "") {
+                                loginErrorMsg = "Unknown Error"
+                            }
+                            isBusy = false
+                            return
+                        }
+                        env.updateUser(newUser: response)
+                        isBusy = false
                     }
                 }) {
                     HStack {
-                        Text("Login")
-                            .frame(height: 30.0)
-                            .frame(maxWidth: .infinity)
-                        // TODO: Only let button be pressed once while waiting for response, progres view
-//                        #if !DEBUG
-//                        if (vm.isBusy) {
-//                            ProgressView()
-//                        }
-//                        #endif
+                        if (isBusy) {
+                            AnyView(ProgressView())
+                                .frame(height: 30.0)
+                                .frame(maxWidth: .infinity)
+                        } else {
+                            Text("Login")
+                                .frame(height: 30.0)
+                                .frame(maxWidth: .infinity)
+                        }
                     }
                 }
                 .padding(.horizontal)
                 .buttonStyle(.borderedProminent)
                 .keyboardShortcut(.defaultAction)
-                
+                .tint(isBusy ? Color.secondary : Color.accentColor)
                 Spacer()
             }
         }

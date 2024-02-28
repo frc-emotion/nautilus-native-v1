@@ -55,7 +55,11 @@ struct DirectoryView: View {
                 users = res
             })
         }
-        
+        .refreshable {
+            users = env.dh.users.loadAll(onCompleteSync: { res in
+                users = res
+            })
+        }
     }
     
     private var mainListView: some View {

@@ -3,6 +3,8 @@ import shared
 
 struct SettingsView: View {
     @EnvironmentObject var env: EnvironmentModel
+    @State private var showingErrorDialog = false
+    @State private var errorMsg = ""
     
     var body: some View {
         NavigationStack {
@@ -47,6 +49,17 @@ struct SettingsView: View {
                 }
             }
             .navigationTitle("Settings")
+            .refreshable {
+                Task {
+                    try await env.dh.users.refreshLoggedIn(onError: { err in
+                        errorMsg = err.message
+                        showingErrorDialog = true
+                    })
+                }
+            }
+            .alert(isPresented: $showingErrorDialog) {
+                Alert(title: Text("Error"), message: Text(errorMsg))
+            }
         }
     }
 }

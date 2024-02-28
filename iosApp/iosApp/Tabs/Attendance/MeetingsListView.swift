@@ -21,8 +21,8 @@ struct MeetingsListView: View {
         NavigationStack {
             List {
                 NavigationLink {
-//                    MeetingCreationView(reloader: $promptReload)
-//                        .environmentObject(env)
+                    MeetingCreationView(reloader: $promptReload)
+                        .environmentObject(env)
                 } label: {
                     HStack {
                         Image(systemName: "plus")
@@ -110,5 +110,9 @@ struct MeetingsListView: View {
 }
 
 #Preview {
-    MeetingsListView(isPresented: .constant(true))
+    MeetingsListView(isPresented: .constant(true)).environmentObject({ () -> EnvironmentModel in
+        let env = EnvironmentModel()
+        env.user = HelpfulVars().testuser
+        return env
+    }() )
 }

@@ -20,7 +20,6 @@
 		93418D9D2A5BC4D100336A62 /* ScoutingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 93418D9C2A5BC4D100336A62 /* ScoutingView.swift */; };
 		93418DE42A5E362600336A62 /* UserView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 93418DE32A5E362600336A62 /* UserView.swift */; };
 		93418DE62A5E362D00336A62 /* UserBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = 93418DE52A5E362D00336A62 /* UserBar.swift */; };
-		934A04D62B54DA0D00B2D145 /* DateHelpers.swift in Sources */ = {isa = PBXBuildFile; fileRef = 934A04D52B54DA0D00B2D145 /* DateHelpers.swift */; };
 		934A04D72B54DA0D00B2D145 /* DateHelpers.swift in Sources */ = {isa = PBXBuildFile; fileRef = 934A04D52B54DA0D00B2D145 /* DateHelpers.swift */; };
 		934E0AFC2B69D5B100515C44 /* EnvironmentModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 934E0AFB2B69D5B100515C44 /* EnvironmentModel.swift */; };
 		934E0AFD2B69D5B100515C44 /* EnvironmentModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 934E0AFB2B69D5B100515C44 /* EnvironmentModel.swift */; };
@@ -36,7 +35,6 @@
 		9351D2082B53A12200148E8D /* AttendanceView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 93790E382AA921690003203D /* AttendanceView.swift */; };
 		9351D2092B53A12200148E8D /* HomeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 93B9EACA2A5E800700D5B8A8 /* HomeView.swift */; };
 		9351D20A2B53A12200148E8D /* helpfulVars.swift in Sources */ = {isa = PBXBuildFile; fileRef = 93B615152AE715F900732A3F /* helpfulVars.swift */; };
-		9351D20B2B53A12200148E8D /* MeetingCreationView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9339CC592B4B6125000DA3FC /* MeetingCreationView.swift */; };
 		9351D20C2B53A12200148E8D /* NFCReader.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9351D1F92B50032900148E8D /* NFCReader.swift */; };
 		9351D20D2B53A12200148E8D /* UserBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = 93418DE52A5E362D00336A62 /* UserBar.swift */; };
 		9351D20E2B53A12200148E8D /* UserView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 93418DE32A5E362600336A62 /* UserView.swift */; };
@@ -75,9 +73,13 @@
 		93B9EAED2A67211600D5B8A8 /* ForgotPasswordView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 93B9EAEC2A67211600D5B8A8 /* ForgotPasswordView.swift */; };
 		93DB394D2AF9701000F257BE /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 93DB394C2AF9701000F257BE /* LaunchScreen.storyboard */; };
 		93E837332B869DB000DAB2E1 /* AccountCreationView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 93B9EAD42A5F4FB800D5B8A8 /* AccountCreationView.swift */; };
-		93E837342B86B58B00DAB2E1 /* helpfulVars.swift in Sources */ = {isa = PBXBuildFile; fileRef = 93B615152AE715F900732A3F /* helpfulVars.swift */; };
 		93E837352B8D48F800DAB2E1 /* DirectoryBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = 93B9EAC82A5E781D00D5B8A8 /* DirectoryBar.swift */; };
 		93E837362B8D4F9200DAB2E1 /* DirectoryView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 93B9EAC22A5E778C00D5B8A8 /* DirectoryView.swift */; };
+		93E8373A2B8D52FE00DAB2E1 /* MeetingCreationView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9339CC592B4B6125000DA3FC /* MeetingCreationView.swift */; };
+		93E8373B2B8D52FE00DAB2E1 /* MeetingCreationView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9339CC592B4B6125000DA3FC /* MeetingCreationView.swift */; };
+		93E8373C2B8DC7F500DAB2E1 /* DateHelpers.swift in Sources */ = {isa = PBXBuildFile; fileRef = 934A04D52B54DA0D00B2D145 /* DateHelpers.swift */; };
+		93E8373E2B8DCAB700DAB2E1 /* Constants.swift in Sources */ = {isa = PBXBuildFile; fileRef = 93E8373D2B8DCAB700DAB2E1 /* Constants.swift */; };
+		93E8373F2B8DCAB700DAB2E1 /* Constants.swift in Sources */ = {isa = PBXBuildFile; fileRef = 93E8373D2B8DCAB700DAB2E1 /* Constants.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -119,6 +121,7 @@
 		93B9EAD42A5F4FB800D5B8A8 /* AccountCreationView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AccountCreationView.swift; sourceTree = "<group>"; };
 		93B9EAEC2A67211600D5B8A8 /* ForgotPasswordView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ForgotPasswordView.swift; sourceTree = "<group>"; };
 		93DB394C2AF9701000F257BE /* LaunchScreen.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = LaunchScreen.storyboard; sourceTree = "<group>"; };
+		93E8373D2B8DCAB700DAB2E1 /* Constants.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Constants.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -186,6 +189,7 @@
 				934E0AFB2B69D5B100515C44 /* EnvironmentModel.swift */,
 				058557D7273AAEEB004C7B11 /* Preview Content */,
 				93DB394C2AF9701000F257BE /* LaunchScreen.storyboard */,
+				93E8373D2B8DCAB700DAB2E1 /* Constants.swift */,
 			);
 			path = iosApp;
 			sourceTree = "<group>";
@@ -462,23 +466,24 @@
 				93E837332B869DB000DAB2E1 /* AccountCreationView.swift in Sources */,
 				93418D9B2A5BC3F300336A62 /* SettingsView.swift in Sources */,
 				93844FFB2ADB29E1003EE764 /* ChargedUpFormView.swift in Sources */,
+				93E8373E2B8DCAB700DAB2E1 /* Constants.swift in Sources */,
 				93790E392AA921690003203D /* AttendanceView.swift in Sources */,
 				93B9EACB2A5E800700D5B8A8 /* HomeView.swift in Sources */,
 				9351D1FA2B50032900148E8D /* NFCReader.swift in Sources */,
+				93E8373C2B8DC7F500DAB2E1 /* DateHelpers.swift in Sources */,
 				93418DE62A5E362D00336A62 /* UserBar.swift in Sources */,
 				93418DE42A5E362600336A62 /* UserView.swift in Sources */,
 				93B9EAA82A5E5BA900D5B8A8 /* BugReportView.swift in Sources */,
-				934A04D62B54DA0D00B2D145 /* DateHelpers.swift in Sources */,
 				93719C882AC0B35300E29446 /* CircularProgressView.swift in Sources */,
 				93418D9D2A5BC4D100336A62 /* ScoutingView.swift in Sources */,
 				93B9EAED2A67211600D5B8A8 /* ForgotPasswordView.swift in Sources */,
 				934E0AFC2B69D5B100515C44 /* EnvironmentModel.swift in Sources */,
-				93E837342B86B58B00DAB2E1 /* helpfulVars.swift in Sources */,
 				93B615502AEA163200732A3F /* NFCButton.swift in Sources */,
 				9351D1F72B4F500300148E8D /* MeetingView.swift in Sources */,
 				93B9EAD12A5F387A00D5B8A8 /* LoginView.swift in Sources */,
 				93B9EAAA2A5E5BD500D5B8A8 /* AccountView.swift in Sources */,
 				93B9EACF2A5E803100D5B8A8 /* ScoutingFormView.swift in Sources */,
+				93E8373A2B8D52FE00DAB2E1 /* MeetingCreationView.swift in Sources */,
 				2152FB042600AC8F00CF470E /* iOSApp.swift in Sources */,
 				9351D1F42B4F4D9500148E8D /* VerifyUsersView.swift in Sources */,
 				9339CC5D2B4C7368000DA3FC /* AttendedMeetingsView.swift in Sources */,
@@ -500,9 +505,9 @@
 				9351D2082B53A12200148E8D /* AttendanceView.swift in Sources */,
 				9351D2092B53A12200148E8D /* HomeView.swift in Sources */,
 				9351D20A2B53A12200148E8D /* helpfulVars.swift in Sources */,
-				9351D20B2B53A12200148E8D /* MeetingCreationView.swift in Sources */,
 				9351D20C2B53A12200148E8D /* NFCReader.swift in Sources */,
 				9351D20D2B53A12200148E8D /* UserBar.swift in Sources */,
+				93E8373F2B8DCAB700DAB2E1 /* Constants.swift in Sources */,
 				9351D20E2B53A12200148E8D /* UserView.swift in Sources */,
 				9351D20F2B53A12200148E8D /* BugReportView.swift in Sources */,
 				9351D2102B53A12200148E8D /* DirectoryBar.swift in Sources */,
@@ -516,6 +521,7 @@
 				9351D2162B53A12200148E8D /* MeetingView.swift in Sources */,
 				9351D2172B53A12200148E8D /* LoginView.swift in Sources */,
 				9351D2182B53A12200148E8D /* AccountView.swift in Sources */,
+				93E8373B2B8D52FE00DAB2E1 /* MeetingCreationView.swift in Sources */,
 				9351D2192B53A12200148E8D /* ScoutingFormView.swift in Sources */,
 				9351D21A2B53A12200148E8D /* iOSApp.swift in Sources */,
 				9351D21C2B53A12200148E8D /* VerifyUsersView.swift in Sources */,
@@ -767,7 +773,7 @@
 				SUPPORTS_XR_DESIGNED_FOR_IPHONE_IPAD = NO;
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = 1;
+				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = Debug;
 		};
@@ -807,7 +813,7 @@
 				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = NO;
 				SUPPORTS_XR_DESIGNED_FOR_IPHONE_IPAD = NO;
 				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = 1;
+				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = Release;
 		};

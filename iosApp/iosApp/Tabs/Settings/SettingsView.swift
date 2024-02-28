@@ -9,7 +9,8 @@ struct SettingsView: View {
             List {
                 Section {
                     NavigationLink {
-                        UserView(user: env.user!)
+                        // temporary workaround to prevent crashing, too time crunched to figure out the right way to do this
+                        UserView(user: env.user ?? Constants().emptyUser)
                     } label: {
                         if (env.user != nil) {
                             UserBar()

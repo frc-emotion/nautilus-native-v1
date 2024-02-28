@@ -31,7 +31,7 @@ struct AttendanceView: View {
         let progress = Double(hours) / 36
         let test: String? = env.user?.attendance.keys.first
         let attObj = env.user?.attendance
-        let meow: Int32 = if(test == nil || attObj == nil ) { 0 } else { attObj![test!]?.totalHoursLogged ?? 0 }
+        let _: Int32 = if(test == nil || attObj == nil ) { 0 } else { attObj![test!]?.totalHoursLogged ?? 0 }
         
         NavigationStack {
             VStack {

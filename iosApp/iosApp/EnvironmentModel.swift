@@ -27,7 +27,7 @@ class EnvironmentModel: ObservableObject {
     @Published var selectedScoutingCompetition = ""
     
     init() {
-        dh = shared.DataHandler(routeBase: "https://staging.team2658.org", databaseDriverFactory: IosDatabaseDriver()) {
+        dh = shared.DataHandler(routeBase: "https://api.team2658.org", databaseDriverFactory: IosDatabaseDriver()) {
             return KeychainSwift().get("userToken")
         } setToken: { newToken in
             if (newToken != nil) {

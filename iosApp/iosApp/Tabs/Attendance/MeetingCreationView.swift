@@ -83,24 +83,21 @@ struct MeetingCreationView: View {
                         showError = true
                         return
                     }
-                    Task {
-                        // create meeting does not exist???
-                        //                        let _ = try await env.dh.attendance.createMeeting(env.user, startTime: startDate, endTime: endDate, type: meetingType.rawValue, description: meetingName, value: meetingValue, attendancePeriod: "2024spring") { res, err in
-                        //                            return // write this
+                    // TODO: change attendance period hardcoding, used dh.seasons.getAttendancePeriod() and a dropdown
+                    // TODO: Automatically navigate backwards when new meeting successfully created
+                    env.dh.attendance.create(startTime: Int64(startDate.timeIntervalSince1970), endTime: Int64(endDate.timeIntervalSince1970), type: meetingType.rawValue, description: meetingName, value: Int32(meetingValue), attendancePeriod: "2024spring") { err in
+                        errorMsg = err.description()
+                        showError = true
+                    } completionHandler: { newMeeting, err in
+                        guard newMeeting != nil else {
+                            if (err != nil) {
+                                errorMsg = err!.localizedDescription
+                            } else {
+                                errorMsg = "Unknown Error Occured"
+                            }
+                            return
+                        }
                     }
-                    //                        let response = try await shared.EmotionClient().createMeeting(user: user, startTime: Int64(startDate.timeIntervalSince1970) * 1000, endTime: Int64(endDate.timeIntervalSince1970) * 1000, type: meetingType.rawValue, description: meetingName, value: Int32(meetingValue)) { error in
-                    //                            errorMsg = error
-                    //                            showError = true
-                    //                        }
-                    //                        let _ = try await
-                    //                        if response != nil {
-                    //                            reloader = true
-                    //                            self.presentationMode.wrappedValue.dismiss()
-                    //                        } else {
-                    //                            errorMsg = "Unknown Error Occured"
-                    //                            showError = true
-                    //                        }
-                    
                 } label: {
                     Text("Create Meeting")
                         .frame(height: 30.0)

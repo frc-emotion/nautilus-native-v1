@@ -11,6 +11,7 @@ import CoreNFC
 
 struct NFCButton: UIViewRepresentable {
     @Binding var data : String
+    @Binding var verifiedBy : String
     @State var title: String
     
     func makeUIView(context: UIViewRepresentableContext<NFCButton>) -> UIButton {
@@ -27,15 +28,17 @@ struct NFCButton: UIViewRepresentable {
     }
     
     func makeCoordinator() -> NFCButton.Coordinator {
-        return Coordinator(data: $data)
+        return Coordinator(data: $data, verifiedBy: $verifiedBy)
     }
     
     class Coordinator: NSObject, NFCNDEFReaderSessionDelegate {
         var session: NFCNDEFReaderSession?
         @Binding var data : String // must match type above
+        @Binding var verifiedBy : String
         
-        init(data: Binding<String>) {
+        init(data: Binding<String>, verifiedBy: Binding<String>) {
             _data = data
+            _verifiedBy = verifiedBy
         }
         
         @objc func beginScan(_ sender: Any) {
@@ -63,14 +66,15 @@ struct NFCButton: UIViewRepresentable {
             guard
                 let nfcMess = messages.first,
                 let record = nfcMess.records.first,
-//                record.typeNameFormat == .absoluteURI || record.typeNameFormat == .nfcWellKnown,
                 record.typeNameFormat == .media,
                 let payload = String(data: record.payload, encoding: .utf8)
             else {
                 return
             }
-            
-            print(payload)
+            let record2 = nfcMess.records[1]
+            record2.typeNameFormat = .media
+            let payload2 = String(data: record2.payload, encoding: .utf8)
+            if (payload2 != nil) { self.verifiedBy = payload2! }
             self.data = payload
         }
     }
@@ -78,7 +82,8 @@ struct NFCButton: UIViewRepresentable {
 
 struct NFCButtonView: View {
     @Binding var data: String
+    @Binding var verifiedBy: String
     var body: some View {
-        NFCButton(data: self.$data, title: "Log Attendance")
+        NFCButton(data: self.$data, verifiedBy: self.$verifiedBy, title: "Log Attendance")
     }
 }

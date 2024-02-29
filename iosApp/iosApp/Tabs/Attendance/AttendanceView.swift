@@ -10,7 +10,6 @@ import SwiftUI
 import shared
 import CoreNFC
 import UIKit
-import SwiftyJSON
 
 func getUTCDate(date: Int) {
     let dateFormatter = DateFormatter()
@@ -20,14 +19,20 @@ func getUTCDate(date: Int) {
 struct AttendanceView: View {
     //    let helpers = AttendanceHelpers()
     @State private var data: String = ""
+    @State private var verifiedBy: String = ""
     @State private var errorMsg: String = ""
     @State private var meetingsPopoverDisplayed = false
     @State private var historyPopoverDisplayed = false
     @EnvironmentObject var env: EnvironmentModel
 
     var body: some View {
-        let hours: Int32 = if env.user!.attendance.isEmpty {0} else {env.user!.attendance[env.user!.attendance.count - 1].totalHoursLogged}
+//        let att = env.user?.attendance.values.reversed().first
+        let att = env.user?.attendance[env.selectedAttendancePeriod]
+        let hours = att?.totalHoursLogged ?? 0
         let progress = Double(hours) / 36
+        let test: String? = env.user?.attendance.keys.first
+        let attObj = env.user?.attendance
+        let _: Int32 = if(test == nil || attObj == nil ) { 0 } else { attObj![test!]?.totalHoursLogged ?? 0 }
         
         NavigationStack {
             VStack {
@@ -49,7 +54,7 @@ struct AttendanceView: View {
                             .padding(.bottom)
                     }
                     
-                    NFCButtonView(data: $data)
+                    NFCButtonView(data: $data, verifiedBy: $verifiedBy)
                         .frame(width: 160, height: 50, alignment: .center)
                 } else {
                     Text("Please use an iPhone to log attendance.")
@@ -60,16 +65,20 @@ struct AttendanceView: View {
             }
             
             .onChange(of: data) { newData in
-                if newData != "" {
-                    Task {
-                        let response = try await env.dh.attendance.attend(meetingId: newData, time: Int64((NSDate().timeIntervalSince1970) * 1000), verifiedBy: nil) { errorMsgIn in
-                            Task {
-                                let json = try JSON(data: errorMsgIn)
-                                errorMsg = "Error: " + json["message"].stringValue
+                if (newData != "") {
+                    env.dh.attendance.attend(meetingId: newData, time: Int64((NSDate().timeIntervalSince1970) * 1000), verifiedBy: verifiedBy) { err in
+                        errorMsg = err.description()
+                    } completionHandler: { updatedUser, err in
+                        guard updatedUser != nil else {
+                            if (err != nil) {
+                                errorMsg = err!.localizedDescription
+                            } else {
+                                errorMsg = "Unknown Error Occured"
                             }
-                        } onSuccess: {
-                            <#code#>
+                            return
                         }
+                        errorMsg = ""
+                        Task { env.updateUser(newUser: updatedUser) }
                     }
                 }
             }
@@ -84,25 +93,23 @@ struct AttendanceView: View {
                 //                        Image(systemName: "clock.arrow.circlepath")
                 //                    }
                 //                }
-                ToolbarItem(placement: .topBarTrailing) {
-                    Button {
-                        // refresh
-                    } label: {
-                        Image(systemName: "arrow.clockwise")
-                            .rotationEffect(.degrees(30.00))
-                    }
-                }
+//                ToolbarItem(placement: .topBarTrailing) {
+//                    Button {
+//                        // refresh
+//                    } label: {
+//                        Image(systemName: "arrow.clockwise")
+//                            .rotationEffect(.degrees(30.00))
+//                    }
+//                }
                 // leads: view meetings
                 ToolbarItem(placement: .topBarTrailing) {
-                    if (env.user!.accountType == shared.AccountType.lead || env.user!.accountType == shared.AccountType.admin || env.user!.accountType == shared.AccountType.superuser) {
-                        Button(action: {
-                            meetingsPopoverDisplayed.toggle()
-                        }) {
-                            Image(systemName: "calendar")
-                        }
-                        .popover(isPresented: $meetingsPopoverDisplayed, arrowEdge: .bottom) {
-                            NavigationView {
-                                MeetingsListView(user: env.user!, isPresented: $meetingsPopoverDisplayed)
+                    if (env.user != nil) {
+                        if (env.user!.accountType == shared.AccountType.lead || env.user!.accountType == shared.AccountType.admin || env.user!.accountType == shared.AccountType.superuser) {
+                            NavigationLink {
+                                MeetingsListView()
+                                    .environmentObject(env)
+                            } label: {
+                                Image(systemName: "calendar")
                             }
                         }
                     }
@@ -117,6 +124,10 @@ struct AttendanceView: View {
 
 struct AttendanceView_Previews: PreviewProvider {
     static var previews: some View {
-        AttendanceView()
+        AttendanceView().environmentObject({ () -> EnvironmentModel in
+            let env = EnvironmentModel()
+            env.user = HelpfulVars().testuser
+            return env
+        }() )
     }
 }

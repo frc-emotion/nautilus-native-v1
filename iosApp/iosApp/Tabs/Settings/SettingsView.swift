@@ -2,23 +2,43 @@ import SwiftUI
 import shared
 
 struct SettingsView: View {
-    @EnvironmentObject var vm: UserStateViewModel
+    @EnvironmentObject var env: EnvironmentModel
+    @State private var showingErrorDialog = false
+    @State private var errorMsg = ""
+    @State private var attendancePeriodSelection: String = ""
     
     var body: some View {
         NavigationStack {
             List {
                 Section {
                     NavigationLink {
-                        UserView(user: vm.user!)
+                        // temporary workaround to prevent crashing, too time crunched to figure out the right way to do this
+                        UserView(user: env.user ?? Constants().emptyUser)
                     } label: {
-                        UserBar(user: vm.user!)
+                        if (env.user != nil) {
+                            UserBar()
+                                .environmentObject(env)
+                        }
                     }
+                       
 //                    Not yet implemented
 //                    NavigationLink {
 //                        AccountView()
 //                    } label: {
 //                        Text("Account Settings")
 //                    }
+                }
+                if (env.user != nil) {
+                    Section {
+                        Picker("Attendance Period", selection: $attendancePeriodSelection) {
+                            ForEach(Array(env.user!.attendanceKeys), id: \.self) {
+                                Text($0)
+                            }
+                            .navigationBarTitleDisplayMode(.inline)
+                        }
+                        .pickerStyle(.navigationLink)
+                        .disabled(Array(env.user!.attendance.keys).isEmpty)
+                    }
                 }
 //                Section {
 //                    Not yet implemented
@@ -31,7 +51,8 @@ struct SettingsView: View {
                 Section {
                     Button (action: {
                         Task {
-                            await vm.signOut()
+                            env.updateUser(newUser: nil)
+                            env.dh.users.logout()
                         }
                     }) {
                         Text("Log Out")
@@ -41,16 +62,34 @@ struct SettingsView: View {
                 }
             }
             .navigationTitle("Settings")
+            .refreshable {
+                Task {
+                    let user = try await env.dh.users.refreshLoggedIn(onError: { err in
+                        errorMsg = err.message
+                        showingErrorDialog = true
+                    })
+                    env.updateUser(newUser: user)
+                }
+            }
+            .alert(isPresented: $showingErrorDialog) {
+                Alert(title: Text("Error"), message: Text(errorMsg))
+            }
+            .onAppear() {
+                attendancePeriodSelection = env.selectedAttendancePeriod
+            }
+            .onChange(of: attendancePeriodSelection) { newSelection in
+                env.updateSelectedAttendancePeriod(newPeriod: newSelection)
+            }
         }
     }
 }
 
 struct SettingsView_Previews: PreviewProvider {
     static var previews: some View {
-        SettingsView().environmentObject({ () -> UserStateViewModel in
-            let vm = UserStateViewModel()
-            vm.user = HelpfulVars().testuser
-            return vm
+        SettingsView().environmentObject({ () -> EnvironmentModel in
+            let env = EnvironmentModel()
+            env.user = HelpfulVars().testuser
+            return env
         }() )
     }
 }

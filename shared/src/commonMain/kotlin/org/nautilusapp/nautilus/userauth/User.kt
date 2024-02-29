@@ -46,7 +46,9 @@ data class TokenUser(
     override val permissions: UserPermissions,
     override val phone: String,
     val token: String,
-) : User.Full
+) : User.Full {
+    val attendanceKeys = this.attendance.keys
+}
 
 /**
  * A user with all of their data. Available to admins via getUsers or getUserById. No JWT.

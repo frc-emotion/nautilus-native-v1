@@ -37,6 +37,7 @@ struct AuthenticationView: View {
                         .frame(maxWidth: .infinity)
                         .cornerRadius(50)
                 })
+                .tint(Color.accentColor)
                 .buttonStyle(.borderedProminent)
                 .padding(.horizontal)
                 
@@ -48,7 +49,7 @@ struct AuthenticationView: View {
                         .cornerRadius(50)
                         
                 })
-                .tint(.gray)
+                .tint(Color.secondary)
                 .buttonStyle(.borderedProminent)
                 .padding(.horizontal)
             }

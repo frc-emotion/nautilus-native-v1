@@ -55,10 +55,23 @@ class EnvironmentModel: ObservableObject {
 //        ScoutingCompetitionCancellable = $selectedScoutingCompetition.receive(on: DispatchQueue.main).sink { [weak self] _ in
 //            self?.objectWillChange.send()
 //        }
+        
+        if (user != nil) {
+            let attendanceKeys = Array(user!.attendance.keys)
+            if attendanceKeys.first != nil {
+                selectedAttendancePeriod = attendanceKeys.first!
+            }
+        }
     }
 
     func updateUser(newUser: TokenUser?) {
         user = newUser
+        if (user != nil) {
+            let attendanceKeys = Array(user!.attendance.keys)
+            if attendanceKeys.first != nil {
+                updateSelectedAttendancePeriod(newPeriod: attendanceKeys.first!)
+            }
+        }
     }
     
     func updateSelectedAttendancePeriod(newPeriod: String) {

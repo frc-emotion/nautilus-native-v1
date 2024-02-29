@@ -20,13 +20,15 @@ func getUTCDate(date: Int) {
 struct AttendanceView: View {
     //    let helpers = AttendanceHelpers()
     @State private var data: String = ""
+    @State private var verifiedBy: String = ""
     @State private var errorMsg: String = ""
     @State private var meetingsPopoverDisplayed = false
     @State private var historyPopoverDisplayed = false
     @EnvironmentObject var env: EnvironmentModel
 
     var body: some View {
-        let att = env.user?.attendance.values.reversed().first
+//        let att = env.user?.attendance.values.reversed().first
+        let att = env.user?.attendance[env.selectedAttendancePeriod]
         let hours = att?.totalHoursLogged ?? 0
         let progress = Double(hours) / 36
         let test: String? = env.user?.attendance.keys.first
@@ -53,7 +55,7 @@ struct AttendanceView: View {
                             .padding(.bottom)
                     }
                     
-                    NFCButtonView(data: $data)
+                    NFCButtonView(data: $data, verifiedBy: $verifiedBy)
                         .frame(width: 160, height: 50, alignment: .center)
                 } else {
                     Text("Please use an iPhone to log attendance.")
@@ -63,20 +65,24 @@ struct AttendanceView: View {
                 }
             }
             
-//            .onChange(of: data) { newData in
-//                if newData != "" {
-//                    Task {
-//                        let response = try await env.dh.attendance.attend(meetingId: newData, time: Int64((NSDate().timeIntervalSince1970) * 1000), verifiedBy: nil) { errorMsgIn in
-//                            Task {
-//                                let json = try JSON(data: errorMsgIn)
-//                                errorMsg = "Error: " + json["message"].stringValue
-//                            }
-//                        } onSuccess: {
-//                            
-//                        }
-//                    }
-//                }
-//            }
+            .onChange(of: data) { newData in
+                if (newData != "") {
+                    env.dh.attendance.attend(meetingId: newData, time: Int64((NSDate().timeIntervalSince1970) * 1000), verifiedBy: verifiedBy) { err in
+                        errorMsg = err.description()
+                    } completionHandler: { updatedUser, err in
+                        guard updatedUser != nil else {
+                            if (err != nil) {
+                                errorMsg = err!.localizedDescription
+                            } else {
+                                errorMsg = "Unknown Error Occured"
+                            }
+                            return
+                        }
+                        errorMsg = ""
+                        Task { env.updateUser(newUser: updatedUser) }
+                    }
+                }
+            }
             .navigationBarTitleDisplayMode(.inline)
             .navigationTitle("Attendance")
             .toolbar {
@@ -124,6 +130,10 @@ struct AttendanceView: View {
 
 struct AttendanceView_Previews: PreviewProvider {
     static var previews: some View {
-        AttendanceView()
+        AttendanceView().environmentObject({ () -> EnvironmentModel in
+            let env = EnvironmentModel()
+            env.user = HelpfulVars().testuser
+            return env
+        }() )
     }
 }

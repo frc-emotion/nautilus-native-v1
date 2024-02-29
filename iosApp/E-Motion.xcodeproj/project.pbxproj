@@ -27,7 +27,6 @@
 		9351D1C22B4E4DDC00148E8D /* KeychainSwift in Frameworks */ = {isa = PBXBuildFile; productRef = 9351D1C12B4E4DDC00148E8D /* KeychainSwift */; };
 		9351D1F42B4F4D9500148E8D /* VerifyUsersView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9351D1F32B4F4D9500148E8D /* VerifyUsersView.swift */; };
 		9351D1F72B4F500300148E8D /* MeetingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9351D1F62B4F500300148E8D /* MeetingView.swift */; };
-		9351D1FA2B50032900148E8D /* NFCReader.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9351D1F92B50032900148E8D /* NFCReader.swift */; };
 		9351D2042B53A12200148E8D /* MeetingBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9339CC562B4B5EA9000DA3FC /* MeetingBar.swift */; };
 		9351D2052B53A12200148E8D /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 93418D9A2A5BC3F300336A62 /* SettingsView.swift */; };
 		9351D2062B53A12200148E8D /* ChargedUpFormView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 93844FFA2ADB29E1003EE764 /* ChargedUpFormView.swift */; };
@@ -35,7 +34,6 @@
 		9351D2082B53A12200148E8D /* AttendanceView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 93790E382AA921690003203D /* AttendanceView.swift */; };
 		9351D2092B53A12200148E8D /* HomeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 93B9EACA2A5E800700D5B8A8 /* HomeView.swift */; };
 		9351D20A2B53A12200148E8D /* helpfulVars.swift in Sources */ = {isa = PBXBuildFile; fileRef = 93B615152AE715F900732A3F /* helpfulVars.swift */; };
-		9351D20C2B53A12200148E8D /* NFCReader.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9351D1F92B50032900148E8D /* NFCReader.swift */; };
 		9351D20D2B53A12200148E8D /* UserBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = 93418DE52A5E362D00336A62 /* UserBar.swift */; };
 		9351D20E2B53A12200148E8D /* UserView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 93418DE32A5E362600336A62 /* UserView.swift */; };
 		9351D20F2B53A12200148E8D /* BugReportView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 93B9EAA72A5E5BA900D5B8A8 /* BugReportView.swift */; };
@@ -114,7 +112,6 @@
 		934F47262B413AF0009DA4FA /* AuthenticationView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthenticationView.swift; sourceTree = "<group>"; };
 		9351D1F32B4F4D9500148E8D /* VerifyUsersView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VerifyUsersView.swift; sourceTree = "<group>"; };
 		9351D1F62B4F500300148E8D /* MeetingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MeetingView.swift; sourceTree = "<group>"; };
-		9351D1F92B50032900148E8D /* NFCReader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NFCReader.swift; sourceTree = "<group>"; };
 		9351D22D2B53A12200148E8D /* E-Motion Dev.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "E-Motion Dev.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		93719C872AC0B35300E29446 /* CircularProgressView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CircularProgressView.swift; sourceTree = "<group>"; };
 		93790E382AA921690003203D /* AttendanceView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AttendanceView.swift; sourceTree = "<group>"; };
@@ -270,7 +267,6 @@
 				93719C872AC0B35300E29446 /* CircularProgressView.swift */,
 				93B6154F2AEA163200732A3F /* NFCButton.swift */,
 				9339CC4F2B4B526D000DA3FC /* NFCWriter.swift */,
-				9351D1F92B50032900148E8D /* NFCReader.swift */,
 			);
 			path = Elements;
 			sourceTree = "<group>";
@@ -500,7 +496,6 @@
 				93E8373E2B8DCAB700DAB2E1 /* Constants.swift in Sources */,
 				93790E392AA921690003203D /* AttendanceView.swift in Sources */,
 				93B9EACB2A5E800700D5B8A8 /* HomeView.swift in Sources */,
-				9351D1FA2B50032900148E8D /* NFCReader.swift in Sources */,
 				93E8373C2B8DC7F500DAB2E1 /* DateHelpers.swift in Sources */,
 				93418DE62A5E362D00336A62 /* UserBar.swift in Sources */,
 				93E8374B2B8F1F5200DAB2E1 /* MinusLabelView.swift in Sources */,
@@ -543,7 +538,6 @@
 				9351D2082B53A12200148E8D /* AttendanceView.swift in Sources */,
 				9351D2092B53A12200148E8D /* HomeView.swift in Sources */,
 				9351D20A2B53A12200148E8D /* helpfulVars.swift in Sources */,
-				9351D20C2B53A12200148E8D /* NFCReader.swift in Sources */,
 				9351D20D2B53A12200148E8D /* UserBar.swift in Sources */,
 				93E8373F2B8DCAB700DAB2E1 /* Constants.swift in Sources */,
 				9351D20E2B53A12200148E8D /* UserView.swift in Sources */,

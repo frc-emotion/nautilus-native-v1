@@ -5,6 +5,7 @@ struct SettingsView: View {
     @EnvironmentObject var env: EnvironmentModel
     @State private var showingErrorDialog = false
     @State private var errorMsg = ""
+    @State private var attendancePeriodSelection: String = ""
     
     var body: some View {
         NavigationStack {
@@ -26,6 +27,18 @@ struct SettingsView: View {
 //                    } label: {
 //                        Text("Account Settings")
 //                    }
+                }
+                if (env.user != nil) {
+                    Section {
+                        Picker("Attendance Period", selection: $attendancePeriodSelection) {
+                            ForEach(Array(env.user!.attendance.keys), id: \.self) {
+                                Text($0)
+                            }
+                            .navigationBarTitleDisplayMode(.inline)
+                        }
+                        .pickerStyle(.navigationLink)
+                        .disabled(Array(env.user!.attendance.keys).isEmpty)
+                    }
                 }
 //                Section {
 //                    Not yet implemented
@@ -60,6 +73,12 @@ struct SettingsView: View {
             }
             .alert(isPresented: $showingErrorDialog) {
                 Alert(title: Text("Error"), message: Text(errorMsg))
+            }
+            .onAppear() {
+                attendancePeriodSelection = env.selectedAttendancePeriod
+            }
+            .onChange(of: attendancePeriodSelection) { newSelection in
+                env.updateSelectedAttendancePeriod(newPeriod: newSelection)
             }
         }
     }

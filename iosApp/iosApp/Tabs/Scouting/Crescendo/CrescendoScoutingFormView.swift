@@ -294,6 +294,20 @@ struct CrescendoScoutingFormView: View {
                         .tint(.red)
                         .disabled(!(competition != nil || teamNumber != nil || AutoAmpNotes != nil || AutoSpeakerNotes != nil || AutoLeftAllianceArea != nil || TeleopAmpNotes != nil || TeleopSpeakerNotes != nil || TeleopSpeakerNotesAmplified != nil || EndgameParked != nil || EndgameHarmony != nil || EndgameTrapNotes != nil || RPMelody != nil || RPEnsemble != nil || RobotDefensive != nil || RobotBrokeDown != nil || PenaltyPointsEarned != nil || FinalScore != nil || FinalGameResultTie != nil || FinalGameResultWin != nil))
                         
+                        Button {
+                            env.dh.crescendo.sync { res, err in
+                                return
+                            }
+                        } label: {
+                            Text("Sync with Server")
+                                .fontWeight(.bold)
+                                .frame(height: 30.0)
+                                .frame(maxWidth: .infinity)
+                                .cornerRadius(50)
+                        }
+                        .buttonStyle(.borderedProminent)
+                        .padding(.horizontal)
+                        .tint(.green)
                     }
                 }
                 .padding(.bottom, 10)

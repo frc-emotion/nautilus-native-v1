@@ -98,6 +98,7 @@ struct MeetingCreationView: View {
                             }
                             return
                         }
+                        reloader = true
                         isPresented = false
                     }
                 } label: {

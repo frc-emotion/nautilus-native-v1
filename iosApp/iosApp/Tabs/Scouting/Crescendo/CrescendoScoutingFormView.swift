@@ -8,7 +8,6 @@
 
 import SwiftUI
 import shared
-import Combine
 
 extension shared.CrescendoStageState {
     var displayName: String {
@@ -54,7 +53,8 @@ struct CrescendoScoutingFormView: View {
     @State var FinalScore: Int?
     @State var FinalGameResultWin: Bool?
     @State var FinalGameResultTie: Bool?
-    @State var FinalComments: String?
+    @State var FinalComments = ""
+    @State private var isBusy = false
     
     func clearForm() {
         competition = nil
@@ -77,7 +77,7 @@ struct CrescendoScoutingFormView: View {
         FinalScore = nil
         FinalGameResultWin = nil
         FinalGameResultTie = nil
-        FinalComments = nil
+        FinalComments = ""
     }
     
     var body: some View {
@@ -221,11 +221,26 @@ struct CrescendoScoutingFormView: View {
                         // game result
                         BooleanSegmentedPickerView(fieldName: "Tied?", data: $FinalGameResultTie)
                         BooleanSegmentedPickerView(fieldName: "Won?", data: $FinalGameResultWin)
+                        
+                        VStack {
+                            HStack {
+                                Text("Comments:")
+                                    .padding(.leading)
+                                Spacer()
+                            }
+                            TextField("Enter Comments", text: $FinalComments, axis: .vertical)
+                                .padding(.horizontal)
+                        }
+                        .padding(.vertical, 10.0)
+                        .background(colorScheme == .dark ? Color.init(UIColor.systemGray5) : Color.white)
+                        .clipShape(RoundedRectangle(cornerRadius: 5))
+                        .padding(.horizontal)
                     }
                     
                     // submit button
                     VStack(spacing: 10) {
                         Button {
+                            isBusy = true
                             var totalRP = 0
                             if (RPMelody!) { totalRP = totalRP + 1 }
                             if (RPEnsemble!) { totalRP = totalRP + 1 }
@@ -234,19 +249,32 @@ struct CrescendoScoutingFormView: View {
                             env.dh.crescendo.upload(data: shared.CrescendoSubmission(auto: shared.CrescendoAuto(leave: AutoLeftAllianceArea!, ampNotes: Int32(AutoAmpNotes!), speakerNotes: Int32(AutoSpeakerNotes!)), comments: FinalComments, competition: competition!, defensive: RobotDefensive!, matchNumber: Int32(matchNumber!), penaltyPointsEarned: Int32(PenaltyPointsEarned!), ranking: shared.CrescendoRankingPoints(melody: RPMelody!, ensemble: RPEnsemble!), rankingPoints: Int32(totalRP), score: Int32(FinalScore!), stage: shared.CrescendoStage(state: EndgameParked!, harmony: Int32(EndgameHarmony!), trapNotes: Int32(EndgameTrapNotes!)), teamNumber: Int32(teamNumber!), teleop: shared.CrescendoTeleop(ampNotes: Int32(TeleopAmpNotes!), speakerUnamped: Int32(TeleopSpeakerNotes!), speakerAmped: Int32(TeleopSpeakerNotesAmplified!)), tied: FinalGameResultTie!, won: FinalGameResultWin!, brokeDown: RobotBrokeDown!)) { err in
                                 errorMessage = err.message
                                 showingError = true
+                                isBusy = false
                             } completionHandler: { match, err in
                                 guard match != nil else {
                                     errorMessage = err?.localizedDescription ?? "Unknown Error Occured"
                                     showingError = true
+                                    isBusy = false
                                     return
                                 }
+                                clearForm()
+                                isBusy = false
                             }
+                            isBusy = false
                         } label: {
-                            Text("Submit")
-                                .fontWeight(.bold)
-                                .frame(height: 30.0)
-                                .frame(maxWidth: .infinity)
-                                .cornerRadius(50)
+                            if (isBusy) {
+                                AnyView(ProgressView())
+                                    .frame(height: 30.0)
+                                    .frame(maxWidth: .infinity)
+                                    .cornerRadius(50)
+                                    .tint(Color.secondary)
+                            } else {
+                                Text("Submit")
+                                    .fontWeight(.bold)
+                                    .frame(height: 30.0)
+                                    .frame(maxWidth: .infinity)
+                                    .cornerRadius(50)
+                            }
                         }
                         .buttonStyle(.borderedProminent)
                         .padding(.horizontal)

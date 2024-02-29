@@ -80,6 +80,18 @@
 		93E8373C2B8DC7F500DAB2E1 /* DateHelpers.swift in Sources */ = {isa = PBXBuildFile; fileRef = 934A04D52B54DA0D00B2D145 /* DateHelpers.swift */; };
 		93E8373E2B8DCAB700DAB2E1 /* Constants.swift in Sources */ = {isa = PBXBuildFile; fileRef = 93E8373D2B8DCAB700DAB2E1 /* Constants.swift */; };
 		93E8373F2B8DCAB700DAB2E1 /* Constants.swift in Sources */ = {isa = PBXBuildFile; fileRef = 93E8373D2B8DCAB700DAB2E1 /* Constants.swift */; };
+		93E837422B8F072100DAB2E1 /* CrescendoScoutingFormView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 93E837412B8F072100DAB2E1 /* CrescendoScoutingFormView.swift */; };
+		93E837432B8F072100DAB2E1 /* CrescendoScoutingFormView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 93E837412B8F072100DAB2E1 /* CrescendoScoutingFormView.swift */; };
+		93E837452B8F1DF200DAB2E1 /* ScoutingIncrementerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 93E837442B8F1DF200DAB2E1 /* ScoutingIncrementerView.swift */; };
+		93E837462B8F1DF200DAB2E1 /* ScoutingIncrementerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 93E837442B8F1DF200DAB2E1 /* ScoutingIncrementerView.swift */; };
+		93E837482B8F1F0100DAB2E1 /* PlusLabelView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 93E837472B8F1F0100DAB2E1 /* PlusLabelView.swift */; };
+		93E837492B8F1F0100DAB2E1 /* PlusLabelView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 93E837472B8F1F0100DAB2E1 /* PlusLabelView.swift */; };
+		93E8374B2B8F1F5200DAB2E1 /* MinusLabelView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 93E8374A2B8F1F5200DAB2E1 /* MinusLabelView.swift */; };
+		93E8374C2B8F1F5200DAB2E1 /* MinusLabelView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 93E8374A2B8F1F5200DAB2E1 /* MinusLabelView.swift */; };
+		93E8374E2B8F30F300DAB2E1 /* BooleanSegmentedPickerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 93E8374D2B8F30F300DAB2E1 /* BooleanSegmentedPickerView.swift */; };
+		93E8374F2B8F30F300DAB2E1 /* BooleanSegmentedPickerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 93E8374D2B8F30F300DAB2E1 /* BooleanSegmentedPickerView.swift */; };
+		93E837522B8FB39100DAB2E1 /* ScoutingNumberInputView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 93E837512B8FB39100DAB2E1 /* ScoutingNumberInputView.swift */; };
+		93E837532B8FB39100DAB2E1 /* ScoutingNumberInputView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 93E837512B8FB39100DAB2E1 /* ScoutingNumberInputView.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -104,7 +116,6 @@
 		9351D1F62B4F500300148E8D /* MeetingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MeetingView.swift; sourceTree = "<group>"; };
 		9351D1F92B50032900148E8D /* NFCReader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NFCReader.swift; sourceTree = "<group>"; };
 		9351D22D2B53A12200148E8D /* E-Motion Dev.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "E-Motion Dev.app"; sourceTree = BUILT_PRODUCTS_DIR; };
-		9351D22E2B53A12200148E8D /* E-Motion copy-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; name = "E-Motion copy-Info.plist"; path = "/Users/jasonballinger/Desktop/teamapp/iosApp/E-Motion copy-Info.plist"; sourceTree = "<absolute>"; };
 		93719C872AC0B35300E29446 /* CircularProgressView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CircularProgressView.swift; sourceTree = "<group>"; };
 		93790E382AA921690003203D /* AttendanceView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AttendanceView.swift; sourceTree = "<group>"; };
 		93790E3C2AA92D800003203D /* Σ-Motion.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = "Σ-Motion.entitlements"; sourceTree = "<group>"; };
@@ -122,6 +133,12 @@
 		93B9EAEC2A67211600D5B8A8 /* ForgotPasswordView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ForgotPasswordView.swift; sourceTree = "<group>"; };
 		93DB394C2AF9701000F257BE /* LaunchScreen.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = LaunchScreen.storyboard; sourceTree = "<group>"; };
 		93E8373D2B8DCAB700DAB2E1 /* Constants.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Constants.swift; sourceTree = "<group>"; };
+		93E837412B8F072100DAB2E1 /* CrescendoScoutingFormView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CrescendoScoutingFormView.swift; sourceTree = "<group>"; };
+		93E837442B8F1DF200DAB2E1 /* ScoutingIncrementerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScoutingIncrementerView.swift; sourceTree = "<group>"; };
+		93E837472B8F1F0100DAB2E1 /* PlusLabelView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlusLabelView.swift; sourceTree = "<group>"; };
+		93E8374A2B8F1F5200DAB2E1 /* MinusLabelView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MinusLabelView.swift; sourceTree = "<group>"; };
+		93E8374D2B8F30F300DAB2E1 /* BooleanSegmentedPickerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BooleanSegmentedPickerView.swift; sourceTree = "<group>"; };
+		93E837512B8FB39100DAB2E1 /* ScoutingNumberInputView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScoutingNumberInputView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -163,7 +180,6 @@
 				7555FF7D242A565900829871 /* iosApp */,
 				7555FF7C242A565900829871 /* Products */,
 				7555FFB0242A642200829871 /* Frameworks */,
-				9351D22E2B53A12200148E8D /* E-Motion copy-Info.plist */,
 			);
 			sourceTree = "<group>";
 		};
@@ -279,6 +295,7 @@
 		93B9EAE72A65E4C700D5B8A8 /* Scouting */ = {
 			isa = PBXGroup;
 			children = (
+				93E837402B8F071500DAB2E1 /* Crescendo */,
 				93844FF92ADB29D8003EE764 /* ChargedUp */,
 				93418D9C2A5BC4D100336A62 /* ScoutingView.swift */,
 				93B9EACE2A5E803100D5B8A8 /* ScoutingFormView.swift */,
@@ -303,6 +320,19 @@
 				93418DE52A5E362D00336A62 /* UserBar.swift */,
 			);
 			path = User;
+			sourceTree = "<group>";
+		};
+		93E837402B8F071500DAB2E1 /* Crescendo */ = {
+			isa = PBXGroup;
+			children = (
+				93E837412B8F072100DAB2E1 /* CrescendoScoutingFormView.swift */,
+				93E837442B8F1DF200DAB2E1 /* ScoutingIncrementerView.swift */,
+				93E837472B8F1F0100DAB2E1 /* PlusLabelView.swift */,
+				93E8374A2B8F1F5200DAB2E1 /* MinusLabelView.swift */,
+				93E8374D2B8F30F300DAB2E1 /* BooleanSegmentedPickerView.swift */,
+				93E837512B8FB39100DAB2E1 /* ScoutingNumberInputView.swift */,
+			);
+			path = Crescendo;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -461,6 +491,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				93E837422B8F072100DAB2E1 /* CrescendoScoutingFormView.swift in Sources */,
 				93E837362B8D4F9200DAB2E1 /* DirectoryView.swift in Sources */,
 				9339CC572B4B5EA9000DA3FC /* MeetingBar.swift in Sources */,
 				93E837332B869DB000DAB2E1 /* AccountCreationView.swift in Sources */,
@@ -472,6 +503,7 @@
 				9351D1FA2B50032900148E8D /* NFCReader.swift in Sources */,
 				93E8373C2B8DC7F500DAB2E1 /* DateHelpers.swift in Sources */,
 				93418DE62A5E362D00336A62 /* UserBar.swift in Sources */,
+				93E8374B2B8F1F5200DAB2E1 /* MinusLabelView.swift in Sources */,
 				93418DE42A5E362600336A62 /* UserView.swift in Sources */,
 				93B9EAA82A5E5BA900D5B8A8 /* BugReportView.swift in Sources */,
 				93719C882AC0B35300E29446 /* CircularProgressView.swift in Sources */,
@@ -486,10 +518,14 @@
 				93E8373A2B8D52FE00DAB2E1 /* MeetingCreationView.swift in Sources */,
 				2152FB042600AC8F00CF470E /* iOSApp.swift in Sources */,
 				9351D1F42B4F4D9500148E8D /* VerifyUsersView.swift in Sources */,
+				93E837482B8F1F0100DAB2E1 /* PlusLabelView.swift in Sources */,
 				9339CC5D2B4C7368000DA3FC /* AttendedMeetingsView.swift in Sources */,
+				93E837452B8F1DF200DAB2E1 /* ScoutingIncrementerView.swift in Sources */,
+				93E8374E2B8F30F300DAB2E1 /* BooleanSegmentedPickerView.swift in Sources */,
 				9339CC542B4B5DAB000DA3FC /* MeetingsListView.swift in Sources */,
 				9339CC502B4B526D000DA3FC /* NFCWriter.swift in Sources */,
 				934F47272B413AF0009DA4FA /* AuthenticationView.swift in Sources */,
+				93E837522B8FB39100DAB2E1 /* ScoutingNumberInputView.swift in Sources */,
 				93E837352B8D48F800DAB2E1 /* DirectoryBar.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -498,7 +534,9 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				93E8374F2B8F30F300DAB2E1 /* BooleanSegmentedPickerView.swift in Sources */,
 				9351D2042B53A12200148E8D /* MeetingBar.swift in Sources */,
+				93E8374C2B8F1F5200DAB2E1 /* MinusLabelView.swift in Sources */,
 				9351D2052B53A12200148E8D /* SettingsView.swift in Sources */,
 				9351D2062B53A12200148E8D /* ChargedUpFormView.swift in Sources */,
 				9351D2072B53A12200148E8D /* AccountCreationView.swift in Sources */,
@@ -509,7 +547,9 @@
 				9351D20D2B53A12200148E8D /* UserBar.swift in Sources */,
 				93E8373F2B8DCAB700DAB2E1 /* Constants.swift in Sources */,
 				9351D20E2B53A12200148E8D /* UserView.swift in Sources */,
+				93E837432B8F072100DAB2E1 /* CrescendoScoutingFormView.swift in Sources */,
 				9351D20F2B53A12200148E8D /* BugReportView.swift in Sources */,
+				93E837492B8F1F0100DAB2E1 /* PlusLabelView.swift in Sources */,
 				9351D2102B53A12200148E8D /* DirectoryBar.swift in Sources */,
 				934A04D72B54DA0D00B2D145 /* DateHelpers.swift in Sources */,
 				9351D2112B53A12200148E8D /* DirectoryView.swift in Sources */,
@@ -520,6 +560,7 @@
 				9351D2152B53A12200148E8D /* NFCButton.swift in Sources */,
 				9351D2162B53A12200148E8D /* MeetingView.swift in Sources */,
 				9351D2172B53A12200148E8D /* LoginView.swift in Sources */,
+				93E837532B8FB39100DAB2E1 /* ScoutingNumberInputView.swift in Sources */,
 				9351D2182B53A12200148E8D /* AccountView.swift in Sources */,
 				93E8373B2B8D52FE00DAB2E1 /* MeetingCreationView.swift in Sources */,
 				9351D2192B53A12200148E8D /* ScoutingFormView.swift in Sources */,
@@ -529,6 +570,7 @@
 				9351D21E2B53A12200148E8D /* MeetingsListView.swift in Sources */,
 				9351D21F2B53A12200148E8D /* NFCWriter.swift in Sources */,
 				9351D2212B53A12200148E8D /* AuthenticationView.swift in Sources */,
+				93E837462B8F1DF200DAB2E1 /* ScoutingIncrementerView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

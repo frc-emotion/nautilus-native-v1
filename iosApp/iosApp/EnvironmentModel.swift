@@ -14,11 +14,18 @@ import KeychainSwift
 
 @MainActor
 class EnvironmentModel: ObservableObject {
-    @Published var user: shared.TokenUser?
     @Published var dh: shared.DataHandler
     @Published var errorMessage: String?
     @Published var errorCode: Int?
-    private var cancellable: AnyCancellable?
+    private var UserCancellable: AnyCancellable?
+    private var AttendancePeriodCancellable: AnyCancellable?
+//    private var ScoutingPeriodCancellable: AnyCancellable?
+//    private var ScoutingCompetitionCancellable: AnyCancellable?
+    
+    @Published var user: shared.TokenUser?
+    @Published var selectedAttendancePeriod = ""
+    @Published var selectedScoutingPeriod = ""
+    @Published var selectedScoutingCompetition = ""
     
     init() {
         dh = shared.DataHandler(routeBase: "https://staging.team2658.org", databaseDriverFactory: IosDatabaseDriver()) {
@@ -36,24 +43,38 @@ class EnvironmentModel: ObservableObject {
             self.errorCode = e.code?.intValue
         })
         
-        cancellable = $user.receive(on: DispatchQueue.main).sink { [weak self] newUser in
+        UserCancellable = $user.receive(on: DispatchQueue.main).sink { [weak self] newUser in
             self?.objectWillChange.send() // Trigger objectWillChange to notify SwiftUI
         }
+        AttendancePeriodCancellable = $selectedAttendancePeriod.receive(on: DispatchQueue.main).sink { [weak self] _ in
+            self?.objectWillChange.send()
+        }
+//        ScoutingPeriodCancellable = $selectedScoutingPeriod.receive(on: DispatchQueue.main).sink { [weak self] _ in
+//            self?.objectWillChange.send()
+//        }
+//        ScoutingCompetitionCancellable = $selectedScoutingCompetition.receive(on: DispatchQueue.main).sink { [weak self] _ in
+//            self?.objectWillChange.send()
+//        }
     }
-    
-//    this is not allowed?
-//    func logout() async throws {
-//        dh.users.logout()
-//        do {
-//            try await refreshUser()
-//        } catch {}
-//    }
-    
+
     func updateUser(newUser: TokenUser?) {
         user = newUser
     }
     
-    func refreshUser() async throws {
-        updateUser(newUser: try await dh.users.refreshLoggedIn(onError: {e in self.errorMessage = e.message; self.errorCode = e.code?.intValue}))
+    func updateSelectedAttendancePeriod(newPeriod: String) {
+        selectedAttendancePeriod = newPeriod
     }
+    
+//    func updateSelectedScoutingPeriod(newPeriod: String) {
+//        selectedScoutingPeriod = newPeriod
+//    }
+//    
+//    func updateSelectedScoutingCompetition(newCompetition: String) {
+//        selectedScoutingCompetition = newCompetition
+//    }
+    
+//    not using this right now, implement background syncing in the future
+//    func refreshUser() async throws {
+//        updateUser(newUser: try await dh.users.refreshLoggedIn(onError: {e in self.errorMessage = e.message; self.errorCode = e.code?.intValue}))
+//    }
 }

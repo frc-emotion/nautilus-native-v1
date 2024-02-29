@@ -101,33 +101,33 @@ struct MeetingCreationView: View {
                     //                            showError = true
                     //                        }
                     
+                } label: {
+                    Text("Create Meeting")
+                        .frame(height: 30.0)
+                        .frame(maxWidth: .infinity)
                 }
-            } label: {
-                Text("Create Meeting")
-                    .frame(height: 30.0)
-                    .frame(maxWidth: .infinity)
-            }
-            .navigationTitle("Create a Meeting")
-            .navigationBarHidden(true)
-            .onChange(of: startDate) { newDate in
-                if (startDate.timeIntervalSince1970 > endDate.timeIntervalSince1970) {
-                    endDate = startDate
+                .navigationTitle("Create a Meeting")
+                .navigationBarHidden(true)
+                .onChange(of: startDate) { newDate in
+                    if (startDate.timeIntervalSince1970 > endDate.timeIntervalSince1970) {
+                        endDate = startDate
+                    }
+                    meetingValue = Int(Double(endDate.timeIntervalSince1970) - Double(startDate.timeIntervalSince1970)) / 3600
                 }
-                meetingValue = Int(Double(endDate.timeIntervalSince1970) - Double(startDate.timeIntervalSince1970)) / 3600
-            }
-            .onChange(of: endDate) { newDate in
-                if (endDate.timeIntervalSince1970 < startDate.timeIntervalSince1970) {
-                    endDate = startDate
+                .onChange(of: endDate) { newDate in
+                    if (endDate.timeIntervalSince1970 < startDate.timeIntervalSince1970) {
+                        endDate = startDate
+                    }
+                    //                    meetingValue = Int((endDate - startDate) / 3600)
+                    meetingValue = Int(Double(endDate.timeIntervalSince1970) - Double(startDate.timeIntervalSince1970)) / 3600
                 }
-                //                    meetingValue = Int((endDate - startDate) / 3600)
-                meetingValue = Int(Double(endDate.timeIntervalSince1970) - Double(startDate.timeIntervalSince1970)) / 3600
-            }
-            .alert(isPresented: $showError) {
-                Alert(
-                    title: Text("Error"),
-                    message: Text(errorMsg),
-                    dismissButton: .default(Text("Ok"))
-                )
+                .alert(isPresented: $showError) {
+                    Alert(
+                        title: Text("Error"),
+                        message: Text(errorMsg),
+                        dismissButton: .default(Text("Ok"))
+                    )
+                }
             }
         }
     }

@@ -32,17 +32,20 @@ struct ApplicationSwitcher: View {
                 //                        Label("Home", systemImage: "house.fill")
                 //                    }
                 //
-                //                ScoutingView()
-                //                    .navigationTitle("Scouting")
-                //                    .tabItem {
-                //                        Label("Scouting", systemImage: "chart.bar.doc.horizontal.fill")
-                //                    }
                 if (env.user!.accountType != shared.AccountType.unverified) {
                     AttendanceView()
                         .tabItem {
                             Label("Attendance", systemImage: "calendar")
                         }
                         .environmentObject(env)
+                    
+                    if (env.user!.permissions.generalScouting || env.user!.accountType == shared.AccountType.superuser) {
+                        CrescendoScoutingFormView()
+                            .navigationTitle("Scouting")
+                            .tabItem {
+                                Label("Scouting", systemImage: "chart.bar.doc.horizontal.fill")
+                            }
+                    }
                     
                     DirectoryView()
                         .tabItem {

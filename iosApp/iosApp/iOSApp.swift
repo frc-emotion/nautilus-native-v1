@@ -39,7 +39,7 @@ struct ApplicationSwitcher: View {
                         }
                         .environmentObject(env)
                     
-                    if (env.user!.permissions.generalScouting || env.user!.accountType == shared.AccountType.superuser) {
+                    if (env.user!.permissions.generalScouting) {
                         CrescendoScoutingFormView()
                             .navigationTitle("Scouting")
                             .tabItem {

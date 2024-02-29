@@ -106,16 +106,11 @@ struct AttendanceView: View {
                 ToolbarItem(placement: .topBarTrailing) {
                     if (env.user != nil) {
                         if (env.user!.accountType == shared.AccountType.lead || env.user!.accountType == shared.AccountType.admin || env.user!.accountType == shared.AccountType.superuser) {
-                            Button(action: {
-                                meetingsPopoverDisplayed.toggle()
-                            }) {
+                            NavigationLink {
+                                MeetingsListView()
+                                    .environmentObject(env)
+                            } label: {
                                 Image(systemName: "calendar")
-                            }
-                            .popover(isPresented: $meetingsPopoverDisplayed, arrowEdge: .bottom) {
-                                NavigationView {
-                                    MeetingsListView(isPresented: $meetingsPopoverDisplayed)
-                                        .environmentObject(env)
-                                }
                             }
                         }
                     }

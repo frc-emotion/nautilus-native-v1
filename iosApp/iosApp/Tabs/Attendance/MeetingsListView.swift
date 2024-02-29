@@ -14,15 +14,14 @@ struct MeetingsListView: View {
     @State var meetings: [shared.Meeting]?
     @State private var showingAlert = false
     @State var alertMessage = ""
-    @Binding var isPresented: Bool
     @State private var promptReload = false
+    @State private var presentCreationView = false
     
     var body: some View {
         NavigationStack {
             List {
-                NavigationLink {
-                    MeetingCreationView(reloader: $promptReload)
-                        .environmentObject(env)
+                Button {
+                    presentCreationView = true
                 } label: {
                     HStack {
                         Image(systemName: "plus")
@@ -71,25 +70,11 @@ struct MeetingsListView: View {
             }
             .navigationTitle("Meetings")
             .navigationBarTitleDisplayMode(.inline)
-            .toolbar {
-                ToolbarItem(placement: .topBarLeading) {
-                    Button {
-                        promptReload = true
-                    } label: {
-                        Image(systemName: "arrow.clockwise")
-                            .rotationEffect(.degrees(30.00))
-                    }
-                }
-                ToolbarItem(placement: .topBarTrailing) {
-                    Button {
-                        isPresented = false
-                    } label: {
-                        Text("Done")
-                    }
-                }
-            }
         }
         .onAppear() {
+            promptReload = true
+        }
+        .refreshable {
             promptReload = true
         }
         .alert(alertMessage, isPresented: $showingAlert) {
@@ -106,11 +91,15 @@ struct MeetingsListView: View {
                 }
             }
         }
+        .popover(isPresented: $presentCreationView) {
+            MeetingCreationView(reloader: $promptReload, isPresented: $presentCreationView)
+                .environmentObject(env)
+        }
     }
 }
 
 #Preview {
-    MeetingsListView(isPresented: .constant(true)).environmentObject({ () -> EnvironmentModel in
+    MeetingsListView().environmentObject({ () -> EnvironmentModel in
         let env = EnvironmentModel()
         env.user = HelpfulVars().testuser
         return env

@@ -27,6 +27,7 @@ struct MeetingCreationView: View {
     }
     
     @Binding var reloader: Bool
+    @Binding var isPresented: Bool
     @Environment(\.presentationMode) var presentationMode
     @EnvironmentObject var env: EnvironmentModel
     
@@ -97,6 +98,7 @@ struct MeetingCreationView: View {
                             }
                             return
                         }
+                        isPresented = false
                     }
                 } label: {
                     Text("Create Meeting")
@@ -104,7 +106,8 @@ struct MeetingCreationView: View {
                         .frame(maxWidth: .infinity)
                 }
                 .navigationTitle("Create a Meeting")
-                .navigationBarHidden(true)
+                .navigationBarTitleDisplayMode(.inline)
+//                .navigationBarHidden(true)
                 .onChange(of: startDate) { newDate in
                     if (startDate.timeIntervalSince1970 > endDate.timeIntervalSince1970) {
                         endDate = startDate
@@ -125,11 +128,20 @@ struct MeetingCreationView: View {
                         dismissButton: .default(Text("Ok"))
                     )
                 }
+                .toolbar {
+                    ToolbarItem(placement: .topBarTrailing) {
+                        Button {
+                            isPresented = false
+                        } label: {
+                            Text("Done")
+                        }
+                    }
+                }
             }
         }
     }
 }
 
 #Preview {
-    MeetingCreationView(reloader: .constant(false))
+    MeetingCreationView(reloader: .constant(false), isPresented: .constant(true))
 }

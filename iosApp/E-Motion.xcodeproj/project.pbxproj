@@ -55,6 +55,7 @@
 		9351D2272B53A12200148E8D /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 058557D8273AAEEB004C7B11 /* Preview Assets.xcassets */; };
 		9351D2282B53A12200148E8D /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 058557BA273AAA24004C7B11 /* Assets.xcassets */; };
 		9351D2292B53A12200148E8D /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 93DB394C2AF9701000F257BE /* LaunchScreen.storyboard */; };
+		9361EEA42B91341700C674B6 /* helpfulVars.swift in Sources */ = {isa = PBXBuildFile; fileRef = 93B615152AE715F900732A3F /* helpfulVars.swift */; };
 		93719C882AC0B35300E29446 /* CircularProgressView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 93719C872AC0B35300E29446 /* CircularProgressView.swift */; };
 		93790E392AA921690003203D /* AttendanceView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 93790E382AA921690003203D /* AttendanceView.swift */; };
 		93844FFB2ADB29E1003EE764 /* ChargedUpFormView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 93844FFA2ADB29E1003EE764 /* ChargedUpFormView.swift */; };
@@ -478,6 +479,7 @@
 				93E837362B8D4F9200DAB2E1 /* DirectoryView.swift in Sources */,
 				9339CC572B4B5EA9000DA3FC /* MeetingBar.swift in Sources */,
 				93E837332B869DB000DAB2E1 /* AccountCreationView.swift in Sources */,
+				9361EEA42B91341700C674B6 /* helpfulVars.swift in Sources */,
 				93418D9B2A5BC3F300336A62 /* SettingsView.swift in Sources */,
 				93844FFB2ADB29E1003EE764 /* ChargedUpFormView.swift in Sources */,
 				93E8373E2B8DCAB700DAB2E1 /* Constants.swift in Sources */,

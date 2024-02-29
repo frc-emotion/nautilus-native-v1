@@ -31,7 +31,7 @@ struct SettingsView: View {
                 if (env.user != nil) {
                     Section {
                         Picker("Attendance Period", selection: $attendancePeriodSelection) {
-                            ForEach(Array(env.user!.attendance.keys), id: \.self) {
+                            ForEach(Array(env.user!.attendanceKeys), id: \.self) {
                                 Text($0)
                             }
                             .navigationBarTitleDisplayMode(.inline)

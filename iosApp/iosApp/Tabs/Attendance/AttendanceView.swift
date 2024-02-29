@@ -10,7 +10,6 @@ import SwiftUI
 import shared
 import CoreNFC
 import UIKit
-import SwiftyJSON
 
 func getUTCDate(date: Int) {
     let dateFormatter = DateFormatter()

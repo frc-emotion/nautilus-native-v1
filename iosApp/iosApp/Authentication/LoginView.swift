@@ -100,6 +100,7 @@ struct LoginView: View {
                 .buttonStyle(.borderedProminent)
                 .keyboardShortcut(.defaultAction)
                 .tint(isBusy ? Color.secondary : Color.accentColor)
+                .disabled(!(username != "" && password != ""))
                 Spacer()
             }
         }

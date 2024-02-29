@@ -222,6 +222,12 @@ class UsersDB(db: AppDatabase) {
         users.deleteOne(user._id)
     }
 
+    fun getUser(user: String): User.WithoutToken? {
+        val res = users.getOne(user).executeAsOneOrNull()
+        return res?.let { extractUser(it) }
+    }
+
+
     fun clearUsers() {
         users.deleteNotLoggedIn()
     }

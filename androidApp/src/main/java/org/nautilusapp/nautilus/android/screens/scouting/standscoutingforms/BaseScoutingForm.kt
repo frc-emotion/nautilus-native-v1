@@ -308,6 +308,9 @@ fun BaseScoutingForm(
                                 showErrorDialog = true
                                 isBusy = false
                                 errorText = res.error.message
+                                if (res.error.code == null) {
+                                    clearForm()
+                                }
                             }
                         }
                     }

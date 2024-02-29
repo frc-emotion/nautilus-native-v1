@@ -46,7 +46,10 @@ data class TokenUser(
     override val permissions: UserPermissions,
     override val phone: String,
     val token: String,
-) : User.Full
+) : User.Full {
+    val attendanceKeys = this.attendance.keys
+}
+
 
 /**
  * A user with all of their data. Available to admins via getUsers or getUserById. No JWT.
@@ -66,7 +69,9 @@ data class FullUser(
     override val grade: Int? = null,
     override val permissions: UserPermissions,
     override val phone: String
-) : User.Full, User.WithoutToken
+) : User.Full, User.WithoutToken {
+    val attendanceKeys = this.attendance.keys
+}
 
 /**
  * A user with only the data that is available to all users. No JWT. Available to all users with base verification.

@@ -77,7 +77,7 @@ fun SettingsLoggedIn(vm: MainViewModel) {
     ColorThemeSelector(value = vm.theme, onValueChange = vm::setTheme)
     Spacer(modifier = Modifier.size(32.dp))
     Row(verticalAlignment = Alignment.CenterVertically) {
-        ShouldSyncIndicator(count = vm.getQueueLength().attendance)
+        ShouldSyncIndicator(count = vm.getQueueLength().attendance + vm.getQueueLength().crescendo)
         Spacer(modifier = Modifier.size(8.dp))
         if (syncBusy) {
             Text(text = "Syncing...")

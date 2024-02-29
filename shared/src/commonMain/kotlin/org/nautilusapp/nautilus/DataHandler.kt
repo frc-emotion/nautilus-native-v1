@@ -333,6 +333,10 @@ class DataHandler(
 
         override fun clearAll() = usersDB.clearUsers()
 
+        override fun getOne(user: String): User.WithoutToken? {
+            return usersDB.getUser(user)
+        }
+
         override suspend fun sync(): SyncUserResult {
             val listRes = scope.async {
                 syncUsers()
@@ -1118,6 +1122,8 @@ class DataHandler(
         fun loadAll(): List<User.WithoutToken>
         fun loadAll(onCompleteSync: (List<User.WithoutToken>) -> Unit): List<User.WithoutToken>
         fun clearAll()
+
+        fun getOne(user: String): User.WithoutToken?
         suspend fun sync(): SyncUserResult
         suspend fun deleteMe(): DataResult<Unit>
         suspend fun deleteMe(onError: (Error) -> Unit) {

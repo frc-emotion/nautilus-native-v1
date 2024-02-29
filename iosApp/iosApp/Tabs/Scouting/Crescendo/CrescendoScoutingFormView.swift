@@ -306,6 +306,11 @@ struct CrescendoScoutingFormView: View {
             competitions = env.dh.seasons.getComps(year: 2024, onCompleteSync: { comps in
                 competitions = comps
             })
+            
+            // TODO: Proper background syncing
+            env.dh.crescendo.sync { res, err in
+                return
+            }
         }
         .alert(errorMessage, isPresented: $showingError) {
             Button("Ok", role: .cancel) {}

@@ -51,10 +51,11 @@ struct SettingsView: View {
             .navigationTitle("Settings")
             .refreshable {
                 Task {
-                    try await env.dh.users.refreshLoggedIn(onError: { err in
+                    let user = try await env.dh.users.refreshLoggedIn(onError: { err in
                         errorMsg = err.message
                         showingErrorDialog = true
                     })
+                    env.updateUser(newUser: user)
                 }
             }
             .alert(isPresented: $showingErrorDialog) {

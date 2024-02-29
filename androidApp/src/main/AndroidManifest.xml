@@ -10,7 +10,7 @@
         android:required="true" />
     <application
         android:icon="@mipmap/ic_launcher"
-        android:label="Nautilus FRC"
+        android:label="Σ-Motion"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
         <activity

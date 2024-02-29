@@ -10,8 +10,6 @@
 		058557BB273AAA24004C7B11 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 058557BA273AAA24004C7B11 /* Assets.xcassets */; };
 		058557D9273AAEEB004C7B11 /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 058557D8273AAEEB004C7B11 /* Preview Assets.xcassets */; };
 		2152FB042600AC8F00CF470E /* iOSApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2152FB032600AC8F00CF470E /* iOSApp.swift */; };
-		932B1E062B3F669C00CAC851 /* SwiftyJSON in Frameworks */ = {isa = PBXBuildFile; productRef = 932B1E052B3F669C00CAC851 /* SwiftyJSON */; };
-		93344F4D2AFC22010045541A /* SwiftyJSON in Frameworks */ = {isa = PBXBuildFile; productRef = 93344F4C2AFC22010045541A /* SwiftyJSON */; };
 		9339CC502B4B526D000DA3FC /* NFCWriter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9339CC4F2B4B526D000DA3FC /* NFCWriter.swift */; };
 		9339CC542B4B5DAB000DA3FC /* MeetingsListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9339CC532B4B5DAB000DA3FC /* MeetingsListView.swift */; };
 		9339CC572B4B5EA9000DA3FC /* MeetingBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9339CC562B4B5EA9000DA3FC /* MeetingBar.swift */; };
@@ -54,8 +52,6 @@
 		9351D21F2B53A12200148E8D /* NFCWriter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9339CC4F2B4B526D000DA3FC /* NFCWriter.swift */; };
 		9351D2212B53A12200148E8D /* AuthenticationView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 934F47262B413AF0009DA4FA /* AuthenticationView.swift */; };
 		9351D2232B53A12200148E8D /* KeychainSwift in Frameworks */ = {isa = PBXBuildFile; productRef = 9351D2002B53A12200148E8D /* KeychainSwift */; };
-		9351D2242B53A12200148E8D /* SwiftyJSON in Frameworks */ = {isa = PBXBuildFile; productRef = 9351D1FF2B53A12200148E8D /* SwiftyJSON */; };
-		9351D2252B53A12200148E8D /* SwiftyJSON in Frameworks */ = {isa = PBXBuildFile; productRef = 9351D1FD2B53A12200148E8D /* SwiftyJSON */; };
 		9351D2272B53A12200148E8D /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 058557D8273AAEEB004C7B11 /* Preview Assets.xcassets */; };
 		9351D2282B53A12200148E8D /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 058557BA273AAA24004C7B11 /* Assets.xcassets */; };
 		9351D2292B53A12200148E8D /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 93DB394C2AF9701000F257BE /* LaunchScreen.storyboard */; };
@@ -144,8 +140,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				9351D1C22B4E4DDC00148E8D /* KeychainSwift in Frameworks */,
-				932B1E062B3F669C00CAC851 /* SwiftyJSON in Frameworks */,
-				93344F4D2AFC22010045541A /* SwiftyJSON in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -154,8 +148,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				9351D2232B53A12200148E8D /* KeychainSwift in Frameworks */,
-				9351D2242B53A12200148E8D /* SwiftyJSON in Frameworks */,
-				9351D2252B53A12200148E8D /* SwiftyJSON in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -349,8 +341,6 @@
 			);
 			name = "E-Motion";
 			packageProductDependencies = (
-				93344F4C2AFC22010045541A /* SwiftyJSON */,
-				932B1E052B3F669C00CAC851 /* SwiftyJSON */,
 				9351D1C12B4E4DDC00148E8D /* KeychainSwift */,
 			);
 			productName = iosApp;
@@ -372,8 +362,6 @@
 			);
 			name = "E-Motion Dev";
 			packageProductDependencies = (
-				9351D1FD2B53A12200148E8D /* SwiftyJSON */,
-				9351D1FF2B53A12200148E8D /* SwiftyJSON */,
 				9351D2002B53A12200148E8D /* KeychainSwift */,
 			);
 			productName = iosApp;
@@ -407,7 +395,6 @@
 			);
 			mainGroup = 7555FF72242A565900829871;
 			packageReferences = (
-				93344F4B2AFC22010045541A /* XCRemoteSwiftPackageReference "SwiftyJSON" */,
 				9351D1C02B4E4DDC00148E8D /* XCRemoteSwiftPackageReference "keychain-swift" */,
 			);
 			productRefGroup = 7555FF7C242A565900829871 /* Products */;
@@ -886,28 +873,12 @@
 /* End XCConfigurationList section */
 
 /* Begin XCRemoteSwiftPackageReference section */
-		93344F4B2AFC22010045541A /* XCRemoteSwiftPackageReference "SwiftyJSON" */ = {
-			isa = XCRemoteSwiftPackageReference;
-			repositoryURL = "https://github.com/SwiftyJSON/SwiftyJSON.git";
-			requirement = {
-				kind = upToNextMajorVersion;
-				minimumVersion = 5.0.1;
-			};
-		};
 		9351D1C02B4E4DDC00148E8D /* XCRemoteSwiftPackageReference "keychain-swift" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/evgenyneu/keychain-swift.git";
 			requirement = {
 				kind = upToNextMajorVersion;
 				minimumVersion = 20.0.0;
-			};
-		};
-		9351D1FE2B53A12200148E8D /* XCRemoteSwiftPackageReference "SwiftyJSON" */ = {
-			isa = XCRemoteSwiftPackageReference;
-			repositoryURL = "https://github.com/SwiftyJSON/SwiftyJSON.git";
-			requirement = {
-				kind = upToNextMajorVersion;
-				minimumVersion = 5.0.1;
 			};
 		};
 		9351D2012B53A12200148E8D /* XCRemoteSwiftPackageReference "keychain-swift" */ = {
@@ -921,30 +892,10 @@
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
-		932B1E052B3F669C00CAC851 /* SwiftyJSON */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = 93344F4B2AFC22010045541A /* XCRemoteSwiftPackageReference "SwiftyJSON" */;
-			productName = SwiftyJSON;
-		};
-		93344F4C2AFC22010045541A /* SwiftyJSON */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = 93344F4B2AFC22010045541A /* XCRemoteSwiftPackageReference "SwiftyJSON" */;
-			productName = SwiftyJSON;
-		};
 		9351D1C12B4E4DDC00148E8D /* KeychainSwift */ = {
 			isa = XCSwiftPackageProductDependency;
 			package = 9351D1C02B4E4DDC00148E8D /* XCRemoteSwiftPackageReference "keychain-swift" */;
 			productName = KeychainSwift;
-		};
-		9351D1FD2B53A12200148E8D /* SwiftyJSON */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = 9351D1FE2B53A12200148E8D /* XCRemoteSwiftPackageReference "SwiftyJSON" */;
-			productName = SwiftyJSON;
-		};
-		9351D1FF2B53A12200148E8D /* SwiftyJSON */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = 9351D1FE2B53A12200148E8D /* XCRemoteSwiftPackageReference "SwiftyJSON" */;
-			productName = SwiftyJSON;
 		};
 		9351D2002B53A12200148E8D /* KeychainSwift */ = {
 			isa = XCSwiftPackageProductDependency;

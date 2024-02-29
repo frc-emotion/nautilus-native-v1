@@ -9,7 +9,6 @@
 import Foundation
 import Combine
 import shared
-import SwiftyJSON
 import KeychainSwift
 
 @MainActor

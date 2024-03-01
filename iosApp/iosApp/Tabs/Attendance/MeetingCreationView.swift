@@ -86,7 +86,7 @@ struct MeetingCreationView: View {
                     }
                     // TODO: change attendance period hardcoding, used dh.seasons.getAttendancePeriod() and a dropdown
                     // TODO: Automatically navigate backwards when new meeting successfully created
-                    env.dh.attendance.create(startTime: Int64(startDate.timeIntervalSince1970), endTime: Int64(endDate.timeIntervalSince1970), type: meetingType.rawValue, description: meetingName, value: Int32(meetingValue), attendancePeriod: "2024spring") { err in
+                    env.dh.attendance.create(startTime: Int64(startDate.timeIntervalSince1970) * 1000, endTime: Int64(endDate.timeIntervalSince1970) * 1000, type: meetingType.rawValue, description: meetingName, value: Int32(meetingValue), attendancePeriod: "2024spring") { err in
                         errorMsg = err.description()
                         showError = true
                     } completionHandler: { newMeeting, err in

@@ -26,9 +26,10 @@ struct MeetingCreationView: View {
         var id: Self { self }
     }
     
-    @State var user: shared.User
     @Binding var reloader: Bool
+    @Binding var isPresented: Bool
     @Environment(\.presentationMode) var presentationMode
+    @EnvironmentObject var env: EnvironmentModel
     
     @State private var showError = false
     @State private var errorMsg = ""
@@ -48,7 +49,7 @@ struct MeetingCreationView: View {
                         Text("Meeting Name ")
                         TextField("Name", text: $meetingName)
                             .tag("meetingNameTextField")
-//                            .submitLabel(.done)
+                        //                            .submitLabel(.done)
                     }
                     
                     Picker("Meeting Type", selection: $meetingType) {
@@ -83,19 +84,22 @@ struct MeetingCreationView: View {
                         showError = true
                         return
                     }
-                    Task {
-                        let response = try await shared.EmotionClient().createMeeting(user: user, startTime: Int64(startDate.timeIntervalSince1970) * 1000, endTime: Int64(endDate.timeIntervalSince1970) * 1000, type: meetingType.rawValue, description: meetingName, value: Int32(meetingValue)) { error in
-                            errorMsg = error
-                            showError = true
+                    // TODO: change attendance period hardcoding, used dh.seasons.getAttendancePeriod() and a dropdown
+                    // TODO: Automatically navigate backwards when new meeting successfully created
+                    env.dh.attendance.create(startTime: Int64(startDate.timeIntervalSince1970), endTime: Int64(endDate.timeIntervalSince1970), type: meetingType.rawValue, description: meetingName, value: Int32(meetingValue), attendancePeriod: "2024spring") { err in
+                        errorMsg = err.description()
+                        showError = true
+                    } completionHandler: { newMeeting, err in
+                        guard newMeeting != nil else {
+                            if (err != nil) {
+                                errorMsg = err!.localizedDescription
+                            } else {
+                                errorMsg = "Unknown Error Occured"
+                            }
+                            return
                         }
-                        if response != nil {
-                            reloader = true
-                            self.presentationMode.wrappedValue.dismiss()
-                        } else {
-                            errorMsg = "Unknown Error Occured"
-                            showError = true
-                        }
-                        
+                        reloader = true
+                        isPresented = false
                     }
                 } label: {
                     Text("Create Meeting")
@@ -103,7 +107,8 @@ struct MeetingCreationView: View {
                         .frame(maxWidth: .infinity)
                 }
                 .navigationTitle("Create a Meeting")
-                .navigationBarHidden(true)
+                .navigationBarTitleDisplayMode(.inline)
+//                .navigationBarHidden(true)
                 .onChange(of: startDate) { newDate in
                     if (startDate.timeIntervalSince1970 > endDate.timeIntervalSince1970) {
                         endDate = startDate
@@ -114,7 +119,7 @@ struct MeetingCreationView: View {
                     if (endDate.timeIntervalSince1970 < startDate.timeIntervalSince1970) {
                         endDate = startDate
                     }
-//                    meetingValue = Int((endDate - startDate) / 3600)
+                    //                    meetingValue = Int((endDate - startDate) / 3600)
                     meetingValue = Int(Double(endDate.timeIntervalSince1970) - Double(startDate.timeIntervalSince1970)) / 3600
                 }
                 .alert(isPresented: $showError) {
@@ -124,11 +129,20 @@ struct MeetingCreationView: View {
                         dismissButton: .default(Text("Ok"))
                     )
                 }
+                .toolbar {
+                    ToolbarItem(placement: .topBarTrailing) {
+                        Button {
+                            isPresented = false
+                        } label: {
+                            Text("Done")
+                        }
+                    }
+                }
             }
         }
     }
 }
 
 #Preview {
-    MeetingCreationView(user: HelpfulVars().testuser, reloader: .constant(false))
+    MeetingCreationView(reloader: .constant(false), isPresented: .constant(true))
 }

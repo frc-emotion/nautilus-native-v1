@@ -50,7 +50,6 @@ data class TokenUser(
     val attendanceKeys = this.attendance.keys
 }
 
-
 /**
  * A user with all of their data. Available to admins via getUsers or getUserById. No JWT.
  */

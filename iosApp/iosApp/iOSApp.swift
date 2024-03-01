@@ -32,11 +32,6 @@ struct ApplicationSwitcher: View {
                 //                        Label("Home", systemImage: "house.fill")
                 //                    }
                 //
-                //                ScoutingView()
-                //                    .navigationTitle("Scouting")
-                //                    .tabItem {
-                //                        Label("Scouting", systemImage: "chart.bar.doc.horizontal.fill")
-                //                    }
                 if (env.user!.accountType != shared.AccountType.unverified) {
                     AttendanceView()
                         .tabItem {
@@ -44,16 +39,26 @@ struct ApplicationSwitcher: View {
                         }
                         .environmentObject(env)
                     
-//                    DirectoryView(dh: $dh)
-//                        .tabItem {
-//                            Label("People", systemImage: "person.2.fill")
-//                        }
+                    if (env.user!.permissions.generalScouting) {
+                        CrescendoScoutingFormView()
+                            .navigationTitle("Scouting")
+                            .tabItem {
+                                Label("Scouting", systemImage: "chart.bar.doc.horizontal.fill")
+                            }
+                    }
+                    
+                    DirectoryView()
+                        .tabItem {
+                            Label("People", systemImage: "person.2.fill")
+                        }
+                        .environmentObject(env)
                 }
-//                SettingsView(dh: $dh)
-//                    .navigationTitle("Settings")
-//                    .tabItem {
-//                        Label("Settings", systemImage: "gear")
-//                    }
+                SettingsView()
+                    .navigationTitle("Settings")
+                    .tabItem {
+                        Label("Settings", systemImage: "gear")
+                    }
+                    .environmentObject(env)
             }
         } else {
             AuthenticationView()

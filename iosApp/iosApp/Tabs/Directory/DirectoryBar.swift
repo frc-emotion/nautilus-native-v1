@@ -15,12 +15,12 @@ struct DirectoryBar: View {
     var body: some View {
         if (user.accountType.value >= 2) {
             HStack {
-                Text("\(user.firstName) \(user.lastName)")
+                Text("\(user.firstname.capitalized) \(user.lastname.capitalized)")
                     .fontWeight(.bold)
             }
         } else {
             HStack {
-                Text("\(user.firstName) \(user.lastName)")
+                Text("\(user.firstname.capitalized) \(user.lastname.capitalized)")
             }
         }
         

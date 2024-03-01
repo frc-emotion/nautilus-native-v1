@@ -12,7 +12,7 @@ import shared
 struct DirectoryView: View {
     // MARK: - State Properties
     @State var users: [shared.UserWithoutToken]?
-    @State private var popoverShown = false
+    @State private var verifyUsersPopoverShown = false
     @State private var alertBoxShowing = false
     @State private var selectedUser: shared.PartialUser?
     //    @State private var alertMsg = ""
@@ -34,8 +34,36 @@ struct DirectoryView: View {
     // MARK: - Body
     var body: some View {
         NavigationSplitView {
-            mainListView
-                .navigationTitle("People")
+            VStack {
+                if users != nil, let subteamSortedUsers = subteamSortedUsers {
+                    List (selection: $selectedUser) {
+                        ForEach(shared.Subteam.entries, id: \.self) { (subteam: shared.Subteam) in
+                            if let nextSort = subteamSortedUsers[subteam.description()] {
+                                Section(header: Text(subteam.description())) {
+                                    ForEach(nextSort, id: \.self) { user in
+                                        DirectoryBar(user: user)
+                                    }
+                                }
+                            }
+                        }
+                    }
+                } else {
+                    AnyView(ProgressView())
+                }
+            }
+            .navigationTitle("People")
+            .navigationBarTitleDisplayMode(.large)
+            .toolbar {
+                if (env.user!.accountType == AccountType.lead || env.user!.accountType == AccountType.admin || env.user!.accountType == AccountType.superuser) {
+                    ToolbarItem(placement: .topBarTrailing) {
+                        Button {
+                            verifyUsersPopoverShown = true
+                        } label: {
+                            Image(systemName: "person.crop.circle.badge.questionmark.fill")
+                        }
+                    }
+                }
+            }
         } detail: {
             // not changing automatically on iPad
             if (selectedUser != nil) {
@@ -60,25 +88,9 @@ struct DirectoryView: View {
                 users = res
             })
         }
-    }
-    
-    private var mainListView: some View {
-        if users != nil, let subteamSortedUsers = subteamSortedUsers {
-            return AnyView (
-                List (selection: $selectedUser) {
-                    ForEach(shared.Subteam.entries, id: \.self) { (subteam: shared.Subteam) in
-                        if let nextSort = subteamSortedUsers[subteam.description()] {
-                            Section(header: Text(subteam.description())) {
-                                ForEach(nextSort, id: \.self) { user in
-                                    DirectoryBar(user: user)
-                                }
-                            }
-                        }
-                    }
-                }
-            )
-        } else {
-            return AnyView(ProgressView())
+        .popover(isPresented: $verifyUsersPopoverShown) {
+            VerifyUsersView(users: users, presented: $verifyUsersPopoverShown)
+                .environmentObject(env)
         }
     }
     // MARK: - Previews

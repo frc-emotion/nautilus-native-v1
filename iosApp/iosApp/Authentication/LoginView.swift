@@ -31,7 +31,7 @@ struct LoginView: View {
                         .fontWeight(.bold)
                         .foregroundColor(Color.red)
                         .padding(.bottom, 20)
-                        .padding(.top, 1)
+                        .padding(.top, 2)
                 }
                 
                 TextField("Username", text: $username)
@@ -50,16 +50,13 @@ struct LoginView: View {
                     .padding(.horizontal)
                     .submitLabel(.done)
                 
-//                HStack {
-//                    Spacer()
-//                    NavigationLink {
-//                        ForgotPasswordView()
-//                    } label: {
-//                        Text("Forgot password?")
-//                    }
-//                }
-//                .padding(.horizontal)
-//                .padding(.vertical, 10.0)
+                HStack {
+                    Spacer()
+                    Link("Forgot Password", destination: URL(string: "https://api.team2658.org/pages/forgot-password")!)
+                        .padding(.top, 2)
+                        .padding(.bottom, 4)
+                }
+                .padding(.horizontal)
                 
                 Button (action: {
                     isBusy = true

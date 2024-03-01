@@ -2,10 +2,18 @@ import SwiftUI
 import shared
 import KeychainSwift
 import Network
+import BackgroundTasks
 
 @main
 struct iOSApp: App {
     @StateObject var envModel = EnvironmentModel()
+    @Environment(\.scenePhase) private var phase
+    
+    func ScheduleAppRefreshTasks() {
+        let request = BGAppRefreshTaskRequest(identifier: "apprefresh")
+        request.earliestBeginDate = .now.addingTimeInterval(900)
+        try? BGTaskScheduler.shared.submit(request)
+    }
 
     var body: some Scene {
         WindowGroup {
@@ -14,14 +22,23 @@ struct iOSApp: App {
             }
             .navigationViewStyle(.stack)
             .environmentObject(envModel)
+            .onChange(of: phase) { newPhase in
+                switch newPhase {
+                case .background: ScheduleAppRefreshTasks()
+                default: break
+                }
+            }
+        }
+        .backgroundTask(.appRefresh("apprefresh")) {
+            await envModel.dh.bgSync()
         }
     }
 }
 
 struct ApplicationSwitcher: View {
     @EnvironmentObject var env: EnvironmentModel
+    
     var body: some View {
-        
         if (env.user != nil) {
             //        if (true) {
             TabView {

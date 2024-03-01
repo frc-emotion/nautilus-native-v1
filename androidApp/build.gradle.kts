@@ -8,11 +8,11 @@ android {
     namespace = "org.nautilusapp.nautilus.android"
     compileSdk = 34
     defaultConfig {
-        applicationId = "org.nautilusapp.nautilus"
+        applicationId = "org.team2658.scouting"
         minSdk = 26
         targetSdk = 34
-        versionCode = 14
-        versionName = "2.0.8"
+        versionCode = 15
+        versionName = "2.1.0"
     }
     signingConfigs {
         create("release")

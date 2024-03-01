@@ -51,18 +51,18 @@ fun LazyScreen(
     onRefresh: suspend () -> DataResult<*>,
     beforeLazyList: @Composable () -> Unit = {},
     snack: SnackbarHostState? = null,
-    contentPadding: PaddingValues = PaddingValues(horizontal = 32.dp),
+    contentPadding: PaddingValues = PaddingValues(horizontal = 8.dp),
     content: LazyListScope.(SnackbarHostState?) -> Unit
 ) {
     val state = rememberLazyListState()
 
     val listSize by remember {
         derivedStateOf {
-            val avgVisSize =
-                state.layoutInfo.visibleItemsInfo.sumOf { it.size } / state.layoutInfo.visibleItemsInfo.size.coerceAtLeast(
-                    1
-                )
-            avgVisSize * state.layoutInfo.totalItemsCount
+            with(state.layoutInfo.visibleItemsInfo) {
+                val lg = this.sortedByDescending { it.size }.take(size / 2)
+                val avg = lg.sumOf { it.size } / lg.size.coerceAtLeast(1)
+                avg * state.layoutInfo.totalItemsCount
+            }
         }
     }
 

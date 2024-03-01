@@ -40,7 +40,7 @@ class MainViewModel(
     }
 
     val organizations =
-        listOf(Organization("Team 2658", "https://staging.team2658.org")) //TODO: get from server
+        listOf(Organization("Team 2658", "https://api.team2658.org")) //TODO: get from server
 
     private val storedURL = sharedPref.getString(SharedPrefKeys.URL, null)
 

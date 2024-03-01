@@ -11,18 +11,19 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.navigation.NavController
 import org.nautilusapp.nautilus.android.cardColor
-import org.nautilusapp.nautilus.userauth.UserPermissions
+import org.nautilusapp.nautilus.userauth.TokenUser
 
 @Composable
 fun ScreenScaffold(
     navController: NavController,
-    perms: UserPermissions?,
+    user: TokenUser?,
     snack: SnackbarHostState,
     topBar: @Composable () -> Unit = {},
     content: @Composable () -> Unit
 ) {
+    val perms = user?.permissions
     Scaffold(
-        bottomBar = { NavBar(navController, perms) },
+        bottomBar = { NavBar(navController, user) },
         topBar = topBar,
         snackbarHost = {
             SnackbarHost(snack) {

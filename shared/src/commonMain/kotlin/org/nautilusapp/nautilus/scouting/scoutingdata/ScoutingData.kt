@@ -14,6 +14,7 @@ interface ScoutingData {
     val brokeDown: Boolean
     val rankingPoints: Int
     val _id: String
+    val ranking: RP
 }
 
 interface ScoutingSubmission {

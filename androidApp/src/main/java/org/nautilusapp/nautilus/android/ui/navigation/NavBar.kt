@@ -10,15 +10,15 @@ import androidx.navigation.NavController
 import androidx.navigation.NavDestination.Companion.hierarchy
 import androidx.navigation.compose.currentBackStackEntryAsState
 import org.nautilusapp.nautilus.toCapitalized
-import org.nautilusapp.nautilus.userauth.UserPermissions
+import org.nautilusapp.nautilus.userauth.TokenUser
 
 @Composable
-fun NavBar(navController: NavController, permissions: UserPermissions?) {
+fun NavBar(navController: NavController, user: TokenUser?) {
     val backStackEntry by navController.currentBackStackEntryAsState()
     val currentDestination = backStackEntry?.destination
     NavigationBar {
         AppScreen.entries.forEach {
-            if (permissions?.canViewScreen(it) == true) {
+            if (user?.canViewScreen(it) == true) {
                 NavigationBarItem(
                     selected = currentDestination?.hierarchy?.any { dest -> dest.route == it.name } == true,
                     onClick = {
@@ -42,7 +42,7 @@ fun NavBar(navController: NavController, permissions: UserPermissions?) {
     }
 }
 
-fun UserPermissions.canViewScreen(screen: AppScreen): Boolean {
-    if (screen == AppScreen.SCOUTING && !generalScouting) return false;
+fun TokenUser?.canViewScreen(screen: AppScreen): Boolean {
+    if (screen == AppScreen.SCOUTING && !this.canViewScoutingPage) return false;
     return true
 }

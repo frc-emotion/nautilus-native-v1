@@ -1,16 +1,18 @@
 //
 //  UserView.swift
-//  E-Motion
+//  iosApp
 //
-//  Created by Jason Ballinger on 3/1/24.
-//  Copyright © 2024 team2658. All rights reserved.
+//  Created by Jason Ballinger on 7/11/23.
+//  Copyright © 2023 orgName. All rights reserved.
 //
 
 import SwiftUI
 import shared
 
-struct UserView: View {
+struct LoggedInUserView: View {
+    // TODO: This needs to work for both Token & non-token users
     @State var user: shared.User
+    
     
     var body: some View {
         ScrollView {
@@ -27,6 +29,8 @@ struct UserView: View {
     }
 }
 
-#Preview {
-    UserView(user: HelpfulVars().testuser)
+struct UserView_Previews: PreviewProvider {
+    static var previews: some View {
+        LoggedInUserView(user: HelpfulVars().testuser)
+    }
 }

@@ -24,7 +24,7 @@ struct DirectoryView: View {
             sortedUsers.sort { $0.accountType.value > $1.accountType.value }
             sortedUsers.sort { $0.subteam?.description() ?? "" < $1.subteam?.description() ?? "" }
             let converted: [PartialUser] = sortedUsers.map { user in
-                return PartialUser(_id: user._id, firstname: user.firstname, lastname: user.lastname, username: user.username, email: user.email, subteam: user.subteam, roles: user.roles, accountType: user.accountType)
+                return PartialUser(_id: user._id, firstname: user.firstname, lastname: user.lastname, username: user.username, email: user.email, subteam: user.subteam, roles: user.roles, accountType: user.accountType, grade: user.grade, phone: user.phone)
             }
             return Dictionary(grouping: converted, by: { $0.subteam?.description() ?? "" })
         } else {

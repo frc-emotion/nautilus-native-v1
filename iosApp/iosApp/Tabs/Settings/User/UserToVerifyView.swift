@@ -90,7 +90,7 @@ struct UserToVerifyView: View {
                 HStack {
                     Text("Subteam:")
                         .fontWeight(.bold)
-                    Text(user.subteam?.description() ?? "Null")
+                    Text(user.subteam?.description().capitalized ?? "Null")
                     Spacer()
                 }
                 HStack {

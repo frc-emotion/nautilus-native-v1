@@ -36,7 +36,6 @@ struct SettingsView: View {
                             ForEach(Array(env.user!.attendanceKeys), id: \.self) {
                                 Text($0)
                             }
-                            .navigationBarTitleDisplayMode(.inline)
                         }
                         .pickerStyle(.navigationLink)
                         .disabled(Array(env.user!.attendance.keys).isEmpty)

@@ -33,8 +33,10 @@ struct ScoutingView: View {
 }
 
 private struct ScoutingViewDataPermission: View {
-    @State private var selectedScreen: ScreenOptions = ScreenOptions.teams
     @EnvironmentObject var env: EnvironmentModel
+    @State private var selectedScreen: ScreenOptions = ScreenOptions.teams
+    @State private var sheetIsPresented = false
+    @State private var sheetPresentationDetent: PresentationDetent = .large
     
     var body: some View {
         NavigationStack {
@@ -63,7 +65,8 @@ private struct ScoutingViewDataPermission: View {
                 if (env.user!.permissions.generalScouting) {
                     ToolbarItem(placement: .topBarTrailing) {
                         Button {
-                            
+                            sheetIsPresented = true
+                            sheetPresentationDetent = .large
                         } label: {
                             Image(systemName: "plus")
                         }
@@ -71,14 +74,16 @@ private struct ScoutingViewDataPermission: View {
                 }
             }
             Divider()
-            //            .sheet(isPresented: .constant(true), content: {
-            //                Text("Hello")
-            //                    .presentationDetents([
-            //                        .large,
-            //                        .height(50)
-            //                    ])
-            //                    .interactiveDismissDisabled()
-            //            })
+            
+            .sheet(isPresented: $sheetIsPresented, content: {
+                CrescendoScoutingFormView()
+                    .environmentObject(env)
+                    .presentationDetents([
+                        .large,
+                        .fraction(1/12)
+                    ], selection: $sheetPresentationDetent)
+                    .interactiveDismissDisabled()
+            })
 
             switch selectedScreen{
             case .teams:

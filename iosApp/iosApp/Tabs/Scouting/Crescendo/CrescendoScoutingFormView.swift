@@ -27,6 +27,7 @@ extension shared.CrescendoStageState {
 struct CrescendoScoutingFormView: View {
     @EnvironmentObject var env: EnvironmentModel
     @Environment(\.colorScheme) var colorScheme
+    @Environment(\.dismiss) var dismiss
 
     @State private var showingError = false
     @State private var errorMessage = ""
@@ -81,6 +82,9 @@ struct CrescendoScoutingFormView: View {
     }
     
     var body: some View {
+        let canSubmit = competition != nil && teamNumber != nil && AutoAmpNotes != nil && AutoSpeakerNotes != nil && AutoLeftAllianceArea != nil && TeleopAmpNotes != nil && TeleopSpeakerNotes != nil && TeleopSpeakerNotesAmplified != nil && EndgameParked != nil && EndgameHarmony != nil && EndgameTrapNotes != nil && RPMelody != nil && RPEnsemble != nil && RobotDefensive != nil && RobotBrokeDown != nil && PenaltyPointsEarned != nil && FinalScore != nil && FinalGameResultTie != nil && FinalGameResultWin != nil
+        let canSave = competition != nil || teamNumber != nil || AutoAmpNotes != nil || AutoSpeakerNotes != nil || AutoLeftAllianceArea != nil || TeleopAmpNotes != nil || TeleopSpeakerNotes != nil || TeleopSpeakerNotesAmplified != nil || EndgameParked != nil || EndgameHarmony != nil || EndgameTrapNotes != nil || RPMelody != nil || RPEnsemble != nil || RobotDefensive != nil || RobotBrokeDown != nil || PenaltyPointsEarned != nil || FinalScore != nil || FinalGameResultTie != nil || FinalGameResultWin != nil
+        
         NavigationStack {
             ScrollView {
                 VStack(spacing: 20) {
@@ -246,19 +250,24 @@ struct CrescendoScoutingFormView: View {
                             if (RPEnsemble!) { totalRP = totalRP + 1 }
                             if (FinalGameResultTie!) { totalRP = totalRP + 1 }
                             if (FinalGameResultWin!) { totalRP = totalRP + 1 }
-                            env.dh.crescendo.upload(data: shared.CrescendoSubmission(auto: shared.CrescendoAuto(leave: AutoLeftAllianceArea!, ampNotes: Int32(AutoAmpNotes!), speakerNotes: Int32(AutoSpeakerNotes!)), comments: FinalComments, competition: competition!, defensive: RobotDefensive!, matchNumber: Int32(matchNumber!), penaltyPointsEarned: Int32(PenaltyPointsEarned!), ranking: shared.CrescendoRankingPoints(melody: RPMelody!, ensemble: RPEnsemble!), rankingPoints: Int32(totalRP), score: Int32(FinalScore!), stage: shared.CrescendoStage(state: EndgameParked!, harmony: Int32(EndgameHarmony!), trapNotes: Int32(EndgameTrapNotes!)), teamNumber: Int32(teamNumber!), teleop: shared.CrescendoTeleop(ampNotes: Int32(TeleopAmpNotes!), speakerUnamped: Int32(TeleopSpeakerNotes!), speakerAmped: Int32(TeleopSpeakerNotesAmplified!)), tied: FinalGameResultTie!, won: FinalGameResultWin!, brokeDown: RobotBrokeDown!)) { err in
-                                errorMessage = err.message
-                                showingError = true
-                                isBusy = false
-                            } completionHandler: { match, err in
-                                guard match != nil else {
-                                    errorMessage = err?.localizedDescription ?? "Unknown Error Occured"
+                            if (canSubmit) {
+                                env.dh.crescendo.upload(data: shared.CrescendoSubmission(auto: shared.CrescendoAuto(leave: AutoLeftAllianceArea!, ampNotes: Int32(AutoAmpNotes!), speakerNotes: Int32(AutoSpeakerNotes!)), comments: FinalComments, competition: competition!, defensive: RobotDefensive!, matchNumber: Int32(matchNumber!), penaltyPointsEarned: Int32(PenaltyPointsEarned!), ranking: shared.CrescendoRankingPoints(melody: RPMelody!, ensemble: RPEnsemble!), rankingPoints: Int32(totalRP), score: Int32(FinalScore!), stage: shared.CrescendoStage(state: EndgameParked!, harmony: Int32(EndgameHarmony!), trapNotes: Int32(EndgameTrapNotes!)), teamNumber: Int32(teamNumber!), teleop: shared.CrescendoTeleop(ampNotes: Int32(TeleopAmpNotes!), speakerUnamped: Int32(TeleopSpeakerNotes!), speakerAmped: Int32(TeleopSpeakerNotesAmplified!)), tied: FinalGameResultTie!, won: FinalGameResultWin!, brokeDown: RobotBrokeDown!)) { err in
+                                    errorMessage = err.message
                                     showingError = true
                                     isBusy = false
-                                    return
+                                } completionHandler: { match, err in
+                                    guard match != nil else {
+                                        errorMessage = err?.localizedDescription ?? "Unknown Error Occured"
+                                        showingError = true
+                                        isBusy = false
+                                        return
+                                    }
+                                    clearForm()
+                                    isBusy = false
+                                    dismiss()
                                 }
-                                clearForm()
-                                isBusy = false
+                            } else {
+                                
                             }
                             isBusy = false
                         } label: {
@@ -268,8 +277,14 @@ struct CrescendoScoutingFormView: View {
                                     .frame(maxWidth: .infinity)
                                     .cornerRadius(50)
                                     .tint(Color.secondary)
-                            } else {
+                            } else if (canSubmit) {
                                 Text("Submit")
+                                    .fontWeight(.bold)
+                                    .frame(height: 30.0)
+                                    .frame(maxWidth: .infinity)
+                                    .cornerRadius(50)
+                            } else {
+                                Text("Save Draft")
                                     .fontWeight(.bold)
                                     .frame(height: 30.0)
                                     .frame(maxWidth: .infinity)
@@ -278,21 +293,32 @@ struct CrescendoScoutingFormView: View {
                         }
                         .buttonStyle(.borderedProminent)
                         .padding(.horizontal)
-                        .disabled(!(competition != nil && teamNumber != nil && AutoAmpNotes != nil && AutoSpeakerNotes != nil && AutoLeftAllianceArea != nil && TeleopAmpNotes != nil && TeleopSpeakerNotes != nil && TeleopSpeakerNotesAmplified != nil && EndgameParked != nil && EndgameHarmony != nil && EndgameTrapNotes != nil && RPMelody != nil && RPEnsemble != nil && RobotDefensive != nil && RobotBrokeDown != nil && PenaltyPointsEarned != nil && FinalScore != nil && FinalGameResultTie != nil && FinalGameResultWin != nil))
+                        .disabled(!canSave)
                         
                         Button {
-                            clearForm()
+                            if (canSave) {
+                                clearForm()
+                            } else {
+                                dismiss()
+                            }
                         } label: {
-                            Text("Clear Form")
-                                .fontWeight(.bold)
-                                .frame(height: 30.0)
-                                .frame(maxWidth: .infinity)
-                                .cornerRadius(50)
+                            if (canSave) {
+                                Text("Clear Form")
+                                    .fontWeight(.bold)
+                                    .frame(height: 30.0)
+                                    .frame(maxWidth: .infinity)
+                                    .cornerRadius(50)
+                            } else {
+                                Text("Cancel")
+                                    .fontWeight(.bold)
+                                    .frame(height: 30.0)
+                                    .frame(maxWidth: .infinity)
+                                    .cornerRadius(50)
+                            }
                         }
                         .buttonStyle(.borderedProminent)
                         .padding(.horizontal)
                         .tint(.red)
-                        .disabled(!(competition != nil || teamNumber != nil || AutoAmpNotes != nil || AutoSpeakerNotes != nil || AutoLeftAllianceArea != nil || TeleopAmpNotes != nil || TeleopSpeakerNotes != nil || TeleopSpeakerNotesAmplified != nil || EndgameParked != nil || EndgameHarmony != nil || EndgameTrapNotes != nil || RPMelody != nil || RPEnsemble != nil || RobotDefensive != nil || RobotBrokeDown != nil || PenaltyPointsEarned != nil || FinalScore != nil || FinalGameResultTie != nil || FinalGameResultWin != nil))
                         
                         Button {
                             env.dh.crescendo.sync { res, err in

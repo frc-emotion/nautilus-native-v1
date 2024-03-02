@@ -38,6 +38,10 @@ struct UserBar: View {
 
 struct UserBar_Previews: PreviewProvider {
     static var previews: some View {
-        UserBar()
+        UserBar().environmentObject({ () -> EnvironmentModel in
+            let env = EnvironmentModel()
+            env.user = HelpfulVars().testuser
+            return env
+        }() )
     }
 }

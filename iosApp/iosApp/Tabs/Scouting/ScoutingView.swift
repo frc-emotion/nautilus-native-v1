@@ -42,6 +42,7 @@ private struct ScoutingViewDataPermission: View {
     @State private var selectedCompetition: String?
     @State private var scoutingData: [shared.Crescendo]?
     @State private var selectedTeam: Int32?
+    @State private var selectedMatch: Int32?
     
     func calculateTotalRP(data: [shared.Crescendo]) -> Int32 {
         var rp: Int32 = 0
@@ -78,6 +79,14 @@ private struct ScoutingViewDataPermission: View {
         }
     }
     
+    var groupedDataByMatchNumber: [Int32 : [shared.Crescendo]]? {
+        if filteredScoutingData != nil {
+            return Dictionary(grouping: filteredScoutingData!, by: {$0.matchNumber})
+        } else {
+            return nil
+        }
+    }
+    
     var body: some View {
         NavigationStack {
             Picker("Screen Selection", selection: $selectedScreen) {
@@ -92,32 +101,32 @@ private struct ScoutingViewDataPermission: View {
             .padding(.top)
             .toolbar {
                 ToolbarItem(placement: .principal) {
-                        Menu {
-                            VStack {
-                                if (competitions != nil) {
-                                    ForEach (competitions!, id: \.self) { comp in
-                                        Button {
-                                            selectedCompetition = comp
-                                        } label: {
-                                            HStack {
-                                                Text(comp.description)
-                                                Spacer()
-                                                if (selectedCompetition == comp) {
-                                                    Image(systemName: "checkmark")
-                                                }
+                    Menu {
+                        VStack {
+                            if (competitions != nil) {
+                                ForEach (competitions!, id: \.self) { comp in
+                                    Button {
+                                        selectedCompetition = comp
+                                    } label: {
+                                        HStack {
+                                            Text(comp.description)
+                                            Spacer()
+                                            if (selectedCompetition == comp) {
+                                                Image(systemName: "checkmark")
                                             }
                                         }
                                     }
                                 }
                             }
-                        } label: {
-                            VStack {
-                                Text("Scouting").font(.headline)
-                                Text("Crescendo - \(selectedCompetition?.description ?? "No Competition Selected")").font(.subheadline)
-                            }
                         }
-                    .tint(.primary)
+                    } label: {
+                        VStack {
+                            Text("Scouting").font(.headline)
+                            Text("Crescendo - \(selectedCompetition?.description ?? "No Competition Selected")").font(.subheadline)
+                        }
                     }
+                    .tint(.primary)
+                }
                 ToolbarItem(placement: .topBarTrailing) {
                     if (env.user!.permissions.generalScouting) {
                         Button {
@@ -130,28 +139,28 @@ private struct ScoutingViewDataPermission: View {
                 }
             }
             Divider()
-            .sheet(isPresented: $sheetIsPresented, content: {
-                if #available(iOS 16.4, *) {
-                    CrescendoScoutingFormView()
-                        .environmentObject(env)
-                        .presentationDetents([
-                            .large,
-                            .fraction(1/12)
-                        ], selection: $sheetPresentationDetent)
-                        .interactiveDismissDisabled()
-                        .presentationBackgroundInteraction(
-                            .enabled(upThrough: .fraction(1/12))
-                        )
-                } else {
-                    CrescendoScoutingFormView()
-                        .environmentObject(env)
-                        .presentationDetents([
-                            .large,
-                            .fraction(1/12)
-                        ], selection: $sheetPresentationDetent)
-                        .interactiveDismissDisabled()
-                }
-            })
+                .sheet(isPresented: $sheetIsPresented, content: {
+                    if #available(iOS 16.4, *) {
+                        CrescendoScoutingFormView()
+                            .environmentObject(env)
+                            .presentationDetents([
+                                .large,
+                                .fraction(1/12)
+                            ], selection: $sheetPresentationDetent)
+                            .interactiveDismissDisabled()
+                            .presentationBackgroundInteraction(
+                                .enabled(upThrough: .fraction(1/12))
+                            )
+                    } else {
+                        CrescendoScoutingFormView()
+                            .environmentObject(env)
+                            .presentationDetents([
+                                .large,
+                                .fraction(1/12)
+                            ], selection: $sheetPresentationDetent)
+                            .interactiveDismissDisabled()
+                    }
+                })
             
             switch selectedScreen{
             case .teams:
@@ -163,7 +172,7 @@ private struct ScoutingViewDataPermission: View {
                                     ForEach(groupedData, id: \.key) { keyValue in
                                         let (teamNumber, matches) = keyValue
                                         NavigationLink {
-                                            ScoutedTeamView(team: teamNumber, data: matches)
+                                            ScoutedTeamView(team: teamNumber, data: matches, selection: $selectedTeam)
                                         } label: {
                                             TeamDataBar(team: teamNumber, data: matches)
                                         }
@@ -187,8 +196,26 @@ private struct ScoutingViewDataPermission: View {
                     }
                 }
             case .matches:
-                List {
-//                    TeamDataBar()
+                if (selectedCompetition != nil) {
+                    if (filteredScoutingData != nil && groupedDataByMatchNumber != nil) {
+                        List(selection: $selectedMatch) {
+                            if let groupedData = groupedDataByMatchNumber?.sorted(by: { $0.key < $1.key }) {
+                                ForEach(groupedData, id: \.key) { keyValue in
+                                    let (matchNumber, data) = keyValue
+                                    NavigationLink {
+                                        ScoutedMatchView(match: matchNumber, data: data, selection: $selectedMatch)
+                                    } label: {
+                                        Text("Match \(matchNumber)")
+                                    }
+                                }
+                            }
+                        }
+                    } else {
+                        Spacer()
+                        Text("Please select a Competition")
+                            .fontWeight(.bold)
+                        Spacer()
+                    }
                 }
             }
         }

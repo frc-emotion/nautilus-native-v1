@@ -14,8 +14,8 @@
 		9339CC542B4B5DAB000DA3FC /* MeetingsListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9339CC532B4B5DAB000DA3FC /* MeetingsListView.swift */; };
 		9339CC572B4B5EA9000DA3FC /* MeetingBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9339CC562B4B5EA9000DA3FC /* MeetingBar.swift */; };
 		9339CC5D2B4C7368000DA3FC /* AttendedMeetingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9339CC5C2B4C7368000DA3FC /* AttendedMeetingsView.swift */; };
-		933B33E32B93B627000E6C9A /* ScoutingTeamView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 933B33E22B93B627000E6C9A /* ScoutingTeamView.swift */; };
-		933B33E42B93B627000E6C9A /* ScoutingTeamView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 933B33E22B93B627000E6C9A /* ScoutingTeamView.swift */; };
+		933B33E32B93B627000E6C9A /* ScoutedTeamView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 933B33E22B93B627000E6C9A /* ScoutedTeamView.swift */; };
+		933B33E42B93B627000E6C9A /* ScoutedTeamView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 933B33E22B93B627000E6C9A /* ScoutedTeamView.swift */; };
 		933B33E62B93B642000E6C9A /* ScoutedMatchView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 933B33E52B93B642000E6C9A /* ScoutedMatchView.swift */; };
 		933B33E72B93B642000E6C9A /* ScoutedMatchView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 933B33E52B93B642000E6C9A /* ScoutedMatchView.swift */; };
 		93418D9B2A5BC3F300336A62 /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 93418D9A2A5BC3F300336A62 /* SettingsView.swift */; };
@@ -106,7 +106,7 @@
 		9339CC562B4B5EA9000DA3FC /* MeetingBar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MeetingBar.swift; sourceTree = "<group>"; };
 		9339CC592B4B6125000DA3FC /* MeetingCreationView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MeetingCreationView.swift; sourceTree = "<group>"; };
 		9339CC5C2B4C7368000DA3FC /* AttendedMeetingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AttendedMeetingsView.swift; sourceTree = "<group>"; };
-		933B33E22B93B627000E6C9A /* ScoutingTeamView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScoutingTeamView.swift; sourceTree = "<group>"; };
+		933B33E22B93B627000E6C9A /* ScoutedTeamView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScoutedTeamView.swift; sourceTree = "<group>"; };
 		933B33E52B93B642000E6C9A /* ScoutedMatchView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScoutedMatchView.swift; sourceTree = "<group>"; };
 		93418D9A2A5BC3F300336A62 /* SettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsView.swift; sourceTree = "<group>"; };
 		93418D9C2A5BC4D100336A62 /* ScoutingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScoutingView.swift; sourceTree = "<group>"; };
@@ -293,7 +293,7 @@
 				93844FF92ADB29D8003EE764 /* ChargedUp */,
 				93418D9C2A5BC4D100336A62 /* ScoutingView.swift */,
 				93B9EACE2A5E803100D5B8A8 /* ScoutingFormView.swift */,
-				933B33E22B93B627000E6C9A /* ScoutingTeamView.swift */,
+				933B33E22B93B627000E6C9A /* ScoutedTeamView.swift */,
 				933B33E52B93B642000E6C9A /* ScoutedMatchView.swift */,
 			);
 			path = Scouting;
@@ -579,7 +579,7 @@
 				93B9EACF2A5E803100D5B8A8 /* ScoutingFormView.swift in Sources */,
 				93E8373A2B8D52FE00DAB2E1 /* MeetingCreationView.swift in Sources */,
 				2152FB042600AC8F00CF470E /* iOSApp.swift in Sources */,
-				933B33E32B93B627000E6C9A /* ScoutingTeamView.swift in Sources */,
+				933B33E32B93B627000E6C9A /* ScoutedTeamView.swift in Sources */,
 				9351D1F42B4F4D9500148E8D /* VerifyUsersView.swift in Sources */,
 				93E837482B8F1F0100DAB2E1 /* PlusLabelView.swift in Sources */,
 				9339CC5D2B4C7368000DA3FC /* AttendedMeetingsView.swift in Sources */,
@@ -625,7 +625,7 @@
 				93E3E2642B92CF10001D8299 /* TeamDataBar.swift in Sources */,
 				9351D2162B53A12200148E8D /* MeetingView.swift in Sources */,
 				9351D2172B53A12200148E8D /* LoginView.swift in Sources */,
-				933B33E42B93B627000E6C9A /* ScoutingTeamView.swift in Sources */,
+				933B33E42B93B627000E6C9A /* ScoutedTeamView.swift in Sources */,
 				93E837532B8FB39100DAB2E1 /* ScoutingNumberInputView.swift in Sources */,
 				93E8373B2B8D52FE00DAB2E1 /* MeetingCreationView.swift in Sources */,
 				9351D2192B53A12200148E8D /* ScoutingFormView.swift in Sources */,

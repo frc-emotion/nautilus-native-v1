@@ -12,12 +12,19 @@ import shared
 struct ScoutedTeamView: View {
     @State var team: Int32
     @State var data: [shared.Crescendo]
+    @Binding var selection: Int32?
     
     var body: some View {
-        Text(/*@START_MENU_TOKEN@*/"Hello, World!"/*@END_MENU_TOKEN@*/)
+        VStack {
+            Text(/*@START_MENU_TOKEN@*/"Hello, World!"/*@END_MENU_TOKEN@*/)
+            .onDisappear() {
+                selection = nil
+            }
+        }
     }
 }
 
 #Preview {
-    ScoutedTeamView(team: 2658, data: [])
+    ScoutedTeamView(team: 2658, data: [], selection: .constant(0))
 }
+

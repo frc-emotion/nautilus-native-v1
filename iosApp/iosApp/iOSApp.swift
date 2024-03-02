@@ -42,7 +42,7 @@ struct ApplicationSwitcher: View {
                     if (env.user!.permissions.generalScouting || env.user!.permissions.viewScoutingData) {
                         ScoutingView()
                             .tabItem {
-                                Label("Attendance", systemImage: "chart.bar.doc.horizontal.fill")
+                                Label("Scouting", systemImage: "chart.bar.doc.horizontal.fill")
                             }
                             .environmentObject(env)
                     }

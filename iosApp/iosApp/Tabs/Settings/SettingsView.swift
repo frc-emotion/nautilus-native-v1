@@ -28,6 +28,8 @@ struct SettingsView: View {
 //                        Text("Account Settings")
 //                    }
                 }
+                .navigationTitle("Settings")
+                .navigationBarTitleDisplayMode(.large)
                 if (env.user != nil) {
                     Section {
                         Picker("Attendance Period", selection: $attendancePeriodSelection) {
@@ -61,7 +63,6 @@ struct SettingsView: View {
                     }
                 }
             }
-            .navigationTitle("Settings")
             .refreshable {
                 Task {
                     let user = try await env.dh.users.refreshLoggedIn(onError: { err in

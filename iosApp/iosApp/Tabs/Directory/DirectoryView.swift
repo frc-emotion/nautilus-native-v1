@@ -53,7 +53,7 @@ struct DirectoryView: View {
     var body: some View {
         NavigationSplitView {
             VStack {
-                if users != nil, let subteamSortedUsers = subteamSortedUsers {
+                if users != nil, subteamSortedUsers != nil {
                     List (selection: $selectedUser) {
                         ForEach(filteredUsers ?? [], id: \.0) { subteamDescription, users in
                             if !users.isEmpty {

@@ -74,17 +74,29 @@ private struct ScoutingViewDataPermission: View {
                 }
             }
             Divider()
-            
             .sheet(isPresented: $sheetIsPresented, content: {
-                CrescendoScoutingFormView()
-                    .environmentObject(env)
-                    .presentationDetents([
-                        .large,
-                        .fraction(1/12)
-                    ], selection: $sheetPresentationDetent)
-                    .interactiveDismissDisabled()
+                if #available(iOS 16.4, *) {
+                    CrescendoScoutingFormView()
+                        .environmentObject(env)
+                        .presentationDetents([
+                            .large,
+                            .fraction(1/12)
+                        ], selection: $sheetPresentationDetent)
+                        .interactiveDismissDisabled()
+                        .presentationBackgroundInteraction(
+                            .enabled(upThrough: .fraction(1/12))
+                        )
+                } else {
+                    CrescendoScoutingFormView()
+                        .environmentObject(env)
+                        .presentationDetents([
+                            .large,
+                            .fraction(1/12)
+                        ], selection: $sheetPresentationDetent)
+                        .interactiveDismissDisabled()
+                }
             })
-
+            
             switch selectedScreen{
             case .teams:
                 List {

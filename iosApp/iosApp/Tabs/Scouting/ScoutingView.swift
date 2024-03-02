@@ -36,7 +36,47 @@ private struct ScoutingViewDataPermission: View {
     @EnvironmentObject var env: EnvironmentModel
     @State private var selectedScreen: ScreenOptions = ScreenOptions.teams
     @State private var sheetIsPresented = false
+    @State private var competitionSelectorPresented = false
     @State private var sheetPresentationDetent: PresentationDetent = .large
+    @State private var competitions: [String]?
+    @State private var selectedCompetition: String?
+    @State private var scoutingData: [shared.Crescendo]?
+    @State private var selectedTeam: Int32?
+    
+    func calculateTotalRP(data: [shared.Crescendo]) -> Int32 {
+        var rp: Int32 = 0
+        for item in data {
+            rp += item.rankingPoints
+        }
+        return rp
+    }
+    
+    var filteredScoutingData: [shared.Crescendo]? {
+        if scoutingData != nil {
+            if (selectedCompetition != nil) {
+                let filtered = scoutingData!.filter { match in
+                    if match.competition == selectedCompetition {
+                        return true
+                    } else {
+                        return false
+                    }
+                }
+                return filtered
+            } else {
+                return nil
+            }
+        } else {
+            return nil
+        }
+    }
+    
+    var groupDataByTeam: [Int32 : [shared.Crescendo]]? {
+        if filteredScoutingData != nil {
+            return Dictionary(grouping: filteredScoutingData!, by: {$0.teamNumber})
+        } else {
+            return nil
+        }
+    }
     
     var body: some View {
         NavigationStack {
@@ -52,18 +92,34 @@ private struct ScoutingViewDataPermission: View {
             .padding(.top)
             .toolbar {
                 ToolbarItem(placement: .principal) {
-                    Button {
-                        
-                    } label: {
-                        VStack {
-                            Text("Scouting").font(.headline)
-                            Text("Crescendo - Port Hueneme Regional").font(.subheadline)
+                        Menu {
+                            VStack {
+                                if (competitions != nil) {
+                                    ForEach (competitions!, id: \.self) { comp in
+                                        Button {
+                                            selectedCompetition = comp
+                                        } label: {
+                                            HStack {
+                                                Text(comp.description)
+                                                Spacer()
+                                                if (selectedCompetition == comp) {
+                                                    Image(systemName: "checkmark")
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        } label: {
+                            VStack {
+                                Text("Scouting").font(.headline)
+                                Text("Crescendo - \(selectedCompetition?.description ?? "No Competition Selected")").font(.subheadline)
+                            }
                         }
-                    }
                     .tint(.primary)
-                }
-                if (env.user!.permissions.generalScouting) {
-                    ToolbarItem(placement: .topBarTrailing) {
+                    }
+                ToolbarItem(placement: .topBarTrailing) {
+                    if (env.user!.permissions.generalScouting) {
                         Button {
                             sheetIsPresented = true
                             sheetPresentationDetent = .large
@@ -99,17 +155,51 @@ private struct ScoutingViewDataPermission: View {
             
             switch selectedScreen{
             case .teams:
-                List {
-                    TeamDataBar()
-                    TeamDataBar()
-                    TeamDataBar()
+                VStack {
+                    if (selectedCompetition != nil) {
+                        if (filteredScoutingData != nil && groupDataByTeam != nil) {
+                            List(selection: $selectedTeam) {
+                                if let groupedData = groupDataByTeam?.sorted(by: { calculateTotalRP(data: $0.value) > calculateTotalRP(data: $1.value) }) {
+                                    ForEach(groupedData, id: \.key) { keyValue in
+                                        let (teamNumber, matches) = keyValue
+                                        NavigationLink {
+                                            ScoutedTeamView(team: teamNumber, data: matches)
+                                        } label: {
+                                            TeamDataBar(team: teamNumber, data: matches)
+                                        }
+                                    }
+                                } else {
+                                    Text("")
+                                }
+                            }
+                        } else {
+                            Spacer()
+                            Text("No Scouting Data")
+                                .fontWeight(.bold)
+                                .foregroundStyle(Color.red)
+                            Spacer()
+                        }
+                    } else {
+                        Spacer()
+                        Text("Please select a Competition")
+                            .fontWeight(.bold)
+                        Spacer()
+                    }
                 }
             case .matches:
                 List {
-                    TeamDataBar()
+//                    TeamDataBar()
                 }
             }
-            
+        }
+        .onAppear() {
+            competitions = env.dh.seasons.getComps(year: 2024) { comps in
+                competitions = comps
+            }
+            scoutingData = env.dh.crescendo.getAll(onCompleteSync_: { data in
+                scoutingData = data
+            })
+            selectedCompetition = competitions?.last?.description
         }
     }
 }

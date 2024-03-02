@@ -12,8 +12,10 @@ import shared
 struct UserToVerifyView: View {
     @State var user: shared.User
     @EnvironmentObject var env: EnvironmentModel
+    @Environment(\.presentationMode) var presentationMode
     @State private var showingVerifyOptions = false
     @State private var showingDeleteConfirmation = false
+    @State private var errorMsg = ""
     
     var body: some View {
         ScrollView {
@@ -27,27 +29,36 @@ struct UserToVerifyView: View {
                         .frame(height: 30)
                         .frame(maxWidth: .infinity)
                 })
-                .padding(.leading)
+//                .padding(.leading)
+                .padding(.horizontal)
                 .padding(.bottom)
                 .buttonStyle(.borderedProminent)
                 .tint(.green)
                 .disabled(env.user!.accountType == AccountType.lead && (env.user!.subteam != user.subteam))
                 
-                Button(role: .destructive, action: {
-                    showingDeleteConfirmation = true
-                }, label: {
-                    Image(systemName: "trash.fill")
-                        .frame(height: 30)
-                        .frame(maxWidth: 50)
-                })
-                .padding(.trailing)
-                .padding(.bottom)
-                .buttonStyle(.borderedProminent)
-                .disabled(env.user!.accountType == AccountType.lead && (env.user!.subteam != user.subteam))
+//                Button(role: .destructive, action: {
+//                    showingDeleteConfirmation = true
+//                }, label: {
+//                    Image(systemName: "trash.fill")
+//                        .frame(height: 30)
+//                        .frame(maxWidth: 50)
+//                })
+//                .padding(.trailing)
+//                .padding(.bottom)
+//                .buttonStyle(.borderedProminent)
+//                .disabled(env.user!.accountType == AccountType.lead && (env.user!.subteam != user.subteam))
             }
             
             if (env.user!.accountType == AccountType.lead && (env.user!.subteam != user.subteam)) {
                 Text("You cannot verify this user because they are not a member of your subteam")
+                    .padding(.bottom)
+                    .fontWeight(.bold)
+                    .padding(.horizontal)
+                    .foregroundStyle(.red)
+            }
+            
+            if (errorMsg != "") {
+                Text(errorMsg)
                     .padding(.bottom)
                     .fontWeight(.bold)
                     .padding(.horizontal)
@@ -104,21 +115,31 @@ struct UserToVerifyView: View {
         }
         .confirmationDialog("Verify User", isPresented: $showingVerifyOptions) {
             Button("Verify") {
-                // TODO: Verify logic
-            }
-            if (env.user!.accountType == AccountType.admin) {
-                Button("Verify as Lead") {}
-                Button("Verify as Admin") {}
-                if (env.user!.accountType == AccountType.superuser) {
-                    Button("Verify as Superuser") {}
+                env.dh.users.verify(user: user._id) { user, error in
+                    if (error != nil) {
+                        errorMsg = error?.localizedDescription ?? "Unknown Error Occured"
+                    } else if (user != nil) {
+                        self.presentationMode.wrappedValue.dismiss()
+                        errorMsg = ""
+                    } else {
+                        errorMsg = "Unknown Error Occured"
+                    }
                 }
+
             }
+//            if (env.user!.accountType == AccountType.admin) {
+//                Button("Verify as Lead") {}
+//                Button("Verify as Admin") {}
+//                if (env.user!.accountType == AccountType.superuser) {
+//                    Button("Verify as Superuser") {}
+//                }
+//            }
         }
-        .confirmationDialog("Delete User", isPresented: $showingDeleteConfirmation) {
-            Button("Delete", role: .destructive) {
-                // TODO: Delete user logic
-            }
-        }
+//        .confirmationDialog("Delete User", isPresented: $showingDeleteConfirmation) {
+//            Button("Delete", role: .destructive) {
+//                // TODO: Delete user logic
+//            }
+//        }
     }
 }
 

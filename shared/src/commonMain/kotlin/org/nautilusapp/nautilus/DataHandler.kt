@@ -663,6 +663,20 @@ class DataHandler(
                 }
             }
         }
+
+        override fun getSeasons(): List<Season> {
+            return seasonsDB.getAll()
+        }
+
+        override fun getSeasons(onCompleteSync: (List<Season>) -> Unit): List<Season> {
+            return seasonsDB.getAll().also {
+                scope.launch {
+                    network.getSeasons().let {
+                        if (it is Result.Success) onCompleteSync(it.data)
+                    }
+                }
+            }
+        }
     }
 
     val crescendo = object : CrescendoNamespace {
@@ -1037,6 +1051,10 @@ class DataHandler(
         fun getComps(year: Int, onCompleteSync: (List<String>) -> Unit): List<String>
         fun getAttendancePeriods(): List<String>
         fun getAttendancePeriods(onCompleteSync: (List<String>) -> Unit): List<String>
+
+        fun getSeasons(): List<Season>
+
+        fun getSeasons(onCompleteSync: (List<Season>) -> Unit): List<Season>
     }
 
     interface CrescendoNamespace {

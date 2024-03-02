@@ -25,6 +25,7 @@ import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
 import org.nautilusapp.nautilus.Result
 import org.nautilusapp.nautilus.attendance.Meeting
+import org.nautilusapp.nautilus.roles.UserRole
 import org.nautilusapp.nautilus.scouting.scoutingdata.Crescendo
 import org.nautilusapp.nautilus.scouting.scoutingdata.CrescendoSubmission
 import org.nautilusapp.nautilus.userauth.FullUser
@@ -87,7 +88,10 @@ class NetworkClient(base: String) {
         RouteKeys.CRESCENDO_MINE to "/crescendo/mine",
         RouteKeys.SEASONS to "/seasons",
         RouteKeys.MEETINGS_MEETING to "/attendance/meetings/{meetingId}",
-        RouteKeys.USERS_VERIFY to "/users/{user}/verify"
+        RouteKeys.USERS_VERIFY to "/users/{user}/verify",
+        RouteKeys.ROLES to "/roles",
+        RouteKeys.USER_ROLES_REVOKE to "/users/{user}/roles/revoke",
+        RouteKeys.USER_ROLES_ASSIGN to "/users/{user}/roles/assign",
     )
 
     private val routes = relativepaths.mapValues {
@@ -526,6 +530,94 @@ class NetworkClient(base: String) {
 
     }
 
+    val roles = object : RolesNamespace {
+        override suspend fun getRoles(user: TokenUser?): Result<List<UserRole>, KtorError> {
+            if (user == null) return Result.Error(KtorError.AUTH)
+            return try {
+                val result = client.get(routes[RouteKeys.ROLES]!!) {
+                    header(HttpHeaders.Authorization, "Bearer ${user.token}")
+                }.body<List<UserRole>>()
+                Result.Success(result)
+            } catch (e: ClientRequestException) {
+                e.printStackTrace()
+                val serverResponse = ServerMessage.readMessage(e.response.bodyAsText()) ?: e.message
+                Result.Error(KtorError.CLIENT(serverResponse, e.response.status.value))
+            } catch (e: ServerResponseException) {
+                e.printStackTrace()
+                val serverResponse = ServerMessage.readMessage(e.response.bodyAsText()) ?: e.message
+                Result.Error(KtorError.SERVER(serverResponse, e.response.status.value))
+            } catch (e: Exception) {
+                println(e)
+                Result.Error(KtorError.IO)
+            }
+        }
+
+        override suspend fun assignRoles(
+            myUser: TokenUser?,
+            assigningTo: String,
+            roleIds: List<String>
+        ): Result<FullUser, KtorError> {
+            if (myUser == null) return Result.Error(KtorError.AUTH)
+            return try {
+                val result =
+                    client.put(
+                        routes[RouteKeys.USER_ROLES_ASSIGN]!!.replace(
+                            "{user}",
+                            assigningTo
+                        )
+                    ) {
+                        header(HttpHeaders.Authorization, "Bearer ${myUser.token}")
+                        setBody(roleIds)
+                    }.body<FullUser>()
+                Result.Success(result)
+            } catch (e: ClientRequestException) {
+                e.printStackTrace()
+                val serverResponse = ServerMessage.readMessage(e.response.bodyAsText()) ?: e.message
+                Result.Error(KtorError.CLIENT(serverResponse, e.response.status.value))
+            } catch (e: ServerResponseException) {
+                e.printStackTrace()
+                val serverResponse = ServerMessage.readMessage(e.response.bodyAsText()) ?: e.message
+                Result.Error(KtorError.SERVER(serverResponse, e.response.status.value))
+            } catch (e: Exception) {
+                println(e)
+                Result.Error(KtorError.IO)
+            }
+        }
+
+        override suspend fun revokeRoles(
+            myUser: TokenUser?,
+            revokingFrom: String,
+            roleIds: List<String>
+        ): Result<FullUser, KtorError> {
+            if (myUser == null) return Result.Error(KtorError.AUTH)
+            return try {
+                val result =
+                    client.put(
+                        routes[RouteKeys.USER_ROLES_REVOKE]!!.replace(
+                            "{user}",
+                            revokingFrom
+                        )
+                    ) {
+                        header(HttpHeaders.Authorization, "Bearer ${myUser.token}")
+                        setBody(roleIds)
+                    }.body<FullUser>()
+                Result.Success(result)
+            } catch (e: ClientRequestException) {
+                e.printStackTrace()
+                val serverResponse = ServerMessage.readMessage(e.response.bodyAsText()) ?: e.message
+                Result.Error(KtorError.CLIENT(serverResponse, e.response.status.value))
+            } catch (e: ServerResponseException) {
+                e.printStackTrace()
+                val serverResponse = ServerMessage.readMessage(e.response.bodyAsText()) ?: e.message
+                Result.Error(KtorError.SERVER(serverResponse, e.response.status.value))
+            } catch (e: Exception) {
+                println(e)
+                Result.Error(KtorError.IO)
+            }
+        }
+
+    }
+
     suspend fun getSeasons(): Result<List<Season>, KtorError.NoAuthRequired> {
         return try {
             Result.Success(this.client.get(routes[RouteKeys.SEASONS]!!).body())
@@ -604,6 +696,21 @@ class NetworkClient(base: String) {
         suspend fun getMyCrescendos(user: TokenUser): Result<List<Crescendo>, KtorError>
     }
 
+    interface RolesNamespace {
+        suspend fun getRoles(user: TokenUser?): Result<List<UserRole>, KtorError>
+        suspend fun assignRoles(
+            myUser: TokenUser?,
+            assigningTo: String,
+            roleIds: List<String>
+        ): Result<FullUser, KtorError>
+
+        suspend fun revokeRoles(
+            myUser: TokenUser?,
+            revokingFrom: String,
+            roleIds: List<String>
+        ): Result<FullUser, KtorError>
+    }
+
 }
 
 sealed interface KtorError {
@@ -667,4 +774,7 @@ private object RouteKeys {
     const val SEASONS = "seasons"
     const val MEETINGS_MEETING = "meetings.meeting"
     const val USERS_VERIFY = "users.verify"
+    const val ROLES = "roles"
+    const val USER_ROLES_ASSIGN = "user.roles.assign"
+    const val USER_ROLES_REVOKE = "user.roles.revoke"
 }

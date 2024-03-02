@@ -24,6 +24,7 @@ import org.nautilusapp.localstorage.User_extras_table
 import org.nautilusapp.localstorage.UsersDB
 import org.nautilusapp.localstorage.uploadcache.Crescendo_upload_table
 import org.nautilusapp.nautilus.attendance.Meeting
+import org.nautilusapp.nautilus.roles.UserRole
 import org.nautilusapp.nautilus.scouting.scoutingdata.Crescendo
 import org.nautilusapp.nautilus.scouting.scoutingdata.CrescendoSubmission
 import org.nautilusapp.nautilus.userauth.FullUser
@@ -777,6 +778,42 @@ class DataHandler(
 
     }
 
+    val roles = object : RolesNamespace {
+        override suspend fun getRoles(): DataResult<List<UserRole>> {
+            return withContext(Dispatchers.IO) {
+                when (val res = network.roles.getRoles(user())) {
+                    is Result.Success -> res
+                    is Result.Error -> mapError(res.error)
+                }
+            }
+        }
+
+        override suspend fun assignRoles(
+            assignTo: String,
+            roleIds: List<String>
+        ): DataResult<FullUser> {
+            return withContext(Dispatchers.IO) {
+                when (val res = network.roles.assignRoles(user(), assignTo, roleIds)) {
+                    is Result.Success -> res
+                    is Result.Error -> mapError(res.error)
+                }
+            }
+        }
+
+        override suspend fun revokeRoles(
+            revokeFrom: String,
+            roleIds: List<String>
+        ): DataResult<FullUser> {
+            return withContext(Dispatchers.IO) {
+                when (val res = network.roles.revokeRoles(user(), revokeFrom, roleIds)) {
+                    is Result.Success -> res
+                    is Result.Error -> mapError(res.error)
+                }
+            }
+        }
+
+    }
+
     fun getQueueLength(): UploadQueueLength {
         val attendance = attendanceUploadCache.getCacheLength().executeAsOneOrNull() ?: 0L
         val crescendo = db.crescendoUploadCacheQueries.getLength().executeAsOneOrNull() ?: 0L
@@ -1010,6 +1047,40 @@ class DataHandler(
         suspend fun upload(data: CrescendoSubmission): DataResult<Crescendo>
         suspend fun upload(data: CrescendoSubmission, onError: (Error) -> Unit): Crescendo? {
             return this.upload(data).unwrap(onError)
+        }
+    }
+
+    interface RolesNamespace {
+        suspend fun getRoles(): DataResult<List<UserRole>>
+        suspend fun getRoles(onError: (Error) -> Unit): List<UserRole>? {
+            return when (val res = this.getRoles()) {
+                is Result.Success -> res.data
+                is Result.Error -> null.also { onError(res.error) }
+            }
+        }
+
+        suspend fun assignRoles(assignTo: String, roleIds: List<String>): DataResult<FullUser>
+        suspend fun assignRoles(
+            assignTo: String,
+            roleIds: List<String>,
+            onError: (Error) -> Unit
+        ): FullUser? {
+            return when (val res = this.assignRoles(assignTo, roleIds)) {
+                is Result.Success -> res.data
+                is Result.Error -> null.also { onError(res.error) }
+            }
+        }
+
+        suspend fun revokeRoles(revokeFrom: String, roleIds: List<String>): DataResult<FullUser>
+        suspend fun revokeRoles(
+            revokeFrom: String,
+            roleIds: List<String>,
+            onError: (Error) -> Unit
+        ): FullUser? {
+            return when (val res = this.revokeRoles(revokeFrom, roleIds)) {
+                is Result.Success -> res.data
+                is Result.Error -> null.also { onError(res.error) }
+            }
         }
     }
 

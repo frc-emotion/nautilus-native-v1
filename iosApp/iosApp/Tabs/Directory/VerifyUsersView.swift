@@ -65,5 +65,9 @@ struct VerifyUsersView: View {
 }
 
 #Preview {
-    VerifyUsersView(presented: .constant(true))
+    VerifyUsersView(presented: .constant(true)).environmentObject({ () -> EnvironmentModel in
+        let env = EnvironmentModel()
+        env.user = HelpfulVars().testuser
+        return env
+    }() )
 }

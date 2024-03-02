@@ -13,7 +13,7 @@ import shared
 
 struct ScoutingFormView: View {
     var body: some View {
-        ChargedUpFormView()
+        CrescendoScoutingFormView()
     }
 }
 

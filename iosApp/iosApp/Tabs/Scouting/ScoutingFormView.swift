@@ -9,16 +9,20 @@
 import SwiftUI
 import shared
 
-
-
 struct ScoutingFormView: View {
+    @EnvironmentObject var env: EnvironmentModel
     var body: some View {
         CrescendoScoutingFormView()
+            .environmentObject(env)
     }
 }
 
 struct ScoutingFormView_Previews: PreviewProvider {
     static var previews: some View {
-        ScoutingFormView()
+        ScoutingFormView().environmentObject({ () -> EnvironmentModel in
+            let env = EnvironmentModel()
+            env.user = HelpfulVars().testuser
+            return env
+        }() )
     }
 }

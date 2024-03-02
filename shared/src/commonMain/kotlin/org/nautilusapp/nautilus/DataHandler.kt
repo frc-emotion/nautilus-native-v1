@@ -26,6 +26,7 @@ import org.nautilusapp.localstorage.uploadcache.Crescendo_upload_table
 import org.nautilusapp.nautilus.attendance.Meeting
 import org.nautilusapp.nautilus.scouting.scoutingdata.Crescendo
 import org.nautilusapp.nautilus.scouting.scoutingdata.CrescendoSubmission
+import org.nautilusapp.nautilus.userauth.FullUser
 import org.nautilusapp.nautilus.userauth.Subteam
 import org.nautilusapp.nautilus.userauth.TokenUser
 import org.nautilusapp.nautilus.userauth.User
@@ -134,23 +135,16 @@ class DataHandler(
                         Result.Success(result.data)
                     }
 
-                    is Result.Error -> when (val error = result.error) {
-                        is KtorError.SERVER -> Result.Error(
-                            Error(
-                                "Server error ${error.code}: ${error.message}",
-                                error.code
-                            )
-                        )
+                    is Result.Error -> mapError(result.error)
+                }
+            }
+        }
 
-                        is KtorError.CLIENT -> Result.Error(
-                            Error(
-                                "Error ${error.code}: ${error.message}",
-                                error.code
-                            )
-                        )
-
-                        is KtorError.IO -> Result.Error(Error("IO error. Please make sure you are connected to the internet."))
-                    }
+        override suspend fun verify(user: String): DataResult<FullUser> {
+            return withContext(Dispatchers.IO) {
+                when (val result = network.users.verify(myUser = user(), verifying = user)) {
+                    is Result.Success -> result
+                    is Result.Error -> mapError(result.error)
                 }
             }
         }
@@ -183,23 +177,7 @@ class DataHandler(
                         Result.Success(result.data)
                     }
 
-                    is Result.Error -> when (val error = result.error) {
-                        is KtorError.SERVER -> Result.Error(
-                            Error(
-                                "Server error ${error.code}: ${error.message}",
-                                error.code
-                            )
-                        )
-
-                        is KtorError.CLIENT -> Result.Error(
-                            Error(
-                                "Error ${error.code}: ${error.message}",
-                                error.code
-                            )
-                        )
-
-                        is KtorError.IO -> Result.Error(Error("IO error. Please make sure you are connected to the internet."))
-                    }
+                    is Result.Error -> mapError(result.error)
                 }
             }
         }
@@ -222,29 +200,7 @@ class DataHandler(
                         Result.Success(result.data)
                     }
 
-                    is Result.Error -> when (val error = result.error) {
-                        is KtorError.AUTH -> Result.Error(
-                            Error(
-                                "Authentication error: Your login session is invalid. Please log out and log back in.",
-                                401
-                            )
-                        )
-
-                        is KtorError.CLIENT -> Result.Error(
-                            Error(
-                                "Error ${error.code}: ${error.message}",
-                                error.code
-                            )
-                        )
-
-                        is KtorError.IO -> Result.Error(Error("IO error. Please make sure you are connected to the internet."))
-                        is KtorError.SERVER -> Result.Error(
-                            Error(
-                                "Server error ${error.code}: ${error.message}",
-                                error.code
-                            )
-                        )
-                    }
+                    is Result.Error -> mapError(result.error)
                 }
             }
         }
@@ -290,29 +246,7 @@ class DataHandler(
                             Result.Success(it.data)
                         }
 
-                        is Result.Error -> when (val error = it.error) {
-                            is KtorError.AUTH -> Result.Error(
-                                Error(
-                                    "Authentication error: Your login session is invalid. Please log out and log back in.",
-                                    401
-                                )
-                            )
-
-                            is KtorError.CLIENT -> Result.Error(
-                                Error(
-                                    "Error ${error.code}: ${error.message}",
-                                    error.code
-                                )
-                            )
-
-                            KtorError.IO -> Result.Error(Error("IO error. Please make sure you are connected to the internet."))
-                            is KtorError.SERVER -> Result.Error(
-                                Error(
-                                    "Server error ${error.code}: ${error.message}",
-                                    error.code
-                                )
-                            )
-                        }
+                        is Result.Error -> mapError(it.error)
                     }
                 }
             }
@@ -361,29 +295,7 @@ class DataHandler(
                         Result.Success(Unit)
                     }
 
-                    is Result.Error -> when (val error = res.error) {
-                        is KtorError.AUTH -> Result.Error(
-                            Error(
-                                "Authentication error: Your login session is invalid. Please log out and log back in.",
-                                401
-                            )
-                        )
-
-                        is KtorError.CLIENT -> Result.Error(
-                            Error(
-                                "Error ${error.code}: ${error.message}",
-                                error.code
-                            )
-                        )
-
-                        is KtorError.IO -> Result.Error(Error("IO error. Please make sure you are connected to the internet."))
-                        is KtorError.SERVER -> Result.Error(
-                            Error(
-                                "Server error ${error.code}: ${error.message}",
-                                error.code
-                            )
-                        )
-                    }
+                    is Result.Error -> mapError(res.error)
                 }
             }
         }
@@ -407,29 +319,7 @@ class DataHandler(
                                 meetingsDB.refresh(it.data)
                             }
 
-                            is Result.Error -> when (val error = it.error) {
-                                KtorError.AUTH -> Result.Error(
-                                    Error(
-                                        "Authentication error: Your login session is invalid. Please log out and log back in.",
-                                        401
-                                    )
-                                )
-
-                                is KtorError.CLIENT -> Result.Error(
-                                    Error(
-                                        "Error ${error.code}: ${error.message}",
-                                        error.code
-                                    )
-                                )
-
-                                KtorError.IO -> Result.Error(Error("IO error. Please make sure you are connected to the internet."))
-                                is KtorError.SERVER -> Result.Error(
-                                    Error(
-                                        "Server error ${error.code}: ${error.message}",
-                                        error.code
-                                    )
-                                )
-                            }
+                            is Result.Error -> mapError(it.error)
                         }
                     }
                 }
@@ -526,29 +416,7 @@ class DataHandler(
                             Result.Success(Unit)
                         }
 
-                        is Result.Error -> when (val error = it.error) {
-                            KtorError.AUTH -> Result.Error(
-                                Error(
-                                    "Authentication error: Your login session is invalid. Please log out and log back in.",
-                                    401
-                                )
-                            )
-
-                            is KtorError.CLIENT -> Result.Error(
-                                Error(
-                                    "Error ${error.code}: ${error.message}",
-                                    error.code
-                                )
-                            )
-
-                            KtorError.IO -> Result.Error(Error("IO error. Please make sure you are connected to the internet."))
-                            is KtorError.SERVER -> Result.Error(
-                                Error(
-                                    "Server error ${error.code}: ${error.message}",
-                                    error.code
-                                )
-                            )
-                        }
+                        is Result.Error -> mapError(it.error)
                     }
                 }
             }
@@ -606,29 +474,7 @@ class DataHandler(
                             Result.Success(it.data)
                         }
 
-                        is Result.Error -> when (val error = it.error) {
-                            KtorError.AUTH -> Result.Error(
-                                Error(
-                                    "Authentication error: Your login session is invalid. Please log out and log back in.",
-                                    401
-                                )
-                            )
-
-                            is KtorError.CLIENT -> Result.Error(
-                                Error(
-                                    "Error ${error.code}: ${error.message}",
-                                    error.code
-                                )
-                            )
-
-                            KtorError.IO -> Result.Error(Error("IO error. Please make sure you are connected to the internet."))
-                            is KtorError.SERVER -> Result.Error(
-                                Error(
-                                    "Server error ${error.code}: ${error.message}",
-                                    error.code
-                                )
-                            )
-                        }
+                        is Result.Error -> mapError(it.error)
                     }
                 }
             }
@@ -679,7 +525,7 @@ class DataHandler(
                                     time,
                                     verifiedBy
                                 ) //cache data to retry later when there is internet
-                                Result.Error(Error("IO error: Attendance will be uploaded when you are connected to the internet."))
+                                Result.Error(Error("Network error: Attendance will be uploaded when you are connected to the internet."))
                             }
 
                             is KtorError.SERVER -> Result.Error(
@@ -719,29 +565,7 @@ class DataHandler(
                             Result.Success(Unit)
                         }
 
-                        is Result.Error -> when (val error = it.error) {
-                            KtorError.AUTH -> Result.Error(
-                                Error(
-                                    "Authentication error: Your login session is invalid. Please log out and log back in.",
-                                    401
-                                )
-                            )
-
-                            is KtorError.CLIENT -> Result.Error(
-                                Error(
-                                    "Error ${error.code}: ${error.message}",
-                                    error.code
-                                )
-                            )
-
-                            KtorError.IO -> Result.Error(Error("IO error. Please make sure you are connected to the internet."))
-                            is KtorError.SERVER -> Result.Error(
-                                Error(
-                                    "Server error ${error.code}: ${error.message}",
-                                    error.code
-                                )
-                            )
-                        }
+                        is Result.Error -> mapError(it.error)
                     }
                 }
             }
@@ -779,7 +603,7 @@ class DataHandler(
                                 )
                                     .also { attendanceUploadCache.delete(mtg.meeting_id) }
 
-                                KtorError.IO -> Result.Error(Error("IO error: Attendance will be uploaded when you are connected to the internet."))
+                                KtorError.IO -> Result.Error(Error("Network error: Attendance will be uploaded when you are connected to the internet."))
                                 is KtorError.SERVER -> Result.Error(
                                     Error(
                                         "Server error ${error.code}: ${error.message}",
@@ -805,22 +629,7 @@ class DataHandler(
                             seasonsDB.insert(it.data)
                         }
 
-                        is Result.Error -> when (val error = it.error) {
-                            is KtorError.CLIENT -> Result.Error(
-                                Error(
-                                    "Error ${error.code}: ${error.message}",
-                                    error.code
-                                )
-                            )
-
-                            KtorError.IO -> Result.Error(Error("IO error. Please make sure you are connected to the internet."))
-                            is KtorError.SERVER -> Result.Error(
-                                Error(
-                                    "Server error ${error.code}: ${error.message}",
-                                    error.code
-                                )
-                            )
-                        }
+                        is Result.Error -> mapError(it.error)
                     }
                 }
             }
@@ -876,29 +685,7 @@ class DataHandler(
                                 it
                             }
 
-                            is Result.Error -> when (val error = it.error) {
-                                is KtorError.CLIENT -> Result.Error(
-                                    Error(
-                                        "Error ${error.code}: ${error.message}",
-                                        error.code
-                                    )
-                                )
-
-                                KtorError.IO -> Result.Error(Error("IO error. Please make sure you are connected to the internet."))
-                                is KtorError.SERVER -> Result.Error(
-                                    Error(
-                                        "Server error ${error.code}: ${error.message}",
-                                        error.code
-                                    )
-                                )
-
-                                KtorError.AUTH -> Result.Error(
-                                    Error(
-                                        "Authentication error: Your login session is invalid. Please log out and log back in.",
-                                        401
-                                    )
-                                )
-                            }
+                            is Result.Error -> mapError(it.error)
                         }
                     }
                 val uploadRes = crescendoUploadDB.getAll().map { (id, data) ->
@@ -918,29 +705,7 @@ class DataHandler(
                                 it
                             }
 
-                            is Result.Error -> when (val error = it.error) {
-                                is KtorError.CLIENT -> Result.Error(
-                                    Error(
-                                        "Error ${error.code}: ${error.message}",
-                                        error.code
-                                    )
-                                )
-
-                                KtorError.IO -> Result.Error(Error("IO error. Your scouting data has been saved offline. Please connect to the internet and try again to upload your data."))
-                                is KtorError.SERVER -> Result.Error(
-                                    Error(
-                                        "Server error ${error.code}: ${error.message}",
-                                        error.code
-                                    )
-                                )
-
-                                KtorError.AUTH -> Result.Error(
-                                    Error(
-                                        "Authentication error: Your login session is invalid. Please log out and log back in.",
-                                        401
-                                    )
-                                )
-                            }
+                            is Result.Error -> mapError(it.error)
                         }
                     }
                 }
@@ -989,7 +754,7 @@ class DataHandler(
 
                         KtorError.IO -> {
                             crescendoUploadDB.insert(data)
-                            Result.Error(Error("IO error. Your scouting data has been saved offline. Please connect to the internet and go to settings to upload your data."))
+                            Result.Error(Error("Network Error. Your scouting data has been saved offline. Please connect to the internet and go to settings to upload your data."))
                         }
 
                         is KtorError.SERVER -> Result.Error(
@@ -1074,6 +839,15 @@ class DataHandler(
             return this.login(username, password).unwrap(onError)
         }
 
+        suspend fun verify(user: String): DataResult<FullUser>
+
+        suspend fun verify(user: String, onError: (Error) -> Unit): FullUser? {
+            return when (val res = this.verify(user)) {
+                is Result.Success -> res.data
+                is Result.Error -> onError(res.error).let { null }
+            }
+        }
+
         suspend fun register(
             username: String,
             password: String,
@@ -1132,6 +906,7 @@ class DataHandler(
             }
         }
     }
+
 
     interface AttendanceNamespace {
         suspend fun sync(): AttendanceResult
@@ -1235,6 +1010,34 @@ class DataHandler(
         suspend fun upload(data: CrescendoSubmission): DataResult<Crescendo>
         suspend fun upload(data: CrescendoSubmission, onError: (Error) -> Unit): Crescendo? {
             return this.upload(data).unwrap(onError)
+        }
+    }
+
+    private fun mapError(error: KtorError): Result.Error<Error> {
+        return when (error) {
+
+            KtorError.AUTH -> Result.Error(
+                Error(
+                    "Authentication error: Your login session is invalid. Please log out and log back in.",
+                    401
+                )
+            )
+
+            is KtorError.SERVER -> Result.Error(
+                Error(
+                    "Server error ${error.code}: ${error.message}",
+                    error.code
+                )
+            )
+
+            is KtorError.CLIENT -> Result.Error(
+                Error(
+                    "Error ${error.code}: ${error.message}",
+                    error.code
+                )
+            )
+
+            is KtorError.IO -> Result.Error(Error("Network Error. Please make sure you are connected to the internet."))
         }
     }
 }

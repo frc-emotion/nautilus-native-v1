@@ -68,7 +68,7 @@ struct CrescendoScoutingFormView: View {
         TeleopSpeakerNotes = nil
         TeleopSpeakerNotesAmplified = nil
         EndgameParked = nil
-        EndgameHarmony = nil    
+        EndgameHarmony = nil
         EndgameTrapNotes = nil
         RPMelody = nil
         RPEnsemble = nil
@@ -243,57 +243,68 @@ struct CrescendoScoutingFormView: View {
                     
                     // submit button
                     VStack(spacing: 10) {
-                        Button {
-                            isBusy = true
-                            var totalRP = 0
-                            if (RPMelody!) { totalRP = totalRP + 1 }
-                            if (RPEnsemble!) { totalRP = totalRP + 1 }
-                            if (FinalGameResultTie!) { totalRP = totalRP + 1 }
-                            if (FinalGameResultWin!) { totalRP = totalRP + 1 }
-                            if (canSubmit) {
-                                env.dh.crescendo.upload(data: shared.CrescendoSubmission(auto: shared.CrescendoAuto(leave: AutoLeftAllianceArea!, ampNotes: Int32(AutoAmpNotes!), speakerNotes: Int32(AutoSpeakerNotes!)), comments: FinalComments, competition: competition!, defensive: RobotDefensive!, matchNumber: Int32(matchNumber!), penaltyPointsEarned: Int32(PenaltyPointsEarned!), ranking: shared.CrescendoRankingPoints(melody: RPMelody!, ensemble: RPEnsemble!), rankingPoints: Int32(totalRP), score: Int32(FinalScore!), stage: shared.CrescendoStage(state: EndgameParked!, harmony: Int32(EndgameHarmony!), trapNotes: Int32(EndgameTrapNotes!)), teamNumber: Int32(teamNumber!), teleop: shared.CrescendoTeleop(ampNotes: Int32(TeleopAmpNotes!), speakerUnamped: Int32(TeleopSpeakerNotes!), speakerAmped: Int32(TeleopSpeakerNotesAmplified!)), tied: FinalGameResultTie!, won: FinalGameResultWin!, brokeDown: RobotBrokeDown!)) { err in
-                                    errorMessage = err.message
-                                    showingError = true
-                                    isBusy = false
-                                } completionHandler: { match, err in
-                                    guard match != nil else {
-                                        errorMessage = err?.localizedDescription ?? "Unknown Error Occured"
-                                        showingError = true
-                                        isBusy = false
-                                        return
+                        if (!isBusy) {
+                            Button {
+                                    isBusy = true
+                                    var totalRP = 0
+                                    if (RPMelody ?? false) { totalRP = totalRP + 1 }
+                                    if (RPEnsemble ?? false) { totalRP = totalRP + 1 }
+                                    if (FinalGameResultTie ?? false) { totalRP = totalRP + 1 }
+                                    if (FinalGameResultWin ?? false) { totalRP = totalRP + 1 }
+                                    if (canSubmit) {
+                                        env.dh.crescendo.upload(data: shared.CrescendoSubmission(auto: shared.CrescendoAuto(leave: AutoLeftAllianceArea!, ampNotes: Int32(AutoAmpNotes!), speakerNotes: Int32(AutoSpeakerNotes!)), comments: FinalComments, competition: competition!, defensive: RobotDefensive!, matchNumber: Int32(matchNumber!), penaltyPointsEarned: Int32(PenaltyPointsEarned!), ranking: shared.CrescendoRankingPoints(melody: RPMelody!, ensemble: RPEnsemble!), rankingPoints: Int32(totalRP), score: Int32(FinalScore!), stage: shared.CrescendoStage(state: EndgameParked!, harmony: Int32(EndgameHarmony!), trapNotes: Int32(EndgameTrapNotes!)), teamNumber: Int32(teamNumber!), teleop: shared.CrescendoTeleop(ampNotes: Int32(TeleopAmpNotes!), speakerUnamped: Int32(TeleopSpeakerNotes!), speakerAmped: Int32(TeleopSpeakerNotesAmplified!)), tied: FinalGameResultTie!, won: FinalGameResultWin!, brokeDown: RobotBrokeDown!)) { err in
+                                            errorMessage = err.message
+                                            showingError = true
+                                            isBusy = false
+                                        } completionHandler: { match, err in
+                                            guard match != nil else {
+                                                errorMessage = err?.localizedDescription ?? "Unknown Error Occured"
+                                                showingError = true
+                                                isBusy = false
+                                                return
+                                            }
+                                            clearForm()
+                                            isBusy = false
+                                            dismiss()
+                                        }
+                                    } else {
+                                        
                                     }
-                                    clearForm()
                                     isBusy = false
-                                    dismiss()
+                            } label: {
+                                HStack {
+                                        Text("Submit")
+                                            .fontWeight(.bold)
+                                            .frame(height: 30.0)
+                                            .frame(maxWidth: .infinity)
+                                            .cornerRadius(50)
+        //                            } else {
+        //                                Text("Save Draft")
+        //                                    .fontWeight(.bold)
+        //                                    .frame(height: 30.0)
+        //                                    .frame(maxWidth: .infinity)
+        //                                    .cornerRadius(50)
                                 }
-                            } else {
-                                
                             }
-                            isBusy = false
-                        } label: {
-                            if (isBusy) {
-                                AnyView(ProgressView())
-                                    .frame(height: 30.0)
-                                    .frame(maxWidth: .infinity)
-                                    .cornerRadius(50)
-                                    .tint(Color.secondary)
-                            } else if (canSubmit) {
-                                Text("Submit")
-                                    .fontWeight(.bold)
-                                    .frame(height: 30.0)
-                                    .frame(maxWidth: .infinity)
-                                    .cornerRadius(50)
-                            } else {
-                                Text("Save Draft")
-                                    .fontWeight(.bold)
-                                    .frame(height: 30.0)
-                                    .frame(maxWidth: .infinity)
-                                    .cornerRadius(50)
+                            .buttonStyle(.borderedProminent)
+                            .padding(.horizontal)
+    //                        .disabled(!canSave)
+                            .disabled(!canSubmit)
+                        } else {
+                            Button {
+                                
+                            } label: {
+                                VStack {
+                                    AnyView(ProgressView())
+                                }
+                                .buttonStyle(.borderedProminent)
+                                .cornerRadius(50)
+                                .frame(maxWidth: .infinity)
+                                .frame(height: 30)
+                                .tint(Color.secondary)
+                                .disabled(true)
                             }
                         }
-                        .buttonStyle(.borderedProminent)
-                        .padding(.horizontal)
-                        .disabled(!canSave)
                         
                         Button {
                             if (canSave) {
@@ -372,3 +383,4 @@ struct CrescendoScoutingFormView: View {
         return env
     }() )
 }
+

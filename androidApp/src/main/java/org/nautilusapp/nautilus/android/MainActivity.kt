@@ -88,7 +88,7 @@ class MainActivity : ComponentActivity() {
             getToken = {
                 return@DataHandler sharedPref.getString(SharedPrefKeys.TOKEN, null)
             },
-            routeBase = rootURL ?: ""
+            routeBase = "api.team2658.org" //TEMP!!
         ) {
             with(sharedPref.edit()) {
                 putString(SharedPrefKeys.TOKEN, it)

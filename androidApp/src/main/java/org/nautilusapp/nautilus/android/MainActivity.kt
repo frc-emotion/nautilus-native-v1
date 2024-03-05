@@ -88,7 +88,7 @@ class MainActivity : ComponentActivity() {
             getToken = {
                 return@DataHandler sharedPref.getString(SharedPrefKeys.TOKEN, null)
             },
-            routeBase = "api.team2658.org" //TEMP!!
+            routeBase = "https://api.team2658.org" //TEMP!!
         ) {
             with(sharedPref.edit()) {
                 putString(SharedPrefKeys.TOKEN, it)
@@ -173,35 +173,35 @@ class MainActivity : ComponentActivity() {
                 primaryViewModel.theme
             ) {
                 LoadingSpinner(isBusy)
-                if (manifestOk == true) {
-                    if (authState(primaryViewModel.user) == AuthState.LOGGED_IN && rootURL?.isNotBlank() == true) {
-                        LoggedInNavigator(primaryViewModel, dataHandler, nfcViewmodel, snack)
-                    } else {
-                        if (rootURL?.isBlank() == true) {
-                            dataHandler.users.logout()
-                        }
-                        Scaffold(
-                            snackbarHost = {
-                                SnackbarHost(snack) {
-                                    Snackbar(
-                                        snackbarData = it,
-                                        containerColor = cardColor(),
-                                        contentColor = MaterialTheme.colorScheme.onSurface
-                                    )
-                                }
-                            },
-                        ) { padding ->
-                            Box(modifier = Modifier.padding(padding)) {
-                                SettingsScreen(primaryViewModel, snack = snack)
-                            }
-                        }
-                    }
-                } else {
-                    Scaffold { padding ->
+                when {
+                    manifestOk == false -> Scaffold { padding ->
                         Box(modifier = Modifier.padding(padding)) {
                             UpdateNeededScreen(manifestOk) {
                                 startActivity(updateIntent)
                             }
+                        }
+                    }
+
+                    authState(primaryViewModel.user) == AuthState.LOGGED_IN && dataHandler.getNetworkClient().rootURL.isNotBlank() -> LoggedInNavigator(
+                        primaryViewModel,
+                        dataHandler,
+                        nfcViewmodel,
+                        snack
+                    )
+
+                    else -> Scaffold(
+                        snackbarHost = {
+                            SnackbarHost(snack) {
+                                Snackbar(
+                                    snackbarData = it,
+                                    containerColor = cardColor(),
+                                    contentColor = MaterialTheme.colorScheme.onSurface
+                                )
+                            }
+                        },
+                    ) { padding ->
+                        Box(modifier = Modifier.padding(padding)) {
+                            SettingsScreen(primaryViewModel, snack = snack)
                         }
                     }
                 }

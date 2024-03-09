@@ -250,7 +250,7 @@ struct CrescendoScoutingFormView: View {
                                     if (RPMelody ?? false) { totalRP = totalRP + 1 }
                                     if (RPEnsemble ?? false) { totalRP = totalRP + 1 }
                                     if (FinalGameResultTie ?? false) { totalRP = totalRP + 1 }
-                                    if (FinalGameResultWin ?? false) { totalRP = totalRP + 1 }
+                                    if (FinalGameResultWin ?? false) { totalRP = totalRP + 2 }
                                     if (canSubmit) {
                                         env.dh.crescendo.upload(data: shared.CrescendoSubmission(auto: shared.CrescendoAuto(leave: AutoLeftAllianceArea!, ampNotes: Int32(AutoAmpNotes!), speakerNotes: Int32(AutoSpeakerNotes!)), comments: FinalComments, competition: competition!, defensive: RobotDefensive!, matchNumber: Int32(matchNumber!), penaltyPointsEarned: Int32(PenaltyPointsEarned!), ranking: shared.CrescendoRankingPoints(melody: RPMelody!, ensemble: RPEnsemble!), rankingPoints: Int32(totalRP), score: Int32(FinalScore!), stage: shared.CrescendoStage(state: EndgameParked!, harmony: Int32(EndgameHarmony!), trapNotes: Int32(EndgameTrapNotes!)), teamNumber: Int32(teamNumber!), teleop: shared.CrescendoTeleop(ampNotes: Int32(TeleopAmpNotes!), speakerUnamped: Int32(TeleopSpeakerNotes!), speakerAmped: Int32(TeleopSpeakerNotesAmplified!)), tied: FinalGameResultTie!, won: FinalGameResultWin!, brokeDown: RobotBrokeDown!)) { err in
                                             errorMessage = err.message

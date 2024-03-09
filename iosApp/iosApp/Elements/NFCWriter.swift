@@ -59,7 +59,7 @@ class NFCWriter: NSObject, ObservableObject, NFCNDEFReaderSessionDelegate {
                 case .readOnly:
                     session.invalidate(errorMessage: "Tag is read only")
                 case .readWrite:
-                    tag.writeNDEF(.init(records: [NFCNDEFPayload(format: .media, type: "application/emotion".data(using: .utf8)!, identifier: Data(), payload: "\(str)".data(using: .utf8)!), NFCNDEFPayload(format: .media, type: "application/emotion".data(using: .utf8)!, identifier: Data(), payload: "\(verifiedBy)".data(using: .utf8)!)]), completionHandler: {(error: Error?) in
+                    tag.writeNDEF(.init(records: [NFCNDEFPayload(format: .media, type: "application/nautilus".data(using: .utf8)!, identifier: Data(), payload: "\(str)".data(using: .utf8)!), NFCNDEFPayload(format: .media, type: "application/nautilus".data(using: .utf8)!, identifier: Data(), payload: "\(verifiedBy)".data(using: .utf8)!)]), completionHandler: {(error: Error?) in
                         if error != nil {
                             session.invalidate(errorMessage: "Failed to write message to tag")
                         } else {

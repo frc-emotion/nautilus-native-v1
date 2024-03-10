@@ -50,9 +50,11 @@ class MainViewModel(
         private set
 
     fun setOrg(org: Organization) {
-        sharedPref.edit().putString(SharedPrefKeys.URL, org.url).apply()
-        dataHandler.getNetworkClient().setRootURL(org.url)
-        organization = org
+//        if (org.url.isNotBlank()) {
+//            sharedPref.edit().putString(SharedPrefKeys.URL, org.url).apply()
+//            dataHandler.getNetworkClient().setRootURL(org.url)
+//            organization = org
+//        }
     }
 
     var theme by mutableStateOf(theme())

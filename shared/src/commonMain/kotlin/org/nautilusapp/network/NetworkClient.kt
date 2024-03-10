@@ -72,36 +72,39 @@ class NetworkClient(base: String) {
         this.client.close()
     }
 
-    val relativepaths = mapOf(
-        RouteKeys.SWAGGER to "/swagger/json",
-        RouteKeys.LOGIN to "/users/login",
-        RouteKeys.USERS to "/users",
-        RouteKeys.USERS_USER to "/users/{user}",
-        RouteKeys.REGISTER to "/users/register",
-        RouteKeys.MEETINGS to "/attendance/meetings",
-        RouteKeys.MEETINGS_CURRENT to "/attendance/meetings/current",
-        RouteKeys.MEETINGS_ALL to "/attendance/meetings/all",
-        RouteKeys.ATTEND to "/attendance/meetings/attend/{meetingId}",
-        RouteKeys.ME to "/users/me",
-        RouteKeys.MEETINGS_ARCHIVE to "/attendance/meetings/archive/{meetingId}",
-        RouteKeys.CRESCENDO to "/crescendo",
-        RouteKeys.CRESCENDO_MINE to "/crescendo/mine",
-        RouteKeys.SEASONS to "/seasons",
-        RouteKeys.MEETINGS_MEETING to "/attendance/meetings/{meetingId}",
-        RouteKeys.USERS_VERIFY to "/users/{user}/verify",
-        RouteKeys.ROLES to "/roles",
-        RouteKeys.USER_ROLES_REVOKE to "/users/{user}/roles/revoke",
-        RouteKeys.USER_ROLES_ASSIGN to "/users/{user}/roles/assign",
-    )
 
-    private val routes = relativepaths.mapValues {
-        "$rootURL${it.value}"
+    private enum class Routes(val relative: String) {
+        SWAGGER("/swagger/json"),
+        LOGIN("/users/login"),
+        USERS("/users"),
+        USERS_USER("/users/{user}"),
+        REGISTER("/users/register"),
+        MEETINGS("/attendance/meetings"),
+        MEETINGS_CURRENT("/attendance/meetings/current"),
+        MEETINGS_ALL("/attendance/meetings/all"),
+        ATTEND("/attendance/meetings/attend/{meetingId}"),
+        ME("/users/me"),
+        MEETINGS_ARCHIVE("/attendance/meetings/archive/{meetingId}"),
+        CRESCENDO("/crescendo"),
+        CRESCENDO_MINE("/crescendo/mine"),
+        SEASONS("/seasons"),
+        MEETINGS_MEETING("/attendance/meetings/{meetingId}"),
+        USERS_VERIFY("/users/{user}/verify"),
+        ROLES("/roles"),
+        USER_ROLES_REVOKE("/users/{user}/roles/revoke"),
+        USER_ROLES_ASSIGN("/users/{user}/roles/assign"),
     }
+
+    private val Routes.path: String
+        get() = rootURL + this.relative
+
+    val relativePaths = Routes.entries.map { it.relative }
+
 
     suspend fun getAppManifest(): Result<SwaggerManifest, KtorError> {
         return withContext(Dispatchers.IO) {
             try {
-                val res = client.get(routes[RouteKeys.SWAGGER]!!).body<SwaggerManifest>()
+                val res = client.get(Routes.SWAGGER.path).body<SwaggerManifest>()
                 Result.Success(res)
             } catch (e: ClientRequestException) {
                 e.printStackTrace()
@@ -124,7 +127,7 @@ class NetworkClient(base: String) {
             password: String
         ): Result<TokenUser, KtorError.NoAuthRequired> {
             return try {
-                val response = client.post(routes[RouteKeys.LOGIN]!!) {
+                val response = client.post(Routes.LOGIN.path) {
                     setBody(Login(username, password))
                 }.body<TokenUser>()
                 Result.Success(response)
@@ -148,7 +151,7 @@ class NetworkClient(base: String) {
             if (myUser == null) return Result.Error(KtorError.AUTH)
             return try {
                 val response =
-                    client.put(routes[RouteKeys.USERS_VERIFY]!!.replace("{user}", verifying)) {
+                    client.put(Routes.USERS_VERIFY.path.replace("{user}", verifying)) {
                         header(HttpHeaders.Authorization, "Bearer ${myUser.token}")
                     }.body<FullUser>()
                 Result.Success(response)
@@ -175,7 +178,7 @@ class NetworkClient(base: String) {
             grade: Int
         ): Result<TokenUser, KtorError.NoAuthRequired> {
             return try {
-                val response = client.post(routes[RouteKeys.REGISTER]!!) {
+                val response = client.post(Routes.REGISTER.path) {
                     setBody(
                         Register(
                             username = username,
@@ -217,7 +220,7 @@ class NetworkClient(base: String) {
             user: TokenUser
         ): Result<User.WithoutToken, KtorError> {
             if (user.isInvalid()) return Result.Error(KtorError.AUTH)
-            val route = routes[RouteKeys.USERS_USER]!!.replace("{user}", id)
+            val route = Routes.USERS_USER.path.replace("{user}", id)
             return try {
                 val responseText = client.get(route)
                 { header(HttpHeaders.Authorization, "Bearer ${user.token}") }
@@ -249,7 +252,7 @@ class NetworkClient(base: String) {
         override suspend fun getUsers(user: TokenUser): Result<List<User.WithoutToken>, KtorError> {
             if (user.isInvalid()) return Result.Error(KtorError.AUTH)
             return try {
-                val responseText = client.get(routes[RouteKeys.USERS]!!)
+                val responseText = client.get(Routes.USERS.path)
                 { header(HttpHeaders.Authorization, "Bearer ${user.token}") }
                     .bodyAsText()
 
@@ -280,7 +283,7 @@ class NetworkClient(base: String) {
         override suspend fun getMe(token: String?): Result<TokenUser, KtorError> {
             if (token == null) return Result.Error(KtorError.AUTH)
             return try {
-                val response = client.get(routes[RouteKeys.ME]!!) {
+                val response = client.get(Routes.ME.path) {
                     header(HttpHeaders.Authorization, "Bearer $token")
                 }.body<TokenUser>()
                 Result.Success(response)
@@ -301,7 +304,7 @@ class NetworkClient(base: String) {
         override suspend fun deleteMe(user: TokenUser): Result<Unit, KtorError> {
             if (user.isInvalid()) return Result.Error(KtorError.AUTH)
             return try {
-                client.delete(routes[RouteKeys.ME]!!) {
+                client.delete(Routes.ME.path) {
                     header(HttpHeaders.Authorization, "Bearer ${user.token}")
                     setBody(json.encodeToString(Unit))
                 }
@@ -331,7 +334,7 @@ class NetworkClient(base: String) {
         ): Result<Meeting, KtorError> {
             if (user.isInvalid()) return Result.Error(KtorError.AUTH)
             return try {
-                val res = client.post(routes[RouteKeys.MEETINGS]!!) {
+                val res = client.post(Routes.MEETINGS.path) {
                     header(HttpHeaders.Authorization, "Bearer ${user.token}")
                     setBody(
                         CreateMeeting(
@@ -362,9 +365,9 @@ class NetworkClient(base: String) {
         override suspend fun getMeetings(user: TokenUser): Result<List<Meeting>, KtorError> {
             if (user.isInvalid()) return Result.Error(KtorError.AUTH)
             val route =
-                if (user.isAdmin) routes[RouteKeys.MEETINGS_ALL] else routes[RouteKeys.MEETINGS_CURRENT] //routes.meetings/all for admin, routes.meetings/current for lead
+                if (user.isAdmin) Routes.MEETINGS_ALL.path else Routes.MEETINGS_CURRENT.path //routes.meetings/all for admin, routes.meetings/current for lead
             return try {
-                val res = client.get(route!!) {
+                val res = client.get(route) {
                     header(HttpHeaders.Authorization, "Bearer ${user.token}")
                 }.body<List<Meeting>>()
                 Result.Success(res)
@@ -391,7 +394,7 @@ class NetworkClient(base: String) {
             if (user.isInvalid()) return Result.Error(KtorError.AUTH)
             return try {
                 val response = client.post(
-                    routes[RouteKeys.ATTEND]!!.replace("{meetingId}", meetingId)
+                    Routes.ATTEND.path.replace("{meetingId}", meetingId)
                 ) {
                     setBody(Attend(tapTime, verifiedBy))
                     header(HttpHeaders.Authorization, "Bearer ${user.token}")
@@ -413,7 +416,7 @@ class NetworkClient(base: String) {
 
         override suspend fun deleteMeeting(id: String, user: TokenUser): Result<Unit, KtorError> {
             if (user.isInvalid()) return Result.Error(KtorError.AUTH)
-            val route = routes[RouteKeys.MEETINGS_MEETING]!!.replace("{meetingId}", id)
+            val route = Routes.MEETINGS_MEETING.path.replace("{meetingId}", id)
             return try {
                 client.delete(route) {
                     header(HttpHeaders.Authorization, "Bearer ${user.token}")
@@ -436,7 +439,7 @@ class NetworkClient(base: String) {
 
         override suspend fun archiveMeeting(id: String, user: TokenUser): Result<Unit, KtorError> {
             if (user.isInvalid()) return Result.Error(KtorError.AUTH)
-            val route = routes[RouteKeys.MEETINGS_ARCHIVE]!!.replace("{meetingId}", id)
+            val route = Routes.MEETINGS_ARCHIVE.path.replace("{meetingId}", id)
             return try {
                 client.put(route) {
                     header(HttpHeaders.Authorization, "Bearer ${user.token}")
@@ -463,7 +466,7 @@ class NetworkClient(base: String) {
         override suspend fun getCrescendos(user: TokenUser): Result<List<Crescendo>, KtorError> {
             if (user.isInvalid()) return Result.Error(KtorError.AUTH)
             return try {
-                val res = client.get(routes[RouteKeys.CRESCENDO]!!) {
+                val res = client.get(Routes.CRESCENDO.path) {
                     header(HttpHeaders.Authorization, "Bearer ${user.token}")
                 }.body<List<Crescendo>>()
                 Result.Success(res)
@@ -487,7 +490,7 @@ class NetworkClient(base: String) {
         ): Result<Crescendo, KtorError> {
             if (user.isInvalid()) return Result.Error(KtorError.AUTH)
             return try {
-                val res = client.post(routes[RouteKeys.CRESCENDO]!!) {
+                val res = client.post(Routes.CRESCENDO.path) {
                     header(HttpHeaders.Authorization, "Bearer ${user.token}")
                     contentType(ContentType.Application.Json)
                     setBody(json.encodeToString(data))
@@ -510,7 +513,7 @@ class NetworkClient(base: String) {
         override suspend fun getMyCrescendos(user: TokenUser): Result<List<Crescendo>, KtorError> {
             if (user.isInvalid()) return Result.Error(KtorError.AUTH)
             return try {
-                val res = client.get(routes[RouteKeys.CRESCENDO_MINE]!!) {
+                val res = client.get(Routes.CRESCENDO_MINE.path) {
                     header(HttpHeaders.Authorization, "Bearer ${user.token}")
                 }.body<List<Crescendo>>()
                 Result.Success(res)
@@ -534,7 +537,7 @@ class NetworkClient(base: String) {
         override suspend fun getRoles(user: TokenUser?): Result<List<UserRole>, KtorError> {
             if (user == null) return Result.Error(KtorError.AUTH)
             return try {
-                val result = client.get(routes[RouteKeys.ROLES]!!) {
+                val result = client.get(Routes.ROLES.path) {
                     header(HttpHeaders.Authorization, "Bearer ${user.token}")
                 }.body<List<UserRole>>()
                 Result.Success(result)
@@ -561,7 +564,7 @@ class NetworkClient(base: String) {
             return try {
                 val result =
                     client.put(
-                        routes[RouteKeys.USER_ROLES_ASSIGN]!!.replace(
+                        Routes.USER_ROLES_ASSIGN.path.replace(
                             "{user}",
                             assigningTo
                         )
@@ -593,7 +596,7 @@ class NetworkClient(base: String) {
             return try {
                 val result =
                     client.put(
-                        routes[RouteKeys.USER_ROLES_REVOKE]!!.replace(
+                        Routes.USER_ROLES_REVOKE.path.replace(
                             "{user}",
                             revokingFrom
                         )
@@ -620,7 +623,7 @@ class NetworkClient(base: String) {
 
     suspend fun getSeasons(): Result<List<Season>, KtorError.NoAuthRequired> {
         return try {
-            Result.Success(this.client.get(routes[RouteKeys.SEASONS]!!).body())
+            Result.Success(this.client.get(Routes.SEASONS.path).body())
         } catch (e: ClientRequestException) {
             e.printStackTrace()
             val serverResponse = ServerMessage.readMessage(e.response.bodyAsText()) ?: e.message
@@ -756,25 +759,3 @@ data class Attend(
     val tapTime: Long,
     val verifiedBy: String
 )
-
-private object RouteKeys {
-    const val SWAGGER = "swagger"
-    const val LOGIN = "login"
-    const val USERS = "users"
-    const val USERS_USER = "users.user"
-    const val REGISTER = "register"
-    const val MEETINGS = "meetings"
-    const val MEETINGS_CURRENT = "meetings.current"
-    const val MEETINGS_ALL = "meetings.all"
-    const val ATTEND = "attend"
-    const val ME = "me"
-    const val MEETINGS_ARCHIVE = "meetings.archive"
-    const val CRESCENDO = "crescendo"
-    const val CRESCENDO_MINE = "crescendo.mine"
-    const val SEASONS = "seasons"
-    const val MEETINGS_MEETING = "meetings.meeting"
-    const val USERS_VERIFY = "users.verify"
-    const val ROLES = "roles"
-    const val USER_ROLES_ASSIGN = "user.roles.assign"
-    const val USER_ROLES_REVOKE = "user.roles.revoke"
-}

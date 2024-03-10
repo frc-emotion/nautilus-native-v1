@@ -122,7 +122,7 @@ class DataHandler(
         return manifestCompat(
             compare = MANIFEST,
             manifest = manifest,
-            usedPaths = network.relativepaths.values.toList()
+            usedPaths = network.relativePaths
         )
     }
 

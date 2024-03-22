@@ -114,6 +114,36 @@ struct AttendanceView: View {
                         }
                     }
                 }
+                ToolbarItem(placement: .principal) {
+                    Menu {
+                        ForEach(Array(env.user!.attendanceKeys), id: \.self) { attendancePeriod in
+                            Button {
+                                env.updateSelectedAttendancePeriod(newPeriod: attendancePeriod)
+                            } label: {
+                                HStack {
+                                    Text(attendancePeriod.description)
+                                    Spacer()
+                                    if (attendancePeriod == env.selectedAttendancePeriod) {
+                                        Image(systemName: "checkmark")
+                                    }
+                                }
+                            }
+                        }
+                    } label: {
+                        VStack {
+                            Text("Attendance")
+                                .font(.headline)
+                            if (env.selectedAttendancePeriod != "") {
+                                Text(env.selectedAttendancePeriod)
+                                    .font(.subheadline)
+                            } else {
+                                Text("No Attendance Period Selected")
+                                    .font(.subheadline)
+                            }
+                        }
+                    }
+                    .tint(.primary)
+                }
             }
             .popover(isPresented: $historyPopoverDisplayed) {
                 AttendedMeetingsView(user: env.user!, isPresented: $historyPopoverDisplayed)

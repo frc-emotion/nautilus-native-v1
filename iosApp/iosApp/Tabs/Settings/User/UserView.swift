@@ -14,7 +14,7 @@ struct UserView: View {
     
     var body: some View {
         ScrollView {
-            ProfileView(user: user)
+            ProfileView(user: $user)
             .padding()
             Divider()
             VStack {

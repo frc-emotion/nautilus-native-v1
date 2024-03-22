@@ -1,16 +1,16 @@
 //
-//  ProfileView.swift
+//  DirectoryProfileView.swift
 //  E-Motion
 //
-//  Created by Jason Ballinger on 3/1/24.
+//  Created by Jason Ballinger on 3/21/24.
 //  Copyright © 2024 team2658. All rights reserved.
 //
 
 import SwiftUI
 import shared
 
-struct ProfileView: View {
-    @Binding var user: shared.User
+struct DirectoryProfileView: View {
+    @Binding var user: shared.PartialUser
     
     var body: some View {
         VStack {
@@ -52,5 +52,5 @@ struct ProfileView: View {
 }
 
 #Preview {
-    ProfileView(user: .constant(HelpfulVars().testuser))
+    DirectoryProfileView(user: .constant(HelpfulVars().testuser as shared.User as! shared.PartialUser))
 }

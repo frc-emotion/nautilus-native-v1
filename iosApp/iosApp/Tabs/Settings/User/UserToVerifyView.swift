@@ -19,7 +19,7 @@ struct UserToVerifyView: View {
     
     var body: some View {
         ScrollView {
-            ProfileView(user: user)
+            ProfileView(user: $user)
                 .padding()
             HStack {
                 Button(action: {

@@ -25,8 +25,8 @@ struct DirectoryView: View {
             var sortedUsers = users.sorted { $0.lastname.lowercased() < $1.lastname.lowercased() }
             sortedUsers.sort { $0.accountType.value > $1.accountType.value }
             sortedUsers.sort { $0.subteam?.description() ?? "" < $1.subteam?.description() ?? "" }
-            let converted: [PartialUser] = sortedUsers.map { user in
-                return PartialUser(_id: user._id, firstname: user.firstname, lastname: user.lastname, username: user.username, email: user.email, subteam: user.subteam, roles: user.roles, accountType: user.accountType, grade: user.grade, phone: user.phone)
+            let converted: [shared.PartialUser] = sortedUsers.map { user in
+                return PartialUser(_id: user._id, firstname: user.firstname, lastname: user.lastname, username: user.username, email: user.email, subteam: user.subteam, roles: user.roles, accountType: user.accountType, grade: user.grade, phone: user.phone) as shared.PartialUser
             }
             return Dictionary(grouping: converted, by: { $0.subteam?.description() ?? "" })
         } else {
@@ -84,8 +84,8 @@ struct DirectoryView: View {
             }
         } detail: {
             // not changing automatically on iPad
-            if (selectedUser != nil) {
-                UserView(user: selectedUser!)
+            if let selectedUser = selectedUser {
+                DirectoryUserView(user: .constant(selectedUser))
                     .navigationTitle("Profile")
                     .navigationBarTitleDisplayMode(.inline)
             } else {
@@ -107,7 +107,7 @@ struct DirectoryView: View {
                 users = res
             })
         }
-        .popover(isPresented: $verifyUsersPopoverShown) {
+        .sheet(isPresented: $verifyUsersPopoverShown) {
             VerifyUsersView(users: users, presented: $verifyUsersPopoverShown)
                 .environmentObject(env)
         }

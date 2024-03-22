@@ -10,7 +10,7 @@ import SwiftUI
 import shared
 
 struct DirectoryBar: View {
-    var user: shared.User
+    var user: shared.PartialUser
     
     var body: some View {
         if (user.accountType.value >= 2) {
@@ -29,6 +29,6 @@ struct DirectoryBar: View {
 
 struct DirectoryBar_Previews: PreviewProvider {
     static var previews: some View {
-        DirectoryBar(user: HelpfulVars().testuser)
+        DirectoryBar(user: HelpfulVars().testuser as shared.User as! shared.PartialUser)
     }
 }

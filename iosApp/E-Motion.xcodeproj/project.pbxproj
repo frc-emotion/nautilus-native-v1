@@ -59,6 +59,10 @@
 		9361EEA42B91341700C674B6 /* helpfulVars.swift in Sources */ = {isa = PBXBuildFile; fileRef = 93B615152AE715F900732A3F /* helpfulVars.swift */; };
 		93719C882AC0B35300E29446 /* CircularProgressView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 93719C872AC0B35300E29446 /* CircularProgressView.swift */; };
 		93790E392AA921690003203D /* AttendanceView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 93790E382AA921690003203D /* AttendanceView.swift */; };
+		9381895D2BAD527A00CDEAE5 /* DirectoryUserView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9381895C2BAD527A00CDEAE5 /* DirectoryUserView.swift */; };
+		9381895E2BAD527A00CDEAE5 /* DirectoryUserView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9381895C2BAD527A00CDEAE5 /* DirectoryUserView.swift */; };
+		938189602BAD573400CDEAE5 /* DirectoryProfileView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9381895F2BAD573400CDEAE5 /* DirectoryProfileView.swift */; };
+		938189612BAD573400CDEAE5 /* DirectoryProfileView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9381895F2BAD573400CDEAE5 /* DirectoryProfileView.swift */; };
 		93844FFB2ADB29E1003EE764 /* ChargedUpFormView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 93844FFA2ADB29E1003EE764 /* ChargedUpFormView.swift */; };
 		93B615502AEA163200732A3F /* NFCButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 93B6154F2AEA163200732A3F /* NFCButton.swift */; };
 		93B9EACB2A5E800700D5B8A8 /* HomeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 93B9EACA2A5E800700D5B8A8 /* HomeView.swift */; };
@@ -121,6 +125,8 @@
 		93719C872AC0B35300E29446 /* CircularProgressView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CircularProgressView.swift; sourceTree = "<group>"; };
 		93790E382AA921690003203D /* AttendanceView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AttendanceView.swift; sourceTree = "<group>"; };
 		93790E3C2AA92D800003203D /* Σ-Motion.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = "Σ-Motion.entitlements"; sourceTree = "<group>"; };
+		9381895C2BAD527A00CDEAE5 /* DirectoryUserView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DirectoryUserView.swift; sourceTree = "<group>"; };
+		9381895F2BAD573400CDEAE5 /* DirectoryProfileView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DirectoryProfileView.swift; sourceTree = "<group>"; };
 		93844FFA2ADB29E1003EE764 /* ChargedUpFormView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChargedUpFormView.swift; sourceTree = "<group>"; };
 		93B615152AE715F900732A3F /* helpfulVars.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = helpfulVars.swift; sourceTree = "<group>"; };
 		93B6154F2AEA163200732A3F /* NFCButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NFCButton.swift; sourceTree = "<group>"; };
@@ -359,6 +365,8 @@
 			isa = PBXGroup;
 			children = (
 				93B9EAC82A5E781D00D5B8A8 /* DirectoryBar.swift */,
+				9381895C2BAD527A00CDEAE5 /* DirectoryUserView.swift */,
+				9381895F2BAD573400CDEAE5 /* DirectoryProfileView.swift */,
 			);
 			path = Directory;
 			sourceTree = "<group>";
@@ -568,6 +576,7 @@
 				93418DE42A5E362600336A62 /* LoggedInUserView.swift in Sources */,
 				93719C882AC0B35300E29446 /* CircularProgressView.swift in Sources */,
 				93E3E25C2B92617B001D8299 /* ProfileView.swift in Sources */,
+				9381895D2BAD527A00CDEAE5 /* DirectoryUserView.swift in Sources */,
 				93418D9D2A5BC4D100336A62 /* ScoutingView.swift in Sources */,
 				93E3E2592B926165001D8299 /* UserView.swift in Sources */,
 				934E0AFC2B69D5B100515C44 /* EnvironmentModel.swift in Sources */,
@@ -581,6 +590,7 @@
 				2152FB042600AC8F00CF470E /* iOSApp.swift in Sources */,
 				933B33E32B93B627000E6C9A /* ScoutedTeamView.swift in Sources */,
 				9351D1F42B4F4D9500148E8D /* VerifyUsersView.swift in Sources */,
+				938189602BAD573400CDEAE5 /* DirectoryProfileView.swift in Sources */,
 				93E837482B8F1F0100DAB2E1 /* PlusLabelView.swift in Sources */,
 				9339CC5D2B4C7368000DA3FC /* AttendedMeetingsView.swift in Sources */,
 				93E837452B8F1DF200DAB2E1 /* ScoutingIncrementerView.swift in Sources */,
@@ -614,6 +624,7 @@
 				93E837492B8F1F0100DAB2E1 /* PlusLabelView.swift in Sources */,
 				9351D2102B53A12200148E8D /* DirectoryBar.swift in Sources */,
 				93E3E25D2B92617B001D8299 /* ProfileView.swift in Sources */,
+				9381895E2BAD527A00CDEAE5 /* DirectoryUserView.swift in Sources */,
 				934A04D72B54DA0D00B2D145 /* DateHelpers.swift in Sources */,
 				9351D2112B53A12200148E8D /* DirectoryView.swift in Sources */,
 				93E3E25A2B926165001D8299 /* UserView.swift in Sources */,
@@ -627,6 +638,7 @@
 				9351D2172B53A12200148E8D /* LoginView.swift in Sources */,
 				933B33E42B93B627000E6C9A /* ScoutedTeamView.swift in Sources */,
 				93E837532B8FB39100DAB2E1 /* ScoutingNumberInputView.swift in Sources */,
+				938189612BAD573400CDEAE5 /* DirectoryProfileView.swift in Sources */,
 				93E8373B2B8D52FE00DAB2E1 /* MeetingCreationView.swift in Sources */,
 				9351D2192B53A12200148E8D /* ScoutingFormView.swift in Sources */,
 				9351D21A2B53A12200148E8D /* iOSApp.swift in Sources */,

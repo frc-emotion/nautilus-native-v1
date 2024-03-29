@@ -64,8 +64,8 @@ struct ApplicationSwitcher: View {
 //                            .environmentObject(env)
 //                    }
                     
-                    if (env.user!.permissions.generalScouting) {
-                        CrescendoScoutingFormView()
+                    if (env.user!.permissions.generalScouting || env.user!.permissions.viewScoutingData /* || env.user!.permissions.pitScouting */ ) {
+                        ScoutingView()
                             .tabItem {
                                 Label("Scouting", systemImage: "chart.bar.doc.horizontal.fill")
                             }

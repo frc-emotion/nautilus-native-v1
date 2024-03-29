@@ -289,7 +289,7 @@ struct CrescendoScoutingFormView: View {
                             .buttonStyle(.borderedProminent)
                             .padding(.horizontal)
     //                        .disabled(!canSave)
-                            .disabled(!canSubmit)
+                            .disabled(!canSubmit || isBusy)
                         } else {
                             Button {
                                 

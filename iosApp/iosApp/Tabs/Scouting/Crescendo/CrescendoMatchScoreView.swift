@@ -51,7 +51,7 @@ extension shared.Crescendo {
 }
 
 struct CrescendoMatchScoreView: View {
-    var data: [shared.Crescendo]
+    @Binding var data: [shared.Crescendo]
     
     var body: some View {
         VStack {

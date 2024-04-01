@@ -15,31 +15,36 @@ enum MatchViewGraph {
     case teamPropAutoTeleop
 }
 
-enum AutoViewGraph {
-    case overall
-    case attemptProp
-}
-
-enum TeleopViewGraph {
-    case overall
-    case ampSpeakerProp
-}
+//enum AutoViewGraph {
+//    case overall
+//    case attemptProp
+//}
+//
+//enum TeleopViewGraph {
+//    case overall
+//    case ampSpeakerProp
+//}
 
 struct CrescendoTeamDataView: View {
     @State private var matchViewGraphSelection: MatchViewGraph = .overall
-    @State private var autoViewGraphSelection: AutoViewGraph = .overall
-    @State private var teleopViewGraphSelection: TeleopViewGraph = .overall
-    var data: [shared.Crescendo]
+//    @State private var autoViewGraphSelection: AutoViewGraph = .overall
+//    @State private var teleopViewGraphSelection: TeleopViewGraph = .overall
+    @State var data: [shared.Crescendo]
+    
+    private let graphFrameHeight: CGFloat = 300
+    
     var body: some View {
         List {
             Section("Match") {
                 switch matchViewGraphSelection {
                 case .overall:
-                    CrescendoMatchScoreView(data: data)
+                    CrescendoMatchScoreView(data: $data)
                         .padding(.vertical)
-                        .frame(minHeight: 300)
+                        .frame(minHeight: graphFrameHeight)
                 case .teamProp:
-                    HomeView()
+                    CrescendoTeamPropView(data: $data)
+                        .padding(.vertical)
+                        .frame(minHeight: graphFrameHeight)
                 case .teamPropAutoTeleop:
                     HomeView()
                 }
@@ -47,43 +52,43 @@ struct CrescendoTeamDataView: View {
                 Picker("Select Match Graph", selection: $matchViewGraphSelection) {
                     Text("Overall").tag(MatchViewGraph.overall)
                     Text("Team Proportion").tag(MatchViewGraph.teamProp)
-                    Text("Team Proportion (Auto / Teleop)").tag(MatchViewGraph.teamPropAutoTeleop)
+                    Text("Team Auto / Teleop").tag(MatchViewGraph.teamPropAutoTeleop)
                 }
                 .pickerStyle(.inline)
                 .labelsHidden()
             }
-            
-            Section("Autonomous") {
-                switch autoViewGraphSelection {
-                case .overall:
-                    HomeView()
-                case .attemptProp:
-                    HomeView()
-                }
-                
-                Picker("Select Autonomous Graph", selection: $autoViewGraphSelection) {
-                    Text("Overall").tag(AutoViewGraph.overall)
-                    Text("Successful Shots Proportion").tag(AutoViewGraph.attemptProp)
-                }
-                .pickerStyle(.inline)
-                .labelsHidden()
-            }
-            
-            Section("Teleop") {
-//                switch teleopViewGraphSelection {
+//            
+//            Section("Autonomous") {
+//                switch autoViewGraphSelection {
 //                case .overall:
 //                    HomeView()
 //                case .attemptProp:
 //                    HomeView()
 //                }
-                
-                Picker("Select Teleop Graph", selection: $teleopViewGraphSelection) {
-                    Text("Overall").tag(TeleopViewGraph.overall)
-                    Text("Amp / Speaker Proportion").tag(TeleopViewGraph.ampSpeakerProp)
-                }
-                .pickerStyle(.inline)
-                .labelsHidden()
-            }
+//                
+//                Picker("Select Autonomous Graph", selection: $autoViewGraphSelection) {
+//                    Text("Overall").tag(AutoViewGraph.overall)
+//                    Text("Successful Shots Proportion").tag(AutoViewGraph.attemptProp)
+//                }
+//                .pickerStyle(.inline)
+//                .labelsHidden()
+//            }
+//            
+//            Section("Teleop") {
+////                switch teleopViewGraphSelection {
+////                case .overall:
+////                    HomeView()
+////                case .attemptProp:
+////                    HomeView()
+////                }
+//                
+//                Picker("Select Teleop Graph", selection: $teleopViewGraphSelection) {
+//                    Text("Overall").tag(TeleopViewGraph.overall)
+//                    Text("Amp / Speaker Proportion").tag(TeleopViewGraph.ampSpeakerProp)
+//                }
+//                .pickerStyle(.inline)
+//                .labelsHidden()
+//            }
             
         }
         .navigationTitle("Scoring")
@@ -92,5 +97,5 @@ struct CrescendoTeamDataView: View {
 }
 
 #Preview {
-    CrescendoTeamDataView(data: [])
+    CrescendoTeamDataView(data: [HelpfulVars().testmatchwin])
 }

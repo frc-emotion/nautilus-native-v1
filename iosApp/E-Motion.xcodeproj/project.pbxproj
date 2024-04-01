@@ -62,7 +62,6 @@
 		9381895E2BAD527A00CDEAE5 /* DirectoryUserView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9381895C2BAD527A00CDEAE5 /* DirectoryUserView.swift */; };
 		938189602BAD573400CDEAE5 /* DirectoryProfileView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9381895F2BAD573400CDEAE5 /* DirectoryProfileView.swift */; };
 		938189612BAD573400CDEAE5 /* DirectoryProfileView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9381895F2BAD573400CDEAE5 /* DirectoryProfileView.swift */; };
-		938189672BAF7E9800CDEAE5 /* KeychainSwift in Frameworks */ = {isa = PBXBuildFile; productRef = 938189662BAF7E9800CDEAE5 /* KeychainSwift */; };
 		9381896A2BAF819900CDEAE5 /* TeamDataWinrate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 938189692BAF819900CDEAE5 /* TeamDataWinrate.swift */; };
 		9381896C2BAF844600CDEAE5 /* TeamWinrateDonut.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9381896B2BAF844600CDEAE5 /* TeamWinrateDonut.swift */; };
 		938189732BAF8A2A00CDEAE5 /* TeamDataRankingPointsOverview.swift in Sources */ = {isa = PBXBuildFile; fileRef = 938189722BAF8A2A00CDEAE5 /* TeamDataRankingPointsOverview.swift */; };
@@ -75,11 +74,13 @@
 		938189812BB54AA700CDEAE5 /* TeamDataWinrate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 938189692BAF819900CDEAE5 /* TeamDataWinrate.swift */; };
 		938189822BB54AA900CDEAE5 /* CrescendoMatchScorePreviewView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 938189742BB0015800CDEAE5 /* CrescendoMatchScorePreviewView.swift */; };
 		938189832BB54AAA00CDEAE5 /* TeamDataRankingPointsOverview.swift in Sources */ = {isa = PBXBuildFile; fileRef = 938189722BAF8A2A00CDEAE5 /* TeamDataRankingPointsOverview.swift */; };
-		938189852BB5EF3B00CDEAE5 /* CrescendoTeamScoreGraphsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 938189842BB5EF3B00CDEAE5 /* CrescendoTeamScoreGraphsView.swift */; };
 		9381898A2BB5F0B300CDEAE5 /* CrescendoMatchScoreView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 938189892BB5F0B300CDEAE5 /* CrescendoMatchScoreView.swift */; };
 		9381898E2BB63AC200CDEAE5 /* CrescendoTeamDataView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9381898D2BB63AC200CDEAE5 /* CrescendoTeamDataView.swift */; };
 		9381898F2BB63CA700CDEAE5 /* CrescendoTeamDataView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9381898D2BB63AC200CDEAE5 /* CrescendoTeamDataView.swift */; };
 		938189912BB63CAD00CDEAE5 /* CrescendoMatchScoreView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 938189892BB5F0B300CDEAE5 /* CrescendoMatchScoreView.swift */; };
+		938189992BBA933D00CDEAE5 /* KeychainSwift in Frameworks */ = {isa = PBXBuildFile; productRef = 938189982BBA933D00CDEAE5 /* KeychainSwift */; };
+		9381899B2BBAA0A000CDEAE5 /* CrescendoTeamPropView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9381899A2BBAA0A000CDEAE5 /* CrescendoTeamPropView.swift */; };
+		9381899C2BBAA0A000CDEAE5 /* CrescendoTeamPropView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9381899A2BBAA0A000CDEAE5 /* CrescendoTeamPropView.swift */; };
 		93844FFB2ADB29E1003EE764 /* ChargedUpFormView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 93844FFA2ADB29E1003EE764 /* ChargedUpFormView.swift */; };
 		93B615502AEA163200732A3F /* NFCButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 93B6154F2AEA163200732A3F /* NFCButton.swift */; };
 		93B9EACB2A5E800700D5B8A8 /* HomeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 93B9EACA2A5E800700D5B8A8 /* HomeView.swift */; };
@@ -150,9 +151,9 @@
 		938189742BB0015800CDEAE5 /* CrescendoMatchScorePreviewView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CrescendoMatchScorePreviewView.swift; sourceTree = "<group>"; };
 		9381897A2BB4F34000CDEAE5 /* ScoutedTeamMatchInfoView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScoutedTeamMatchInfoView.swift; sourceTree = "<group>"; };
 		9381897C2BB4F3A700CDEAE5 /* ScoutedTeamMatchInfoBarView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScoutedTeamMatchInfoBarView.swift; sourceTree = "<group>"; };
-		938189842BB5EF3B00CDEAE5 /* CrescendoTeamScoreGraphsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CrescendoTeamScoreGraphsView.swift; sourceTree = "<group>"; };
 		938189892BB5F0B300CDEAE5 /* CrescendoMatchScoreView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CrescendoMatchScoreView.swift; sourceTree = "<group>"; };
 		9381898D2BB63AC200CDEAE5 /* CrescendoTeamDataView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CrescendoTeamDataView.swift; sourceTree = "<group>"; };
+		9381899A2BBAA0A000CDEAE5 /* CrescendoTeamPropView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CrescendoTeamPropView.swift; sourceTree = "<group>"; };
 		93844FFA2ADB29E1003EE764 /* ChargedUpFormView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChargedUpFormView.swift; sourceTree = "<group>"; };
 		93B615152AE715F900732A3F /* helpfulVars.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = helpfulVars.swift; sourceTree = "<group>"; };
 		93B6154F2AEA163200732A3F /* NFCButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NFCButton.swift; sourceTree = "<group>"; };
@@ -181,7 +182,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				938189672BAF7E9800CDEAE5 /* KeychainSwift in Frameworks */,
+				938189992BBA933D00CDEAE5 /* KeychainSwift in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -370,6 +371,7 @@
 			isa = PBXGroup;
 			children = (
 				938189892BB5F0B300CDEAE5 /* CrescendoMatchScoreView.swift */,
+				9381899A2BBAA0A000CDEAE5 /* CrescendoTeamPropView.swift */,
 			);
 			name = Graphs;
 			path = ../../../../../Tabs/Scouting/Crescendo;
@@ -496,7 +498,6 @@
 				93418D9C2A5BC4D100336A62 /* ScoutingView.swift */,
 				933B33E22B93B627000E6C9A /* ScoutedTeamView.swift */,
 				933B33E52B93B642000E6C9A /* ScoutedMatchView.swift */,
-				938189842BB5EF3B00CDEAE5 /* CrescendoTeamScoreGraphsView.swift */,
 			);
 			path = Crescendo;
 			sourceTree = "<group>";
@@ -519,7 +520,7 @@
 			);
 			name = "E-Motion";
 			packageProductDependencies = (
-				938189662BAF7E9800CDEAE5 /* KeychainSwift */,
+				938189982BBA933D00CDEAE5 /* KeychainSwift */,
 			);
 			productName = iosApp;
 			productReference = 7555FF7B242A565900829871 /* E-Motion.app */;
@@ -573,7 +574,7 @@
 			);
 			mainGroup = 7555FF72242A565900829871;
 			packageReferences = (
-				938189652BAF7E9100CDEAE5 /* XCRemoteSwiftPackageReference "keychain-swift" */,
+				938189972BBA933D00CDEAE5 /* XCRemoteSwiftPackageReference "keychain-swift" */,
 			);
 			productRefGroup = 7555FF7C242A565900829871 /* Products */;
 			projectDirPath = "";
@@ -671,6 +672,7 @@
 				93418DE42A5E362600336A62 /* LoggedInUserView.swift in Sources */,
 				93719C882AC0B35300E29446 /* CircularProgressView.swift in Sources */,
 				93E3E25C2B92617B001D8299 /* ProfileView.swift in Sources */,
+				9381899B2BBAA0A000CDEAE5 /* CrescendoTeamPropView.swift in Sources */,
 				9381896C2BAF844600CDEAE5 /* TeamWinrateDonut.swift in Sources */,
 				9381895D2BAD527A00CDEAE5 /* DirectoryUserView.swift in Sources */,
 				93418D9D2A5BC4D100336A62 /* ScoutingView.swift in Sources */,
@@ -700,7 +702,6 @@
 				934F47272B413AF0009DA4FA /* AuthenticationView.swift in Sources */,
 				938189732BAF8A2A00CDEAE5 /* TeamDataRankingPointsOverview.swift in Sources */,
 				93E837522B8FB39100DAB2E1 /* ScoutingNumberInputView.swift in Sources */,
-				938189852BB5EF3B00CDEAE5 /* CrescendoTeamScoreGraphsView.swift in Sources */,
 				93E837352B8D48F800DAB2E1 /* DirectoryBar.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -728,6 +729,7 @@
 				93E837492B8F1F0100DAB2E1 /* PlusLabelView.swift in Sources */,
 				9351D2102B53A12200148E8D /* DirectoryBar.swift in Sources */,
 				93E3E25D2B92617B001D8299 /* ProfileView.swift in Sources */,
+				9381899C2BBAA0A000CDEAE5 /* CrescendoTeamPropView.swift in Sources */,
 				9381895E2BAD527A00CDEAE5 /* DirectoryUserView.swift in Sources */,
 				934A04D72B54DA0D00B2D145 /* DateHelpers.swift in Sources */,
 				9351D2112B53A12200148E8D /* DirectoryView.swift in Sources */,
@@ -1087,7 +1089,7 @@
 				minimumVersion = 20.0.0;
 			};
 		};
-		938189652BAF7E9100CDEAE5 /* XCRemoteSwiftPackageReference "keychain-swift" */ = {
+		938189972BBA933D00CDEAE5 /* XCRemoteSwiftPackageReference "keychain-swift" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/evgenyneu/keychain-swift.git";
 			requirement = {
@@ -1103,9 +1105,9 @@
 			package = 9351D2012B53A12200148E8D /* XCRemoteSwiftPackageReference "keychain-swift" */;
 			productName = KeychainSwift;
 		};
-		938189662BAF7E9800CDEAE5 /* KeychainSwift */ = {
+		938189982BBA933D00CDEAE5 /* KeychainSwift */ = {
 			isa = XCSwiftPackageProductDependency;
-			package = 938189652BAF7E9100CDEAE5 /* XCRemoteSwiftPackageReference "keychain-swift" */;
+			package = 938189972BBA933D00CDEAE5 /* XCRemoteSwiftPackageReference "keychain-swift" */;
 			productName = KeychainSwift;
 		};
 /* End XCSwiftPackageProductDependency section */

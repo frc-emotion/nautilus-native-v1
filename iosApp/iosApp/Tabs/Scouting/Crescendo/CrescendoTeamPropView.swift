@@ -23,9 +23,9 @@ struct CrescendoTeamPropView: View {
         VStack {
             Chart(TeamMatchData, id: \.matchNumber) { item in
                 BarMark(x: .value("Match Number", String(item.matchNumber)), y: .value("Score", item.score), stacking: .unstacked)
-                    .annotation {
-                        Text("\(item.score)").font(.caption)
-                    }
+//                    .annotation {
+//                        Text("\(item.score)").font(.caption)
+//                    }
                     .foregroundStyle(by: .value("Group", item.period))
                     
             }

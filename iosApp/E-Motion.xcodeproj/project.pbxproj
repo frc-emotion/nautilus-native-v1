@@ -23,6 +23,16 @@
 		93418DE42A5E362600336A62 /* LoggedInUserView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 93418DE32A5E362600336A62 /* LoggedInUserView.swift */; };
 		93418DE62A5E362D00336A62 /* UserBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = 93418DE52A5E362D00336A62 /* UserBar.swift */; };
 		934A04D72B54DA0D00B2D145 /* DateHelpers.swift in Sources */ = {isa = PBXBuildFile; fileRef = 934A04D52B54DA0D00B2D145 /* DateHelpers.swift */; };
+		934CDD2D2BBBE7F300C958A4 /* CrescendoTeamAutoTeleopView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 934CDD2C2BBBE7F300C958A4 /* CrescendoTeamAutoTeleopView.swift */; };
+		934CDD2E2BBBE7F300C958A4 /* CrescendoTeamAutoTeleopView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 934CDD2C2BBBE7F300C958A4 /* CrescendoTeamAutoTeleopView.swift */; };
+		934CDD342BBBEABE00C958A4 /* CrescendoAutoOverallView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 934CDD332BBBEABE00C958A4 /* CrescendoAutoOverallView.swift */; };
+		934CDD352BBBEABE00C958A4 /* CrescendoAutoOverallView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 934CDD332BBBEABE00C958A4 /* CrescendoAutoOverallView.swift */; };
+		934CDD382BBBEB9C00C958A4 /* CrescendoTeleopOverallView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 934CDD372BBBEB9C00C958A4 /* CrescendoTeleopOverallView.swift */; };
+		934CDD392BBBEB9C00C958A4 /* CrescendoTeleopOverallView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 934CDD372BBBEB9C00C958A4 /* CrescendoTeleopOverallView.swift */; };
+		934CDD3B2BBBEBE400C958A4 /* CrescendoTeleopBreakdownView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 934CDD3A2BBBEBE400C958A4 /* CrescendoTeleopBreakdownView.swift */; };
+		934CDD3C2BBBEBE400C958A4 /* CrescendoTeleopBreakdownView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 934CDD3A2BBBEBE400C958A4 /* CrescendoTeleopBreakdownView.swift */; };
+		934CDD3E2BBBEC5400C958A4 /* CreescendoExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 934CDD3D2BBBEC5400C958A4 /* CreescendoExtension.swift */; };
+		934CDD3F2BBBEC5400C958A4 /* CreescendoExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 934CDD3D2BBBEC5400C958A4 /* CreescendoExtension.swift */; };
 		934E0AFC2B69D5B100515C44 /* EnvironmentModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 934E0AFB2B69D5B100515C44 /* EnvironmentModel.swift */; };
 		934E0AFD2B69D5B100515C44 /* EnvironmentModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 934E0AFB2B69D5B100515C44 /* EnvironmentModel.swift */; };
 		934F47272B413AF0009DA4FA /* AuthenticationView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 934F47262B413AF0009DA4FA /* AuthenticationView.swift */; };
@@ -135,6 +145,11 @@
 		93418DE32A5E362600336A62 /* LoggedInUserView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoggedInUserView.swift; sourceTree = "<group>"; };
 		93418DE52A5E362D00336A62 /* UserBar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserBar.swift; sourceTree = "<group>"; };
 		934A04D52B54DA0D00B2D145 /* DateHelpers.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DateHelpers.swift; sourceTree = "<group>"; };
+		934CDD2C2BBBE7F300C958A4 /* CrescendoTeamAutoTeleopView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CrescendoTeamAutoTeleopView.swift; sourceTree = "<group>"; };
+		934CDD332BBBEABE00C958A4 /* CrescendoAutoOverallView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CrescendoAutoOverallView.swift; sourceTree = "<group>"; };
+		934CDD372BBBEB9C00C958A4 /* CrescendoTeleopOverallView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CrescendoTeleopOverallView.swift; sourceTree = "<group>"; };
+		934CDD3A2BBBEBE400C958A4 /* CrescendoTeleopBreakdownView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CrescendoTeleopBreakdownView.swift; sourceTree = "<group>"; };
+		934CDD3D2BBBEC5400C958A4 /* CreescendoExtension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CreescendoExtension.swift; sourceTree = "<group>"; };
 		934E0AFB2B69D5B100515C44 /* EnvironmentModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EnvironmentModel.swift; sourceTree = "<group>"; };
 		934F47262B413AF0009DA4FA /* AuthenticationView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthenticationView.swift; sourceTree = "<group>"; };
 		9351D1F32B4F4D9500148E8D /* VerifyUsersView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VerifyUsersView.swift; sourceTree = "<group>"; };
@@ -292,6 +307,33 @@
 			path = Authentication;
 			sourceTree = "<group>";
 		};
+		934CDD2F2BBBEA9B00C958A4 /* Match */ = {
+			isa = PBXGroup;
+			children = (
+				938189892BB5F0B300CDEAE5 /* CrescendoMatchScoreView.swift */,
+				9381899A2BBAA0A000CDEAE5 /* CrescendoTeamPropView.swift */,
+				934CDD2C2BBBE7F300C958A4 /* CrescendoTeamAutoTeleopView.swift */,
+			);
+			name = Match;
+			sourceTree = "<group>";
+		};
+		934CDD312BBBEAA600C958A4 /* Autonomous */ = {
+			isa = PBXGroup;
+			children = (
+				934CDD332BBBEABE00C958A4 /* CrescendoAutoOverallView.swift */,
+			);
+			name = Autonomous;
+			sourceTree = "<group>";
+		};
+		934CDD362BBBEB9300C958A4 /* Teleop */ = {
+			isa = PBXGroup;
+			children = (
+				934CDD372BBBEB9C00C958A4 /* CrescendoTeleopOverallView.swift */,
+				934CDD3A2BBBEBE400C958A4 /* CrescendoTeleopBreakdownView.swift */,
+			);
+			name = Teleop;
+			sourceTree = "<group>";
+		};
 		93719C842AC0B33200E29446 /* Elements */ = {
 			isa = PBXGroup;
 			children = (
@@ -355,6 +397,7 @@
 				938189742BB0015800CDEAE5 /* CrescendoMatchScorePreviewView.swift */,
 				938189862BB5F05500CDEAE5 /* Graphs */,
 				9381898D2BB63AC200CDEAE5 /* CrescendoTeamDataView.swift */,
+				934CDD3D2BBBEC5400C958A4 /* CreescendoExtension.swift */,
 			);
 			name = Crescendo;
 			sourceTree = "<group>";
@@ -370,8 +413,9 @@
 		938189862BB5F05500CDEAE5 /* Graphs */ = {
 			isa = PBXGroup;
 			children = (
-				938189892BB5F0B300CDEAE5 /* CrescendoMatchScoreView.swift */,
-				9381899A2BBAA0A000CDEAE5 /* CrescendoTeamPropView.swift */,
+				934CDD362BBBEB9300C958A4 /* Teleop */,
+				934CDD312BBBEAA600C958A4 /* Autonomous */,
+				934CDD2F2BBBEA9B00C958A4 /* Match */,
 			);
 			name = Graphs;
 			path = ../../../../../Tabs/Scouting/Crescendo;
@@ -666,11 +710,13 @@
 				93790E392AA921690003203D /* AttendanceView.swift in Sources */,
 				9381897B2BB4F34000CDEAE5 /* ScoutedTeamMatchInfoView.swift in Sources */,
 				93B9EACB2A5E800700D5B8A8 /* HomeView.swift in Sources */,
+				934CDD2D2BBBE7F300C958A4 /* CrescendoTeamAutoTeleopView.swift in Sources */,
 				93E8373C2B8DC7F500DAB2E1 /* DateHelpers.swift in Sources */,
 				93418DE62A5E362D00336A62 /* UserBar.swift in Sources */,
 				93E8374B2B8F1F5200DAB2E1 /* MinusLabelView.swift in Sources */,
 				93418DE42A5E362600336A62 /* LoggedInUserView.swift in Sources */,
 				93719C882AC0B35300E29446 /* CircularProgressView.swift in Sources */,
+				934CDD382BBBEB9C00C958A4 /* CrescendoTeleopOverallView.swift in Sources */,
 				93E3E25C2B92617B001D8299 /* ProfileView.swift in Sources */,
 				9381899B2BBAA0A000CDEAE5 /* CrescendoTeamPropView.swift in Sources */,
 				9381896C2BAF844600CDEAE5 /* TeamWinrateDonut.swift in Sources */,
@@ -691,11 +737,14 @@
 				933B33E32B93B627000E6C9A /* ScoutedTeamView.swift in Sources */,
 				9351D1F42B4F4D9500148E8D /* VerifyUsersView.swift in Sources */,
 				938189602BAD573400CDEAE5 /* DirectoryProfileView.swift in Sources */,
+				934CDD3E2BBBEC5400C958A4 /* CreescendoExtension.swift in Sources */,
 				93E837482B8F1F0100DAB2E1 /* PlusLabelView.swift in Sources */,
+				934CDD342BBBEABE00C958A4 /* CrescendoAutoOverallView.swift in Sources */,
 				9339CC5D2B4C7368000DA3FC /* AttendedMeetingsView.swift in Sources */,
 				93E837452B8F1DF200DAB2E1 /* ScoutingIncrementerView.swift in Sources */,
 				93E8374E2B8F30F300DAB2E1 /* BooleanSegmentedPickerView.swift in Sources */,
 				9381897D2BB4F3A700CDEAE5 /* ScoutedTeamMatchInfoBarView.swift in Sources */,
+				934CDD3B2BBBEBE400C958A4 /* CrescendoTeleopBreakdownView.swift in Sources */,
 				9339CC542B4B5DAB000DA3FC /* MeetingsListView.swift in Sources */,
 				9381898E2BB63AC200CDEAE5 /* CrescendoTeamDataView.swift in Sources */,
 				9339CC502B4B526D000DA3FC /* NFCWriter.swift in Sources */,
@@ -723,11 +772,13 @@
 				9351D2092B53A12200148E8D /* HomeView.swift in Sources */,
 				9351D20A2B53A12200148E8D /* helpfulVars.swift in Sources */,
 				9351D20D2B53A12200148E8D /* UserBar.swift in Sources */,
+				934CDD2E2BBBE7F300C958A4 /* CrescendoTeamAutoTeleopView.swift in Sources */,
 				93E8373F2B8DCAB700DAB2E1 /* Constants.swift in Sources */,
 				9351D20E2B53A12200148E8D /* LoggedInUserView.swift in Sources */,
 				93E837432B8F072100DAB2E1 /* CrescendoScoutingFormView.swift in Sources */,
 				93E837492B8F1F0100DAB2E1 /* PlusLabelView.swift in Sources */,
 				9351D2102B53A12200148E8D /* DirectoryBar.swift in Sources */,
+				934CDD392BBBEB9C00C958A4 /* CrescendoTeleopOverallView.swift in Sources */,
 				93E3E25D2B92617B001D8299 /* ProfileView.swift in Sources */,
 				9381899C2BBAA0A000CDEAE5 /* CrescendoTeamPropView.swift in Sources */,
 				9381895E2BAD527A00CDEAE5 /* DirectoryUserView.swift in Sources */,
@@ -748,11 +799,14 @@
 				938189912BB63CAD00CDEAE5 /* CrescendoMatchScoreView.swift in Sources */,
 				93E837532B8FB39100DAB2E1 /* ScoutingNumberInputView.swift in Sources */,
 				938189612BAD573400CDEAE5 /* DirectoryProfileView.swift in Sources */,
+				934CDD3F2BBBEC5400C958A4 /* CreescendoExtension.swift in Sources */,
 				93E8373B2B8D52FE00DAB2E1 /* MeetingCreationView.swift in Sources */,
+				934CDD352BBBEABE00C958A4 /* CrescendoAutoOverallView.swift in Sources */,
 				9351D2192B53A12200148E8D /* ScoutingFormView.swift in Sources */,
 				9351D21A2B53A12200148E8D /* iOSApp.swift in Sources */,
 				9351D21C2B53A12200148E8D /* VerifyUsersView.swift in Sources */,
 				9381898F2BB63CA700CDEAE5 /* CrescendoTeamDataView.swift in Sources */,
+				934CDD3C2BBBEBE400C958A4 /* CrescendoTeleopBreakdownView.swift in Sources */,
 				9351D21D2B53A12200148E8D /* AttendedMeetingsView.swift in Sources */,
 				9351D21E2B53A12200148E8D /* MeetingsListView.swift in Sources */,
 				9351D21F2B53A12200148E8D /* NFCWriter.swift in Sources */,

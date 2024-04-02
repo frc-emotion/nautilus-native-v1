@@ -264,11 +264,9 @@ struct CrescendoScoutingFormView: View {
                                                 return
                                             }
                                             clearForm()
-                                            isBusy = false
                                             dismiss()
+                                            isBusy = false
                                         }
-                                    } else {
-                                        
                                     }
                                     isBusy = false
                             } label: {

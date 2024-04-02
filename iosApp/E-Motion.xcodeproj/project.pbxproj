@@ -33,6 +33,8 @@
 		934CDD3C2BBBEBE400C958A4 /* CrescendoTeleopBreakdownView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 934CDD3A2BBBEBE400C958A4 /* CrescendoTeleopBreakdownView.swift */; };
 		934CDD3E2BBBEC5400C958A4 /* CreescendoExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 934CDD3D2BBBEC5400C958A4 /* CreescendoExtension.swift */; };
 		934CDD3F2BBBEC5400C958A4 /* CreescendoExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 934CDD3D2BBBEC5400C958A4 /* CreescendoExtension.swift */; };
+		934CDD412BBBF0A100C958A4 /* CrescendoAutoBreakdownView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 934CDD402BBBF0A100C958A4 /* CrescendoAutoBreakdownView.swift */; };
+		934CDD422BBBF0A100C958A4 /* CrescendoAutoBreakdownView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 934CDD402BBBF0A100C958A4 /* CrescendoAutoBreakdownView.swift */; };
 		934E0AFC2B69D5B100515C44 /* EnvironmentModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 934E0AFB2B69D5B100515C44 /* EnvironmentModel.swift */; };
 		934E0AFD2B69D5B100515C44 /* EnvironmentModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 934E0AFB2B69D5B100515C44 /* EnvironmentModel.swift */; };
 		934F47272B413AF0009DA4FA /* AuthenticationView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 934F47262B413AF0009DA4FA /* AuthenticationView.swift */; };
@@ -150,6 +152,7 @@
 		934CDD372BBBEB9C00C958A4 /* CrescendoTeleopOverallView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CrescendoTeleopOverallView.swift; sourceTree = "<group>"; };
 		934CDD3A2BBBEBE400C958A4 /* CrescendoTeleopBreakdownView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CrescendoTeleopBreakdownView.swift; sourceTree = "<group>"; };
 		934CDD3D2BBBEC5400C958A4 /* CreescendoExtension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CreescendoExtension.swift; sourceTree = "<group>"; };
+		934CDD402BBBF0A100C958A4 /* CrescendoAutoBreakdownView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CrescendoAutoBreakdownView.swift; sourceTree = "<group>"; };
 		934E0AFB2B69D5B100515C44 /* EnvironmentModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EnvironmentModel.swift; sourceTree = "<group>"; };
 		934F47262B413AF0009DA4FA /* AuthenticationView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthenticationView.swift; sourceTree = "<group>"; };
 		9351D1F32B4F4D9500148E8D /* VerifyUsersView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VerifyUsersView.swift; sourceTree = "<group>"; };
@@ -321,6 +324,7 @@
 			isa = PBXGroup;
 			children = (
 				934CDD332BBBEABE00C958A4 /* CrescendoAutoOverallView.swift */,
+				934CDD402BBBF0A100C958A4 /* CrescendoAutoBreakdownView.swift */,
 			);
 			name = Autonomous;
 			sourceTree = "<group>";
@@ -741,6 +745,7 @@
 				93E837482B8F1F0100DAB2E1 /* PlusLabelView.swift in Sources */,
 				934CDD342BBBEABE00C958A4 /* CrescendoAutoOverallView.swift in Sources */,
 				9339CC5D2B4C7368000DA3FC /* AttendedMeetingsView.swift in Sources */,
+				934CDD412BBBF0A100C958A4 /* CrescendoAutoBreakdownView.swift in Sources */,
 				93E837452B8F1DF200DAB2E1 /* ScoutingIncrementerView.swift in Sources */,
 				93E8374E2B8F30F300DAB2E1 /* BooleanSegmentedPickerView.swift in Sources */,
 				9381897D2BB4F3A700CDEAE5 /* ScoutedTeamMatchInfoBarView.swift in Sources */,
@@ -803,6 +808,7 @@
 				93E8373B2B8D52FE00DAB2E1 /* MeetingCreationView.swift in Sources */,
 				934CDD352BBBEABE00C958A4 /* CrescendoAutoOverallView.swift in Sources */,
 				9351D2192B53A12200148E8D /* ScoutingFormView.swift in Sources */,
+				934CDD422BBBF0A100C958A4 /* CrescendoAutoBreakdownView.swift in Sources */,
 				9351D21A2B53A12200148E8D /* iOSApp.swift in Sources */,
 				9351D21C2B53A12200148E8D /* VerifyUsersView.swift in Sources */,
 				9381898F2BB63CA700CDEAE5 /* CrescendoTeamDataView.swift in Sources */,

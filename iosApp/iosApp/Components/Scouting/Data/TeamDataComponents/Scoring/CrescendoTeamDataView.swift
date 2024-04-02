@@ -17,6 +17,7 @@ enum MatchViewGraph {
 
 enum AutoViewGraph {
     case overall
+    case breakdown
 //    case attemptProp
 }
 
@@ -25,16 +26,16 @@ enum TeleopViewGraph {
     case breakdown
 }
 
-enum EndgameViewGraph {
-    case overall
-    case breakdown
-}
+//enum EndgameViewGraph {
+//    case overall
+//    case breakdown
+//}
 
 struct CrescendoTeamDataView: View {
     @State private var matchViewGraphSelection: MatchViewGraph = .overall
     @State private var autoViewGraphSelection: AutoViewGraph = .overall
     @State private var teleopViewGraphSelection: TeleopViewGraph = .overall
-    @State private var endgameViewGraphSelection: EndgameViewGraph = .overall
+//    @State private var endgameViewGraphSelection: EndgameViewGraph = .overall
     @State var data: [shared.Crescendo]
     
     private let graphFrameHeight: CGFloat = 250
@@ -71,13 +72,16 @@ struct CrescendoTeamDataView: View {
                 case .overall:
                     CrescendoAutoOverallView(data: $data)
                         .padding(.vertical)
-                        .frame(minHeight: graphFrameHeight / 2)
+                        .frame(minHeight: graphFrameHeight)
+                case .breakdown:
+                    CrescendoAutoBreakdownView(data: $data)
+                        .padding(.vertical)
+                        .frame(minHeight: graphFrameHeight)
                 }
                 
                 Picker("Select Autonomous Graph", selection: $autoViewGraphSelection) {
                     Text("Overall").tag(AutoViewGraph.overall)
-//                    for later:
-//                    Text("Successful Shots Proportion").tag(AutoViewGraph.attemptProp)
+                    Text("Autonomous Score Breakdown").tag(AutoViewGraph.breakdown)
                 }
                 .pickerStyle(.inline)
                 .labelsHidden()
@@ -97,7 +101,7 @@ struct CrescendoTeamDataView: View {
                 
                 Picker("Select Teleop Graph", selection: $teleopViewGraphSelection) {
                     Text("Overall").tag(TeleopViewGraph.overall)
-                    Text("Amp / Speaker Proportion").tag(TeleopViewGraph.breakdown)
+                    Text("Teleop Score Breakdown").tag(TeleopViewGraph.breakdown)
                 }
                 .pickerStyle(.inline)
                 .labelsHidden()

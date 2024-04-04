@@ -26,6 +26,7 @@ import kotlinx.serialization.json.Json
 import org.nautilusapp.nautilus.Result
 import org.nautilusapp.nautilus.attendance.Meeting
 import org.nautilusapp.nautilus.roles.UserRole
+import org.nautilusapp.nautilus.scouting.pit.Inpit
 import org.nautilusapp.nautilus.scouting.scoutingdata.Crescendo
 import org.nautilusapp.nautilus.scouting.scoutingdata.CrescendoSubmission
 import org.nautilusapp.nautilus.userauth.FullUser
@@ -94,6 +95,8 @@ class NetworkClient(base: String) {
         ROLES("/roles"),
         USER_ROLES_REVOKE("/users/{user}/roles/revoke"),
         USER_ROLES_ASSIGN("/users/{user}/roles/assign"),
+        INPIT("/inpit"),
+        INPIT_TEAM("/inpit/{team}")
     }
 
     private val Routes.path: String
@@ -661,6 +664,76 @@ class NetworkClient(base: String) {
         }
     }
 
+    val inpit = object : InpitNamespace {
+        override suspend fun get(user: TokenUser): Result<List<Inpit>, KtorError> {
+            return try {
+                val res = client.get(Routes.INPIT.path) {
+                    header(HttpHeaders.Authorization, "Bearer ${user.token}")
+                }.body<List<Inpit>>()
+                Result.Success(res)
+            } catch (e: ClientRequestException) {
+                e.printStackTrace()
+                val serverResponse = ServerMessage.readMessage(e.response.bodyAsText()) ?: e.message
+                Result.Error(KtorError.CLIENT(serverResponse, e.response.status.value))
+            } catch (e: ServerResponseException) {
+                e.printStackTrace()
+                val serverResponse = ServerMessage.readMessage(e.response.bodyAsText()) ?: e.message
+                Result.Error(KtorError.SERVER(serverResponse, e.response.status.value))
+            } catch (e: Exception) {
+                e.printStackTrace()
+                Result.Error(KtorError.IO)
+            }
+        }
+
+        override suspend fun post(
+            user: TokenUser,
+            data: Map<String, String>,
+            unset: List<String>,
+            teamNumber: Int
+        ): Result<Inpit, KtorError> {
+            return try {
+                val res =
+                    client.post(Routes.INPIT.path) {
+                        header(HttpHeaders.Authorization, "Bearer ${user.token}")
+                        setBody(mapOf("data" to data, "unset" to unset, "teamNumber" to teamNumber))
+                    }.body<Inpit>()
+                Result.Success(res)
+            } catch (e: ClientRequestException) {
+                e.printStackTrace()
+                val serverResponse = ServerMessage.readMessage(e.response.bodyAsText()) ?: e.message
+                Result.Error(KtorError.CLIENT(serverResponse, e.response.status.value))
+            } catch (e: ServerResponseException) {
+                e.printStackTrace()
+                val serverResponse = ServerMessage.readMessage(e.response.bodyAsText()) ?: e.message
+                Result.Error(KtorError.SERVER(serverResponse, e.response.status.value))
+            } catch (e: Exception) {
+                e.printStackTrace()
+                Result.Error(KtorError.IO)
+            }
+        }
+
+        override suspend fun delete(user: TokenUser, team: Int): Result<Unit, KtorError> {
+            return try {
+                client.delete(Routes.INPIT_TEAM.path.replace("{team}", team.toString())) {
+                    header(HttpHeaders.Authorization, "Bearer ${user.token}")
+                }
+                Result.Success(Unit)
+            } catch (e: ClientRequestException) {
+                e.printStackTrace()
+                val serverResponse = ServerMessage.readMessage(e.response.bodyAsText()) ?: e.message
+                Result.Error(KtorError.CLIENT(serverResponse, e.response.status.value))
+            } catch (e: ServerResponseException) {
+                e.printStackTrace()
+                val serverResponse = ServerMessage.readMessage(e.response.bodyAsText()) ?: e.message
+                Result.Error(KtorError.SERVER(serverResponse, e.response.status.value))
+            } catch (e: Exception) {
+                println(e)
+                Result.Error(KtorError.IO)
+            }
+        }
+
+    }
+
     interface UsersNamespace {
         suspend fun login(
             username: String,
@@ -740,6 +813,19 @@ class NetworkClient(base: String) {
             revokingFrom: String,
             roleIds: List<String>
         ): Result<FullUser, KtorError>
+    }
+
+    interface InpitNamespace {
+        suspend fun get(user: TokenUser): Result<List<Inpit>, KtorError>
+
+        suspend fun post(
+            user: TokenUser,
+            data: Map<String, String>,
+            unset: List<String>,
+            teamNumber: Int
+        ): Result<Inpit, KtorError>
+
+        suspend fun delete(user: TokenUser, team: Int): Result<Unit, KtorError>
     }
 
 }

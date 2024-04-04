@@ -25,6 +25,7 @@ import org.nautilusapp.localstorage.UsersDB
 import org.nautilusapp.localstorage.uploadcache.Crescendo_upload_table
 import org.nautilusapp.nautilus.attendance.Meeting
 import org.nautilusapp.nautilus.roles.UserRole
+import org.nautilusapp.nautilus.scouting.pit.Inpit
 import org.nautilusapp.nautilus.scouting.scoutingdata.Crescendo
 import org.nautilusapp.nautilus.scouting.scoutingdata.CrescendoSubmission
 import org.nautilusapp.nautilus.userauth.FullUser
@@ -892,11 +893,108 @@ class DataHandler(
         )
     }
 
+    val inpit = object : InpitNamespace {
+        override suspend fun post(
+            team: Int,
+            data: Map<String, String>,
+            unset: List<String>
+        ): DataResult<Inpit> {
+            return withContext(Dispatchers.IO) {
+                network.inpit.post(
+                    user = user() ?: return@withContext Result.Error(
+                        Error(
+                            "Authentication error: Your login session is invalid. Please log out and log back in.",
+                            401
+                        )
+                    ),
+                    teamNumber = team,
+                    data = data,
+                    unset = unset
+                ).let {
+                    when (it) {
+                        is Result.Success -> it
+                        is Result.Error -> mapError(it.error)
+                    }
+                }
+            }
+        }
+
+        override suspend fun get(): DataResult<List<Inpit>> {
+            return withContext(Dispatchers.IO) {
+                network.inpit.get(
+                    user() ?: return@withContext Result.Error(
+                        Error(
+                            "Authentication error: Your login session is invalid. Please log out and log back in.",
+                            401
+                        )
+                    )
+                ).let {
+                    when (it) {
+                        is Result.Success -> it
+                        is Result.Error -> mapError(it.error)
+                    }
+                }
+            }
+        }
+
+        override suspend fun delete(team: Int): DataResult<Unit> {
+            return withContext(Dispatchers.IO) {
+                network.inpit.delete(
+                    user() ?: return@withContext Result.Error(
+                        Error(
+                            "Authentication error: Your login session is invalid. Please log out and log back in.",
+                            401
+                        )
+                    ),
+                    team
+                ).let {
+                    when (it) {
+                        is Result.Success -> it
+                        is Result.Error -> mapError(it.error)
+                    }
+                }
+            }
+        }
+
+    }
+
     fun getNetworkClient() = network
 
     //interfaces are required for methods of namespace objects to be accessible,
     //   without making them implement an interface you just get an error that those methods
     //   don't exist on the type of the object
+
+    interface InpitNamespace {
+        suspend fun post(
+            team: Int,
+            data: Map<String, String>,
+            unset: List<String>
+        ): DataResult<Inpit>
+
+        suspend fun post(
+            team: Int,
+            data: Map<String, String>,
+            unset: List<String>,
+            onError: (Error) -> Unit
+        ): Inpit? {
+            return this.post(team, data, unset).unwrap(onError)
+        }
+
+        suspend fun get(): DataResult<List<Inpit>>
+
+        suspend fun get(onError: (Error) -> Unit): List<Inpit>? {
+            return this.get().unwrap(onError)
+        }
+
+        suspend fun delete(team: Int): DataResult<Unit>
+
+        suspend fun delete(team: Int, onError: (Error) -> Unit) {
+            this.delete(team).let {
+                if (it is Result.Error) onError(it.error)
+            }
+        }
+    }
+
     interface UserNamspace {
         suspend fun login(username: String, password: String): DataResult<TokenUser>
 
@@ -1342,6 +1440,16 @@ fun DataResult<TokenUser>.unwrap(onError: (Error) -> Unit): TokenUser? {
 }
 
 fun DataResult<Meeting>.unwrap(onError: (Error) -> Unit): Meeting? {
+    return when (this) {
+        is Result.Success -> this.data
+        is Result.Error -> {
+            onError(this.error)
+            null
+        }
+    }
+}
+
+fun <T> DataResult<T>.unwrap(onError: (Error) -> Unit): T? {
     return when (this) {
         is Result.Success -> this.data
         is Result.Error -> {

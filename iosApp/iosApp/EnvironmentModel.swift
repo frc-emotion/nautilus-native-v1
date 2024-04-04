@@ -26,6 +26,8 @@ class EnvironmentModel: ObservableObject {
     @Published var selectedScoutingPeriod = ""
     @Published var selectedScoutingCompetition = ""
     
+    private let defaults = UserDefaults()
+    
     init() {
         dh = shared.DataHandler(routeBase: "https://api.team2658.org", databaseDriverFactory: IosDatabaseDriver()) {
             return KeychainSwift().get("userToken")
@@ -56,9 +58,13 @@ class EnvironmentModel: ObservableObject {
 //        }
         
         if (user != nil) {
-            let attendanceKeys = Array(user!.attendance.keys)
-            if attendanceKeys.first != nil {
-                selectedAttendancePeriod = attendanceKeys.first!
+            if (defaults.value(forKey: "selectedAttendancePeriod") != nil) {
+                selectedAttendancePeriod = defaults.string(forKey: "selectedAttendancePeriod")!
+            } else {
+                let attendanceKeys = Array(user!.attendance.keys)
+                if attendanceKeys.first != nil {
+                    selectedAttendancePeriod = attendanceKeys.first!
+                }
             }
         }
     }
@@ -75,6 +81,7 @@ class EnvironmentModel: ObservableObject {
     
     func updateSelectedAttendancePeriod(newPeriod: String) {
         selectedAttendancePeriod = newPeriod
+        defaults.setValue(newPeriod, forKey: "selectedAttendancePeriod")
     }
     
 //    func updateSelectedScoutingPeriod(newPeriod: String) {

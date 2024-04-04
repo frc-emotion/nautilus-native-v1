@@ -10,7 +10,7 @@ import SwiftUI
 import shared
 
 struct AllianceRPView: View {
-    var alliance: [shared.Crescendo]
+    @Binding var alliance: [shared.Crescendo]
     
     var body: some View {
         HStack {
@@ -50,5 +50,5 @@ struct AllianceRPView: View {
 }
 
 #Preview {
-    AllianceRPView(alliance: [HelpfulVars().testmatchwin])
+    AllianceRPView(alliance: .constant([HelpfulVars().testmatchwin]))
 }

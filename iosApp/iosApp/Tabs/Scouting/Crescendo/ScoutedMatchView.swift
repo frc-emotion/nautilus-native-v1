@@ -66,11 +66,11 @@ struct ScoutedMatchView: View {
             
             // winning alliance stats
             Section("Winning Alliance") {
-                AllianceRPView(alliance: winningAlliance)
+                AllianceDataView(alliance: winningAlliance)
             }
             // losing alliance stats
             Section("Losing Alliance") {
-                AllianceRPView(alliance: losingAlliance)
+                AllianceDataView(alliance: losingAlliance)
             }
         }
         .navigationTitle("Match \(match)")

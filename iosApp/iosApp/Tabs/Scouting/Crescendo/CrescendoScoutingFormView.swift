@@ -264,11 +264,9 @@ struct CrescendoScoutingFormView: View {
                                                 return
                                             }
                                             clearForm()
-                                            isBusy = false
                                             dismiss()
+                                            isBusy = false
                                         }
-                                    } else {
-                                        
                                     }
                                     isBusy = false
                             } label: {
@@ -289,7 +287,7 @@ struct CrescendoScoutingFormView: View {
                             .buttonStyle(.borderedProminent)
                             .padding(.horizontal)
     //                        .disabled(!canSave)
-                            .disabled(!canSubmit)
+                            .disabled(!canSubmit || isBusy)
                         } else {
                             Button {
                                 

@@ -13,7 +13,8 @@ struct MeetingView: View {
     @State var user: shared.User
     @State var meeting: shared.Meeting
     @State var writer = NFCWriter()
-//    @State private var creatorName = ""
+    @State private var creatorName = ""
+    @EnvironmentObject var env: EnvironmentModel
     
     var body: some View {
         VStack {
@@ -34,7 +35,7 @@ struct MeetingView: View {
                 HStack {
                     Text("\(meeting.value) Credits")
                     Spacer()
-//                    Text("Created by \(creatorName)")
+                    Text("Created by \(creatorName)")
                 }
             }
             if (UIDevice.current.systemName == "iOS") {
@@ -62,16 +63,16 @@ struct MeetingView: View {
         .padding(.horizontal)
         .padding(.top)
         // none of this is implemented on DataHandler, wait for nova
-//        .onAppear() {
-//            Task {
-////                guard let response = try await shared.EmotionClient().getUserById(id: meeting.createdBy, user: user) else {
-////                    creatorName = "Unknown"
-////                    return
-////                }
-////                creatorName = "\(response.firstName) \(response.lastName)"
-//                
-//            }
-//        }
+        .onAppear() {
+            Task {
+                let user = env.dh.users.getOne(user: meeting.createdBy)
+                if (user != nil) {
+                    creatorName = "\(user!.firstname) \(user!.lastname)"
+                } else {
+                    creatorName = "Unknown"
+                }
+            }
+        }
     }
 }
 

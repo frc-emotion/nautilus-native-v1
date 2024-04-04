@@ -37,6 +37,7 @@ struct MeetingsListView: View {
                         ForEach(meetings!.reversed(), id: \.self) { meeting in
                             NavigationLink {
                                 MeetingView(user: env.user!, meeting: meeting)
+                                    .environmentObject(env)
                             } label: {
                                 MeetingBar(meeting: meeting)
                                     .swipeActions(edge: .trailing) {

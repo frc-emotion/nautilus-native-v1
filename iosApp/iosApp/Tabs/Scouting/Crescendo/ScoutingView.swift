@@ -12,7 +12,7 @@ import shared
 private enum ScreenOptions {
     case teams
     case matches
-//    case yourRanking
+//    case picklist
 }
 
 struct ScoutingView: View {
@@ -44,12 +44,12 @@ private struct ScoutingViewDataPermission: View {
     @State private var selectedTeam: Int32?
     @State private var selectedMatch: Int32?
     
-    func calculateTotalRP(data: [shared.Crescendo]) -> Int32 {
+    func calculateAvgRP(data: [shared.Crescendo]) -> Double {
         var rp: Int32 = 0
         for item in data {
             rp += item.rankingPoints
         }
-        return rp
+        return Double(rp) / Double(data.count)
     }
     
     var filteredScoutingData: [shared.Crescendo]? {
@@ -91,8 +91,8 @@ private struct ScoutingViewDataPermission: View {
         NavigationStack {
             Picker("Screen Selection", selection: $selectedScreen) {
                 Text("Teams").tag(ScreenOptions.teams)
-                Text("Matches").tag(ScreenOptions.matches)
-                //                Text("Your Ranking").tag(ScreenOptions.yourRanking)
+//                Text("Matches").tag(ScreenOptions.matches)
+//                Text("Picklist").tag(ScreenOptions.picklist)
             }
             .pickerStyle(.segmented)
             .padding(.horizontal)
@@ -110,6 +110,8 @@ private struct ScoutingViewDataPermission: View {
                                     } label: {
                                         HStack {
                                             Text(comp.description)
+                                                .lineLimit(1)
+                                                .truncationMode(.middle)
                                             Spacer()
                                             if (selectedCompetition == comp) {
                                                 Image(systemName: "checkmark")
@@ -168,11 +170,11 @@ private struct ScoutingViewDataPermission: View {
                     if (selectedCompetition != nil) {
                         if (filteredScoutingData != nil && groupDataByTeam != nil) {
                             List(selection: $selectedTeam) {
-                                if let groupedData = groupDataByTeam?.sorted(by: { calculateTotalRP(data: $0.value) > calculateTotalRP(data: $1.value) }) {
+                                if let groupedData = groupDataByTeam?.sorted(by: { calculateAvgRP(data: $0.value) > calculateAvgRP(data: $1.value) }) {
                                     ForEach(groupedData, id: \.key) { keyValue in
                                         let (teamNumber, matches) = keyValue
                                         NavigationLink {
-                                            ScoutedTeamView(team: teamNumber, data: matches, selection: $selectedTeam)
+                                            ScoutedTeamView(team: teamNumber, data: filteredScoutingData!, selection: $selectedTeam)
                                         } label: {
                                             TeamDataBar(team: teamNumber, data: matches)
                                         }
@@ -203,19 +205,26 @@ private struct ScoutingViewDataPermission: View {
                                 ForEach(groupedData, id: \.key) { keyValue in
                                     let (matchNumber, data) = keyValue
                                     NavigationLink {
-                                        ScoutedMatchView(match: matchNumber, data: data, selection: $selectedMatch)
+                                        ScoutedMatchView(match: matchNumber, data: data)
                                     } label: {
                                         Text("Match \(matchNumber)")
                                     }
                                 }
                             }
+                     
                         }
                     } else {
                         Spacer()
-                        Text("Please select a Competition")
+                        Text("No Scouting Data")
                             .fontWeight(.bold)
                         Spacer()
                     }
+                }
+                else {
+                    Spacer()
+                    Text("Please select a Competition")
+                        .fontWeight(.bold)
+                    Spacer()
                 }
             }
         }

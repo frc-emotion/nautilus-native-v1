@@ -30,17 +30,6 @@ struct SettingsView: View {
                 }
                 .navigationTitle("Settings")
                 .navigationBarTitleDisplayMode(.large)
-                if (env.user != nil) {
-                    Section {
-                        Picker("Attendance Period", selection: $attendancePeriodSelection) {
-                            ForEach(Array(env.user!.attendanceKeys), id: \.self) {
-                                Text($0)
-                            }
-                        }
-                        .pickerStyle(.navigationLink)
-                        .disabled(Array(env.user!.attendance.keys).isEmpty)
-                    }
-                }
 //                Section {
 //                    Not yet implemented
 //                    NavigationLink {

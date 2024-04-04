@@ -87,6 +87,7 @@ class NetworkClient(base: String) {
         MEETINGS_ARCHIVE("/attendance/meetings/archive/{meetingId}"),
         CRESCENDO("/crescendo"),
         CRESCENDO_MINE("/crescendo/mine"),
+        CRESCENDO_SUBMISSION("/crescendo/{id}"),
         SEASONS("/seasons"),
         MEETINGS_MEETING("/attendance/meetings/{meetingId}"),
         USERS_VERIFY("/users/{user}/verify"),
@@ -531,6 +532,28 @@ class NetworkClient(base: String) {
             }
         }
 
+        override suspend fun deleteCrescendo(user: TokenUser, id: String): Result<Unit, KtorError> {
+            if (user.isInvalid()) return Result.Error(KtorError.AUTH)
+            return try {
+                client.delete(Routes.CRESCENDO_SUBMISSION.path.replace("{id}", id)) {
+                    header(HttpHeaders.Authorization, "Bearer ${user.token}")
+                    setBody(json.encodeToString(Unit))
+                }
+                Result.Success(Unit)
+            } catch (e: ClientRequestException) {
+                e.printStackTrace()
+                val serverResponse = ServerMessage.readMessage(e.response.bodyAsText()) ?: e.message
+                Result.Error(KtorError.CLIENT(serverResponse, e.response.status.value))
+            } catch (e: ServerResponseException) {
+                e.printStackTrace()
+                val serverResponse = ServerMessage.readMessage(e.response.bodyAsText()) ?: e.message
+                Result.Error(KtorError.SERVER(serverResponse, e.response.status.value))
+            } catch (e: Exception) {
+                e.printStackTrace()
+                Result.Error(KtorError.IO)
+            }
+        }
+
     }
 
     val roles = object : RolesNamespace {
@@ -697,6 +720,11 @@ class NetworkClient(base: String) {
         ): Result<Crescendo, KtorError>
 
         suspend fun getMyCrescendos(user: TokenUser): Result<List<Crescendo>, KtorError>
+
+        suspend fun deleteCrescendo(
+            user: TokenUser,
+            id: String
+        ): Result<Unit, KtorError>
     }
 
     interface RolesNamespace {

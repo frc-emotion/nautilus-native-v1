@@ -788,6 +788,26 @@ class DataHandler(
             }
         }
 
+        override suspend fun deleteCrescendo(id: String): DataResult<Unit> {
+            network.crescendo.deleteCrescendo(
+                user() ?: return Result.Error(
+                    Error(
+                        "Authentication error: Your login session is invalid. Please log out and log back in.",
+                        401
+                    )
+                ), id
+            ).let {
+                return when (it) {
+                    is Result.Success -> {
+                        crescendoDB.delete(id)
+                        Result.Success(Unit)
+                    }
+
+                    is Result.Error -> mapError(it.error)
+                }
+            }
+        }
+
     }
 
     val roles = object : RolesNamespace {
@@ -1063,6 +1083,14 @@ class DataHandler(
         suspend fun upload(data: CrescendoSubmission): DataResult<Crescendo>
         suspend fun upload(data: CrescendoSubmission, onError: (Error) -> Unit): Crescendo? {
             return this.upload(data).unwrap(onError)
+        }
+
+        suspend fun deleteCrescendo(id: String): DataResult<Unit>
+
+        suspend fun deleteCrescendo(id: String, onError: (Error) -> Unit) {
+            this.deleteCrescendo(id).let {
+                if (it is Result.Error) onError(it.error)
+            }
         }
     }
 

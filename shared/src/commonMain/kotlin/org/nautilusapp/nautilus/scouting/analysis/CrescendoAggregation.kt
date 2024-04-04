@@ -64,8 +64,8 @@ fun List<CrescendoAverage>.average(): CrescendoAverage {
 
 private fun List<CrescendoAuto>.average(): CrescendoAutoAverage {
     val leaveRate = filter { it.leave }.size.toDouble() / size.toDouble()
-    val amp = map { it.ampNotes.toDouble() }.average()
-    val speaker = map { it.speakerNotes.toDouble() }.average()
+    val amp = map { it.attempted.toDouble() }.average()
+    val speaker = map { it.scored.toDouble() }.average()
     return CrescendoAutoAverage(
         leaveRate = leaveRate,
         ampNotes = amp,
@@ -110,7 +110,7 @@ private fun List<CrescendoStage>.average(): CrescendoStageAverage {
     val spotlitRate =
         filter { it.state == CrescendoStageState.ONSTAGE_SPOTLIT }.size.toDouble() / size.toDouble()
     val harmony = map { it.harmony.toDouble() }.average()
-    val trap = map { it.trapNotes.toDouble() }.average()
+    val trap = filter { it.trap }.size.toDouble() / size.toDouble()
     return CrescendoStageAverage(
         parkRate = parkRate,
         onstageRate = onstageRate,

@@ -44,5 +44,9 @@ fun CrescendoSubmission.Companion.from(
     score = base.score,
     teamNumber = base.teamNumber,
     tied = base.tied,
-    won = base.won
+    won = base.won,
+    defenseRating = TODO(),
+    human = TODO(),
+    rating = TODO(),
+    coopertition = TODO(),
 )

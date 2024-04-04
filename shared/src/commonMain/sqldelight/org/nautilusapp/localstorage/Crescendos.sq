@@ -16,24 +16,29 @@ CREATE TABLE crescendo_table (
     brokeDown INTEGER AS Boolean NOT NULL,
     rankingPoints INTEGER AS Int NOT NULL,
     auto_leave INTEGER AS Boolean NOT NULL,
-    auto_ampNotes INTEGER AS Int NOT NULL,
-    auto_speakerNotes INTEGER AS Int NOT NULL,
+    auto_attempted INTEGER AS Int NOT NULL,
+    auto_scored INTEGER AS Int NOT NULL,
     teleop_ampNotes INTEGER AS Int NOT NULL,
     teleop_speakerUnamped INTEGER AS Int NOT NULL,
     teleop_speakerAmped INTEGER AS Int NOT NULL,
     stageState TEXT NOT NULL,
     harmony INTEGER AS Int NOT NULL,
-    trapNotes INTEGER AS Int NOT NULL,
+    trap INTEGER AS Boolean NOT NULL,
     melody INTEGER AS Boolean NOT NULL,
     ensemble INTEGER AS Boolean NOT NULL,
-    created_by TEXT NOT NULL
+    created_by TEXT NOT NULL,
+    rating REAL NOT NULL,
+    defense_rating REAL NOT NULL,
+    human_source INTEGER AS Boolean NOT NULL,
+    coop INTEGER AS Boolean NOT NULL,
+    human_skill REAL NOT NULL
 );
 
 insert {
 -- BEGIN TRANSACTION;
 DELETE FROM crescendo_table WHERE id = :id;
-INSERT OR ROLLBACK INTO crescendo_table(id, competition, teamNumber, teamName, matchNumber, score, penalty, won, tie, comments, defensive, brokeDown, rankingPoints, auto_leave, auto_ampNotes, auto_speakerNotes, teleop_ampNotes, teleop_speakerUnamped, teleop_speakerAmped, stageState, harmony, trapNotes, melody, ensemble, created_by)
-VALUES (:id, :competition, :teamNumber, :teamName, :matchNumber, :score, :penalty, :won, :tie, :comments, :defensive, :brokeDown, :rankingPoints, :autoLeave, :autoAmp, :autoSpeaker, :teleopAmp, :teleopSpeakerUnamp, :teleopSpeakerAmp, :stageState, :harmony, :trapNotes, :melody, :ensemble, :created_by);
+INSERT OR ROLLBACK INTO crescendo_table(id, competition, teamNumber, teamName, matchNumber, score, penalty, won, tie, comments, defensive, brokeDown, rankingPoints, auto_leave, auto_attempted, auto_scored, teleop_ampNotes, teleop_speakerUnamped, teleop_speakerAmped, stageState, harmony, trap, melody, ensemble, created_by, rating, defense_rating, human_source, coop, human_skill)
+VALUES (:id, :competition, :teamNumber, :teamName, :matchNumber, :score, :penalty, :won, :tie, :comments, :defensive, :brokeDown, :rankingPoints, :autoLeave, :auto_attempted, :auto_scored, :teleopAmp, :teleopSpeakerUnamp, :teleopSpeakerAmp, :stageState, :harmony, :trap, :melody, :ensemble, :created_by, :rating, :defense_rating, :human_source, :coop, :human_skill);
 -- COMMIT;
 }
 

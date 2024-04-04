@@ -9,7 +9,7 @@ import org.nautilusapp.nautilus.scouting.scoutingdata.CrescendoStageState
 class CrescendoEndgame {
     var parkstate: CrescendoStageState? by mutableStateOf(null)
     var harmony: Int? by mutableStateOf(null)
-    var trap: Int? by mutableStateOf(null)
+    var trap: Boolean? by mutableStateOf(null)
 
     fun clear() {
         parkstate = null

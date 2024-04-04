@@ -1,6 +1,7 @@
 package org.nautilusapp.localstorage
 
 import org.nautilusapp.nautilus.scouting.scoutingdata.CrescendoAuto
+import org.nautilusapp.nautilus.scouting.scoutingdata.CrescendoHuman
 import org.nautilusapp.nautilus.scouting.scoutingdata.CrescendoRankingPoints
 import org.nautilusapp.nautilus.scouting.scoutingdata.CrescendoStage
 import org.nautilusapp.nautilus.scouting.scoutingdata.CrescendoStageState
@@ -34,7 +35,7 @@ class CrescendoUploadCacheDB(db: AppDatabase) {
                                 CrescendoStageState.NOT_PARKED
                             },
                             harmony = it.harmony,
-                            trapNotes = it.trapNotes
+                            trap = it.trap
                         ),
                         teamNumber = it.teamNumber,
                         teleop = CrescendoTeleop(
@@ -46,18 +47,25 @@ class CrescendoUploadCacheDB(db: AppDatabase) {
                         won = it.won,
                         auto = CrescendoAuto(
                             leave = it.autoLeave,
-                            ampNotes = it.autoAmp,
-                            speakerNotes = it.autoSpeaker
-                        )
+                            attempted = it.auto_attempted,
+                            scored = it.auto_scored
+                        ),
+                        rating = it.rating,
+                        human = CrescendoHuman(
+                            source = it.human_source,
+                            rating = it.human_skill
+                        ),
+                        defenseRating = it.defense_rating,
+                        coopertition = it.coop
                     )
         }
     }
 
     fun insert(obj: CrescendoSubmission) {
         this.dbQuery.insert(
-            autoAmp = obj.auto.ampNotes,
+            auto_attempted = obj.auto.attempted,
             autoLeave = obj.auto.leave,
-            autoSpeaker = obj.auto.speakerNotes,
+            auto_scored = obj.auto.scored,
             brokeDown = obj.brokeDown,
             comments = obj.comments ?: "",
             competition = obj.competition,
@@ -75,8 +83,13 @@ class CrescendoUploadCacheDB(db: AppDatabase) {
             teleopSpeakerAmp = obj.teleop.speakerAmped,
             teleopSpeakerUnamp = obj.teleop.speakerUnamped,
             tie = obj.tied,
-            trapNotes = obj.stage.trapNotes,
-            won = obj.won
+            trap = obj.stage.trap,
+            won = obj.won,
+            rating = obj.rating,
+            human_source = obj.human.source,
+            defense_rating = obj.defenseRating,
+            coop = obj.coopertition,
+            human_skill = obj.human.rating
         )
     }
 
@@ -118,7 +131,7 @@ class CrescendoUploadCacheDB(db: AppDatabase) {
                         CrescendoStageState.NOT_PARKED
                     },
                     harmony = it.harmony,
-                    trapNotes = it.trapNotes
+                    trap = it.trap
                 ),
                 teamNumber = it.teamNumber,
                 teleop = CrescendoTeleop(
@@ -130,9 +143,16 @@ class CrescendoUploadCacheDB(db: AppDatabase) {
                 won = it.won,
                 auto = CrescendoAuto(
                     leave = it.autoLeave,
-                    ampNotes = it.autoAmp,
-                    speakerNotes = it.autoSpeaker
-                )
+                    attempted = it.auto_attempted,
+                    scored = it.auto_scored
+                ),
+                rating = it.rating,
+                human = CrescendoHuman(
+                    source = it.human_source,
+                    rating = it.human_skill
+                ),
+                coopertition = it.coop,
+                defenseRating = it.defense_rating
             )
         }
     }

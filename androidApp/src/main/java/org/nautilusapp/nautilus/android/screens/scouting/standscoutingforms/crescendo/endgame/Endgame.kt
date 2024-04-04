@@ -14,8 +14,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import org.nautilusapp.nautilus.android.PreviewTheme
-import org.nautilusapp.nautilus.android.screens.scouting.components.Incrementer
 import org.nautilusapp.nautilus.android.ui.composables.LabelledRadioButton
+import org.nautilusapp.nautilus.android.ui.composables.YesNoSelector
 import org.nautilusapp.nautilus.android.ui.composables.containers.Screen
 import org.nautilusapp.nautilus.android.ui.composables.indicators.MinimalWarning
 import org.nautilusapp.nautilus.android.ui.composables.indicators.Show
@@ -61,7 +61,7 @@ fun CrescendoEndgameInput(
         }
     }
     Spacer(modifier = Modifier.size(8.dp))
-    Incrementer(label = "Trap Notes", value = state.trap, onValueChange = { state.trap = it })
+    YesNoSelector(label = "Trap Notes", value = state.trap, setValue = { state.trap = it })
 }
 
 val CrescendoStageState.displayName: String

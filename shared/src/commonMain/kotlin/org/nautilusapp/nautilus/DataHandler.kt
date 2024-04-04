@@ -25,6 +25,7 @@ import org.nautilusapp.localstorage.UsersDB
 import org.nautilusapp.localstorage.uploadcache.Crescendo_upload_table
 import org.nautilusapp.nautilus.attendance.Meeting
 import org.nautilusapp.nautilus.roles.UserRole
+import org.nautilusapp.nautilus.scouting.pit.Inpit
 import org.nautilusapp.nautilus.scouting.scoutingdata.Crescendo
 import org.nautilusapp.nautilus.scouting.scoutingdata.CrescendoSubmission
 import org.nautilusapp.nautilus.userauth.FullUser
@@ -56,8 +57,6 @@ class DataHandler(
         attendance_periods_tableAdapter = Attendance_periods_table.Adapter(yearAdapter = IntColumnAdapter),
         attendance_tableAdapter = Attendance_table.Adapter(IntColumnAdapter),
         crescendo_tableAdapter = Crescendo_table.Adapter(
-            auto_ampNotesAdapter = IntColumnAdapter,
-            auto_speakerNotesAdapter = IntColumnAdapter,
             matchNumberAdapter = IntColumnAdapter,
             penaltyAdapter = IntColumnAdapter,
             harmonyAdapter = IntColumnAdapter,
@@ -67,21 +66,21 @@ class DataHandler(
             teleop_ampNotesAdapter = IntColumnAdapter,
             teleop_speakerAmpedAdapter = IntColumnAdapter,
             teleop_speakerUnampedAdapter = IntColumnAdapter,
-            trapNotesAdapter = IntColumnAdapter,
+            auto_attemptedAdapter = IntColumnAdapter,
+            auto_scoredAdapter = IntColumnAdapter,
         ),
         crescendo_upload_tableAdapter = Crescendo_upload_table.Adapter(
             scoreAdapter = IntColumnAdapter,
-            autoAmpAdapter = IntColumnAdapter,
             teamNumberAdapter = IntColumnAdapter,
             rankingPointsAdapter = IntColumnAdapter,
             harmonyAdapter = IntColumnAdapter,
             teleopAmpAdapter = IntColumnAdapter,
-            autoSpeakerAdapter = IntColumnAdapter,
             matchNumberAdapter = IntColumnAdapter,
             penaltyAdapter = IntColumnAdapter,
             teleopSpeakerAmpAdapter = IntColumnAdapter,
             teleopSpeakerUnampAdapter = IntColumnAdapter,
-            trapNotesAdapter = IntColumnAdapter,
+            auto_attemptedAdapter = IntColumnAdapter,
+            auto_scoredAdapter = IntColumnAdapter,
         ),
         user_extras_tableAdapter = User_extras_table.Adapter(
             accountUpdateVersionAdapter = IntColumnAdapter
@@ -790,6 +789,26 @@ class DataHandler(
             }
         }
 
+        override suspend fun deleteCrescendo(id: String): DataResult<Unit> {
+            network.crescendo.deleteCrescendo(
+                user() ?: return Result.Error(
+                    Error(
+                        "Authentication error: Your login session is invalid. Please log out and log back in.",
+                        401
+                    )
+                ), id
+            ).let {
+                return when (it) {
+                    is Result.Success -> {
+                        crescendoDB.delete(id)
+                        Result.Success(Unit)
+                    }
+
+                    is Result.Error -> mapError(it.error)
+                }
+            }
+        }
+
     }
 
     val roles = object : RolesNamespace {
@@ -874,11 +893,108 @@ class DataHandler(
         )
     }
 
+    val inpit = object : InpitNamespace {
+        override suspend fun post(
+            team: Int,
+            data: Map<String, String>,
+            unset: List<String>
+        ): DataResult<Inpit> {
+            return withContext(Dispatchers.IO) {
+                network.inpit.post(
+                    user = user() ?: return@withContext Result.Error(
+                        Error(
+                            "Authentication error: Your login session is invalid. Please log out and log back in.",
+                            401
+                        )
+                    ),
+                    teamNumber = team,
+                    data = data,
+                    unset = unset
+                ).let {
+                    when (it) {
+                        is Result.Success -> it
+                        is Result.Error -> mapError(it.error)
+                    }
+                }
+            }
+        }
+
+        override suspend fun get(): DataResult<List<Inpit>> {
+            return withContext(Dispatchers.IO) {
+                network.inpit.get(
+                    user() ?: return@withContext Result.Error(
+                        Error(
+                            "Authentication error: Your login session is invalid. Please log out and log back in.",
+                            401
+                        )
+                    )
+                ).let {
+                    when (it) {
+                        is Result.Success -> it
+                        is Result.Error -> mapError(it.error)
+                    }
+                }
+            }
+        }
+
+        override suspend fun delete(team: Int): DataResult<Unit> {
+            return withContext(Dispatchers.IO) {
+                network.inpit.delete(
+                    user() ?: return@withContext Result.Error(
+                        Error(
+                            "Authentication error: Your login session is invalid. Please log out and log back in.",
+                            401
+                        )
+                    ),
+                    team
+                ).let {
+                    when (it) {
+                        is Result.Success -> it
+                        is Result.Error -> mapError(it.error)
+                    }
+                }
+            }
+        }
+
+    }
+
     fun getNetworkClient() = network
 
     //interfaces are required for methods of namespace objects to be accessible,
     //   without making them implement an interface you just get an error that those methods
     //   don't exist on the type of the object
+
+    interface InpitNamespace {
+        suspend fun post(
+            team: Int,
+            data: Map<String, String>,
+            unset: List<String>
+        ): DataResult<Inpit>
+
+        suspend fun post(
+            team: Int,
+            data: Map<String, String>,
+            unset: List<String>,
+            onError: (Error) -> Unit
+        ): Inpit? {
+            return this.post(team, data, unset).unwrap(onError)
+        }
+
+        suspend fun get(): DataResult<List<Inpit>>
+
+        suspend fun get(onError: (Error) -> Unit): List<Inpit>? {
+            return this.get().unwrap(onError)
+        }
+
+        suspend fun delete(team: Int): DataResult<Unit>
+
+        suspend fun delete(team: Int, onError: (Error) -> Unit) {
+            this.delete(team).let {
+                if (it is Result.Error) onError(it.error)
+            }
+        }
+    }
+
     interface UserNamspace {
         suspend fun login(username: String, password: String): DataResult<TokenUser>
 
@@ -1065,6 +1181,14 @@ class DataHandler(
         suspend fun upload(data: CrescendoSubmission): DataResult<Crescendo>
         suspend fun upload(data: CrescendoSubmission, onError: (Error) -> Unit): Crescendo? {
             return this.upload(data).unwrap(onError)
+        }
+
+        suspend fun deleteCrescendo(id: String): DataResult<Unit>
+
+        suspend fun deleteCrescendo(id: String, onError: (Error) -> Unit) {
+            this.deleteCrescendo(id).let {
+                if (it is Result.Error) onError(it.error)
+            }
         }
     }
 
@@ -1316,6 +1440,16 @@ fun DataResult<TokenUser>.unwrap(onError: (Error) -> Unit): TokenUser? {
 }
 
 fun DataResult<Meeting>.unwrap(onError: (Error) -> Unit): Meeting? {
+    return when (this) {
+        is Result.Success -> this.data
+        is Result.Error -> {
+            onError(this.error)
+            null
+        }
+    }
+}
+
+fun <T> DataResult<T>.unwrap(onError: (Error) -> Unit): T? {
     return when (this) {
         is Result.Success -> this.data
         is Result.Error -> {

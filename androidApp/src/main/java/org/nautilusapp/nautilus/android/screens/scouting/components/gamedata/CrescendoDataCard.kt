@@ -103,12 +103,12 @@ fun CrescendoDataCard(
                         )
                         Spacer(Modifier.size(4.dp))
                         Text(
-                            "Amp: $ampNotes",
+                            "Amp: $attempted",
                             style = MaterialTheme.typography.bodySmall
                         )
                         Spacer(Modifier.size(4.dp))
                         Text(
-                            "Speaker: $speakerNotes",
+                            "Speaker: $scored",
                             style = MaterialTheme.typography.bodySmall
                         )
                     }
@@ -154,7 +154,7 @@ fun CrescendoDataCard(
                         )
                         Spacer(Modifier.size(4.dp))
                         Text(
-                            "Trap: $trapNotes",
+                            "Trap: $trap",
                             style = MaterialTheme.typography.bodySmall
                         )
                     }

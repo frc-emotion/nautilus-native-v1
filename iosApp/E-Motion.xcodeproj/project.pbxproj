@@ -35,6 +35,10 @@
 		934CDD3F2BBBEC5400C958A4 /* CreescendoExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 934CDD3D2BBBEC5400C958A4 /* CreescendoExtension.swift */; };
 		934CDD412BBBF0A100C958A4 /* CrescendoAutoBreakdownView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 934CDD402BBBF0A100C958A4 /* CrescendoAutoBreakdownView.swift */; };
 		934CDD422BBBF0A100C958A4 /* CrescendoAutoBreakdownView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 934CDD402BBBF0A100C958A4 /* CrescendoAutoBreakdownView.swift */; };
+		934CDD492BBE61A000C958A4 /* AllianceScoreboardView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 934CDD482BBE61A000C958A4 /* AllianceScoreboardView.swift */; };
+		934CDD4A2BBE61A000C958A4 /* AllianceScoreboardView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 934CDD482BBE61A000C958A4 /* AllianceScoreboardView.swift */; };
+		934CDD4C2BBE62AD00C958A4 /* AllianceRPView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 934CDD4B2BBE62AD00C958A4 /* AllianceRPView.swift */; };
+		934CDD4D2BBE62AD00C958A4 /* AllianceRPView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 934CDD4B2BBE62AD00C958A4 /* AllianceRPView.swift */; };
 		934E0AFC2B69D5B100515C44 /* EnvironmentModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 934E0AFB2B69D5B100515C44 /* EnvironmentModel.swift */; };
 		934E0AFD2B69D5B100515C44 /* EnvironmentModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 934E0AFB2B69D5B100515C44 /* EnvironmentModel.swift */; };
 		934F47272B413AF0009DA4FA /* AuthenticationView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 934F47262B413AF0009DA4FA /* AuthenticationView.swift */; };
@@ -153,6 +157,8 @@
 		934CDD3A2BBBEBE400C958A4 /* CrescendoTeleopBreakdownView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CrescendoTeleopBreakdownView.swift; sourceTree = "<group>"; };
 		934CDD3D2BBBEC5400C958A4 /* CreescendoExtension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CreescendoExtension.swift; sourceTree = "<group>"; };
 		934CDD402BBBF0A100C958A4 /* CrescendoAutoBreakdownView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CrescendoAutoBreakdownView.swift; sourceTree = "<group>"; };
+		934CDD482BBE61A000C958A4 /* AllianceScoreboardView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AllianceScoreboardView.swift; sourceTree = "<group>"; };
+		934CDD4B2BBE62AD00C958A4 /* AllianceRPView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AllianceRPView.swift; sourceTree = "<group>"; };
 		934E0AFB2B69D5B100515C44 /* EnvironmentModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EnvironmentModel.swift; sourceTree = "<group>"; };
 		934F47262B413AF0009DA4FA /* AuthenticationView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthenticationView.swift; sourceTree = "<group>"; };
 		9351D1F32B4F4D9500148E8D /* VerifyUsersView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VerifyUsersView.swift; sourceTree = "<group>"; };
@@ -338,6 +344,15 @@
 			name = Teleop;
 			sourceTree = "<group>";
 		};
+		934CDD442BBE408C00C958A4 /* MatchDataComponents */ = {
+			isa = PBXGroup;
+			children = (
+				934CDD482BBE61A000C958A4 /* AllianceScoreboardView.swift */,
+				934CDD4B2BBE62AD00C958A4 /* AllianceRPView.swift */,
+			);
+			path = MatchDataComponents;
+			sourceTree = "<group>";
+		};
 		93719C842AC0B33200E29446 /* Elements */ = {
 			isa = PBXGroup;
 			children = (
@@ -512,6 +527,7 @@
 		93E3E26A2B93123A001D8299 /* Data */ = {
 			isa = PBXGroup;
 			children = (
+				934CDD442BBE408C00C958A4 /* MatchDataComponents */,
 				938189682BAF818000CDEAE5 /* TeamDataComponents */,
 				93E3E2622B92CEE4001D8299 /* TeamDataBar.swift */,
 			);
@@ -716,6 +732,7 @@
 				93B9EACB2A5E800700D5B8A8 /* HomeView.swift in Sources */,
 				934CDD2D2BBBE7F300C958A4 /* CrescendoTeamAutoTeleopView.swift in Sources */,
 				93E8373C2B8DC7F500DAB2E1 /* DateHelpers.swift in Sources */,
+				934CDD492BBE61A000C958A4 /* AllianceScoreboardView.swift in Sources */,
 				93418DE62A5E362D00336A62 /* UserBar.swift in Sources */,
 				93E8374B2B8F1F5200DAB2E1 /* MinusLabelView.swift in Sources */,
 				93418DE42A5E362600336A62 /* LoggedInUserView.swift in Sources */,
@@ -757,6 +774,7 @@
 				938189732BAF8A2A00CDEAE5 /* TeamDataRankingPointsOverview.swift in Sources */,
 				93E837522B8FB39100DAB2E1 /* ScoutingNumberInputView.swift in Sources */,
 				93E837352B8D48F800DAB2E1 /* DirectoryBar.swift in Sources */,
+				934CDD4C2BBE62AD00C958A4 /* AllianceRPView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -779,6 +797,7 @@
 				9351D20D2B53A12200148E8D /* UserBar.swift in Sources */,
 				934CDD2E2BBBE7F300C958A4 /* CrescendoTeamAutoTeleopView.swift in Sources */,
 				93E8373F2B8DCAB700DAB2E1 /* Constants.swift in Sources */,
+				934CDD4A2BBE61A000C958A4 /* AllianceScoreboardView.swift in Sources */,
 				9351D20E2B53A12200148E8D /* LoggedInUserView.swift in Sources */,
 				93E837432B8F072100DAB2E1 /* CrescendoScoutingFormView.swift in Sources */,
 				93E837492B8F1F0100DAB2E1 /* PlusLabelView.swift in Sources */,
@@ -820,6 +839,7 @@
 				93E837462B8F1DF200DAB2E1 /* ScoutingIncrementerView.swift in Sources */,
 				9381897E2BB54A9E00CDEAE5 /* ScoutedTeamMatchInfoBarView.swift in Sources */,
 				938189812BB54AA700CDEAE5 /* TeamDataWinrate.swift in Sources */,
+				934CDD4D2BBE62AD00C958A4 /* AllianceRPView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

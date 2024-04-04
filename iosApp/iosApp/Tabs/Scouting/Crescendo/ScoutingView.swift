@@ -91,8 +91,8 @@ private struct ScoutingViewDataPermission: View {
         NavigationStack {
             Picker("Screen Selection", selection: $selectedScreen) {
                 Text("Teams").tag(ScreenOptions.teams)
-                Text("Matches").tag(ScreenOptions.matches)
-                //                Text("Your Ranking").tag(ScreenOptions.yourRanking)
+//                Text("Matches").tag(ScreenOptions.matches)
+//                Text("Picklist").tag(ScreenOptions.picklist)
             }
             .pickerStyle(.segmented)
             .padding(.horizontal)

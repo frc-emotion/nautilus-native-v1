@@ -24,6 +24,10 @@ data class Crescendo(
     val stage: CrescendoStage,
     override val ranking: CrescendoRankingPoints,
     val createdBy: String,
+    val rating: Double,
+    val defenseRating: Double,
+    val human: CrescendoHuman,
+    val coopertition: Boolean
 ) : ScoutingData {
     companion object {
         fun exampleData(): Crescendo {
@@ -44,8 +48,8 @@ data class Crescendo(
                 rankingPoints = (0..4).random(),
                 auto = CrescendoAuto(
                     leave = Random.nextBoolean(),
-                    ampNotes = (0..6).random(),
-                    speakerNotes = (0..6).random()
+                    attempted = (0..6).random(),
+                    scored = (0..6).random()
                 ),
                 teleop = CrescendoTeleop(
                     ampNotes = (0..50).random(),
@@ -55,17 +59,27 @@ data class Crescendo(
                 stage = CrescendoStage(
                     state = CrescendoStageState.entries.random(),
                     harmony = (0..50).random(),
-                    trapNotes = (0..50).random()
+                    trap = Random.nextBoolean()
                 ),
                 ranking = CrescendoRankingPoints(
                     melody = Random.nextBoolean(),
                     ensemble = Random.nextBoolean()
                 ),
-                createdBy = String.random()
+                createdBy = String.random(),
+                human = CrescendoHuman(Random.nextBoolean(), Random.nextDouble()),
+                coopertition = Random.nextBoolean(),
+                defenseRating = Random.nextDouble(),
+                rating = Random.nextDouble(),
             )
         }
     }
 }
+
+@Serializable
+data class CrescendoHuman(
+    val source: Boolean,
+    val rating: Double
+)
 
 private fun String.Companion.random(len: Int = 16): String {
     val chars = ('a'..'z') + ('A'..'Z') + ('0'..'9') + ('!'..'@')
@@ -99,13 +113,17 @@ data class CrescendoSubmission(
     override val tied: Boolean,
     override val won: Boolean,
     override val brokeDown: Boolean,
+    val rating: Double,
+    val defenseRating: Double,
+    val human: CrescendoHuman,
+    val coopertition: Boolean
 ) : ScoutingSubmission
 
 @Serializable
 data class CrescendoAuto(
     val leave: Boolean,
-    val ampNotes: Int,
-    val speakerNotes: Int
+    val attempted: Int,
+    val scored: Int
 )
 
 @Serializable
@@ -119,7 +137,7 @@ data class CrescendoTeleop(
 data class CrescendoStage(
     val state: CrescendoStageState,
     val harmony: Int,
-    val trapNotes: Int,
+    val trap: Boolean,
 )
 
 @Serializable

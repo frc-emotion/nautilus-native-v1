@@ -2,6 +2,7 @@ package org.nautilusapp.localstorage
 
 import org.nautilusapp.nautilus.scouting.scoutingdata.Crescendo
 import org.nautilusapp.nautilus.scouting.scoutingdata.CrescendoAuto
+import org.nautilusapp.nautilus.scouting.scoutingdata.CrescendoHuman
 import org.nautilusapp.nautilus.scouting.scoutingdata.CrescendoRankingPoints
 import org.nautilusapp.nautilus.scouting.scoutingdata.CrescendoStage
 import org.nautilusapp.nautilus.scouting.scoutingdata.CrescendoStageState
@@ -38,8 +39,8 @@ class CrescendoDB(db: AppDatabase) {
         this.dbQuery.insert(
             id = obj._id,
             autoLeave = obj.auto.leave,
-            autoAmp = obj.auto.ampNotes,
-            autoSpeaker = obj.auto.speakerNotes,
+            auto_attempted = obj.auto.attempted,
+            auto_scored = obj.auto.scored,
             teleopAmp = obj.teleop.ampNotes,
             teleopSpeakerAmp = obj.teleop.speakerAmped,
             teleopSpeakerUnamp = obj.teleop.speakerUnamped,
@@ -56,11 +57,16 @@ class CrescendoDB(db: AppDatabase) {
             rankingPoints = obj.rankingPoints,
             stageState = obj.stage.state.name,
             harmony = obj.stage.harmony,
-            trapNotes = obj.stage.trapNotes,
+            trap = obj.stage.trap,
             teamName = obj.teamName,
             tie = obj.tied,
             won = obj.won,
-            created_by = obj.createdBy
+            created_by = obj.createdBy,
+            coop = obj.coopertition,
+            defense_rating = obj.defenseRating,
+            human_skill = obj.human.rating,
+            human_source = obj.human.source,
+            rating = obj.rating
         )
     }
 
@@ -74,8 +80,8 @@ fun mapCrescendo(it: Crescendo_table): Crescendo {
         _id = it.id,
         auto = CrescendoAuto(
             leave = it.auto_leave,
-            ampNotes = it.auto_ampNotes,
-            speakerNotes = it.auto_speakerNotes
+            attempted = it.auto_attempted,
+            scored = it.auto_scored
         ),
         teleop = CrescendoTeleop(
             ampNotes = it.teleop_ampNotes,
@@ -96,13 +102,24 @@ fun mapCrescendo(it: Crescendo_table): Crescendo {
         ),
         rankingPoints = it.rankingPoints,
         stage = CrescendoStage(
-            state = try { CrescendoStageState.valueOf(it.stageState) } catch(_: Exception) { CrescendoStageState.NOT_PARKED },
+            state = try {
+                CrescendoStageState.valueOf(it.stageState)
+            } catch (_: Exception) {
+                CrescendoStageState.NOT_PARKED
+            },
             harmony = it.harmony,
-            trapNotes = it.trapNotes
+            trap = it.trap
         ),
         teamName = it.teamName,
         tied = it.tie,
         won = it.won,
-        createdBy = it.created_by
+        createdBy = it.created_by,
+        rating = it.rating,
+        defenseRating = it.defense_rating,
+        coopertition = it.coop,
+        human = CrescendoHuman(
+            rating = it.human_skill,
+            source = it.human_source
+        )
     )
 }

@@ -379,7 +379,6 @@
 				9381897C2BB4F3A700CDEAE5 /* ScoutedTeamMatchInfoBarView.swift */,
 				938189792BB0F74D00CDEAE5 /* RankingPoints */,
 				938189772BB0F73B00CDEAE5 /* Scoring */,
-				9381896D2BAF88EA00CDEAE5 /* Winrate */,
 			);
 			path = TeamDataComponents;
 			sourceTree = "<group>";
@@ -391,40 +390,25 @@
 				9381896B2BAF844600CDEAE5 /* TeamWinrateDonut.swift */,
 			);
 			name = Winrate;
-			sourceTree = "<group>";
-		};
-		9381896F2BAF88F600CDEAE5 /* Crescendo */ = {
-			isa = PBXGroup;
-			children = (
-				938189722BAF8A2A00CDEAE5 /* TeamDataRankingPointsOverview.swift */,
-			);
-			name = Crescendo;
 			path = ..;
 			sourceTree = "<group>";
 		};
 		938189772BB0F73B00CDEAE5 /* Scoring */ = {
 			isa = PBXGroup;
 			children = (
-				938189782BB0F74500CDEAE5 /* Crescendo */,
-			);
-			path = Scoring;
-			sourceTree = "<group>";
-		};
-		938189782BB0F74500CDEAE5 /* Crescendo */ = {
-			isa = PBXGroup;
-			children = (
-				938189742BB0015800CDEAE5 /* CrescendoMatchScorePreviewView.swift */,
 				938189862BB5F05500CDEAE5 /* Graphs */,
+				9381896D2BAF88EA00CDEAE5 /* Winrate */,
+				938189742BB0015800CDEAE5 /* CrescendoMatchScorePreviewView.swift */,
 				9381898D2BB63AC200CDEAE5 /* CrescendoTeamDataView.swift */,
 				934CDD3D2BBBEC5400C958A4 /* CreescendoExtension.swift */,
 			);
-			name = Crescendo;
+			path = Scoring;
 			sourceTree = "<group>";
 		};
 		938189792BB0F74D00CDEAE5 /* RankingPoints */ = {
 			isa = PBXGroup;
 			children = (
-				9381896F2BAF88F600CDEAE5 /* Crescendo */,
+				938189722BAF8A2A00CDEAE5 /* TeamDataRankingPointsOverview.swift */,
 			);
 			path = RankingPoints;
 			sourceTree = "<group>";

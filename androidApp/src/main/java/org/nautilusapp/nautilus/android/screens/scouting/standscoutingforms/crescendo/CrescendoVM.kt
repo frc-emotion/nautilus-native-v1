@@ -7,8 +7,10 @@ import androidx.lifecycle.ViewModel
 import org.nautilusapp.nautilus.android.screens.scouting.standscoutingforms.ScoutingSubmissionImpl
 import org.nautilusapp.nautilus.android.screens.scouting.standscoutingforms.crescendo.auto.CrescendoAutoState
 import org.nautilusapp.nautilus.android.screens.scouting.standscoutingforms.crescendo.endgame.CrescendoEndgame
+import org.nautilusapp.nautilus.android.screens.scouting.standscoutingforms.crescendo.ratings.CrescendoRatings
 import org.nautilusapp.nautilus.android.screens.scouting.standscoutingforms.crescendo.teleop.CrescendoTeleopState
 import org.nautilusapp.nautilus.scouting.scoutingdata.CrescendoAuto
+import org.nautilusapp.nautilus.scouting.scoutingdata.CrescendoHuman
 import org.nautilusapp.nautilus.scouting.scoutingdata.CrescendoRankingPoints
 import org.nautilusapp.nautilus.scouting.scoutingdata.CrescendoStage
 import org.nautilusapp.nautilus.scouting.scoutingdata.CrescendoSubmission
@@ -18,6 +20,7 @@ class CrescendoVM : ViewModel() {
     val auto = CrescendoAutoState()
     val teleop = CrescendoTeleopState()
     val endgame = CrescendoEndgame()
+    val ratings = CrescendoRatings()
     var comps: List<String> by mutableStateOf(listOf())
 }
 
@@ -25,7 +28,12 @@ fun CrescendoSubmission.Companion.from(
     base: ScoutingSubmissionImpl,
     auto: CrescendoAuto,
     teleop: CrescendoTeleop,
-    stage: CrescendoStage
+    stage: CrescendoStage,
+
+    defenseRating: Double,
+    human: CrescendoHuman,
+    rating: Double,
+    coopertition: Boolean
 ) = CrescendoSubmission(
     auto = auto,
     teleop = teleop,
@@ -45,8 +53,8 @@ fun CrescendoSubmission.Companion.from(
     teamNumber = base.teamNumber,
     tied = base.tied,
     won = base.won,
-    defenseRating = TODO(),
-    human = TODO(),
-    rating = TODO(),
-    coopertition = TODO(),
+    defenseRating = defenseRating,
+    human = human,
+    rating = rating,
+    coopertition = coopertition
 )

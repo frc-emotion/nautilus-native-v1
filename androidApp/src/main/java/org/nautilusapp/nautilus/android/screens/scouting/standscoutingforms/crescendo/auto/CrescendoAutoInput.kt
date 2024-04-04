@@ -30,15 +30,15 @@ fun CrescendoAutoInput(
     }
     Spacer(modifier = Modifier.size(8.dp))
     Incrementer(
-        label = "Amp Notes",
-        value = state.amp,
-        onValueChange = { state.amp = it },
+        label = "Notes Attempted",
+        value = state.attempted,
+        onValueChange = { state.attempted = it },
     )
     Spacer(modifier = Modifier.size(8.dp))
     Incrementer(
-        label = "Speaker Notes",
-        value = state.speaker,
-        onValueChange = { state.speaker = it },
+        label = "Notes Scored",
+        value = state.scored,
+        onValueChange = { state.scored = it },
     )
     Spacer(modifier = Modifier.size(16.dp))
     YesNoSelector(

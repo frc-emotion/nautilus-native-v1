@@ -59,6 +59,8 @@ fun BaseScoutingForm(
     rpInfo: Pair<RPInfo, RPInfo>,
     onFormSubmit: suspend (baseData: ScoutingSubmissionImpl) -> DataResult<*>,
     contentInputsOkay: Boolean,
+    defensive: Boolean?,
+    setDefensive: (Boolean?) -> Unit,
     clearContentInputs: () -> Unit,
     contents: @Composable () -> Unit,
 ) {
@@ -69,7 +71,6 @@ fun BaseScoutingForm(
     } //default to most recent competition
     var teamNumber by rememberSaveable { mutableStateOf("") }
     var matchNumber by rememberSaveable { mutableStateOf("") }
-    var defensive by rememberSaveable { mutableStateOf<Boolean?>(null) }
     var finalScore by rememberSaveable { mutableStateOf("") }
     var gameResult by rememberSaveable { mutableStateOf<GameResult?>(null) }
     var penaltyPointsEarned by rememberSaveable { mutableStateOf("") }
@@ -105,12 +106,15 @@ fun BaseScoutingForm(
     fun clearForm() {
         teamNumber = ""
         matchNumber = ""
-        defensive = null
+//        defensive = null
+        setDefensive(null)
         finalScore = ""
         gameResult = null
         penaltyPointsEarned = ""
         comments = ""
         brokeDown = null
+        rp1 = null
+        rp2 = null
         clearContentInputs()
     }
 
@@ -162,7 +166,7 @@ fun BaseScoutingForm(
     Spacer(modifier = Modifier.size(16.dp))
     Text(text = "Robot Information", style = MaterialTheme.typography.titleLarge)
     Spacer(Modifier.size(8.dp))
-    YesNoSelector(label = "Defense Bot?", value = defensive, setValue = { defensive = it })
+    YesNoSelector(label = "Defense Bot?", value = defensive, setValue = { setDefensive(it) })
     Spacer(modifier = Modifier.size(8.dp))
     YesNoSelector(label = "Robot Broke Down?", value = brokeDown, setValue = { brokeDown = it })
     Spacer(modifier = Modifier.size(16.dp))
@@ -355,7 +359,9 @@ fun BaseScoutPreview() {
                 clearContentInputs = {},
                 contents = {
                     Text(text = "Test")
-                }
+                },
+                defensive = true,
+                setDefensive = {}
             )
         }
     }

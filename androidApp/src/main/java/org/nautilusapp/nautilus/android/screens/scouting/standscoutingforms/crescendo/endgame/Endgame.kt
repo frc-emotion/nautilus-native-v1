@@ -61,7 +61,7 @@ fun CrescendoEndgameInput(
         }
     }
     Spacer(modifier = Modifier.size(8.dp))
-    YesNoSelector(label = "Trap Notes", value = state.trap, setValue = { state.trap = it })
+    YesNoSelector(label = "Scored in Trap?", value = state.trap, setValue = { state.trap = it })
 }
 
 val CrescendoStageState.displayName: String
